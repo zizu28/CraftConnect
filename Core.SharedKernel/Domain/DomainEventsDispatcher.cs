@@ -7,7 +7,7 @@ namespace Core.SharedKernel.Domain
 	{
 		private static readonly ConcurrentDictionary<Type, Type> HandlerTypeDictionary = new();
 		private static readonly ConcurrentDictionary<Type, Type> WrapperTypeDictionary = new();
-		public async Task DispatchAsync(IEnumerable<IDomainEvent> domainEvents, CancellationToken cancellationToken = default)
+		public async Task DispatchAsync(IEnumerable<IIntegrationEvent> domainEvents, CancellationToken cancellationToken = default)
 		{
 			foreach(var domainEvent in domainEvents)
 			{
@@ -28,7 +28,7 @@ namespace Core.SharedKernel.Domain
 
 		private abstract class HandlerWrapper
 		{
-			public abstract Task HandleAsync(IDomainEvent domainEvent, CancellationToken cancellationToken);
+			public abstract Task HandleAsync(IIntegrationEvent domainEvent, CancellationToken cancellationToken);
 			public static HandlerWrapper Create(object handler, Type domainEventType)
 			{
 				Type wrapperType = WrapperTypeDictionary.GetOrAdd(
@@ -38,11 +38,11 @@ namespace Core.SharedKernel.Domain
 			}
 		}
 
-		private class HandlerWrapper<T>(object handler) : HandlerWrapper where T : IDomainEvent
+		private class HandlerWrapper<T>(object handler) : HandlerWrapper where T : IIntegrationEvent
 		{
 			private readonly IDomainEventHandler<T> _handler = (IDomainEventHandler<T>)handler;
 
-			public override async Task HandleAsync(IDomainEvent domainEvent, CancellationToken cancellationToken)
+			public override async Task HandleAsync(IIntegrationEvent domainEvent, CancellationToken cancellationToken)
 			{
 				await _handler.HandleAsync((T)domainEvent, cancellationToken);
 			}

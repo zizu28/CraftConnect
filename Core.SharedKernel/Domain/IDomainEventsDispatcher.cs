@@ -2,6 +2,6 @@
 {
 	public interface IDomainEventsDispatcher
 	{
-		Task DispatchAsync(IEnumerable<IDomainEvent> domainEvents, CancellationToken cancellationToken = default);
+		Task DispatchAsync(IEnumerable<IIntegrationEvent> domainEvents, CancellationToken cancellationToken = default);
 	}
 }

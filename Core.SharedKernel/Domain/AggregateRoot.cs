@@ -2,10 +2,10 @@
 {
 	public abstract class AggregateRoot : Entity
 	{
-		private	readonly List<IDomainEvent>	 _domainEvents = [];
-		public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+		private	readonly List<IIntegrationEvent>	 _domainEvents = [];
+		public IReadOnlyCollection<IIntegrationEvent> DomainEvents => _domainEvents.AsReadOnly();
 
-		protected void AddDomainEvent(IDomainEvent domainEvent)
+		protected void AddIntegrationEvent(IIntegrationEvent domainEvent)
 		{
 			_domainEvents.Add(domainEvent);
 		}
