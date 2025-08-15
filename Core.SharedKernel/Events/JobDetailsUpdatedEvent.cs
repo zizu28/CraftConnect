@@ -3,7 +3,7 @@
 namespace Core.SharedKernel.Events
 {
 	public record JobDetailsUpdatedEvent(
-		Guid BookingId, Guid UpdatedByUserId, string NewDescription) : IDomainEvent
+		Guid BookingId, Guid UpdatedByUserId, string NewDescription) : IIntegrationEvent
 	{
 		public Guid Id => Guid.NewGuid();
 

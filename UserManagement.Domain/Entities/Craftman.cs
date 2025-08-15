@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Core.SharedKernel.Enums;
-using Core.SharedKernel.Events;
+using Core.SharedKernel.IntegrationEvents;
 using Core.SharedKernel.ValueObjects;
 
 namespace UserManagement.Domain.Entities
@@ -26,24 +26,10 @@ namespace UserManagement.Domain.Entities
 			Profession = profession;
 		}
 
-		//public Craftman(Email email, Profession profession, string bio, Money hourlyRate,
-		//VerificationStatus status, bool isAvailable, string firstName,
-		//string lastName, string userName) : base(email, UserRole.Craftman)
-		//{
-		//	Profession = profession;
-		//	Bio = bio;
-		//	HourlyRate = hourlyRate;
-		//	Status = status;
-		//	IsAvailable = isAvailable;
-		//	FirstName = firstName;
-		//	LastName = lastName;
-		//	Username = userName;
-		//}
-
 		public void AddSkill(string name, int yearsOfExperience)
 		{
 			_skills.Add(new Skill(name, yearsOfExperience));
-			AddDomainEvent(new CraftmanSkillAddedEvent(Id, name));
+			AddIntegrationEvent(new CraftmanSkillIntegrationAddedEvent(Id, name));
 		}
 
 		public static void VerifyCraftman(Email email, Profession craftmanProfession, IdentityDocument document)
@@ -52,7 +38,7 @@ namespace UserManagement.Domain.Entities
 			{
 				Status = VerificationStatus.Verified,
 			};
-			craftman.AddDomainEvent(new CraftmanVerifiedEvent(craftman.Id, document.Type));
+			craftman.AddIntegrationEvent(new CraftmanVerifiedIntegrationEvent(craftman.Id, document.Type));
 		}
 	}
 }

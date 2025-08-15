@@ -2,7 +2,7 @@
 
 namespace Core.SharedKernel.Events
 {
-	public record BookingCompletedEvent(Guid BookingId, DateTime CompletedAt) : IDomainEvent
+	public record BookingCompletedEvent(Guid BookingId, DateTime CompletedAt) : IIntegrationEvent
 	{
 		public Guid Id => Guid.NewGuid();
 

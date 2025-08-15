@@ -9,7 +9,7 @@ namespace Core.SharedKernel.Events
 		Guid CraftmanId, 
 		string Description, 
 		Address ServiceAddress,
-		DateTime CreatedAt) : IDomainEvent
+		DateTime CreatedAt) : IIntegrationEvent
 	{
 		public DateTime OccuredOn => DateTime.UtcNow;
 

@@ -4,7 +4,7 @@ namespace Core.SharedKernel.Events
 {
 	public record BookingLineItemAddedEvent(
 		Guid BookingId, Guid LineItemId, string Description,
-		decimal Price, int Quantity) : IDomainEvent
+		decimal Price, int Quantity) : IIntegrationEvent
 	{
 		public Guid Id => Guid.NewGuid();
 

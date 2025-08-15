@@ -14,7 +14,7 @@ namespace Core.EventServices
 			await _publish.Publish(message, message.GetType(),cancellationToken);
 		}
 
-		public async Task SendAsync<T>(string queueName, T command, CancellationToken cancellationToken = default) where T : IDomainEvent
+		public async Task SendAsync<T>(string queueName, T command, CancellationToken cancellationToken = default) where T : IIntegrationEvent
 		{
 			var endpoint = await _send.GetSendEndpoint(new Uri($"queue:{queueName}"));
 			await endpoint.Send(command, command.GetType(),cancellationToken);

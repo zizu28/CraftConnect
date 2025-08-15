@@ -3,7 +3,7 @@ using Core.SharedKernel.Enums;
 
 namespace Core.SharedKernel.Events
 {
-	public record BookingCancelledEvent(Guid BookingId, CancellationReason Reason) : IDomainEvent
+	public record BookingCancelledEvent(Guid BookingId, CancellationReason Reason) : IIntegrationEvent
 	{
 		public DateTime OccuredOn => DateTime.UtcNow;
 

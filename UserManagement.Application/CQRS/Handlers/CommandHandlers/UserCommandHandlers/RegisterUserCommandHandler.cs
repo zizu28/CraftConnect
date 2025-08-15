@@ -45,7 +45,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				newUser.PasswordHash = request.User.Password;
 
 				await user.AddAsync(newUser, cancellationToken);
-				var userRegisteredEvent = new UserRegisteredEvent(newUser.Id, newUser.Email, newUser.Role);
+				var userRegisteredEvent = new UserRegisteredIntegrationEvent(newUser.Id, newUser.Email, newUser.Role);
 				await eventBus.PublishAsync(userRegisteredEvent, cancellationToken);
 
 				await user.SaveChangesAsync(cancellationToken);

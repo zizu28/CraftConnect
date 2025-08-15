@@ -1,6 +1,7 @@
 ﻿using Core.SharedKernel.Domain;
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.Events;
+using Core.SharedKernel.IntegrationEvents;
 using Core.SharedKernel.ValueObjects;
 using System.Text.Json.Serialization;
 
@@ -41,8 +42,14 @@ namespace BookingManagement.Domain.Entities
 				CreatedAt = DateTime.UtcNow,
 			};
 			booking.Details = new JobDetails(booking.Id, initialDescription);
-			booking.AddDomainEvent(new BookingCreatedEvent(booking.Id, booking.CustomerId, 
-				booking.CraftmanId, initialDescription,address,DateTime.UtcNow));
+			booking.AddIntegrationEvent(new BookingRequestedIntegrationEvent
+			{
+				BookingId = booking.Id,
+				CustomerId = customerId,
+				CraftspersonId = craftmanId,
+				JobDescription = initialDescription,
+				ServiceAddress = address.ToString()
+			});
 			return booking;
 		}
 
@@ -58,7 +65,7 @@ namespace BookingManagement.Domain.Entities
 			}
 			var lineItem = new BookingLineItem(Id, description, price, quantity);
 			_lineItems.Add(lineItem);
-			AddDomainEvent(new BookingLineItemAddedEvent(Id, lineItem.Id, 
+			AddIntegrationEvent(new BookingLineItemIntegrationEvent(Id, lineItem.Id, 
 				lineItem.Description, lineItem.Price, lineItem.Quantity));
 		}
 
@@ -73,7 +80,7 @@ namespace BookingManagement.Domain.Entities
 				throw new InvalidOperationException("Cannot confirm booking without line items.");
 			}
 			Status = BookingStatus.Confirmed;
-			AddDomainEvent(new BookingConfirmedEvent(Id, CustomerId, CraftmanId, DateTime.UtcNow));
+			AddIntegrationEvent(new BookingConfirmedIntegrationEvent(Id, CraftmanId, CustomerId, CalculateTotalPrice(), DateTime.UtcNow));
 		}
 
 		public void CompleteBooking()
@@ -83,7 +90,7 @@ namespace BookingManagement.Domain.Entities
 				throw new InvalidOperationException("Booking can only be completed if it is confirmed.");
 			}
 			Status = BookingStatus.Completed;
-			AddDomainEvent(new BookingCompletedEvent(Id, DateTime.UtcNow));
+			AddIntegrationEvent(new BookingCompletedIntegrationEvent(Id, CustomerId, CraftmanId, CalculateTotalPrice()));
 		}
 
 		public void CancelBooking(CancellationReason reason)
@@ -93,7 +100,7 @@ namespace BookingManagement.Domain.Entities
 				throw new InvalidOperationException("Cannot cancel a booking that is already completed or cancelled.");
 			}
 			Status = BookingStatus.Cancelled;
-			AddDomainEvent(new BookingCancelledEvent(Id, reason));
+			AddIntegrationEvent(new BookingCancelledIntegrationEvent(Id, reason));
 		}
 
 		public decimal CalculateTotalPrice()

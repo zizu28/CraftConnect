@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.ValueObjects;
-using Core.SharedKernel.Events;
+using Core.SharedKernel.IntegrationEvents;
 
 namespace UserManagement.Domain.Entities
 {
@@ -27,7 +27,7 @@ namespace UserManagement.Domain.Entities
 			Email = email;
 			Role = role;
 			CreatedAt = DateTime.UtcNow;
-			AddDomainEvent(new UserRegisteredEvent(Id, email, role));
+			AddIntegrationEvent(new UserRegisteredIntegrationEvent(Id, email, role));
 		}
 	}
 }

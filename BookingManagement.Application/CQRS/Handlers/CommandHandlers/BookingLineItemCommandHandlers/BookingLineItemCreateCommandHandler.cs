@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BookingManagement.Application.Contracts;
-using BookingManagement.Application.CQRS.Commands.BookingLineItemCommands;
+using BookingManagement.Application.CQRS.Commands.BookingCommands.JobDetailsCommands;
 using BookingManagement.Application.DTOs.BookingLineItemDTOs;
 using BookingManagement.Application.Validators;
 using Core.Logging;
