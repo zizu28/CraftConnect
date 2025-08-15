@@ -1,0 +1,38 @@
+﻿using BookingManagement.Application.Contracts;
+using BookingManagement.Application.CQRS.Commands.BookingCommands;
+using Core.Logging;
+using Core.SharedKernel.Domain;
+using MediatR;
+
+namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCommandHandlers
+{
+	public class DeleteBookingCommandHandler(
+		IBookingRepository bookingRepository,
+		ILoggingService<DeleteBookingCommandHandler> logger,
+		IDomainEventsDispatcher domainEventsDispatcher) : IRequestHandler<DeleteBookingCommand, Unit>
+	{
+		public async Task<Unit> Handle(DeleteBookingCommand request, CancellationToken cancellationToken)
+		{
+			var booking = await bookingRepository.GetByIdAsync(request.BookingId, cancellationToken)
+				?? throw new KeyNotFoundException($"Booking with ID {request.BookingId} not found.");
+			booking.CancelBooking(request.Reason);
+
+			await domainEventsDispatcher.DispatchAsync(booking.DomainEvents, cancellationToken);
+			await bookingRepository.DeleteAsync(booking.Id, cancellationToken);
+			await bookingRepository.SaveChangesAsync(cancellationToken);
+			logger.LogInformation($"Booking with ID {request.BookingId} deleted successfully.");
+			booking.ClearEvents();
+
+			//backgroundJobService.Enqueue<IMessageBroker>(
+			//	"delete-booking-event",
+			//	broker => broker.SendAsync("delete-booking", new BookingCancelledEvent(
+			//								booking.Id, request.Reason), cancellationToken));
+
+			//backgroundJobService.Enqueue<IMassTransitIntegrationEventBus>(
+			//	"delete-booking-integration-event",
+			//	broker => broker.PublishAsync(new BookingCancelledIntegrationEvent(
+			//								 booking.Id, request.Reason), cancellationToken));
+			return Unit.Value;
+		}
+	}
+}

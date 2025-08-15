@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>431930e3-3f68-44b8-be43-f0eb35cd8986</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BookingManagement.Infrastructure\BookingManagement.Infrastructure.csproj" />
+    <ProjectReference Include="..\CraftConnect.ServiceDefaults\CraftConnect.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>

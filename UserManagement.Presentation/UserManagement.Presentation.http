@@ -1,0 +1,19 @@
+@UserManagement.Presentation_HostAddress = https://localhost:7235
+
+GET {{UserManagement.Presentation_HostAddress}}/api/users
+Accept: application/json
+
+###
+
+
+POST {{UserManagement.Presentation_HostAddress}}/api/users
+Content-Type: application/json
+{
+  "Email": "John Doe",
+  "Password": "",
+  "PhoneCountryCode": "1",
+  "PhoneNumber": "1234567890",
+  "Role": "User"
+}
+
+###
