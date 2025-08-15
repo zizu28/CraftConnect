@@ -16,7 +16,7 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 		IBookingRepository bookingRepository,
 		ILoggingService<CreateBookingCommandHandler> logger,
 		IMapper mapper,
-		IMassTransitIntegrationEventBus publisher) : IRequestHandler<CreateBookingCommand, BookingResponseDTO>
+		IMessageBroker publisher) : IRequestHandler<CreateBookingCommand, BookingResponseDTO>
 	{
 		public async Task<BookingResponseDTO> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
 		{

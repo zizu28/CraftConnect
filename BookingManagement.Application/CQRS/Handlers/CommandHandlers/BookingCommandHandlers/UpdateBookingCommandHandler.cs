@@ -3,7 +3,9 @@ using BookingManagement.Application.Contracts;
 using BookingManagement.Application.CQRS.Commands.BookingCommands;
 using BookingManagement.Application.DTOs.BookingDTOs;
 using BookingManagement.Application.Validators.BookingValidators;
+using Core.EventServices;
 using Core.Logging;
+using Core.SharedKernel.IntegrationEvents;
 using MediatR;
 
 namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCommandHandlers
@@ -11,7 +13,8 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 	public class UpdateBookingCommandHandler(
 		IBookingRepository bookingRepository,
 		IMapper mapper,
-		ILoggingService<UpdateBookingCommandHandler> logger) : IRequestHandler<UpdateBookingCommand, BookingResponseDTO>
+		ILoggingService<UpdateBookingCommandHandler> logger,
+		IMessageBroker messageBroker) : IRequestHandler<UpdateBookingCommand, BookingResponseDTO>
 	{
 		public async Task<BookingResponseDTO> Handle(UpdateBookingCommand request, CancellationToken cancellationToken)
 		{
@@ -32,6 +35,16 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 			mapper.Map(request.BookingDTO, booking);
 
 			await bookingRepository.UpdateAsync(booking, cancellationToken);
+			
+			var bookingUpdatedEvent = new BookingUpdatedIntegrationEvent(
+				booking.Id,
+				booking.CustomerId,
+				booking.CraftmanId,
+				booking.Status,
+				booking.Duration,
+				booking.CalculateTotalPrice(),
+				DateTime.UtcNow);
+			await messageBroker.PublishAsync(bookingUpdatedEvent, cancellationToken);
 			await bookingRepository.SaveChangesAsync(cancellationToken);
 
 			response = mapper.Map<BookingResponseDTO>(booking);

@@ -1,8 +1,10 @@
 ﻿using BookingManagement.Application.Contracts;
 using BookingManagement.Application.CQRS.Commands.BookingCommands;
+using Core.EventServices;
 using Core.Logging;
 using Core.SharedKernel.Domain;
 using Core.SharedKernel.Enums;
+using Core.SharedKernel.IntegrationEvents;
 using MediatR;
 
 namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCommandHandlers
@@ -10,7 +12,8 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 	public class ConfirmBookingCommandHandler(
 		IBookingRepository bookingRepository,
 		ILoggingService<ConfirmBookingCommandHandler> logger,
-		IDomainEventsDispatcher domainEventsDispatcher) : IRequestHandler<ConfirmBookingCommand, Unit>
+		IDomainEventsDispatcher domainEventsDispatcher,
+		IMessageBroker messageBroker) : IRequestHandler<ConfirmBookingCommand, Unit>
 	{
 		public async Task<Unit> Handle(ConfirmBookingCommand request, CancellationToken cancellationToken)
 		{
@@ -23,6 +26,14 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 			booking.ConfirmBooking();
 			await domainEventsDispatcher.DispatchAsync(booking.DomainEvents, cancellationToken);
 			await bookingRepository.UpdateAsync(booking, cancellationToken);
+
+			var bookingConfirmedEvent = new BookingConfirmedIntegrationEvent(
+				request.BookingId,
+				request.CustomerId,
+				request.CraftmanId,
+				booking.CalculateTotalPrice(),
+				request.ConfirmedAt);
+			await messageBroker.PublishAsync(bookingConfirmedEvent, cancellationToken);
 			await bookingRepository.SaveChangesAsync(cancellationToken);
 
 			logger.LogInformation($"Booking with ID {request.BookingId} confirmed by Craftman with ID {request.CraftmanId} at {request.ConfirmedAt}.");

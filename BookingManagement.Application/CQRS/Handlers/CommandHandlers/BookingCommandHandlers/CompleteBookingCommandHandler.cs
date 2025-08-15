@@ -1,16 +1,18 @@
 ﻿using BookingManagement.Application.Contracts;
 using BookingManagement.Application.CQRS.Commands.BookingCommands;
 using BookingManagement.Application.Validators.BookingValidators;
+using Core.EventServices;
 using Core.Logging;
 using Core.SharedKernel.Domain;
+using Core.SharedKernel.IntegrationEvents;
 using MediatR;
 
 namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCommandHandlers
 {
 	public class CompleteBookingCommandHandler(
-		IDomainEventsDispatcher domainEventsDispatcher,
 		ILoggingService<CompleteBookingCommandHandler> logger,
-		IBookingRepository bookingRepository) : IRequestHandler<CompleteBookingCommand, Unit>
+		IBookingRepository bookingRepository,
+		IMessageBroker messageBroker) : IRequestHandler<CompleteBookingCommand, Unit>
 	{
 		public async Task<Unit> Handle(CompleteBookingCommand request, CancellationToken cancellationToken)
 		{
@@ -24,8 +26,10 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 			var booking = await bookingRepository.GetByIdAsync(request.BookingId, cancellationToken)
 				?? throw new InvalidOperationException($"Booking with ID {request.BookingId} not found.");
 			booking.CompleteBooking();
-			await domainEventsDispatcher.DispatchAsync(booking.DomainEvents, cancellationToken);
 			await bookingRepository.UpdateAsync(booking, cancellationToken);
+			var newEvent = new BookingCompletedIntegrationEvent(booking.Id, booking.CustomerId, 
+														booking.CraftmanId, booking.CalculateTotalPrice());
+			await messageBroker.PublishAsync(newEvent, cancellationToken);
 			await bookingRepository.SaveChangesAsync(cancellationToken);
 
 			logger.LogInformation("Booking with ID {BookingId} has been completed successfully.", request.BookingId);

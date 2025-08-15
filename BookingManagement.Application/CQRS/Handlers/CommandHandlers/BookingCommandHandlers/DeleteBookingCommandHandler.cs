@@ -1,7 +1,11 @@
 ﻿using BookingManagement.Application.Contracts;
 using BookingManagement.Application.CQRS.Commands.BookingCommands;
+using Core.EventServices;
 using Core.Logging;
 using Core.SharedKernel.Domain;
+using Core.SharedKernel.Events;
+using Core.SharedKernel.IntegrationEvents;
+using Infrastructure.BackgroundJobs;
 using MediatR;
 
 namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCommandHandlers
@@ -9,7 +13,8 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 	public class DeleteBookingCommandHandler(
 		IBookingRepository bookingRepository,
 		ILoggingService<DeleteBookingCommandHandler> logger,
-		IDomainEventsDispatcher domainEventsDispatcher) : IRequestHandler<DeleteBookingCommand, Unit>
+		IMessageBroker messageBroker,
+		IBackgroundJobService backgroundJob) : IRequestHandler<DeleteBookingCommand, Unit>
 	{
 		public async Task<Unit> Handle(DeleteBookingCommand request, CancellationToken cancellationToken)
 		{
@@ -17,21 +22,21 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 				?? throw new KeyNotFoundException($"Booking with ID {request.BookingId} not found.");
 			booking.CancelBooking(request.Reason);
 
-			await domainEventsDispatcher.DispatchAsync(booking.DomainEvents, cancellationToken);
+			//await domainEventsDispatcher.DispatchAsync(booking.DomainEvents, cancellationToken);
 			await bookingRepository.DeleteAsync(booking.Id, cancellationToken);
+
+			var bookingCancelledEvent = new BookingCancelledIntegrationEvent(booking.Id, request.Reason);
+			await messageBroker.PublishAsync(bookingCancelledEvent, cancellationToken);
+
 			await bookingRepository.SaveChangesAsync(cancellationToken);
 			logger.LogInformation($"Booking with ID {request.BookingId} deleted successfully.");
 			booking.ClearEvents();
 
-			//backgroundJobService.Enqueue<IMessageBroker>(
-			//	"delete-booking-event",
-			//	broker => broker.SendAsync("delete-booking", new BookingCancelledEvent(
-			//								booking.Id, request.Reason), cancellationToken));
+			backgroundJob.Enqueue<IMessageBroker>(
+				"delete-booking-event",
+				broker => broker.SendAsync("delete-booking", new BookingCancelledEvent(
+											booking.Id, request.Reason), cancellationToken));
 
-			//backgroundJobService.Enqueue<IMassTransitIntegrationEventBus>(
-			//	"delete-booking-integration-event",
-			//	broker => broker.PublishAsync(new BookingCancelledIntegrationEvent(
-			//								 booking.Id, request.Reason), cancellationToken));
 			return Unit.Value;
 		}
 	}
