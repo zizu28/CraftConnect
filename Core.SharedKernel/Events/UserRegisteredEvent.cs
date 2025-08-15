@@ -4,10 +4,10 @@ using Core.SharedKernel.ValueObjects;
 
 namespace Core.SharedKernel.Events
 {
-	public record UserRegisteredEvent(Guid UserId, Email Email, UserRole Role) : IDomainEvent
+	public record UserRegisteredEvent(Guid UserId, Email Email, UserRole Role) : IIntegrationEvent
 	{
 		public DateTime OccuredOn => DateTime.UtcNow;
 
-		public Guid Id => Guid.NewGuid();
+		public Guid EventId => Guid.NewGuid();
 	}
 }
