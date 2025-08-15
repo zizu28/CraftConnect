@@ -2,8 +2,6 @@
 using BookingManagement.Application.CQRS.Commands.BookingCommands;
 using Core.EventServices;
 using Core.Logging;
-using Core.SharedKernel.Domain;
-using Core.SharedKernel.Events;
 using Core.SharedKernel.IntegrationEvents;
 using Infrastructure.BackgroundJobs;
 using MediatR;

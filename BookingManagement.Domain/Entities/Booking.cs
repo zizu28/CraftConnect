@@ -1,6 +1,5 @@
 ﻿using Core.SharedKernel.Domain;
 using Core.SharedKernel.Enums;
-using Core.SharedKernel.Events;
 using Core.SharedKernel.IntegrationEvents;
 using Core.SharedKernel.ValueObjects;
 using System.Text.Json.Serialization;
