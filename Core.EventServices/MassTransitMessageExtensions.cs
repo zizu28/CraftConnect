@@ -34,7 +34,6 @@ namespace Core.EventServices
 			});
 
 			services.AddScoped<IMessageBroker, MassTransitMessageBroker>();
-			services.AddScoped<IMassTransitIntegrationEventBus, MassTransitIntegrationEventBus>();
 			return services;
 		}
 	}
