@@ -1,8 +1,8 @@
 ﻿using Core.SharedKernel.Domain;
 
-namespace Core.SharedKernel.Events
+namespace Core.SharedKernel.IntegrationEvents
 {
-	public record JobDetailsUpdatedEvent(
+	public record JobDetailsUpdatedIntegrationEvent(
 		Guid BookingId, Guid UpdatedByUserId, string NewDescription) : IIntegrationEvent
 	{
 		public Guid EventId => Guid.NewGuid();
