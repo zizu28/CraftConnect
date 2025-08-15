@@ -34,7 +34,7 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 
 			backgroundJob.Enqueue<IMessageBroker>(
 				"delete-booking-event",
-				broker => broker.SendAsync("delete-booking", new BookingCancelledEvent(
+				broker => broker.SendAsync("delete-booking", new BookingCancelledIntegrationEvent(
 											booking.Id, request.Reason), cancellationToken));
 
 			return Unit.Value;

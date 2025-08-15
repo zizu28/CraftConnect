@@ -1,6 +1,7 @@
 ﻿using BookingManagement.Application.CQRS.Handlers.DomainEventHandlers;
 using Core.SharedKernel.Domain;
 using Core.SharedKernel.Events;
+using Core.SharedKernel.IntegrationEvents;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,10 +26,10 @@ namespace BookingManagement.Application.Extensions
 			services.AddValidatorsFromAssemblyContaining(typeof(BookingManagementApplicationExtensions));
 
 			services.AddTransient<IDomainEventsDispatcher, DomainEventsDispatcher>();
-			services.AddScoped<IDomainEventHandler<BookingConfirmedEvent>, ConfirmBookingEventHandler>();
-			services.AddScoped<IDomainEventHandler<BookingCreatedEvent>, BookingCreatedEventHandler>();
-			services.AddScoped<IDomainEventHandler<BookingCancelledEvent>, BookingCancelledEventHandler>();
-			services.AddScoped<IDomainEventHandler<BookingCompletedEvent>, BookingCompleteEventHandler>();
+			services.AddScoped<IDomainEventHandler<BookingConfirmedIntegrationEvent>, ConfirmBookingEventHandler>();
+			services.AddScoped<IDomainEventHandler<BookingRequestedIntegrationEvent>, BookingCreatedEventHandler>();
+			services.AddScoped<IDomainEventHandler<BookingCancelledIntegrationEvent>, BookingCancelledEventHandler>();
+			services.AddScoped<IDomainEventHandler<BookingCompletedIntegrationEvent>, BookingCompleteEventHandler>();
 			return services;
 		}
 	}

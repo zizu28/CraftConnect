@@ -1,16 +1,15 @@
 ﻿using BookingManagement.Application.Contracts;
 using Core.EventServices;
 using Core.SharedKernel.Domain;
-using Core.SharedKernel.Events;
 using Core.SharedKernel.IntegrationEvents;
 
 namespace BookingManagement.Application.CQRS.Handlers.DomainEventHandlers
 {
 	public class BookingCompleteEventHandler(
 		IMessageBroker messageBroker,
-		IBookingRepository bookingRepository) : IDomainEventHandler<BookingCompletedEvent>
+		IBookingRepository bookingRepository) : IDomainEventHandler<BookingCompletedIntegrationEvent>
 	{
-		public async Task HandleAsync(BookingCompletedEvent domainEvent, CancellationToken cancellationToken = default)
+		public async Task HandleAsync(BookingCompletedIntegrationEvent domainEvent, CancellationToken cancellationToken = default)
 		{
 			var booking = await bookingRepository.GetByIdAsync(domainEvent.BookingId, cancellationToken)
 				?? throw new InvalidOperationException($"Booking with ID {domainEvent.BookingId} not found.");

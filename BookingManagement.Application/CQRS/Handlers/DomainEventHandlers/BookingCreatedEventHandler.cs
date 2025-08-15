@@ -2,16 +2,15 @@
 using BookingManagement.Domain.Entities;
 using Core.EventServices;
 using Core.SharedKernel.Domain;
-using Core.SharedKernel.Events;
 using Core.SharedKernel.IntegrationEvents;
 
 namespace BookingManagement.Application.CQRS.Handlers.DomainEventHandlers
 {
 	public class BookingCreatedEventHandler(
 		IMessageBroker messageBroker,
-		IBookingRepository bookingRepository) : IDomainEventHandler<BookingCreatedEvent>
+		IBookingRepository bookingRepository) : IDomainEventHandler<BookingRequestedIntegrationEvent>
 	{
-		public async Task HandleAsync(BookingCreatedEvent domainEvent, CancellationToken cancellationToken = default)
+		public async Task HandleAsync(BookingRequestedIntegrationEvent domainEvent, CancellationToken cancellationToken = default)
 		{
 			if (domainEvent == null)
 			{
@@ -22,17 +21,13 @@ namespace BookingManagement.Application.CQRS.Handlers.DomainEventHandlers
 			{
 				throw new InvalidOperationException($"Booking with ID {domainEvent.BookingId} already exists.");
 			}
-			var newBooking = Booking.Create(
-				domainEvent.CustomerId,
-				domainEvent.CraftmanId,
-				domainEvent.ServiceAddress,
-				domainEvent.Description
-			);
+			var newBooking = Booking.Create(booking!.CustomerId, booking!.CraftmanId,
+				booking!.ServiceAddress, booking!.Details.Description);
 			var bookingCreatedIntegrationEvent = new BookingRequestedIntegrationEvent
 			{
-				BookingId = domainEvent.BookingId,
-				CraftspersonId = domainEvent.CraftmanId,
-				CustomerId = domainEvent.CustomerId,
+				BookingId = newBooking.Id,
+				CraftspersonId = newBooking.CraftmanId,
+				CustomerId = newBooking.CustomerId,
 				JobDescription = newBooking!.Details.Description,
 				ServiceAddress = $"{newBooking.ServiceAddress.Street}, {newBooking.ServiceAddress.City}, {newBooking.ServiceAddress.PostalCode}"
 			};

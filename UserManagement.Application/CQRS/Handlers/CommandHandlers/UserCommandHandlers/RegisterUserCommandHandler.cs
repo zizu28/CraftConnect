@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Core.EventServices;
 using Core.Logging;
-using Core.SharedKernel.Events;
+using Core.SharedKernel.IntegrationEvents;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
 using MediatR;

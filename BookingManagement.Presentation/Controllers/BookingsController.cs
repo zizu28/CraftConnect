@@ -1,5 +1,4 @@
 ﻿using BookingManagement.Application.CQRS.Commands.BookingCommands;
-using BookingManagement.Application.CQRS.Commands.BookingLineItemCommands;
 using BookingManagement.Application.CQRS.Queries.BookingQueries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -98,20 +97,20 @@ namespace BookingManagement.Presentation.Controllers
 			return NoContent();
 		}
 
-		[HttpPost("{id:guid}/add-line-item")]
-		public async Task<IActionResult> AddLineItemToBookingAsync(Guid id, [FromBody] BookingLineItemCreateCommand command)
-		{
-			if (id == Guid.Empty || command == null)
-			{
-				return BadRequest("Invalid booking ID or line item data.");
-			}
-			command.BookingId = id;
-			var result = await mediator.Send(command);
-			if (result == null)
-			{
-				return NotFound($"Booking with ID {id} not found.");
-			}
-			return Ok(result);
-		}
+		//[HttpPost("{id:guid}/add-line-item")]
+		//public async Task<IActionResult> AddLineItemToBookingAsync(Guid id, [FromBody] BookingLineItemCreateCommand command)
+		//{
+		//	if (id == Guid.Empty || command == null)
+		//	{
+		//		return BadRequest("Invalid booking ID or line item data.");
+		//	}
+		//	command.BookingId = id;
+		//	var result = await mediator.Send(command);
+		//	if (result == null)
+		//	{
+		//		return NotFound($"Booking with ID {id} not found.");
+		//	}
+		//	return Ok(result);
+		//}
 	}
 }
