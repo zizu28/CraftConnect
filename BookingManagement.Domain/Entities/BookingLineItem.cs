@@ -15,6 +15,7 @@ namespace BookingManagement.Domain.Entities
 
 		internal BookingLineItem(Guid bookingId, string description, decimal price, int quantity)
 		{
+			Id = Guid.NewGuid();
 			BookingId = bookingId;
 			Description = description;
 			Price = price;
