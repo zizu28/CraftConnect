@@ -19,7 +19,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 		IBackgroundJobService backgroundJob,
 		ICustomerRepository customerRepository, 
 		ITokenProvider tokenProvider,
-		IMassTransitIntegrationEventBus publisher) : IRequestHandler<RegisterCustomerCommand, CustomerResponseDTO>
+		IMessageBroker publisher) : IRequestHandler<RegisterCustomerCommand, CustomerResponseDTO>
 	{
 		public async Task<CustomerResponseDTO> Handle(RegisterCustomerCommand request, CancellationToken cancellationToken)
 		{

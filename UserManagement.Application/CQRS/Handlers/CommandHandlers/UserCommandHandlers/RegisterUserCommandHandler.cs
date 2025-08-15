@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.EventServices;
 using Core.Logging;
+using Core.SharedKernel.Events;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
 using MediatR;
@@ -16,7 +17,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 		IMapper mapper, 
 		ILoggingService<RegisterUserCommandHandler> logger, 
 		IUserRepository user,
-		IMassTransitIntegrationEventBus eventBus, 
+		IMessageBroker eventBus, 
 		IBackgroundJobService backgroundJob)
 		: IRequestHandler<RegisterUserCommand, UserResponseDTO>
 	{
@@ -42,8 +43,13 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 
 				var newUser = mapper.Map<User>(request.User);
 				newUser.PasswordHash = request.User.Password;
+
 				await user.AddAsync(newUser, cancellationToken);
-				
+				var userRegisteredEvent = new UserRegisteredEvent(newUser.Id, newUser.Email, newUser.Role);
+				await eventBus.PublishAsync(userRegisteredEvent, cancellationToken);
+
+				await user.SaveChangesAsync(cancellationToken);
+
 				backgroundJob.Enqueue<IGmailService>(
 					"default",
 					email => email.SendEmailAsync(
