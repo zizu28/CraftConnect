@@ -29,6 +29,7 @@ namespace BookingManagement.Infrastructure.Extensions
 			});
 
 			services.AddNpgsqlDataSource("postgresdb");
+			
 
 			return services;
 		}

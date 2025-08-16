@@ -1,7 +1,7 @@
 ﻿using BookingManagement.Application.DTOs.BookingLineItemDTOs;
 using MediatR;
 
-namespace BookingManagement.Application.CQRS.Commands.BookingCommands.JobDetailsCommands
+namespace BookingManagement.Application.CQRS.Commands.JobDetailsCommands
 {
 	public class BookingLineItemCreateCommand : IRequest<BookingLineItemResponseDTO>
 	{

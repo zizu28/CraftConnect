@@ -2,7 +2,6 @@ using Core.EventServices;
 using Core.Logging;
 using CraftConnect.ServiceDefaults;
 using Infrastructure.BackgroundJobs;
-using Infrastructure.Cache;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +25,7 @@ builder.Services.AddUserApplicationExtensions(builder.Configuration.GetSection("
 builder.Services.AddMessageBroker(builder.Configuration);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddSqlServer<ApplicationDbContext>("CraftConnectDb");
 
 var app = builder.Build();
 
