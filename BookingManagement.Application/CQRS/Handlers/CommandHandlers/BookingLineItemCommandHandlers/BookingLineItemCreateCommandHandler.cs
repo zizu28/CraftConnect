@@ -4,13 +4,11 @@ using BookingManagement.Application.CQRS.Commands.BookingCommands.JobDetailsComm
 using BookingManagement.Application.DTOs.BookingLineItemDTOs;
 using BookingManagement.Application.Validators;
 using Core.Logging;
-using Core.SharedKernel.Domain;
 using MediatR;
 
 namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingLineItemCommandHandlers
 {
 	public class BookingLineItemCreateCommandHandler(
-		IDomainEventsDispatcher domainEventsDispatcher,
 		IBookingRepository bookingRepository,
 		ILoggingService<BookingLineItemCreateCommandHandler> logger,
 		IMapper mapper)
@@ -34,7 +32,8 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingLin
 			booking.AddLineItem(request.LineItemCreateDTO.Description,
 				request.LineItemCreateDTO.Price, request.LineItemCreateDTO.Quantity);
 			await bookingRepository.UpdateAsync(booking, cancellationToken);
-			await domainEventsDispatcher.DispatchAsync(booking.DomainEvents, cancellationToken);
+			await bookingRepository.SaveChangesAsync(cancellationToken);
+			//await domainEventsDispatcher.DispatchAsync(booking.DomainEvents, cancellationToken);
 			logger.LogInformation("Booking line item created successfully for Booking ID {BookingId}", request.BookingId);
 			booking.ClearEvents();
 			response = mapper.Map<BookingLineItemResponseDTO>(booking);

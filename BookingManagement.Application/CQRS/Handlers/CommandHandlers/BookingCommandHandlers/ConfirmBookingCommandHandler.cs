@@ -12,7 +12,6 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 	public class ConfirmBookingCommandHandler(
 		IBookingRepository bookingRepository,
 		ILoggingService<ConfirmBookingCommandHandler> logger,
-		IDomainEventsDispatcher domainEventsDispatcher,
 		IMessageBroker messageBroker) : IRequestHandler<ConfirmBookingCommand, Unit>
 	{
 		public async Task<Unit> Handle(ConfirmBookingCommand request, CancellationToken cancellationToken)
@@ -24,7 +23,6 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 				throw new InvalidOperationException($"Booking with ID {request.BookingId} is not in a pending state.");
 			}
 			booking.ConfirmBooking();
-			await domainEventsDispatcher.DispatchAsync(booking.DomainEvents, cancellationToken);
 			await bookingRepository.UpdateAsync(booking, cancellationToken);
 
 			var bookingConfirmedEvent = new BookingConfirmedIntegrationEvent(
