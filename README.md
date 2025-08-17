@@ -1,18 +1,14 @@
 # CraftConnect
 
-This is the description of what the code block changes:
-Update README.md to reflect recent changes: BookingLineItem aggregate, repository, CQRS commands/handlers, validation, logging, and API endpoints.
-
-This is the code block that represents the suggested code change:
-
 # Booking Management System
 
 ## Overview
 
-The Booking Management System is a modular, event-driven solution for managing service bookings between customers and craftspersons. Built with .NET 9 and C# 13, it leverages CQRS, MediatR, and a layered architecture for scalability and maintainability.
+The Booking Management System is a modular monolith designed using Clean Architecture and Domain-Driven Design (DDD) principles for each module. Built with .NET 9 and C# 13, it leverages CQRS, MediatR, and a layered architecture for scalability, maintainability, and clear separation of concerns. Each module encapsulates its own domain logic, application services, infrastructure, and presentation layers, ensuring high cohesion and low coupling across the system.
 
 ## Table of Contents
 - [Project Structure](#project-structure)
+- [Modular Monolith & Clean Architecture](#modular-monolith--clean-architecture)
 - [Core Features](#core-features)
 - [Technology Stack](#technology-stack)
 - [Domain Model](#domain-model)
@@ -29,11 +25,18 @@ The Booking Management System is a modular, event-driven solution for managing s
 
 ## Project Structure
 
-- **Domain**: Business entities (Booking, BookingLineItem, Address, JobDetails) and value objects.
-- **Application**: CQRS commands/queries, handlers, DTOs, validators, and service contracts.
-- **Infrastructure**: Data access, repository implementations, event bus, logging.
-- **Presentation**: API controllers for bookings and line items.
+- **Domain**: Business entities (Booking, BookingLineItem, Address, JobDetails) and value objects, organized per module.
+- **Application**: CQRS commands/queries, handlers, DTOs, validators, and service contracts, per module.
+- **Infrastructure**: Data access, repository implementations, event bus, logging, per module.
+- **Presentation**: API controllers for bookings, line items, and other modules.
 - **Core**: Shared kernel, integration events, value objects.
+
+## Modular Monolith & Clean Architecture
+
+- The project is structured as a modular monolith, where each business domain (e.g., Booking Management, User Management) is implemented as a distinct module.
+- Each module follows Clean Architecture, separating domain, application, infrastructure, and presentation concerns.
+- DDD is applied within each module, ensuring that domain logic is encapsulated and business rules are enforced at the core.
+- Modules communicate via well-defined interfaces and integration events, supporting extensibility and maintainability.
 
 ## Core Features
 
@@ -139,6 +142,7 @@ This README is updated to reflect recent changes:
 - Implemented BookingLineItemCreateCommand and handler for itemized bookings.
 - Enhanced validation and logging for booking and line item creation.
 - API endpoints for booking and line item management.
+- Project restructured as a modular monolith using Clean Architecture and DDD for each module.
 
 **Purpose:**
 - Provide clear documentation for developers and stakeholders.
