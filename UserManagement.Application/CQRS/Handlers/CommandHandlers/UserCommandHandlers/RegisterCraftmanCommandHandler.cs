@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Core.EventServices;
 using Core.Logging;
+using Core.SharedKernel.IntegrationEvents;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
 using MediatR;
@@ -15,7 +17,8 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 		IMapper mapper,
 		ICraftsmanRepository craftmanRepository,
 		ILoggingService<RegisterCraftmanCommandHandler> logger,
-		IBackgroundJobService backgroundJob) : IRequestHandler<RegisterCraftmanCommand, CraftmanResponseDTO>
+		IBackgroundJobService backgroundJob,
+		IMessageBroker messageBroker) : IRequestHandler<RegisterCraftmanCommand, CraftmanResponseDTO>
 	{
 		public async Task<CraftmanResponseDTO> Handle(RegisterCraftmanCommand request, CancellationToken cancellationToken)
 		{
@@ -49,6 +52,15 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				newUser.AddSkill(skillName, request.Craftman.YearsOfExperience);
 			}
 			await craftmanRepository.AddAsync(newUser, cancellationToken);
+
+			var userRegisteredEvent = new UserRegisteredIntegrationEvent
+			(
+				newUser.Id,
+				newUser.Email,
+				newUser.Role
+			);
+			await messageBroker.PublishAsync(userRegisteredEvent, cancellationToken);
+			await craftmanRepository.SaveChangesAsync(cancellationToken);
 
 			backgroundJob.Enqueue<IGmailService>(
 				"default",

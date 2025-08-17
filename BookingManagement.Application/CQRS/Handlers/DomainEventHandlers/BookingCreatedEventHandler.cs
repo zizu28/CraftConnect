@@ -22,7 +22,7 @@ namespace BookingManagement.Application.CQRS.Handlers.DomainEventHandlers
 				throw new InvalidOperationException($"Booking with ID {domainEvent.BookingId} already exists.");
 			}
 			var newBooking = Booking.Create(booking!.CustomerId, booking!.CraftmanId,
-				booking!.ServiceAddress, booking!.Details.Description);
+				booking!.ServiceAddress, booking!.Details.Description, booking.Duration!);
 			var bookingCreatedIntegrationEvent = new BookingRequestedIntegrationEvent
 			{
 				BookingId = newBooking.Id,

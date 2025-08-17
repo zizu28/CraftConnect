@@ -1,5 +1,4 @@
 ﻿using BookingManagement.Application.CQRS.Commands.BookingCommands;
-using BookingManagement.Application.CQRS.Commands.JobDetailsCommands;
 using BookingManagement.Application.CQRS.Queries.BookingQueries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

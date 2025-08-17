@@ -31,7 +31,7 @@ namespace BookingManagement.Infrastructure.RepositoryImplementations
 		public async Task<IEnumerable<Booking>> GetAllAsync(CancellationToken cancellationToken = default)
 		{
 			return (await dbContext.Bookings
-				.Include(b => b.LineItems)
+				//.Include(b => b.LineItems)
 				.AsNoTracking()
 				.ToListAsync(cancellationToken));
 		}

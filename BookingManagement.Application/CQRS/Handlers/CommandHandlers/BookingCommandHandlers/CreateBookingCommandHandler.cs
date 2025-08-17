@@ -35,7 +35,8 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 			var booking = Booking.Create(request.BookingDTO.CustomerId,
 								request.BookingDTO.CraftmanId,
 								new Address(request.BookingDTO.Street, request.BookingDTO.City, request.BookingDTO.PostalCode),
-								request.BookingDTO.InitialDescription);
+								request.BookingDTO.InitialDescription,
+								new DateTimeRange(request.BookingDTO.StartDate, request.BookingDTO.EndDate));
 
 			//var isAvailableAlready = await bookingRepository.FindBy(b => 
 			//								b.CraftmanId == booking.CraftmanId &&
@@ -64,6 +65,7 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 			logger.LogInformation("Booking with ID {BookingId} successfully created.", booking.Id);
 
 			response = mapper.Map<BookingResponseDTO>(booking);
+			response.Details.Desciption = booking.Details.Description;
 			response.Message = $"Booking with ID {response.BookingId} succesfully added.";
 			response.IsSuccess = true;
 

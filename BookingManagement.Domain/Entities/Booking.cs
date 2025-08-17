@@ -25,7 +25,7 @@ namespace BookingManagement.Domain.Entities
 		}
 
 		public static Booking Create(Guid customerId, Guid craftmanId, 
-			Address address, string initialDescription)
+			Address address, string initialDescription, DateTimeRange duration)
 		{
 			if(customerId == Guid.Empty || craftmanId == Guid.Empty || address == null)
 			{
@@ -39,6 +39,7 @@ namespace BookingManagement.Domain.Entities
 				ServiceAddress = address,
 				Status = BookingStatus.Pending,
 				CreatedAt = DateTime.UtcNow,
+				Duration = duration
 			};
 			booking.Details = new JobDetails(booking.Id, initialDescription);
 			booking.AddIntegrationEvent(new BookingRequestedIntegrationEvent

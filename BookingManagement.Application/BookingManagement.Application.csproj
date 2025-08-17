@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Infrastructure.BackgroundJobs\Infrastructure.BackgroundJobs.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CQRS\Commands\JobDetailsCommands\" />
+  </ItemGroup>
+
 </Project>
