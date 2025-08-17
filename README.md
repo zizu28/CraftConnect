@@ -1,22 +1,21 @@
 # CraftConnect
 
-# Booking Management System
-
 ## Overview
 
-The Booking Management System is a modular monolith designed using Clean Architecture and Domain-Driven Design (DDD) principles for each module. Built with .NET 9 and C# 13, it leverages CQRS, MediatR, and a layered architecture for scalability, maintainability, and clear separation of concerns. Each module encapsulates its own domain logic, application services, infrastructure, and presentation layers, ensuring high cohesion and low coupling across the system.
+CraftConnect is a modular monolith platform designed to connect customers with craftspersons and manage service bookings. The project utilizes Clean Architecture and Domain-Driven Design (DDD) principles for each module, ensuring scalability, maintainability, and clear separation of concerns. Built with .NET 9 and C# 13, CraftConnect is composed of several business modules, including Booking Management and User Management, each encapsulating its own domain logic, application services, infrastructure, and presentation layers.
 
 ## Table of Contents
 - [Project Structure](#project-structure)
 - [Modular Monolith & Clean Architecture](#modular-monolith--clean-architecture)
 - [Core Features](#core-features)
 - [Technology Stack](#technology-stack)
-- [Domain Model](#domain-model)
-- [CQRS & Handlers](#cqrs--handlers)
-- [Validation](#validation)
-- [Integration Events](#integration-events)
+- [Modules](#modules)
+- [Domain Model (Booking Management)](#domain-model-booking-management)
+- [CQRS & Handlers (Booking Management)](#cqrs--handlers-booking-management)
+- [Validation (Booking Management)](#validation-booking-management)
+- [Integration Events (Booking Management)](#integration-events-booking-management)
 - [Logging](#logging)
-- [API Endpoints](#api-endpoints)
+- [API Endpoints (Booking Management)](#api-endpoints-booking-management)
 - [How to Run](#how-to-run)
 - [Contributing](#contributing)
 - [License](#license)
@@ -25,22 +24,23 @@ The Booking Management System is a modular monolith designed using Clean Archite
 
 ## Project Structure
 
-- **Domain**: Business entities (Booking, BookingLineItem, Address, JobDetails) and value objects, organized per module.
+- **Domain**: Business entities and value objects, organized per module (e.g., Booking, User).
 - **Application**: CQRS commands/queries, handlers, DTOs, validators, and service contracts, per module.
 - **Infrastructure**: Data access, repository implementations, event bus, logging, per module.
-- **Presentation**: API controllers for bookings, line items, and other modules.
+- **Presentation**: API controllers for each module.
 - **Core**: Shared kernel, integration events, value objects.
 
 ## Modular Monolith & Clean Architecture
 
-- The project is structured as a modular monolith, where each business domain (e.g., Booking Management, User Management) is implemented as a distinct module.
+- CraftConnect is structured as a modular monolith, where each business domain (e.g., Booking Management, User Management) is implemented as a distinct module.
 - Each module follows Clean Architecture, separating domain, application, infrastructure, and presentation concerns.
 - DDD is applied within each module, ensuring that domain logic is encapsulated and business rules are enforced at the core.
 - Modules communicate via well-defined interfaces and integration events, supporting extensibility and maintainability.
 
 ## Core Features
 
-- **Booking Creation**: Customers request bookings with craftspersons, specifying job details and service address.
+- **Service Booking**: Customers can request and manage bookings with craftspersons.
+- **User Management**: Registration, authentication, and profile management for users and craftspersons.
 - **Booking Line Items**: Add itemized jobs to bookings, each with description, price, and quantity.
 - **Validation**: All requests are validated for correctness and completeness.
 - **Event-Driven**: Booking and line item creation trigger integration events for downstream processing.
@@ -57,7 +57,14 @@ The Booking Management System is a modular monolith designed using Clean Archite
 - **FluentValidation**: Input validation.
 - **Custom Logging Service**: Structured logging.
 
-## Domain Model
+## Modules
+
+- **Booking Management**: Handles all booking-related operations, aggregates, and events.
+- **User Management**: Manages user registration, authentication, and profiles.
+- **Infrastructure**: Shared services such as email, background jobs, caching, and PDF generation.
+- **Core**: Shared kernel and cross-cutting concerns.
+
+## Domain Model (Booking Management)
 
 ### Booking
 - Represents a service booking between a customer and a craftsperson.
@@ -72,19 +79,19 @@ The Booking Management System is a modular monolith designed using Clean Archite
 ### Address & JobDetails
 - Value objects for encapsulating address and job description.
 
-## CQRS & Handlers
+## CQRS & Handlers (Booking Management)
 
 - **Commands**: For write operations (e.g., CreateBookingCommand, BookingLineItemCreateCommand).
 - **Handlers**: Validate input, persist data, publish events.
 - **BookingLineItemCreateCommandHandler**: Validates and adds line items to bookings, updates repository, logs actions.
 
-## Validation
+## Validation (Booking Management)
 
 - **BookingCreateDTOValidator**: Validates booking requests.
 - **BookingLineItemCreateDTOValidator**: Validates line item requests.
 - Validation failures are logged and returned with error messages.
 
-## Integration Events
+## Integration Events (Booking Management)
 
 - **BookingRequestedIntegrationEvent**: Published on booking creation.
 - **BookingLineItemIntegrationEvent**: Published on line item addition.
@@ -94,7 +101,7 @@ The Booking Management System is a modular monolith designed using Clean Archite
 
 - Uses custom logging service (`ILoggingService<T>`) for contextual logging at various levels.
 
-## API Endpoints
+## API Endpoints (Booking Management)
 
 - **Create Booking**: `POST /bookings`
 - **Update Booking**: `PUT /update-booking`
@@ -120,7 +127,7 @@ The Booking Management System is a modular monolith designed using Clean Archite
    dotnet run --project <StartupProject>
    ```
 5. **Test the API**
-   Use tools like Postman or Swagger to interact with the booking endpoints.
+   Use tools like Postman or Swagger to interact with the endpoints.
 
 ## Contributing
 
@@ -143,6 +150,7 @@ This README is updated to reflect recent changes:
 - Enhanced validation and logging for booking and line item creation.
 - API endpoints for booking and line item management.
 - Project restructured as a modular monolith using Clean Architecture and DDD for each module.
+- Clarified CraftConnect as the main project, with Booking Management as a module.
 
 **Purpose:**
 - Provide clear documentation for developers and stakeholders.
