@@ -2,11 +2,12 @@
 
 ## Overview
 
-CraftConnect is a modular monolith platform designed to connect customers with craftspersons and manage service bookings. The project utilizes Clean Architecture and Domain-Driven Design (DDD) principles for each module, ensuring scalability, maintainability, and clear separation of concerns. Built with .NET 9 and C# 13, CraftConnect is composed of several business modules, including Booking Management and User Management, each encapsulating its own domain logic, application services, infrastructure, and presentation layers.
+CraftConnect is a modular monolith platform designed to connect customers with craftspersons and manage service bookings. Built with .NET 9 and C# 13, it utilizes Clean Architecture and Domain-Driven Design (DDD) principles for each module, ensuring scalability, maintainability, and clear separation of concerns. The platform is composed of several business modules, including Booking Management and User Management, and is orchestrated via an API Gateway for unified routing and service management.
 
 ## Table of Contents
 - [Project Structure](#project-structure)
 - [Modular Monolith & Clean Architecture](#modular-monolith--clean-architecture)
+- [API Gateway](#api-gateway)
 - [Core Features](#core-features)
 - [Technology Stack](#technology-stack)
 - [Modules](#modules)
@@ -29,6 +30,7 @@ CraftConnect is a modular monolith platform designed to connect customers with c
 - **Infrastructure**: Data access, repository implementations, event bus, logging, per module.
 - **Presentation**: API controllers for each module.
 - **Core**: Shared kernel, integration events, value objects.
+- **API Gateway**: Centralized routing, rate limiting, and service orchestration using Ocelot.
 
 ## Modular Monolith & Clean Architecture
 
@@ -36,6 +38,14 @@ CraftConnect is a modular monolith platform designed to connect customers with c
 - Each module follows Clean Architecture, separating domain, application, infrastructure, and presentation concerns.
 - DDD is applied within each module, ensuring that domain logic is encapsulated and business rules are enforced at the core.
 - Modules communicate via well-defined interfaces and integration events, supporting extensibility and maintainability.
+
+## API Gateway
+
+- The API Gateway (Ocelot) provides unified routing for all modules, including Booking Management and User Management.
+- Supports rate limiting, downstream service mapping, and centralized endpoint management.
+- Example routes:
+  - `/users/{everything}` ? User Management Service
+  - `/bookings/{everything}` ? Booking Management Service
 
 ## Core Features
 
@@ -55,6 +65,7 @@ CraftConnect is a modular monolith platform designed to connect customers with c
 - **AutoMapper**: Mapping between domain entities and DTOs.
 - **MassTransit**: Integration event publishing.
 - **FluentValidation**: Input validation.
+- **Ocelot**: API Gateway for routing and orchestration.
 - **Custom Logging Service**: Structured logging.
 
 ## Modules
@@ -151,6 +162,7 @@ This README is updated to reflect recent changes:
 - API endpoints for booking and line item management.
 - Project restructured as a modular monolith using Clean Architecture and DDD for each module.
 - Clarified CraftConnect as the main project, with Booking Management as a module.
+- Added API Gateway details for unified routing and orchestration.
 
 **Purpose:**
 - Provide clear documentation for developers and stakeholders.
