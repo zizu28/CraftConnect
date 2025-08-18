@@ -16,8 +16,7 @@ namespace BookingManagement.Domain.Entities
 		public JobDetails Details { get; private set; }
 		public DateTimeRange? Duration { get; private set; }
 		public DateTime CreatedAt { get; private set; }
-		private readonly List<BookingLineItem> _lineItems = [];
-		public IReadOnlyCollection<BookingLineItem> LineItems => _lineItems.AsReadOnly();
+		public List<BookingLineItem> LineItems { get; private set; } = [];
 
 		private Booking()
 		{
@@ -64,7 +63,7 @@ namespace BookingManagement.Domain.Entities
 				throw new ArgumentException("Invalid line item parameters.");
 			}
 			var lineItem = new BookingLineItem(Id, description, price, quantity);
-			_lineItems.Add(lineItem);
+			LineItems.Add(lineItem);
 			AddIntegrationEvent(new BookingLineItemIntegrationEvent(Id, lineItem.Id, 
 				lineItem.Description, lineItem.Price, lineItem.Quantity));
 		}
@@ -75,7 +74,7 @@ namespace BookingManagement.Domain.Entities
 			{
 				throw new InvalidOperationException("Booking can only be confirmed if it is in a pending state.");
 			}
-			if (_lineItems.Count == 0)
+			if (LineItems.Count == 0)
 			{
 				throw new InvalidOperationException("Cannot confirm booking without line items.");
 			}
@@ -109,7 +108,7 @@ namespace BookingManagement.Domain.Entities
 			{
 				return 0;
 			}
-			return _lineItems.Sum(item => item.Price * item.Quantity);
+			return LineItems.Sum(item => item.Price * item.Quantity);
 		}
 	}
 }

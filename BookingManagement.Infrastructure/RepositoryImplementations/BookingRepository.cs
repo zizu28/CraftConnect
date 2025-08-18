@@ -24,14 +24,13 @@ namespace BookingManagement.Infrastructure.RepositoryImplementations
 		public async Task<Booking> FindBy(Expression<Func<Booking, bool>> predicate, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(predicate);
-			var booking = await dbContext.Bookings.FirstOrDefaultAsync(predicate, cancellationToken);
+			var booking = await dbContext.Bookings.Include(b => b.LineItems).FirstOrDefaultAsync(predicate, cancellationToken);
 			return booking!;
 		}
 
 		public async Task<IEnumerable<Booking>> GetAllAsync(CancellationToken cancellationToken = default)
 		{
 			return (await dbContext.Bookings
-				//.Include(b => b.LineItems)
 				.AsNoTracking()
 				.ToListAsync(cancellationToken));
 		}

@@ -61,6 +61,7 @@ namespace BookingManagement.Infrastructure.RepositoryImplementations
 			{
 				throw new ArgumentNullException(nameof(entity), "BookingLineItem cannot be null.");
 			}
+			dbContext.Entry(entity).State = EntityState.Detached;
 			dbContext.BookingLineItems.Update(entity);
 			return Task.CompletedTask;
 		}

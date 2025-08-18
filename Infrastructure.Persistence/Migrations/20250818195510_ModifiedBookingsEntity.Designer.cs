@@ -4,6 +4,7 @@ using Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250818195510_ModifiedBookingsEntity")]
+    partial class ModifiedBookingsEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,8 +68,6 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BookingId");
 
                     b.ToTable("BookingLineItems");
                 });
@@ -412,17 +413,6 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BookingManagement.Domain.Entities.BookingLineItem", b =>
-                {
-                    b.HasOne("BookingManagement.Domain.Entities.Booking", "Booking")
-                        .WithMany("LineItems")
-                        .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-                });
-
             modelBuilder.Entity("BookingManagement.Domain.Entities.JobDetails", b =>
                 {
                     b.HasOne("BookingManagement.Domain.Entities.Booking", null)
@@ -611,8 +601,6 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Navigation("Details")
                         .IsRequired();
-
-                    b.Navigation("LineItems");
                 });
 
             modelBuilder.Entity("UserManagement.Domain.Entities.User", b =>

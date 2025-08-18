@@ -3,15 +3,19 @@ using BookingManagement.Application.Contracts;
 using BookingManagement.Application.CQRS.Commands.BookingCommands;
 using BookingManagement.Application.DTOs.BookingLineItemDTOs;
 using BookingManagement.Application.Validators;
+using BookingManagement.Domain.Entities;
+using Core.EventServices;
 using Core.Logging;
+using Core.SharedKernel.IntegrationEvents;
 using MediatR;
 
 namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingLineItemCommandHandlers
 {
 	public class BookingLineItemCreateCommandHandler(
-		IBookingRepository bookingRepository,
+		IBookingLineItemRepository lineItemRepository,
 		ILoggingService<BookingLineItemCreateCommandHandler> logger,
-		IMapper mapper)
+		IMapper mapper,
+		IMessageBroker messageBroker)
 		: IRequestHandler<BookingLineItemCreateCommand, BookingLineItemResponseDTO>
 	{
 		public async Task<BookingLineItemResponseDTO> Handle(BookingLineItemCreateCommand request, CancellationToken cancellationToken)
@@ -27,16 +31,27 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingLin
 				response.Message = "Validation failed";
 				return response;
 			}
-			var booking = await bookingRepository.GetByIdAsync(request.BookingId, cancellationToken)
-				?? throw new KeyNotFoundException($"Booking with ID {request.BookingId} not found.");
-			booking.AddLineItem(request.LineItemCreateDTO.Description,
-				request.LineItemCreateDTO.Price, request.LineItemCreateDTO.Quantity);
-			await bookingRepository.UpdateAsync(booking, cancellationToken);
-			await bookingRepository.SaveChangesAsync(cancellationToken);
+			//var booking = await bookingRepository.GetByIdAsync(request.BookingId, cancellationToken)
+			//	?? throw new KeyNotFoundException($"Booking with ID {request.BookingId} not found.");
+			//booking.AddLineItem(request.LineItemCreateDTO.Description,
+			//	request.LineItemCreateDTO.Price, request.LineItemCreateDTO.Quantity);
+			//await bookingRepository.UpdateAsync(booking, cancellationToken);
+
+			var lineItem = mapper.Map<BookingLineItem>(request.LineItemCreateDTO);
+
+			var bookingLineItemEvent = new BookingLineItemIntegrationEvent(
+				lineItem.BookingId, lineItem.Id,
+				lineItem.Description,
+				lineItem.Price,
+				lineItem.Quantity);
+
+			await lineItemRepository.AddAsync(lineItem, cancellationToken);
+			await messageBroker.PublishAsync(bookingLineItemEvent, cancellationToken);
+			await lineItemRepository.SaveChangesAsync(cancellationToken);
 			//await domainEventsDispatcher.DispatchAsync(booking.DomainEvents, cancellationToken);
 			logger.LogInformation("Booking line item created successfully for Booking ID {BookingId}", request.BookingId);
-			booking.ClearEvents();
-			response = mapper.Map<BookingLineItemResponseDTO>(booking);
+			
+			response = mapper.Map<BookingLineItemResponseDTO>(lineItem);
 			response.IsSuccess = true;
 			response.Message = "Booking line item created successfully";
 			return response;

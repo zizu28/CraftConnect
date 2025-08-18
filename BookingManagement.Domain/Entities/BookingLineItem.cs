@@ -5,6 +5,7 @@ namespace BookingManagement.Domain.Entities
 	public class BookingLineItem : Entity
 	{
 		public Guid BookingId { get; private set; }
+		public Booking Booking { get; set; }
 		public string Description { get; private set; }
 		public decimal Price { get; private set; }
 		public int Quantity { get; private set; }
