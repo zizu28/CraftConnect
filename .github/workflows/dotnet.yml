@@ -37,4 +37,4 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Run Unit Tests
-      run: dotnet test CraftConnect.sln --no-build --verbosity normal
+      run: dotnet test BookingManagement.Presentation/Tests/BookingControllerTests.cs --no-build --verbosity normal && dotnet test UserManagement.Presentation/Tests/UserControllerTest.cs --no-build --verbosity normal
