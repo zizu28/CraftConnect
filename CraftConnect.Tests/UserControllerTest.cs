@@ -275,8 +275,8 @@ namespace CraftConnect.Tests
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result);
 			dynamic returnedTokens = okResult.Value;
-			Assert.Equal(accessToken, returnedTokens.AccessToken);
-			Assert.Equal(refreshToken, returnedTokens.RefreshToken);
+			Assert.Equal(accessToken, returnedTokens.Item1);
+			Assert.Equal(refreshToken, returnedTokens.Item2);
 		}
 
 		[Fact]

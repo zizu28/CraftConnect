@@ -108,7 +108,7 @@ namespace UserManagement.Presentation.Controllers
 			{
 				return Unauthorized("Invalid login attempt.");
 			}
-			return Ok(new { AccessToken, RefreshToken });
+			return Ok(new Tuple<string, string>(AccessToken, RefreshToken));
 		}
 
 		[HttpPost("refresh-token")]
