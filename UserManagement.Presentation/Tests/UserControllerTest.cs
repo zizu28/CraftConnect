@@ -45,7 +45,7 @@ namespace UserManagement.Presentation.Tests
 			// Act
 			var result = await _usersController.GetAllUsersAsync();
 			// Assert
-			Assert.IsType<NotFoundResult>(result);
+			Assert.IsType<NotFoundObjectResult>(result);
 		}
 
 		[Fact]
@@ -154,7 +154,17 @@ namespace UserManagement.Presentation.Tests
 		public async Task RegisterNewUserAsync_ReturnsBadRequest_WhenModelStateIsInvalid()
 		{
 			// Arrange
-			var userDto = new UserCreateDTO() { };
+			var userDto = new UserCreateDTO()
+			{
+				Username = "testuser",
+				FirstName = "Test",
+				LastName = "User",
+				Email = "test@example.com",
+				Password = "password123",
+				PhoneCountryCode = "+1",
+				PhoneNumber = "1234567890",
+				Role = "User"
+			};
 
 			_usersController.ModelState.AddModelError("ErrorKey", "A test validation error.");
 
@@ -399,8 +409,9 @@ namespace UserManagement.Presentation.Tests
 		{
 			// Arrange
 			var command = new ChangePasswordCommand();
+
 			_mediatorMock.Setup(m => m.Send(It.IsAny<ChangePasswordCommand>(), default))
-				.ReturnsAsync((object)null); 
+				.ThrowsAsync(new InvalidOperationException("Password change failed."));
 
 			// Act
 			var result = await _usersController.ChangePasswordAsync(command);
