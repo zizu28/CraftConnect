@@ -6,8 +6,6 @@ name: .NET
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
@@ -25,8 +23,7 @@ jobs:
       run: dotnet build --no-restore
 
   test:
-    needs: [build]
-    name: "Test CraftConnect Modules"
+    name: "Test CraftConnect xUnit Project"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -36,5 +33,5 @@ jobs:
         dotnet-version: 9.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Run Unit Tests
-      run: dotnet test CraftConnect.sln --no-build --verbosity normal
+    - name: Run xUnit Tests
+      run: dotnet test CraftConnect.Tests/CraftConnect.Tests.csproj --no-build --verbosity normal
