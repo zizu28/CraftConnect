@@ -1,6 +1,7 @@
 ﻿
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Moq;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.CQRS.Queries.UserQueries;
@@ -123,24 +124,66 @@ namespace UserManagement.Presentation.Tests
 		}
 
 		[Fact]
+		public async Task RegisterNewUserAsync_ReturnsBadRequest_ForMissingUsername()
+		{
+			// Arrange
+			var userDtoWithMissingUsername = new UserCreateDTO
+			{
+				Username = null,
+				FirstName = "John",
+				LastName = "Doe",
+				Email = "john.doe@example.com",
+				Password = "SecurePassword123",
+				PhoneCountryCode = "+1",
+				PhoneNumber = "1234567890",
+				Role = "User"
+			};
+
+			// Manually add the validation error that ModelState will have
+			_usersController.ModelState.AddModelError(nameof(UserCreateDTO.Username), "The Username field is required.");
+
+			// Act
+			var result = await _usersController.RegisterNewUserAsync(userDtoWithMissingUsername);
+
+			// Assert
+			// The controller should return BadRequest because ModelState is invalid.
+			Assert.IsType<BadRequestObjectResult>(result);
+		}
+
+		[Fact]
 		public async Task RegisterNewUserAsync_ReturnsBadRequest_WhenModelStateIsInvalid()
 		{
 			// Arrange
-			_usersController.ModelState.AddModelError("Email", "Email is required.");
-			var command = new RegisterUserCommand();
+			var userDto = new UserCreateDTO() { };
+
+			_usersController.ModelState.AddModelError("ErrorKey", "A test validation error.");
 
 			// Act
-			var result = await _usersController.RegisterNewUserAsync(new UserCreateDTO());
+			var result = await _usersController.RegisterNewUserAsync(userDto);
 
 			// Assert
-			Assert.IsType<BadRequestObjectResult>(result);
+			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+
+			var modelState = Assert.IsType<ModelStateDictionary>(badRequestResult.Value);
+			Assert.False(modelState.IsValid);
+			Assert.True(modelState.ContainsKey("ErrorKey"));
 		}
 
 		[Fact]
 		public async Task RegisterNewUserAsync_ReturnsOkResult_WhenUserIsRegistered()
 		{
 			// Arrange
-			var newUserDto = new UserCreateDTO();
+			var newUserDto = new UserCreateDTO
+			{
+				Username = "JohnDoe",
+				FirstName = "John",
+				LastName = "Doe",
+				Email = "john.doe@example.com",
+				Password = "SecurePassword123",
+				PhoneCountryCode = "+1",
+				PhoneNumber = "1234567890",
+				Role = "User"
+			};
 			var responseDto = new UserResponseDTO();
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RegisterUserCommand>(), default))
 				.ReturnsAsync(responseDto);
@@ -156,7 +199,17 @@ namespace UserManagement.Presentation.Tests
 		public async Task RegisterNewUserAsync_ReturnsBadRequest_WhenRegistrationFails()
 		{
 			// Arrange
-			var user = new UserCreateDTO();
+			var user = new UserCreateDTO
+			{
+				Username = "JohnDoe",
+				FirstName = "John",
+				LastName = "Doe",
+				Email = "john.doe@example.com",
+				Password = "SecurePassword123",
+				PhoneCountryCode = "+1",
+				PhoneNumber = "1234567890",
+				Role = "User"
+			};
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RegisterUserCommand>(), default))
 				.ReturnsAsync((UserResponseDTO)null);
 
@@ -185,7 +238,7 @@ namespace UserManagement.Presentation.Tests
 		{
 			// Arrange
 			_mediatorMock.Setup(m => m.Send(It.IsAny<LoginUserCommand>(), default))
-				.ReturnsAsync(new Tuple<string, string>(null, null));
+				.ReturnsAsync((null, null));
 
 			// Act
 			var result = await _usersController.LoginUserAsync(new LoginUserCommand());
@@ -206,8 +259,8 @@ namespace UserManagement.Presentation.Tests
 			};
 			var accessToken = "access_token_mock";
 			var refreshToken = "refresh_token_mock";
-			_mediatorMock.Setup(m => m.Send(It.Is<LoginUserCommand>(q => q == loginCommand), default))
-				.ReturnsAsync(new Tuple<string, string>(accessToken, refreshToken));
+			_mediatorMock.Setup(m => m.Send(It.IsAny<LoginUserCommand>(), default))
+				.ReturnsAsync((accessToken, refreshToken));
 
 			// Act
 			var result = await _usersController.LoginUserAsync(loginCommand);
@@ -236,8 +289,10 @@ namespace UserManagement.Presentation.Tests
 		public async Task RefreshTokenAsync_ReturnsUnauthorized_WhenRefreshTokenFails()
 		{
 			// Arrange
+			string accessToken = "" ?? null;
+			string refreshToken = "" ?? null;
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(), default))
-				.ReturnsAsync(new { AccessToken = "", RefreshToken = "" });
+				.ReturnsAsync((accessToken, refreshToken));
 
 			// Act
 			var result = await _usersController.RefreshTokenAsync(new RefreshTokenCommand());
@@ -250,10 +305,9 @@ namespace UserManagement.Presentation.Tests
 		public async Task RefreshTokenAsync_ReturnsOk_WhenTokenIsRefreshed()
 		{
 			// Arrange
-			var RefreshToken = "existing_refresh_token";
 			var newAccessToken = "new_access_token";
 			var newRefreshToken = "new_refresh_token";
-			var newTokens = new { AccessToken = newAccessToken, RefreshToken = newRefreshToken };
+			var newTokens = (newAccessToken, newRefreshToken);
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(), default))
 				.ReturnsAsync(newTokens);
 
@@ -323,6 +377,7 @@ namespace UserManagement.Presentation.Tests
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result);
 		}
+
 
 		[Fact]
 		public async Task ChangePasswordAsync_ReturnsOk_WhenPasswordIsChanged()
