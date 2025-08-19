@@ -1,5 +1,4 @@
-﻿
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Moq;
@@ -7,9 +6,8 @@ using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.CQRS.Queries.UserQueries;
 using UserManagement.Application.DTOs.UserDTOs;
 using UserManagement.Presentation.Controllers;
-using Xunit;
 
-namespace UserManagement.Presentation.Tests
+namespace CraftConnect.Tests
 {
 	public class UserControllerTest
 	{

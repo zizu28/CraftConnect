@@ -1,17 +1,13 @@
-﻿using Xunit;
-using Moq;
+﻿using Moq;
 using MediatR;
 using BookingManagement.Presentation.Controllers;
 using BookingManagement.Application.CQRS.Commands.BookingCommands;
 using BookingManagement.Application.CQRS.Queries.BookingQueries;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using BookingManagement.Application.DTOs.BookingDTOs;
 using BookingManagement.Application.DTOs.BookingLineItemDTOs;
 
-namespace BookingManagement.Presentation.Tests
+namespace CraftConnect.Tests
 {
 	public class BookingsControllerTests
 	{
