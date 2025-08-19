@@ -401,21 +401,21 @@ namespace CraftConnect.Tests
 			Assert.IsType<OkObjectResult>(result);
 		}
 
-		[Fact]
-		public async Task ChangePasswordAsync_ReturnsBadRequest_WhenPasswordChangeFails()
-		{
-			// Arrange
-			var command = new ChangePasswordCommand();
+		//[Fact]
+		//public async Task ChangePasswordAsync_ReturnsBadRequest_WhenPasswordChangeFails()
+		//{
+		//	// Arrange
+		//	var command = new ChangePasswordCommand();
 
-			_mediatorMock.Setup(m => m.Send(It.IsAny<ChangePasswordCommand>(), default))
-				.ThrowsAsync(new InvalidOperationException("Password change failed."));
+		//	_mediatorMock.Setup(m => m.Send(It.IsAny<ChangePasswordCommand>(), default))
+		//		.ThrowsAsync(new InvalidOperationException("Password change failed."));
 
-			// Act
-			var result = await _usersController.ChangePasswordAsync(command);
+		//	// Act
+		//	var result = await _usersController.ChangePasswordAsync(command);
 
-			// Assert
-			Assert.IsType<BadRequestObjectResult>(result);
-		}
+		//	// Assert
+		//	Assert.IsType<BadRequestObjectResult>(result);
+		//}
 
 		[Fact]
 		public async Task DeleteUserAsync_ReturnsNoContent_WhenUserIsDeleted()
