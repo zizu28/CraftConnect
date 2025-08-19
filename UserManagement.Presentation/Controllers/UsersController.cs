@@ -99,16 +99,16 @@ namespace UserManagement.Presentation.Controllers
 		[HttpPost("signin")]
 		public async Task<IActionResult> LoginUserAsync([FromBody] LoginUserCommand command)
 		{
-			if(!ModelState.IsValid)
+			if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
 			}
-			var (AccesToken, RefreshToken) = await mediator.Send(command);
-			if (string.IsNullOrEmpty(AccesToken) || string.IsNullOrEmpty(RefreshToken))
+			var (AccessToken, RefreshToken) = await mediator.Send(command);
+			if (string.IsNullOrEmpty(AccessToken) || string.IsNullOrEmpty(RefreshToken))
 			{
 				return Unauthorized("Invalid login attempt.");
 			}
-			return Ok(new { AcccessToken = AccesToken, RefreshToken = RefreshToken });
+			return Ok(new { AccessToken, RefreshToken });
 		}
 
 		[HttpPost("refresh-token")]
