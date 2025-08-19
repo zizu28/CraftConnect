@@ -144,14 +144,22 @@ namespace UserManagement.Presentation.Controllers
 		[HttpPost("change-password")]
 		public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordCommand command)
 		{
-			if(!ModelState.IsValid)
+			if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
 			}
-			var result = await mediator.Send(command);
-			if (result == Unit.Value)
+			try
 			{
-				return Ok("Password changed successfully.");
+				var result = await mediator.Send(command);
+				if (result == Unit.Value)
+				{
+					return Ok("Password changed successfully.");
+				}
+			}
+			catch (Exception ex)
+			{
+				// Log the exception
+				return BadRequest("Password change failed.");
 			}
 			return BadRequest("Password change failed.");
 		}

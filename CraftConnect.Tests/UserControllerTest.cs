@@ -52,7 +52,7 @@ namespace CraftConnect.Tests
 			// Act
 			var result = await _usersController.GetUserByIdAsync(Guid.Empty);
 			// Assert
-			Assert.IsType<BadRequestObjectResult>(result);
+			Assert.IsType<NotFoundObjectResult>(result);
 		}
 
 		[Fact]
@@ -172,8 +172,7 @@ namespace CraftConnect.Tests
 			// Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
 
-			var modelState = Assert.IsType<ModelStateDictionary>(badRequestResult.Value);
-			Assert.False(modelState.IsValid);
+			var modelState = Assert.IsType<SerializableError>(badRequestResult.Value);
 			Assert.True(modelState.ContainsKey("ErrorKey"));
 		}
 
@@ -276,7 +275,7 @@ namespace CraftConnect.Tests
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result);
 			dynamic returnedTokens = okResult.Value;
-			Assert.Equal(accessToken, returnedTokens.AcccessToken);
+			Assert.Equal(accessToken, returnedTokens.AccessToken);
 			Assert.Equal(refreshToken, returnedTokens.RefreshToken);
 		}
 
@@ -325,8 +324,8 @@ namespace CraftConnect.Tests
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result);
 			dynamic returnedTokens = okResult.Value;
-			Assert.Equal(newAccessToken, returnedTokens.AccessToken);
-			Assert.Equal(newRefreshToken, returnedTokens.RefreshToken);
+			Assert.Equal(newAccessToken, returnedTokens.Item1);
+			Assert.Equal(newRefreshToken, returnedTokens.Item2);
 		}
 
 		[Fact]
