@@ -25,6 +25,7 @@ jobs:
       run: dotnet build --no-restore
 
   test:
+    needs: [build]
     name: "Test CraftConnect Modules"
     runs-on: ubuntu-latest
     steps:
