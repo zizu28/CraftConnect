@@ -15,8 +15,8 @@
       ],
       "RateLimitOptions": {
         "EnableRateLimiting": true,
-        "Period": "15s",
-        "Limit": 10
+        "Period": "30s",
+        "Limit": 15
       }
     },
     // --- Booking Management Service Routes ---
@@ -34,8 +34,8 @@
       ],
       "RateLimitOptions": {
         "EnableRateLimiting": true,
-        "Period": "15s",
-        "Limit": 10
+        "Period": "30s",
+        "Limit": 15
       }
     }
   ],

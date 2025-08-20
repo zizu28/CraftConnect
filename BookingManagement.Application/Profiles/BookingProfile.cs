@@ -26,7 +26,10 @@ namespace BookingManagement.Application.Profiles
 				.ForPath(dest => dest.ServiceAddress.PostalCode, opt => opt.MapFrom(src => src.PostalCode))
 				.ForPath(dest => dest.ServiceAddress.City, opt => opt.MapFrom(src => src.City))
 				.ForPath(dest => dest.ServiceAddress.Street, opt => opt.MapFrom(src => src.Street))
-				.ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<BookingStatus>(src.Status)));
+				.ForPath(dest => dest.Details.BookingId, opt => opt.MapFrom(src => src.BookingId))
+				.ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<BookingStatus>(src.Status)))
+				.ForPath(dest => dest.Details.Description, opt => opt.MapFrom(src => src.NewDescription))
+				.ForMember(dest => dest.RowVersion, opt => opt.Ignore());
 
 			CreateMap<Booking, BookingResponseDTO>()
 				.ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.Id))
@@ -38,6 +41,7 @@ namespace BookingManagement.Application.Profiles
 				.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
 				.ForPath(dest => dest.Details.Desciption, opt => opt.MapFrom(src => src.Details.Description))
 				.ForMember(dest => dest.LineItems, opt => opt.MapFrom(src => src.LineItems))
+				.ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion))
 				.ForPath(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.CalculateTotalPrice()));
 		}
 	}

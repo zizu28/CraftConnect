@@ -6,5 +6,6 @@
 	string Status,
 	string Street, 
 	string City, 
-	string PostalCode);
+	string PostalCode,
+	byte[] RowVersion);
 }

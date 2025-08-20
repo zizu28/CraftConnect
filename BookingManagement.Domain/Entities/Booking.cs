@@ -2,6 +2,7 @@
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.IntegrationEvents;
 using Core.SharedKernel.ValueObjects;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace BookingManagement.Domain.Entities
@@ -17,6 +18,8 @@ namespace BookingManagement.Domain.Entities
 		public DateTimeRange? Duration { get; private set; }
 		public DateTime CreatedAt { get; private set; }
 		public List<BookingLineItem> LineItems { get; private set; } = [];
+		[Timestamp]
+		public byte[] RowVersion { get; set; }
 
 		private Booking()
 		{

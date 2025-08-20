@@ -37,6 +37,8 @@ namespace Infrastructure.Persistence.Data
 			modelBuilder.Owned<DateTimeRange>();
 			modelBuilder.Owned<Address>();
 
+			modelBuilder.Owned<Image>();
+
 			modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
 			var applicationsToScan = AppDomain.CurrentDomain.GetAssemblies()

@@ -7,6 +7,7 @@ using Core.EventServices;
 using Core.Logging;
 using Core.SharedKernel.IntegrationEvents;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCommandHandlers
 {
@@ -30,24 +31,59 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 				return response;
 			}
 			logger.LogInformation("Booking update metadata successfully validated.");
-			var booking = await bookingRepository.GetByIdAsync(request.BookingId, cancellationToken)
-				?? throw new ApplicationException($"Booking with ID {request.BookingId} not found.");
-			mapper.Map(request.BookingDTO, booking);
+			var booking = await bookingRepository.GetByIdAsync(request.BookingDTO.BookingId, cancellationToken)
+				?? throw new ApplicationException($"Booking with ID {request.BookingDTO.BookingId} not found.");
+			if (!booking.RowVersion.SequenceEqual(request.BookingDTO.RowVersion))
+			{
+				logger.LogWarning("Concurrency conflict: Booking {BookingId} was modified by another user.", request.BookingDTO.BookingId);
+				response.IsSuccess = false;
+				response.Message = "The booking was modified by another user. Please reload and try again.";
+				response.Errors.Add("ConcurrencyError: The data has changed since it was loaded.");
+				return response;
+			}
 
-			await bookingRepository.UpdateAsync(booking, cancellationToken);
-			
+			var newUpdatedBooking = mapper.Map(request.BookingDTO, booking);
+
+			await bookingRepository.UpdateAsync(newUpdatedBooking, cancellationToken);
+
 			var bookingUpdatedEvent = new BookingUpdatedIntegrationEvent(
-				booking.Id,
-				booking.CustomerId,
-				booking.CraftmanId,
-				booking.Status,
-				booking.Duration,
-				booking.CalculateTotalPrice(),
+				newUpdatedBooking.Id,
+				newUpdatedBooking.CustomerId,
+				newUpdatedBooking.CraftmanId,
+				newUpdatedBooking.Status,
+				newUpdatedBooking.Duration,
+				newUpdatedBooking.CalculateTotalPrice(),
 				DateTime.UtcNow);
-			await messageBroker.PublishAsync(bookingUpdatedEvent, cancellationToken);
-			await bookingRepository.SaveChangesAsync(cancellationToken);
 
-			response = mapper.Map<BookingResponseDTO>(booking);
+			await messageBroker.PublishAsync(bookingUpdatedEvent, cancellationToken);
+			try
+			{
+				await bookingRepository.SaveChangesAsync(cancellationToken);
+			}
+			catch (DbUpdateConcurrencyException ex)
+			{
+				logger.LogWarning("Concurrency exception when updating booking {BookingId}: {Message}",
+					request.BookingDTO.BookingId, ex.Message);
+
+				// Check if the entity still exists
+				var isStillExists = await bookingRepository.ExistsAsync(request.BookingDTO.BookingId, cancellationToken);
+				if (!isStillExists)
+				{
+					response.IsSuccess = false;
+					response.Message = "Booking was deleted by another user.";
+					response.Errors.Add("Booking not found.");
+					return response;
+				}
+				else
+				{
+					response.IsSuccess = false;
+					response.Message = "Booking was modified by another user. Please reload and try again.";
+					response.Errors.Add("Concurrency conflict.");
+					return response;
+				}
+			}
+
+			response = mapper.Map<BookingResponseDTO>(newUpdatedBooking);
 			response.Message = $"Booking with ID {response.BookingId} succesfully updated.";
 			response.IsSuccess = true;
 

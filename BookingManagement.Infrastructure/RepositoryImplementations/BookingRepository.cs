@@ -21,6 +21,11 @@ namespace BookingManagement.Infrastructure.RepositoryImplementations
 			dbContext.Bookings.Remove(booking);
 		}
 
+		public async Task<bool> ExistsAsync(Guid bookingId, CancellationToken cancellationToken)
+		{
+			return (await FindBy(b => b.Id == bookingId, cancellationToken) != null);
+		}
+
 		public async Task<Booking> FindBy(Expression<Func<Booking, bool>> predicate, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(predicate);
@@ -59,8 +64,8 @@ namespace BookingManagement.Infrastructure.RepositoryImplementations
 		public Task UpdateAsync(Booking entity, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(entity);
-			dbContext.Bookings.Update(entity);
-			return Task.CompletedTask;
+			dbContext.Entry(entity).State = EntityState.Modified;
+			return Task.FromResult(entity);
 		}
 	}
 }

@@ -73,15 +73,23 @@ namespace BookingManagement.Presentation.Controllers
 		[HttpPut("update-booking")]
 		public async Task<IActionResult> UpdateBookingAsync([FromBody] UpdateBookingCommand command)
 		{
-			if (command == null || command.BookingId == Guid.Empty)
+			if (command == null || command.BookingDTO?.BookingId == Guid.Empty)
 			{
 				return BadRequest("Invalid booking data.");
 			}
+
 			var result = await mediator.Send(command);
-			if (result == null)
+
+			if (!result.IsSuccess)
 			{
-				return NotFound($"Booking with ID {command.BookingId} not found.");
+				if (result.Message.Contains("modified by another user") || result.Message.Contains("Concurrency"))
+					return Conflict(result);
+				else if (result.Message.Contains("not found"))
+					return NotFound(result);
+				else
+					return BadRequest(result);
 			}
+
 			return Ok(result);
 		}
 
