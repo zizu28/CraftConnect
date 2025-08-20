@@ -35,4 +35,4 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Run Unit Tests
-      run: dotnet test ../CraftConnect.Tests/CraftConnect.Tests.csproj --no-build --verbosity normal
+      run: dotnet test CraftConnect.Tests/CraftConnect.Tests.csproj --no-build --verbosity normal
