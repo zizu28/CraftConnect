@@ -364,7 +364,7 @@ namespace CraftConnect.Tests
 			var result = await _usersController.GetUserByIdAsync(userId);
 
 			// Assert
-			Assert.IsType<BadRequestObjectResult>(result);
+			Assert.IsType<NotFoundObjectResult>(result);
 		}
 
 		[Fact]

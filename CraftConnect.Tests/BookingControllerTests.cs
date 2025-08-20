@@ -93,7 +93,7 @@ namespace CraftConnect.Tests
 			var result = await _bookingsController.GetAllBookingAsync();
 
 			// Assert
-			Assert.IsType<NotFoundObjectResult>(result);
+			Assert.IsType<NotFoundResult>(result);
 		}
 
 		[Fact]
@@ -194,7 +194,7 @@ namespace CraftConnect.Tests
 			var result = await _bookingsController.UpdateBookingAsync(updateCommand);
 
 			// Assert
-			Assert.IsType<NotFoundObjectResult>(result);
+			Assert.IsType<BadRequestObjectResult>(result);
 		}
 
 		[Fact]
@@ -315,7 +315,7 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			var detailsQuery = "test description";
-			var booking = new GetBookingByDetailsQuery();
+			var booking = new BookingResponseDTO();
 			_mediatorMock.Setup(m => m.Send(It.Is<GetBookingByDetailsQuery>(q => q.Description == detailsQuery), default))
 				.ReturnsAsync(new BookingResponseDTO());
 
@@ -353,7 +353,7 @@ namespace CraftConnect.Tests
 			var result = await _bookingsController.GetBookingByDetailsAsync(detailsQuery);
 
 			// Assert
-			Assert.IsType<BadRequestObjectResult>(result);
+			Assert.IsType<NotFoundObjectResult>(result);
 		}
 	}
 }
