@@ -1,11 +1,11 @@
 ﻿using Moq;
 using MediatR;
 using BookingManagement.Presentation.Controllers;
-using BookingManagement.Application.CQRS.Commands.BookingCommands;
-using BookingManagement.Application.CQRS.Queries.BookingQueries;
 using Microsoft.AspNetCore.Mvc;
 using BookingManagement.Application.DTOs.BookingDTOs;
 using BookingManagement.Application.DTOs.BookingLineItemDTOs;
+using BookingManagement.Application.CQRS.Commands.BookingCommands;
+using BookingManagement.Application.CQRS.Queries.BookingQueries;
 
 namespace CraftConnect.Tests
 {

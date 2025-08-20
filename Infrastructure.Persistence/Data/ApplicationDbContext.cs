@@ -2,6 +2,7 @@
 using Core.SharedKernel.ValueObjects;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using ProductInventoryManagement.Domain.Entities;
 using UserManagement.Domain.Entities;
 
 namespace Infrastructure.Persistence.Data
@@ -15,6 +16,9 @@ namespace Infrastructure.Persistence.Data
 		public DbSet<Booking> Bookings { get; set; }
 		public DbSet<BookingLineItem> BookingLineItems { get; set; }
 		public DbSet<JobDetails> JobDetails { get; set; }
+		public DbSet<Product> Products { get; set; }
+		public DbSet<Category> Categories { get; set; }
+		public DbSet<Inventory> Inventories { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
@@ -38,7 +42,8 @@ namespace Infrastructure.Persistence.Data
 			var applicationsToScan = AppDomain.CurrentDomain.GetAssemblies()
 				.Where(a => a.FullName != null && (
 						a.FullName.StartsWith("UserManagement.Infrastructure.EntityTypeConfigurations") ||
-						a.FullName.StartsWith("BookingManagement.Infrastructure.EntityTypeConfigurations")));
+						a.FullName.StartsWith("BookingManagement.Infrastructure.EntityTypeConfigurations") ||
+						a.FullName.StartsWith("ProductInventoryManagement.Infrastructure.EntityTypeConfigurations")));
 
 			foreach (var assembly in applicationsToScan)
 			{

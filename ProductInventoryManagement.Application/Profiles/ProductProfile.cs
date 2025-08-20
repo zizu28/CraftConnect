@@ -1,0 +1,33 @@
+﻿using AutoMapper;
+using Core.SharedKernel.ValueObjects;
+using ProductInventoryManagement.Application.DTOs;
+using ProductInventoryManagement.Application.DTOs.ProductDTOs;
+using ProductInventoryManagement.Domain.Entities;
+
+namespace ProductInventoryManagement.Application.Profiles
+{
+	public class ProductProfile : Profile
+	{
+		public ProductProfile()
+		{
+			CreateMap<ProductCreateDTO, Product>()
+				.ForCtorParam("name", opt => opt.MapFrom(src => src.Name))
+				.ForCtorParam("description", opt => opt.MapFrom(src => src.Description))
+				.ForCtorParam("price", opt => opt.MapFrom(src => src.Price))
+				.ForCtorParam("categoryId", opt => opt.MapFrom(src => src.CategoryId));
+
+			CreateMap<ProductUpdateDTO, Product>()
+				.ForMember(dest => dest.Name, opt => opt.Condition(src => src.Name != null))
+				.ForMember(dest => dest.Description, opt => opt.Condition(src => src.Description != null))
+				.ForMember(dest => dest.Price, opt => opt.Condition(src => src.Price.HasValue))
+				.ForMember(dest => dest.CategoryId, opt => opt.Condition(src => src.CategoryId.HasValue));
+
+			CreateMap<Product, ProductResponseDTO>()
+				.ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.Id))
+				.ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.Inventory.Quantity))
+				.ForMember(dest => dest.CraftmanId, opt => opt.MapFrom(src => src.CraftmanId));
+
+			CreateMap<Image, ImageResponseDTO>();
+		}
+	}
+}
