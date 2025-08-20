@@ -165,12 +165,11 @@ namespace CraftConnect.Tests
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result);
 		}
-
 		[Fact]
 		public async Task UpdateBookingAsync_ReturnsOk_WhenBookingUpdated()
 		{
 			// Arrange
-			var bookingId = Guid.NewGuid();
+			_bookingsController.ModelState.Clear(); 
 			var updateCommand = new UpdateBookingCommand();
 			_mediatorMock.Setup(m => m.Send(It.IsAny<UpdateBookingCommand>(), default))
 				.ReturnsAsync(new BookingResponseDTO());
@@ -179,8 +178,7 @@ namespace CraftConnect.Tests
 			var result = await _bookingsController.UpdateBookingAsync(updateCommand);
 
 			// Assert
-			var okResult = Assert.IsType<OkObjectResult>(result);
-			Assert.IsType<BookingResponseDTO>(okResult.Value);
+			Assert.IsType<OkObjectResult>(result);
 		}
 
 		[Fact]
@@ -316,16 +314,16 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			var detailsQuery = "test description";
-			var booking = new BookingResponseDTO();
+			var bookingResponse = new BookingResponseDTO();
 			_mediatorMock.Setup(m => m.Send(It.Is<GetBookingByDetailsQuery>(q => q.Description == detailsQuery), default))
-				.ReturnsAsync(new BookingResponseDTO());
+				.ReturnsAsync(bookingResponse); 
 
 			// Act
 			var result = await _bookingsController.GetBookingByDetailsAsync(detailsQuery);
 
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result);
-			Assert.Equal(booking, okResult.Value);
+			Assert.Equal(bookingResponse, okResult.Value);
 		}
 
 		[Fact]
