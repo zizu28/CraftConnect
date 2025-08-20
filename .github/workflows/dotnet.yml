@@ -34,5 +34,7 @@ jobs:
         dotnet-version: 9.0.x
     - name: Restore dependencies
       run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
     - name: Run Unit Tests
       run: dotnet test CraftConnect.Tests/CraftConnect.Tests.csproj --verbosity normal
