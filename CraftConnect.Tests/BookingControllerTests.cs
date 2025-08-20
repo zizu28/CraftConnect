@@ -1,5 +1,7 @@
 ﻿using BookingManagement.Application.CQRS.Commands.BookingCommands;
 using BookingManagement.Application.CQRS.Queries.BookingQueries;
+using BookingManagement.Application.DTOs.BookingDTOs;
+using BookingManagement.Application.DTOs.BookingLineItemDTOs;
 using BookingManagement.Presentation.Controllers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -23,16 +25,16 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			var bookingId = Guid.NewGuid();
-			var bookingQuery = new GetBookingByIdQuery();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<GetBookingByIdQuery>(), default))
-				.ReturnsAsync(bookingQuery);
+			var bookingResponse = new BookingResponseDTO();
+			_mediatorMock.Setup(m => m.Send(It.Is<GetBookingByIdQuery>(q => q.Id == bookingId), default))
+				.ReturnsAsync(bookingResponse);
 
 			// Act
 			var result = await _bookingsController.GetBookingByIdAsync(bookingId);
 
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result);
-			Assert.Equal(bookingQuery, okResult.Value);
+			Assert.Equal(bookingResponse, okResult.Value);
 		}
 
 		[Fact]
@@ -40,7 +42,8 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			var bookingId = Guid.NewGuid();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<GetBookingByIdQuery>(), default)).ReturnsAsync((GetBookingByIdQuery)null);
+			_mediatorMock.Setup(m => m.Send(It.Is<GetBookingByIdQuery>(q => q.Id == bookingId), default))
+				.ReturnsAsync((BookingResponseDTO)null);
 
 			// Act
 			var result = await _bookingsController.GetBookingByIdAsync(bookingId);
@@ -66,15 +69,16 @@ namespace CraftConnect.Tests
 		public async Task GetAllBookingAsync_ReturnsOk_WhenBookingsExist()
 		{
 			// Arrange
-			var bookings = new List<GetAllBookingsQuery> { new GetAllBookingsQuery(), new GetAllBookingsQuery() };
-			_mediatorMock.Setup(m => m.Send(It.IsAny<GetAllBookingsQuery>(), default)).ReturnsAsync(bookings);
+			var bookings = new List<GetAllBookingQuery> { new(), new() };
+			_mediatorMock.Setup(m => m.Send(It.IsAny<IEnumerable<GetAllBookingQuery>>(), default))
+				.ReturnsAsync(bookings);
 
 			// Act
 			var result = await _bookingsController.GetAllBookingAsync();
 
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result);
-			var returnedBookings = Assert.IsAssignableFrom<IEnumerable<GetAllBookingsQuery>>(okResult.Value);
+			var returnedBookings = Assert.IsAssignableFrom<IEnumerable<GetAllBookingQuery>>(okResult.Value);
 			Assert.Equal(2, returnedBookings.Count());
 		}
 
@@ -82,7 +86,8 @@ namespace CraftConnect.Tests
 		public async Task GetAllBookingAsync_ReturnsNotFound_WhenNoBookingsExist()
 		{
 			// Arrange
-			_mediatorMock.Setup(m => m.Send(It.IsAny<GetAllBookingsQuery>(), default)).ReturnsAsync(new List<GetAllBookingsQuery>());
+			_mediatorMock.Setup(m => m.Send(It.IsAny<IEnumerable<GetAllBookingQuery>>(), default))
+				.ReturnsAsync(new List<GetAllBookingQuery>());
 
 			// Act
 			var result = await _bookingsController.GetAllBookingAsync();
@@ -97,7 +102,8 @@ namespace CraftConnect.Tests
 			// Arrange
 			_bookingsController.ModelState.Clear();
 			var createCommand = new CreateBookingCommand();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<CreateBookingCommand>(), default)).ReturnsAsync(true);
+			_mediatorMock.Setup(m => m.Send(It.IsAny<CreateBookingCommand>(), default))
+				.ReturnsAsync(new BookingResponseDTO());
 
 			// Act
 			var result = await _bookingsController.CreateBookingAsync(createCommand);
@@ -122,7 +128,8 @@ namespace CraftConnect.Tests
 			// Arrange
 			_bookingsController.ModelState.Clear();
 			var createCommand = new CreateBookingCommand();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<CreateBookingCommand>(), default)).ReturnsAsync(false);
+			_mediatorMock.Setup(m => m.Send(It.IsAny<CreateBookingCommand>(), default))
+				.ReturnsAsync(new BookingResponseDTO());
 
 			// Act
 			var result = await _bookingsController.CreateBookingAsync(createCommand);
@@ -136,7 +143,8 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			var bookingId = Guid.NewGuid();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<DeleteBookingCommand>(), default)).ReturnsAsync(true);
+			_mediatorMock.Setup(m => m.Send(It.IsAny<DeleteBookingCommand>(), default))
+				.ReturnsAsync(Unit.Value);
 
 			// Act
 			var result = await _bookingsController.DeleteBookingAsync(bookingId);
@@ -164,10 +172,11 @@ namespace CraftConnect.Tests
 			// Arrange
 			var bookingId = Guid.NewGuid();
 			var updateCommand = new UpdateBookingCommand();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<UpdateBookingCommand>(), default)).ReturnsAsync(true);
+			_mediatorMock.Setup(m => m.Send(It.IsAny<UpdateBookingCommand>(), default))
+				.ReturnsAsync(new BookingResponseDTO());
 
 			// Act
-			var result = await _bookingsController.UpdateBookingAsync(bookingId, updateCommand);
+			var result = await _bookingsController.UpdateBookingAsync(updateCommand);
 
 			// Assert
 			Assert.IsType<OkObjectResult>(result);
@@ -179,10 +188,11 @@ namespace CraftConnect.Tests
 			// Arrange
 			var bookingId = Guid.NewGuid();
 			var updateCommand = new UpdateBookingCommand();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<UpdateBookingCommand>(), default)).ReturnsAsync(false);
+			_mediatorMock.Setup(m => m.Send(It.IsAny<UpdateBookingCommand>(), default))
+				.ReturnsAsync(new BookingResponseDTO());
 
 			// Act
-			var result = await _bookingsController.UpdateBookingAsync(bookingId, updateCommand);
+			var result = await _bookingsController.UpdateBookingAsync(updateCommand);
 
 			// Assert
 			Assert.IsType<NotFoundObjectResult>(result);
@@ -191,11 +201,8 @@ namespace CraftConnect.Tests
 		[Fact]
 		public async Task UpdateBookingAsync_ReturnsBadRequest_WhenCommandIsNullOrIdIsEmpty()
 		{
-			// Arrange
-			var bookingId = Guid.Empty;
-
 			// Act
-			var result = await _bookingsController.UpdateBookingAsync(bookingId, null);
+			var result = await _bookingsController.UpdateBookingAsync(null);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result);
@@ -207,7 +214,8 @@ namespace CraftConnect.Tests
 			// Arrange
 			_bookingsController.ModelState.Clear();
 			var confirmCommand = new ConfirmBookingCommand();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<ConfirmBookingCommand>(), default)).ReturnsAsync(true);
+			_mediatorMock.Setup(m => m.Send(It.IsAny<ConfirmBookingCommand>(), default))
+				.ReturnsAsync(Unit.Value);
 
 			// Act
 			var result = await _bookingsController.ConfirmBookingAsync(confirmCommand);
@@ -235,7 +243,8 @@ namespace CraftConnect.Tests
 			// Arrange
 			_bookingsController.ModelState.Clear();
 			var completeCommand = new CompleteBookingCommand();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<CompleteBookingCommand>(), default)).ReturnsAsync(true);
+			_mediatorMock.Setup(m => m.Send(It.IsAny<CompleteBookingCommand>(), default))
+				.ReturnsAsync(Unit.Value);
 
 			// Act
 			var result = await _bookingsController.CompleteBookingAsync(completeCommand);
@@ -262,8 +271,9 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			var bookingId = Guid.NewGuid();
-			var addLineItemCommand = new AddLineItemToBookingCommand();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<AddLineItemToBookingCommand>(), default)).ReturnsAsync(true);
+			var addLineItemCommand = new BookingLineItemCreateCommand();
+			_mediatorMock.Setup(m => m.Send(It.IsAny<BookingLineItemCreateCommand>(), default))
+				.ReturnsAsync(new BookingLineItemResponseDTO());
 
 			// Act
 			var result = await _bookingsController.AddLineItemToBookingAsync(bookingId, addLineItemCommand);
@@ -277,8 +287,9 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			var bookingId = Guid.NewGuid();
-			var addLineItemCommand = new AddLineItemToBookingCommand();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<AddLineItemToBookingCommand>(), default)).ReturnsAsync(false);
+			var addLineItemCommand = new BookingLineItemCreateCommand();
+			_mediatorMock.Setup(m => m.Send(It.IsAny<BookingLineItemCreateCommand>(), default))
+				.ReturnsAsync(new BookingLineItemResponseDTO());
 
 			// Act
 			var result = await _bookingsController.AddLineItemToBookingAsync(bookingId, addLineItemCommand);
@@ -304,9 +315,10 @@ namespace CraftConnect.Tests
 		public async Task GetBookingByDetailsAsync_ReturnsOk_WhenBookingExists()
 		{
 			// Arrange
-			var detailsQuery = new GetBookingByDetailsQuery();
+			var detailsQuery = "test description";
 			var booking = new GetBookingByDetailsQuery();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<GetBookingByDetailsQuery>(), default)).ReturnsAsync(booking);
+			_mediatorMock.Setup(m => m.Send(It.Is<GetBookingByDetailsQuery>(q => q.Description == detailsQuery), default))
+				.ReturnsAsync(new BookingResponseDTO());
 
 			// Act
 			var result = await _bookingsController.GetBookingByDetailsAsync(detailsQuery);
@@ -320,8 +332,9 @@ namespace CraftConnect.Tests
 		public async Task GetBookingByDetailsAsync_ReturnsNotFound_WhenBookingDoesNotExist()
 		{
 			// Arrange
-			var detailsQuery = new GetBookingByDetailsQuery();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<GetBookingByDetailsQuery>(), default)).ReturnsAsync((GetBookingByDetailsQuery)null);
+			var detailsQuery = "Test description";
+			_mediatorMock.Setup(m => m.Send(It.IsAny<GetBookingByDetailsQuery>(), default))
+				.ReturnsAsync((BookingResponseDTO)null);
 
 			// Act
 			var result = await _bookingsController.GetBookingByDetailsAsync(detailsQuery);
@@ -334,7 +347,7 @@ namespace CraftConnect.Tests
 		public async Task GetBookingByDetailsAsync_ReturnsBadRequest_WhenDetailsIsEmpty()
 		{
 			// Arrange
-			var detailsQuery = new GetBookingByDetailsQuery();
+			var detailsQuery = "Test description";
 			_bookingsController.ModelState.AddModelError("PropertyName", "Error message");
 
 			// Act

@@ -1,20 +1,10 @@
-﻿using Xunit;
-using Moq;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using CraftConnect.Controllers;
-using CraftConnect.Application.Features.Queries.Users.LoginUser;
-using CraftConnect.Application.Features.Commands.Users.RegisterNewUser;
-using CraftConnect.Application.Features.Commands.Users.ConfirmEmail;
-using CraftConnect.Application.Features.Commands.Users.ChangePassword;
-using CraftConnect.Application.Features.Commands.Users.DeleteUser;
-using CraftConnect.Application.Features.Queries.Users.GetUserById;
-using CraftConnect.Application.Features.Queries.Users.GetAllUsers;
-using CraftConnect.Application.Features.Queries.Users.GetUserByEmail;
-using CraftConnect.Application.Features.Commands.Users.RefreshToken;
-using CraftConnect.Application.DTOs.Users.Commands.RefreshToken;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using Moq;
+using UserManagement.Application.CQRS.Commands.UserCommands;
+using UserManagement.Application.CQRS.Queries.UserQueries;
+using UserManagement.Application.DTOs.UserDTOs;
+using UserManagement.Presentation.Controllers;
 
 namespace CraftConnect.Tests
 {
@@ -92,9 +82,18 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			_usersController.ModelState.Clear();
-			var registerCommand = new RegisterNewUserCommand();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<RegisterNewUserCommand>(), default))
-				.ReturnsAsync(true);
+			var registerCommand = new UserCreateDTO() { 
+				Email = "example@gmail.com",
+				Password = "password123",
+				FirstName = "Test",
+				LastName = "User",
+				Username = "testuser",
+				PhoneNumber = "1234567890",
+				PhoneCountryCode = "+1",
+				Role = "User"
+			};
+			_mediatorMock.Setup(m => m.Send(It.IsAny<RegisterUserCommand>(), default))
+				.ReturnsAsync(new UserResponseDTO());
 
 			// Act
 			var result = await _usersController.RegisterNewUserAsync(registerCommand);
@@ -108,9 +107,19 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			_usersController.ModelState.Clear();
-			var registerCommand = new RegisterNewUserCommand();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<RegisterNewUserCommand>(), default))
-				.ReturnsAsync(false);
+			var registerCommand = new UserCreateDTO()
+			{
+				Email = null,
+				Password = "password123",
+				FirstName = "Test",
+				LastName = null,
+				Username = "testuser",
+				PhoneNumber = "1234567890",
+				PhoneCountryCode = "+1",
+				Role = "User"
+			};
+			_mediatorMock.Setup(m => m.Send(It.IsAny<RegisterUserCommand>(), default))
+				.ReturnsAsync(new UserResponseDTO());
 
 			// Act
 			var result = await _usersController.RegisterNewUserAsync(registerCommand);
@@ -126,7 +135,7 @@ namespace CraftConnect.Tests
 			_usersController.ModelState.AddModelError("Name", "Name is required");
 
 			// Act
-			var result = await _usersController.RegisterNewUserAsync(new RegisterNewUserCommand());
+			var result = await _usersController.RegisterNewUserAsync(null);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result);
@@ -137,13 +146,16 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			_usersController.ModelState.AddModelError("Username", "Username is missing");
-			var registerCommand = new RegisterNewUserCommand
+			var registerCommand = new UserCreateDTO()
 			{
-				// Username is not set
-				Email = "test@example.com",
+				Email = "example@email.com",
 				Password = "password123",
 				FirstName = "Test",
-				LastName = "User"
+				LastName = "testname",
+				Username = null,
+				PhoneNumber = "1234567890",
+				PhoneCountryCode = "+1",
+				Role = "User"
 			};
 
 			// Act
@@ -205,7 +217,7 @@ namespace CraftConnect.Tests
 			_usersController.ModelState.Clear();
 			var changeCommand = new ChangePasswordCommand();
 			_mediatorMock.Setup(m => m.Send(It.IsAny<ChangePasswordCommand>(), default))
-				.ReturnsAsync(true);
+				.ReturnsAsync(Unit.Value);
 
 			// Act
 			var result = await _usersController.ChangePasswordAsync(changeCommand);
@@ -232,7 +244,7 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			_usersController.ModelState.Clear();
-			var refreshTokenDto = new RefreshTokenDto { AccessToken = "oldAccessToken", RefreshToken = "oldRefreshToken" };
+			var refreshTokenDto = new RefreshTokenCommand();
 			var newAccessToken = "newAccessToken";
 			var newRefreshToken = "newRefreshToken";
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(), default))
@@ -244,8 +256,8 @@ namespace CraftConnect.Tests
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result);
 			dynamic returnedTokens = okResult.Value;
-			Assert.Equal(newAccessToken, returnedTokens.AccessToken);
-			Assert.Equal(newRefreshToken, returnedTokens.RefreshToken);
+			Assert.Equal(newAccessToken, returnedTokens.Item1);
+			Assert.Equal(newRefreshToken, returnedTokens.Item2);
 		}
 
 		[Fact]
@@ -253,7 +265,7 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			_usersController.ModelState.Clear();
-			var refreshTokenDto = new RefreshTokenDto { AccessToken = "invalidToken", RefreshToken = "invalidRefreshToken" };
+			var refreshTokenDto = new RefreshTokenCommand();
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(), default))
 				.ReturnsAsync((string.Empty, string.Empty));
 
@@ -271,7 +283,7 @@ namespace CraftConnect.Tests
 			_usersController.ModelState.AddModelError("AccessToken", "AccessToken is required");
 
 			// Act
-			var result = await _usersController.RefreshTokenAsync(new RefreshTokenDto());
+			var result = await _usersController.RefreshTokenAsync(new RefreshTokenCommand());
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result);
@@ -281,8 +293,9 @@ namespace CraftConnect.Tests
 		public async Task GetAllUsersAsync_ReturnsOkResult_WhenUsersExist()
 		{
 			// Arrange
-			var users = new List<GetUserByIdQuery> { new GetUserByIdQuery(), new GetUserByIdQuery() };
-			_mediatorMock.Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), default)).ReturnsAsync(users);
+			var users = new List<UserResponseDTO> { new(), new() };
+			_mediatorMock.Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), default))
+				.ReturnsAsync(users);
 
 			// Act
 			var result = await _usersController.GetAllUsersAsync();
@@ -297,7 +310,9 @@ namespace CraftConnect.Tests
 		public async Task GetAllUsersAsync_ReturnsNotFound_WhenNoUsersExist()
 		{
 			// Arrange
-			_mediatorMock.Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), default)).ReturnsAsync(new List<GetUserByIdQuery>());
+			var users = new List<UserResponseDTO>();
+			_mediatorMock.Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), default))
+				.ReturnsAsync(users);
 
 			// Act
 			var result = await _usersController.GetAllUsersAsync();
@@ -311,8 +326,9 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			var userId = Guid.NewGuid();
-			var user = new GetUserByIdQuery();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<GetUserByIdQuery>(), default)).ReturnsAsync(user);
+			var user = new UserResponseDTO();
+			_mediatorMock.Setup(m => m.Send(It.IsAny<GetUserByIdQuery>(), default))
+				.ReturnsAsync(user);
 
 			// Act
 			var result = await _usersController.GetUserByIdAsync(userId);
@@ -327,7 +343,8 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			var userId = Guid.NewGuid();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<GetUserByIdQuery>(), default)).ReturnsAsync((GetUserByIdQuery)null);
+			_mediatorMock.Setup(m => m.Send(It.IsAny<GetUserByIdQuery>(), default))
+				.ReturnsAsync((UserResponseDTO)null);
 
 			// Act
 			var result = await _usersController.GetUserByIdAsync(userId);
@@ -354,8 +371,9 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			var userEmail = "test@example.com";
-			var user = new GetUserByEmailQuery();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<GetUserByEmailQuery>(), default)).ReturnsAsync(user);
+			var user = new UserResponseDTO();
+			_mediatorMock.Setup(m => m.Send(It.IsAny<GetUserByEmailQuery>(), default))
+				.ReturnsAsync(user);
 
 			// Act
 			var result = await _usersController.GetUserByEmailAsync(userEmail);
@@ -370,7 +388,8 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			var userEmail = "nonexistent@example.com";
-			_mediatorMock.Setup(m => m.Send(It.IsAny<GetUserByEmailQuery>(), default)).ReturnsAsync((GetUserByEmailQuery)null);
+			_mediatorMock.Setup(m => m.Send(It.IsAny<GetUserByEmailQuery>(), default))
+				.ReturnsAsync((UserResponseDTO)null);
 
 			// Act
 			var result = await _usersController.GetUserByEmailAsync(userEmail);
@@ -384,7 +403,8 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			var userId = Guid.NewGuid();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<DeleteUserCommand>(), default)).ReturnsAsync(true);
+			_mediatorMock.Setup(m => m.Send(It.IsAny<DeleteUserCommand>(), default))
+				.ReturnsAsync(Unit.Value);
 
 			// Act
 			var result = await _usersController.DeleteUserAsync(userId);

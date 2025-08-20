@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CQRS\Commands\JobDetailsCommands\**" />
+    <EmbeddedResource Remove="CQRS\Commands\JobDetailsCommands\**" />
+    <None Remove="CQRS\Commands\JobDetailsCommands\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="15.0.1" />
     <PackageReference Include="FluentValidation" Version="12.0.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
@@ -18,10 +24,6 @@
     <ProjectReference Include="..\Core.EventServices\Core.EventServices.csproj" />
     <ProjectReference Include="..\Core.Logging\Core.Logging.csproj" />
     <ProjectReference Include="..\Infrastructure.BackgroundJobs\Infrastructure.BackgroundJobs.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="CQRS\Commands\JobDetailsCommands\" />
   </ItemGroup>
 
 </Project>
