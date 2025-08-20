@@ -109,17 +109,18 @@ namespace CraftConnect.Tests
 			_usersController.ModelState.Clear();
 			var registerCommand = new UserCreateDTO()
 			{
-				Email = null,
+				Email = "test@gmail.com",
 				Password = "password123",
 				FirstName = "Test",
-				LastName = null,
+				LastName = "User",
 				Username = "testuser",
 				PhoneNumber = "1234567890",
 				PhoneCountryCode = "+1",
 				Role = "User"
 			};
+			// Mock returns null to simulate registration failure
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RegisterUserCommand>(), default))
-				.ReturnsAsync(new UserResponseDTO());
+				.ReturnsAsync((UserResponseDTO)null);
 
 			// Act
 			var result = await _usersController.RegisterNewUserAsync(registerCommand);
@@ -302,7 +303,7 @@ namespace CraftConnect.Tests
 
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result);
-			var returnedUsers = Assert.IsAssignableFrom<IEnumerable<GetUserByIdQuery>>(okResult.Value);
+			var returnedUsers = Assert.IsAssignableFrom<IEnumerable<UserResponseDTO>>(okResult.Value);
 			Assert.Equal(2, returnedUsers.Count());
 		}
 
