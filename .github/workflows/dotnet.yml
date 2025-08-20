@@ -25,6 +25,7 @@ jobs:
   test:
     name: "Test CraftConnect xUnit Project"
     runs-on: ubuntu-latest
+    needs: build
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -34,4 +35,4 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Run Unit Tests
-      run: dotnet test CraftConnect/Tests/CraftConnect.Tests/CraftConnect.Tests.csproj --no-build --verbosity normal
+      run: dotnet test CraftConnect.Tests/CraftConnect.Tests.csproj --no-build --verbosity normal
