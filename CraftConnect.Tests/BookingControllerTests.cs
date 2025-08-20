@@ -179,7 +179,8 @@ namespace CraftConnect.Tests
 			var result = await _bookingsController.UpdateBookingAsync(updateCommand);
 
 			// Assert
-			Assert.IsType<OkObjectResult>(result);
+			var okResult = Assert.IsType<OkObjectResult>(result);
+			Assert.IsType<BookingResponseDTO>(okResult.Value);
 		}
 
 		[Fact]
