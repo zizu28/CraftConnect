@@ -171,14 +171,20 @@ namespace CraftConnect.Tests
 			// Arrange
 			_bookingsController.ModelState.Clear(); 
 			var updateCommand = new UpdateBookingCommand();
+			var response = new BookingResponseDTO
+			{
+				IsSuccess = true,
+				Message = "Booking updated successfully"
+			};
 			_mediatorMock.Setup(m => m.Send(It.IsAny<UpdateBookingCommand>(), default))
-				.ReturnsAsync(new BookingResponseDTO());
+				.ReturnsAsync(response);
 
 			// Act
 			var result = await _bookingsController.UpdateBookingAsync(updateCommand);
 
 			// Assert
-			Assert.IsType<OkObjectResult>(result);
+			var okResult = Assert.IsType<OkObjectResult>(result);
+			Assert.Equal(response, okResult.Value);
 		}
 
 		[Fact]
