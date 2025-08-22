@@ -30,7 +30,7 @@ namespace UserManagement.Infrastructure.EntityTypeConfigurations
 				role => role.ToString(),
 				roleString => Enum.Parse<UserRole>(roleString, true))
 				.IsRequired();
-			builder.Property(u => u.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
+			builder.Property(u => u.CreatedAt.ToUniversalTime()).IsRequired().HasDefaultValueSql("GETUTCDATE()");
 		}
 	}
 }

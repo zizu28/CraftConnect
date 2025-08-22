@@ -36,7 +36,8 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 								request.BookingDTO.CraftmanId,
 								new Address(request.BookingDTO.Street, request.BookingDTO.City, request.BookingDTO.PostalCode),
 								request.BookingDTO.InitialDescription,
-								new DateTimeRange(request.BookingDTO.StartDate, request.BookingDTO.EndDate));
+								new DateTimeRange(request.BookingDTO.StartDate.ToUniversalTime(), 
+								request.BookingDTO.EndDate.ToUniversalTime()));
 
 			//var isAvailableAlready = await bookingRepository.FindBy(b => 
 			//								b.CraftmanId == booking.CraftmanId &&

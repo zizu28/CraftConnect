@@ -16,6 +16,5 @@ namespace BookingManagement.Application.DTOs.BookingDTOs
 		public bool IsSuccess { get; set; }
 		public string Message { get; set; } = "";
 		public List<string> Errors { get; set; } = [];
-		public byte[] RowVersion { get; set; }
 	}
 }

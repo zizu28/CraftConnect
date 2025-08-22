@@ -2,14 +2,9 @@ using Core.Logging;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +15,8 @@ builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange
 builder.Services.AddOcelot(builder.Configuration);
 builder.Services.AddBackgroundJobs(builder.Configuration);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+	o => o.UseNodaTime()));
 
 //builder.AddServiceDefaults();
 //builder.AddRabbitMQClient("rabbitmq");

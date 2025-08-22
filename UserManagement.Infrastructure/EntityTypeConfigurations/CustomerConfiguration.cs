@@ -33,7 +33,7 @@ namespace UserManagement.Infrastructure.EntityTypeConfigurations
 			builder.Property(c => c.PreferredPaymentMethod).HasConversion(
 				p => p.ToString(),
 				p => Enum.Parse<PaymentMethod>(p, true));
-			builder.Property(c => c.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
+			builder.Property(c => c.CreatedAt.ToUniversalTime()).IsRequired().HasDefaultValueSql("GETUTCDATE()");
 		}
 	}
 }

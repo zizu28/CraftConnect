@@ -16,10 +16,8 @@ namespace BookingManagement.Domain.Entities
 		public Address ServiceAddress { get; private set; }
 		public JobDetails Details { get; private set; }
 		public DateTimeRange? Duration { get; private set; }
-		public DateTime CreatedAt { get; private set; }
+		public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 		public List<BookingLineItem> LineItems { get; private set; } = [];
-		[Timestamp]
-		public byte[] RowVersion { get; set; }
 
 		private Booking()
 		{

@@ -29,8 +29,8 @@ namespace BookingManagement.Infrastructure.EntityTypeConfigurations
 			});
 			builder.OwnsOne(b => b.Duration, duration =>
 			{
-				duration.Property(d => d.Start).HasColumnName("DurationStart");
-				duration.Property(d => d.End).HasColumnName("DurationEnd");
+				duration.Property(d => d.Start.ToUniversalTime()).HasColumnName("DurationStart");
+				duration.Property(d => d.End.ToUniversalTime()).HasColumnName("DurationEnd");
 			});
 			builder.HasMany(b => b.LineItems).WithOne().HasForeignKey(bi => bi.BookingId);
 			builder.Ignore(b => b.DomainEvents);

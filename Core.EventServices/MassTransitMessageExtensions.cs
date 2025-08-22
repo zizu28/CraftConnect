@@ -8,16 +8,15 @@ namespace Core.EventServices
 	{
 		public static IServiceCollection AddMessageBroker(this IServiceCollection services, IConfiguration configuration)
 		{
-			services.AddMassTransit(mt =>
+			var rabbitMQConfig = configuration.GetSection("RabbitMQ");
+			if (rabbitMQConfig == null || !rabbitMQConfig.Exists())
+			{
+				throw new ArgumentException("RabbitMQ configuration section is missing or invalid.");
+			}
+				services.AddMassTransit(mt =>
 			{
 				mt.UsingRabbitMq((context, config) =>
 				{
-					//config.ReceiveEndpoint("event-bus", e =>
-					//{
-					//	e.Durable = true;
-					//	e.AutoDelete = false;
-					//	e.Exclusive = false;
-					//});
 					config.Host(new Uri(configuration["RabbitMQ:Host"]!), h =>
 					{
 						h.Username(configuration["RabbitMQ:UserName"]!);

@@ -33,15 +33,7 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 			logger.LogInformation("Booking update metadata successfully validated.");
 			var booking = await bookingRepository.GetByIdAsync(request.BookingDTO.BookingId, cancellationToken)
 				?? throw new ApplicationException($"Booking with ID {request.BookingDTO.BookingId} not found.");
-			if (!booking.RowVersion.SequenceEqual(request.BookingDTO.RowVersion))
-			{
-				logger.LogWarning("Concurrency conflict: Booking {BookingId} was modified by another user.", request.BookingDTO.BookingId);
-				response.IsSuccess = false;
-				response.Message = "The booking was modified by another user. Please reload and try again.";
-				response.Errors.Add("ConcurrencyError: The data has changed since it was loaded.");
-				return response;
-			}
-
+			
 			var newUpdatedBooking = mapper.Map(request.BookingDTO, booking);
 
 			await bookingRepository.UpdateAsync(newUpdatedBooking, cancellationToken);

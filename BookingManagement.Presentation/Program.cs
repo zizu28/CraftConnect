@@ -26,7 +26,8 @@ builder.Services.AddBackgroundJobs(builder.Configuration);
 builder.Services.RegisterSerilog();
 builder.Services.AddMessageBroker(builder.Configuration);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+	o => o.UseNodaTime()));
 //builder.Services.AddSqlServer<ApplicationDbContext>("CraftConnectDb");
 
 

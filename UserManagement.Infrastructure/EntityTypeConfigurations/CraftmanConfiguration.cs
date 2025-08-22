@@ -35,7 +35,7 @@ namespace UserManagement.Infrastructure.EntityTypeConfigurations
 				money.Property(m => m.Currency).IsRequired()
 				.HasMaxLength(10).HasColumnName("HourlyRateCurrency");
 			});
-			builder.Property(c => c.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
+			builder.Property(c => c.CreatedAt.ToUniversalTime()).IsRequired().HasDefaultValueSql("GETUTCDATE()");
 		}
 	}
 }
