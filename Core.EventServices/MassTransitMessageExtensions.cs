@@ -1,8 +1,6 @@
-﻿using Infrastructure.Persistence.Data;
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace Core.EventServices
 {

@@ -1,7 +1,6 @@
 ﻿using BookingManagement.Application.Contracts;
 using BookingManagement.Application.Extensions;
 using BookingManagement.Infrastructure.RepositoryImplementations;
-using Core.EventServices;
 using Infrastructure.Persistence.Data;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -22,13 +21,13 @@ namespace BookingManagement.Infrastructure.Extensions
 				mt.AddEntityFrameworkOutbox<ApplicationDbContext>(config =>
 				{
 					config.QueryDelay = TimeSpan.FromSeconds(30);
-					config.UseSqlServer().UseBusOutbox();
+					config.UsePostgres().UseBusOutbox();
 				});
 				mt.SetKebabCaseEndpointNameFormatter();
 				mt.AddConsumers(typeof(BookingManagementApplicationExtensions).Assembly);				
 			});
 
-			services.AddNpgsqlDataSource("postgresdb");
+			//services.AddNpgsqlDataSource("postgresdb");
 			
 
 			return services;
