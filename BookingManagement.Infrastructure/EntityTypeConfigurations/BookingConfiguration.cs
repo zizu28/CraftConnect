@@ -27,13 +27,14 @@ namespace BookingManagement.Infrastructure.EntityTypeConfigurations
 			{
 				details.Property(d => d.Description).IsRequired().HasMaxLength(1000);
 			});
-			builder.OwnsOne(b => b.Duration, duration =>
-			{
-				duration.Property(d => d.Start.ToUniversalTime()).HasColumnName("DurationStart");
-				duration.Property(d => d.End.ToUniversalTime()).HasColumnName("DurationEnd");
-			});
+			
+			builder.Property(b => b.StartDate).IsRequired().HasColumnType("timestamp without timezone");
+			builder.Property(b => b.EndDate).IsRequired().HasColumnType("timestamp without timezone");
+			builder.Property(b => b.CreatedAt).IsRequired().HasColumnType("time without time zone");
 			builder.HasMany(b => b.LineItems).WithOne().HasForeignKey(bi => bi.BookingId);
 			builder.Ignore(b => b.DomainEvents);
+			builder.Property(b => b.RowVersion).IsRowVersion()
+				.HasColumnType("xmin").ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
 		}
 	}
 }

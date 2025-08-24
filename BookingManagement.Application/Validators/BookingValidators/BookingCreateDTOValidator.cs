@@ -1,5 +1,6 @@
 ﻿using BookingManagement.Application.DTOs.BookingDTOs;
 using FluentValidation;
+using NodaTime;
 
 namespace BookingManagement.Application.Validators.BookingValidators
 {
@@ -28,11 +29,10 @@ namespace BookingManagement.Application.Validators.BookingValidators
 				.WithMessage("Status must be either 'Pending', 'InProgress', or 'Completed'.");
 			RuleFor(x => x.StartDate)
 				.NotEmpty().WithMessage("Start date can not be empty.")
-				.GreaterThan(DateTime.UtcNow).WithMessage("Start date must be in the future.");
+				.LessThan(x => x.EndDate).WithMessage("Start date must be in the future.");
 			RuleFor(x => x.EndDate)
 				.NotEmpty().WithMessage("End date can not be empty.")
-				.GreaterThan(x => x.StartDate).WithMessage("End date must be after the start date.")
-				.GreaterThan(DateTime.UtcNow).WithMessage("End date must be in the future.");
+				.GreaterThan(x => x.StartDate).WithMessage("End date must be after the start date.");
 		}
 	}
 }

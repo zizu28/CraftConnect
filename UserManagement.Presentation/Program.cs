@@ -5,6 +5,7 @@ using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
+using NodaTime.Serialization.SystemTextJson;
 using UserManagement.Application.Extensions;
 using UserManagement.Infrastructure.Extensions;
 
@@ -15,7 +16,11 @@ builder.AddRabbitMQClient("rabbitmq");
 // Add services to the container.
 
 builder.Host.ConfigureSerilog();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+	.AddJsonOptions(opt =>
+	{
+		opt.JsonSerializerOptions.ConfigureForNodaTime(NodaTime.DateTimeZoneProviders.Tzdb);
+	});
 builder.Services.AddUserManagementConfiguration(builder.Configuration);
 builder.Services.AddFluentEmailService(builder.Configuration);
 //builder.Services.AddHybridCacheService(builder.Configuration);

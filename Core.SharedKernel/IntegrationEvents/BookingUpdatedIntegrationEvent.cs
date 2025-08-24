@@ -1,6 +1,6 @@
 ﻿using Core.SharedKernel.Domain;
 using Core.SharedKernel.Enums;
-using Core.SharedKernel.ValueObjects;
+using NodaTime;
 
 namespace Core.SharedKernel.IntegrationEvents
 {
@@ -8,13 +8,14 @@ namespace Core.SharedKernel.IntegrationEvents
 		Guid BookingId,
 		Guid CustomerId,
 		Guid CraftsmanId,
+		LocalDateTime StartDate,
+		LocalDateTime EndDate,
 		BookingStatus Status,
-		DateTimeRange? Duration,
 		decimal TotalPrice,
-		DateTime UpdatedAt) : IIntegrationEvent
+		LocalDateTime UpdatedAt) : IIntegrationEvent
 	{
 		public Guid EventId => Guid.NewGuid();
-
 		public DateTime OccuredOn => DateTime.UtcNow;
+		public Period Duration => Period.Between(StartDate, EndDate);
 	}
 }

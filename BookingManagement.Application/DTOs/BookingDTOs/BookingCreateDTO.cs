@@ -1,4 +1,6 @@
-﻿namespace BookingManagement.Application.DTOs.BookingDTOs
+﻿using NodaTime;
+
+namespace BookingManagement.Application.DTOs.BookingDTOs
 {
 	public record BookingCreateDTO(
 		Guid CustomerId, 
@@ -7,7 +9,7 @@
 		string City, 
 		string PostalCode,
 		string InitialDescription,
-		DateTime StartDate,
-		DateTime EndDate,
+		LocalDateTime StartDate,
+		LocalDateTime EndDate,
 		string Status = "Pending");
 }

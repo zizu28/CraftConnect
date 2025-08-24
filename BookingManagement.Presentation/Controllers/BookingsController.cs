@@ -70,26 +70,19 @@ namespace BookingManagement.Presentation.Controllers
 			return Ok(result);
 		}
 
-		[HttpPut("update-booking")]
-		public async Task<IActionResult> UpdateBookingAsync([FromBody] UpdateBookingCommand command)
+		[HttpPost("update-booking-details")]
+		public async Task<IActionResult> UpdateBookingJobDetailsAsync([FromBody] UpdateBookingDetailsCommand command)
 		{
-			if (command == null || command.BookingDTO?.BookingId == Guid.Empty)
+			if (command == null || command.BookingId == Guid.Empty)
 			{
 				return BadRequest("Invalid booking data.");
 			}
 
 			var result = await mediator.Send(command);
-
-			if (!result.IsSuccess)
+			if (string.IsNullOrWhiteSpace(result))
 			{
-				if (result.Message.Contains("modified by another user") || result.Message.Contains("Concurrency"))
-					return Conflict(result);
-				else if (result.Message.Contains("not found"))
-					return NotFound(result);
-				else
-					return BadRequest(result);
+				return NotFound($"Booking with ID {command.BookingId} not found or update failed.");
 			}
-
 			return Ok(result);
 		}
 

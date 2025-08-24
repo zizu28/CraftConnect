@@ -1,5 +1,6 @@
 ﻿using BookingManagement.Application.CQRS.Commands.BookingCommands;
 using FluentValidation;
+using NodaTime;
 
 namespace BookingManagement.Application.Validators.BookingValidators
 {
@@ -15,10 +16,11 @@ namespace BookingManagement.Application.Validators.BookingValidators
 				.Must(id => id != Guid.Empty).WithMessage("CraftmanId must be a valid GUID.");
 			RuleFor(x => x.BookingDTO.StartDate)
 				.NotEmpty().WithMessage("StartDate is required.")
-				.Must(date => date > DateTime.MinValue).WithMessage("StartDate must be a valid date and time.");
+				.Must(date => date > LocalDateTime.FromDateTime(DateTime.MinValue))
+				.WithMessage("StartDate must be a valid date and time.");
 			RuleFor(x => x.BookingDTO.EndDate)
 				.NotEmpty().WithMessage("EndDate is required.")
-				.Must(date => date > DateTime.MinValue).WithMessage("EndDate must be a valid date and time.")
+				.Must(date => date > LocalDateTime.FromDateTime(DateTime.MinValue)).WithMessage("EndDate must be a valid date and time.")
 				.GreaterThan(x => x.BookingDTO.StartDate).WithMessage("EndDate must be after StartDate.");
 			RuleFor(x => x.BookingDTO.Status)
 				.NotEmpty().WithMessage("Status is required.")

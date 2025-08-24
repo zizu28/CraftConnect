@@ -36,17 +36,7 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 								request.BookingDTO.CraftmanId,
 								new Address(request.BookingDTO.Street, request.BookingDTO.City, request.BookingDTO.PostalCode),
 								request.BookingDTO.InitialDescription,
-								new DateTimeRange(request.BookingDTO.StartDate.ToUniversalTime(), 
-								request.BookingDTO.EndDate.ToUniversalTime()));
-
-			//var isAvailableAlready = await bookingRepository.FindBy(b => 
-			//								b.CraftmanId == booking.CraftmanId &&
-			//								b.CustomerId == booking.CustomerId &&
-			//								b.Details.Description == booking.Details.Description, cancellationToken)
-			//	?? throw new InvalidOperationException(
-			//		$"Booking with Craftman ID {booking.CraftmanId} and Customer ID {booking.CustomerId} already exists.");
-
-			//await domainEventsDispatcher.DispatchAsync(booking.DomainEvents, cancellationToken);
+								request.BookingDTO.StartDate, request.BookingDTO.EndDate);
 
 			var bookingCreatedIntegrationEvent = new BookingRequestedIntegrationEvent
 			{

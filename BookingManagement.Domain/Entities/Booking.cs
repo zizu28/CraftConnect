@@ -2,7 +2,7 @@
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.IntegrationEvents;
 using Core.SharedKernel.ValueObjects;
-using System.ComponentModel.DataAnnotations;
+using NodaTime;
 using System.Text.Json.Serialization;
 
 namespace BookingManagement.Domain.Entities
@@ -15,8 +15,11 @@ namespace BookingManagement.Domain.Entities
 		public BookingStatus Status { get; private set; }
 		public Address ServiceAddress { get; private set; }
 		public JobDetails Details { get; private set; }
-		public DateTimeRange? Duration { get; private set; }
-		public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+		public uint RowVersion { get; private set; }
+		public LocalDateTime StartDate { get; private set; }
+		public LocalDateTime EndDate { get; private set; }
+		public LocalTime CreatedAt { get; private set; } = new LocalTime(
+					DateTime.UtcNow.Hour, DateTime.UtcNow.Minute, DateTime.UtcNow.Second, DateTime.UtcNow.Millisecond);
 		public List<BookingLineItem> LineItems { get; private set; } = [];
 
 		private Booking()
@@ -25,7 +28,7 @@ namespace BookingManagement.Domain.Entities
 		}
 
 		public static Booking Create(Guid customerId, Guid craftmanId, 
-			Address address, string initialDescription, DateTimeRange duration)
+			Address address, string initialDescription, LocalDateTime startDate, LocalDateTime endDate)
 		{
 			if(customerId == Guid.Empty || craftmanId == Guid.Empty || address == null)
 			{
@@ -38,18 +41,10 @@ namespace BookingManagement.Domain.Entities
 				CraftmanId = craftmanId,
 				ServiceAddress = address,
 				Status = BookingStatus.Pending,
-				CreatedAt = DateTime.UtcNow,
-				Duration = duration
+				StartDate = startDate,
+				EndDate = endDate
 			};
 			booking.Details = new JobDetails(booking.Id, initialDescription);
-			booking.AddIntegrationEvent(new BookingRequestedIntegrationEvent
-			{
-				BookingId = booking.Id,
-				CustomerId = customerId,
-				CraftspersonId = craftmanId,
-				JobDescription = initialDescription,
-				ServiceAddress = address.ToString()
-			});
 			return booking;
 		}
 
@@ -65,8 +60,6 @@ namespace BookingManagement.Domain.Entities
 			}
 			var lineItem = new BookingLineItem(Id, description, price, quantity);
 			LineItems.Add(lineItem);
-			AddIntegrationEvent(new BookingLineItemIntegrationEvent(Id, lineItem.Id, 
-				lineItem.Description, lineItem.Price, lineItem.Quantity));
 		}
 
 		public void ConfirmBooking()
@@ -80,7 +73,6 @@ namespace BookingManagement.Domain.Entities
 				throw new InvalidOperationException("Cannot confirm booking without line items.");
 			}
 			Status = BookingStatus.Confirmed;
-			AddIntegrationEvent(new BookingConfirmedIntegrationEvent(Id, CraftmanId, CustomerId, CalculateTotalPrice(), DateTime.UtcNow));
 		}
 
 		public void CompleteBooking()
@@ -90,7 +82,6 @@ namespace BookingManagement.Domain.Entities
 				throw new InvalidOperationException("Booking can only be completed if it is confirmed.");
 			}
 			Status = BookingStatus.Completed;
-			AddIntegrationEvent(new BookingCompletedIntegrationEvent(Id, CustomerId, CraftmanId, CalculateTotalPrice()));
 		}
 
 		public void CancelBooking(CancellationReason reason)
@@ -101,6 +92,23 @@ namespace BookingManagement.Domain.Entities
 			}
 			Status = BookingStatus.Cancelled;
 			AddIntegrationEvent(new BookingCancelledIntegrationEvent(Id, reason));
+		}
+
+
+		public void UpdateJobDetails(string newDescription)
+		{
+			if(Status == BookingStatus.Cancelled || Status == BookingStatus.Completed)
+			{
+				throw new InvalidOperationException("Cannot update job details of a completed or cancelled booking.");
+			}
+			if(string.IsNullOrWhiteSpace(newDescription))
+			{
+				throw new ArgumentException("Job description cannot be empty.");
+			}
+			Details = new JobDetails(Id, newDescription);
+			AddIntegrationEvent(new BookingUpdatedIntegrationEvent(Id, CustomerId, CraftmanId, StartDate,
+				EndDate, Status, CalculateTotalPrice(), new LocalDateTime(DateTime.UtcNow.Year,
+				DateTime.UtcNow.Month, DateTime.UtcNow.Day, DateTime.UtcNow.Hour, DateTime.UtcNow.Minute)));
 		}
 
 		public decimal CalculateTotalPrice()

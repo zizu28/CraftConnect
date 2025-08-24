@@ -12,13 +12,9 @@ namespace BookingManagement.Application.CQRS.Handlers.QueryHandlers.BookingQueri
 	{
 		public async Task<IEnumerable<BookingResponseDTO>> Handle(GetAllBookingQuery request, CancellationToken cancellationToken)
 		{
-			var bookings = await bookingRepository.GetAllAsync(cancellationToken);
-			if(bookings == null)
-			{
-				return [];
-			}
-			var mappedBookings = mapper.Map<IEnumerable<BookingResponseDTO>>(bookings);
-			return mappedBookings;
+			var bookings = await bookingRepository.GetAllAsync(cancellationToken)
+				?? throw new ArgumentNullException($"Could not retrieve list of bookings from database or cache.");
+			return mapper.Map<IEnumerable<BookingResponseDTO>>(bookings);
 		}
 	}
 }

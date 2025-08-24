@@ -7,6 +7,7 @@ using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
+using NodaTime.Serialization.SystemTextJson;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,11 @@ builder.AddRabbitMQClient("rabbitmq");
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+	.AddJsonOptions(opt =>
+	{
+		opt.JsonSerializerOptions.ConfigureForNodaTime(NodaTime.DateTimeZoneProviders.Tzdb);
+	});
 builder.Services.AddBookingApplicationExtensions(builder.Configuration);
 builder.Host.ConfigureSerilog();
 builder.Services.AddControllers();
