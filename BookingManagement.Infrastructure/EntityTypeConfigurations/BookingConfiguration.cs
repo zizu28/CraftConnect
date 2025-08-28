@@ -25,7 +25,9 @@ namespace BookingManagement.Infrastructure.EntityTypeConfigurations
 			});
 			builder.OwnsOne(b => b.Details, details =>
 			{
-				details.Property(d => d.Description).IsRequired().HasMaxLength(1000);
+				details.Property(d => d.Id).HasColumnName("DetailsId");
+				details.Property(details => details.BookingId).IsRequired().HasColumnName("BookingId");
+				details.Property(d => d.Description).IsRequired().HasMaxLength(1000).HasColumnName("Description");
 			});
 			
 			builder.Property(b => b.StartDate).IsRequired().HasColumnType("timestamp without timezone");

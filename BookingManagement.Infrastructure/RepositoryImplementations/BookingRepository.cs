@@ -64,8 +64,9 @@ namespace BookingManagement.Infrastructure.RepositoryImplementations
 		public Task UpdateAsync(Booking entity, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(entity);
-			dbContext.Entry(entity).State = EntityState.Modified;
-			return Task.FromResult(entity);
+			dbContext.Entry(entity).State = EntityState.Detached;
+			dbContext.Bookings.Update(entity);
+			return Task.CompletedTask;
 		}
 	}
 }

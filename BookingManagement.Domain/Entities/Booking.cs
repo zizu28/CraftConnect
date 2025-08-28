@@ -28,7 +28,7 @@ namespace BookingManagement.Domain.Entities
 		}
 
 		public static Booking Create(Guid customerId, Guid craftmanId, 
-			Address address, string initialDescription, LocalDateTime startDate, LocalDateTime endDate)
+			Address address, LocalDateTime startDate, LocalDateTime endDate)
 		{
 			if(customerId == Guid.Empty || craftmanId == Guid.Empty || address == null)
 			{
@@ -44,7 +44,6 @@ namespace BookingManagement.Domain.Entities
 				StartDate = startDate,
 				EndDate = endDate
 			};
-			booking.Details = new JobDetails(booking.Id, initialDescription);
 			return booking;
 		}
 
@@ -60,6 +59,19 @@ namespace BookingManagement.Domain.Entities
 			}
 			var lineItem = new BookingLineItem(Id, description, price, quantity);
 			LineItems.Add(lineItem);
+		}
+
+		public void AddJobDetails(string description)
+		{
+			if(Status != BookingStatus.Pending)
+			{
+				throw new InvalidOperationException("Cannot add job details to a booking that is not in a pending state.");
+			}
+			if(string.IsNullOrWhiteSpace(description))
+			{
+				throw new ArgumentException("Job description cannot be empty.");
+			}
+			Details ??= new JobDetails(Id, description);
 		}
 
 		public void ConfirmBooking()

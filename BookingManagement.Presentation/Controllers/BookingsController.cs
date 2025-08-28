@@ -70,10 +70,25 @@ namespace BookingManagement.Presentation.Controllers
 			return Ok(result);
 		}
 
-		[HttpPost("update-booking-details")]
+		[HttpPost("create-booking-details")]
+		public async Task<IActionResult> CreateBookingJobDetailsAsync([FromBody] CreateBookingDetailsCommand command)
+		{
+			if (command == null || command.JobDetails.BookingId == Guid.Empty)
+			{
+				return BadRequest("Invalid booking data.");
+			}
+			var result = await mediator.Send(command);
+			if (result == null || !result.IsSuccess)
+			{
+				return BadRequest(result?.Message ?? "Failed to create booking details.");
+			}
+			return Ok(result);
+		}
+
+		[HttpPut("update-booking-details")]
 		public async Task<IActionResult> UpdateBookingJobDetailsAsync([FromBody] UpdateBookingDetailsCommand command)
 		{
-			if (command == null || command.BookingId == Guid.Empty)
+			if (command == null || command.JobDetails.BookingId == Guid.Empty)
 			{
 				return BadRequest("Invalid booking data.");
 			}
@@ -81,7 +96,7 @@ namespace BookingManagement.Presentation.Controllers
 			var result = await mediator.Send(command);
 			if (string.IsNullOrWhiteSpace(result))
 			{
-				return NotFound($"Booking with ID {command.BookingId} not found or update failed.");
+				return NotFound($"Booking with ID {command.JobDetails.BookingId} not found or update failed.");
 			}
 			return Ok(result);
 		}

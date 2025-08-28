@@ -30,7 +30,7 @@ builder.Services.AddFluentEmailService(builder.Configuration);
 builder.Services.AddBackgroundJobs(builder.Configuration);
 builder.Services.RegisterSerilog();
 builder.Services.AddMessageBroker(builder.Configuration);
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddEntityFrameworkNpgsql().AddDbContext<ApplicationDbContext>(options =>
 	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
 	o => o.UseNodaTime()));
 //builder.Services.AddSqlServer<ApplicationDbContext>("CraftConnectDb");

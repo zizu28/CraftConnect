@@ -8,7 +8,17 @@ namespace BookingManagement.Application.Profiles
 	{
 		public JobDetailsProfile()
 		{
-			CreateMap<JobDetails, JobDetailsResponseDTO>();
+			CreateMap<JobDetailsCreateDTO, JobDetails>()
+				.ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.BookingId))
+				.ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+
+			CreateMap<JobDetailsUpdateDTO, JobDetails>()
+				.ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.BookingId))
+				.ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+
+			CreateMap<JobDetails, JobDetailsResponseDTO>()
+				.ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.BookingId))
+				.ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
 		}
 	}
 }

@@ -35,7 +35,6 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 			var booking = Booking.Create(request.BookingDTO.CustomerId,
 								request.BookingDTO.CraftmanId,
 								new Address(request.BookingDTO.Street, request.BookingDTO.City, request.BookingDTO.PostalCode),
-								request.BookingDTO.InitialDescription,
 								request.BookingDTO.StartDate, request.BookingDTO.EndDate);
 
 			var bookingCreatedIntegrationEvent = new BookingRequestedIntegrationEvent
@@ -43,7 +42,6 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 				BookingId = booking.Id,
 				CustomerId = booking.CustomerId,
 				CraftspersonId = booking.CraftmanId,
-				JobDescription = booking.Details.Description,
 				ServiceAddress = booking.ServiceAddress.ToString()
 			};
 
@@ -56,7 +54,6 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 			logger.LogInformation("Booking with ID {BookingId} successfully created.", booking.Id);
 
 			response = mapper.Map<BookingResponseDTO>(booking);
-			response.Details.Desciption = booking.Details.Description;
 			response.Message = $"Booking with ID {response.BookingId} succesfully added.";
 			response.IsSuccess = true;
 

@@ -3,8 +3,8 @@ using MediatR;
 
 namespace BookingManagement.Application.CQRS.Commands.BookingCommands
 {
-	public class UpdateBookingDetailsCommand : IRequest<string>
+	public class CreateBookingDetailsCommand : IRequest<JobDetailsResponseDTO>
 	{
-		public JobDetailsUpdateDTO JobDetails { get; set; }
+		public JobDetailsCreateDTO JobDetails { get; set; }
 	}
 }

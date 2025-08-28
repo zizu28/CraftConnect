@@ -1,50 +1,50 @@
 ﻿using AutoMapper;
 using BookingManagement.Application.Contracts;
 using BookingManagement.Application.CQRS.Commands.BookingCommands;
-using BookingManagement.Application.DTOs.BookingDTOs;
-using BookingManagement.Application.Validators.BookingValidators;
-using Core.EventServices;
+using BookingManagement.Application.Validators.JobDetailsValidators;
 using Core.Logging;
-using Core.SharedKernel.IntegrationEvents;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using NodaTime;
+using System.Data;
 
 namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCommandHandlers
 {
 	public class UpdateBookingDetailsCommandHandler(
+		//IJobDetailsRepository jobDetailsRepository,
 		IBookingRepository bookingRepository,
-		ILoggingService<UpdateBookingDetailsCommandHandler> logger,
-		IMessageBroker messageBroker) : IRequestHandler<UpdateBookingDetailsCommand, string>
+		ILoggingService<UpdateBookingDetailsCommandHandler> logger) : IRequestHandler<UpdateBookingDetailsCommand, string>
 	{
 		public async Task<string> Handle(UpdateBookingDetailsCommand request, CancellationToken cancellationToken)
 		{
-			var validator = new BookingDetailsDTOValidator();
-			var validationResult = await validator.ValidateAsync(request.BookingDetailsDTO, cancellationToken);
+			var validator = new JobDetailsUpdateDTOValidator();
+			var validationResult = await validator.ValidateAsync(request.JobDetails, cancellationToken);
 			if (!validationResult.IsValid)
 			{
 				logger.LogWarning("Failed validation of booking update entity.");
 				return $"Validation failed: {string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage))}";
 			}
 			logger.LogInformation("Booking update metadata successfully validated.");
-			var booking = await bookingRepository.GetByIdAsync(request.BookingId, cancellationToken)
-				?? throw new ApplicationException($"Booking with ID {request.BookingId} not found.");
-			
-			booking.UpdateJobDetails(request.BookingDetailsDTO.Description);
 
+			var booking = await bookingRepository.GetByIdAsync(request.JobDetails.BookingId, cancellationToken);
+			if (booking == null)
+			{
+				logger.LogWarning($"Booking with ID {request.JobDetails.BookingId} not found.");
+				return $"Booking with ID {request.JobDetails.BookingId} not found.";
+			}
+			logger.LogInformation("Booking found in the database.");
+			booking.UpdateJobDetails(request.JobDetails.Description);
 			await bookingRepository.UpdateAsync(booking, cancellationToken);
-
-			var bookingUpdatedEvent = new BookingUpdatedIntegrationEvent(booking.Id,
-				booking.CustomerId, booking.CraftmanId, booking.StartDate, booking.EndDate,
-				booking.Status, booking.CalculateTotalPrice(), new LocalDateTime(DateTime.UtcNow.Year,
-				DateTime.UtcNow.Month, DateTime.UtcNow.Day, DateTime.UtcNow.Hour, DateTime.UtcNow.Minute));
-
-			await messageBroker.PublishAsync(bookingUpdatedEvent, cancellationToken);
-			await bookingRepository.SaveChangesAsync(cancellationToken);
 			
-			booking.ClearEvents();
-			logger.LogInformation($"Booking with ID {request.BookingId} updated successfully.");
-			return booking.Id.ToString();
+
+			try
+			{
+				await bookingRepository.SaveChangesAsync(cancellationToken);
+			}
+			catch (DBConcurrencyException ex)
+			{
+				
+			}
+			logger.LogInformation("Booking details updated successfully in the database.");
+			return "Booking details updated successfully.";
 		}
 	}
 }

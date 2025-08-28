@@ -9,7 +9,6 @@ namespace Core.SharedKernel.IntegrationEvents
 		public Guid BookingId { get; set; }
 		public Guid CustomerId { get; set; }
 		public Guid CraftspersonId { get; set; }
-		public string JobDescription { get; set; }
 		public string ServiceAddress { get; set; }
 	}
 }

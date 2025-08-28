@@ -38,7 +38,7 @@ namespace BookingManagement.Application.Profiles
 				.ForPath(dest => dest.ServiceAddress.City, opt => opt.MapFrom(src => src.ServiceAddress.City))
 				.ForPath(dest => dest.ServiceAddress.Street, opt => opt.MapFrom(src => src.ServiceAddress.Street))
 				.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-				.ForPath(dest => dest.Details.Desciption, opt => opt.MapFrom(src => src.Details.Description))
+				.ForPath(dest => dest.Details.Description, opt => opt.MapFrom(src => src.Details.Description))
 				.ForMember(dest => dest.LineItems, opt => opt.MapFrom(src => src.LineItems))
 				.ForPath(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.CalculateTotalPrice()));
 		}
