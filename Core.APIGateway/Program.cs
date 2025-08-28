@@ -1,4 +1,5 @@
 using Core.Logging;
+using CraftConnect.ServiceDefaults;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
@@ -15,11 +16,9 @@ builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange
 builder.Services.AddOcelot(builder.Configuration);
 builder.Services.AddBackgroundJobs(builder.Configuration);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
-	o => o.UseNodaTime()));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 //builder.AddServiceDefaults();
-//builder.AddRabbitMQClient("rabbitmq");
 // Add services to the container.
 
 builder.Host.ConfigureSerilog();

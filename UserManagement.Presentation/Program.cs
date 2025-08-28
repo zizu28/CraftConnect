@@ -5,22 +5,17 @@ using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
-using NodaTime.Serialization.SystemTextJson;
 using UserManagement.Application.Extensions;
 using UserManagement.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
-builder.AddRabbitMQClient("rabbitmq");
+//builder.AddServiceDefaults();
+//builder.AddRabbitMQClient("rabbitmq");
 // Add services to the container.
 
 builder.Host.ConfigureSerilog();
-builder.Services.AddControllers()
-	.AddJsonOptions(opt =>
-	{
-		opt.JsonSerializerOptions.ConfigureForNodaTime(NodaTime.DateTimeZoneProviders.Tzdb);
-	});
+builder.Services.AddControllers();
 builder.Services.AddUserManagementConfiguration(builder.Configuration);
 builder.Services.AddFluentEmailService(builder.Configuration);
 //builder.Services.AddHybridCacheService(builder.Configuration);
@@ -29,8 +24,7 @@ builder.Services.RegisterSerilog();
 builder.Services.AddUserApplicationExtensions(builder.Configuration.GetSection("MediatR"));
 builder.Services.AddMessageBroker(builder.Configuration);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
-	o => o.UseNodaTime()));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 //builder.Services.AddSqlServer<ApplicationDbContext>("CraftConnectDb");
 
 var app = builder.Build();

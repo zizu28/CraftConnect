@@ -1,6 +1,5 @@
 ﻿using BookingManagement.Application.DTOs.BookingDTOs;
 using FluentValidation;
-using NodaTime;
 
 namespace BookingManagement.Application.Validators.BookingValidators
 {

@@ -165,52 +165,96 @@ namespace CraftConnect.Tests
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result);
 		}
-		//[Fact]
-		//public async Task UpdateBookingAsync_ReturnsOk_WhenBookingUpdated()
-		//{
-		//	// Arrange
-		//	_bookingsController.ModelState.Clear(); 
-		//	var updateCommand = new UpdateBookingCommand();
-		//	var response = new BookingResponseDTO
-		//	{
-		//		IsSuccess = true,
-		//		Message = "Booking updated successfully"
-		//	};
-		//	_mediatorMock.Setup(m => m.Send(It.IsAny<UpdateBookingCommand>(), default))
-		//		.ReturnsAsync(response);
 
-		//	// Act
-		//	var result = await _bookingsController.UpdateBookingAsync(updateCommand);
+		[Fact]
+		public async Task UpdateBookingAsync_ReturnsOk_WhenBookingUpdatedSuccessfully()
+		{
+			// Arrange
+			_bookingsController.ModelState.Clear();
+			var updateCommand = new UpdateBookingCommand { BookingDTO = new BookingUpdateDTO(
+				Guid.NewGuid(), "Test description", "Confirmed", "Test Street", "Test City", "Test PostalCode")};
+			var response = new BookingResponseDTO
+			{
+				IsSuccess = true,
+				Message = "Booking updated successfully",
+				BookingId = updateCommand.BookingDTO.BookingId // Match ID if relevant
+			};
+			_mediatorMock.Setup(m => m.Send(It.IsAny<UpdateBookingCommand>(), default))
+				.ReturnsAsync(response);
 
-		//	// Assert
-		//	var okResult = Assert.IsType<OkObjectResult>(result);
-		//	Assert.Equal(response, okResult.Value);
-		//}
+			// Act
+			var result = await _bookingsController.UpdateBookingAsync(updateCommand);
 
-		//[Fact]
-		//public async Task UpdateBookingAsync_ReturnsNotFound_WhenResultIsNull()
-		//{
-		//	// Arrange
-		//	var updateCommand = new UpdateBookingCommand();
-		//	_mediatorMock.Setup(m => m.Send(It.IsAny<UpdateBookingCommand>(), default))
-		//		.ReturnsAsync((BookingResponseDTO)null);
+			// Assert
+			var okResult = Assert.IsType<OkObjectResult>(result);
+			Assert.Equal(response, okResult.Value); // Or check specific properties
+		}
 
-		//	// Act
-		//	var result = await _bookingsController.UpdateBookingAsync(updateCommand);
+		[Fact]
+		public async Task UpdateBookingAsync_ReturnsNotFound_WhenHandlerReturnsNull()
+		{
+			// Arrange
+			_bookingsController.ModelState.Clear();
+			var updateCommand = new UpdateBookingCommand { BookingDTO = new BookingUpdateDTO(
+				Guid.NewGuid(), "Test description", "Confirmed", "Test Street", "Test City", "Test PostalCode")};
+			_mediatorMock.Setup(m => m.Send(It.IsAny<UpdateBookingCommand>(), default))
+				.ReturnsAsync((BookingResponseDTO)null);
 
-		//	// Assert
-		//	Assert.IsType<BadRequestObjectResult>(result);
-		//}
+			// Act
+			var result = await _bookingsController.UpdateBookingAsync(updateCommand);
 
-		//[Fact]
-		//public async Task UpdateBookingAsync_ReturnsBadRequest_WhenCommandIsNullOrIdIsEmpty()
-		//{
-		//	// Act
-		//	var result = await _bookingsController.UpdateBookingAsync(null);
+			// Assert
+			Assert.IsType<NotFoundObjectResult>(result); 
+		}
 
-		//	// Assert
-		//	Assert.IsType<BadRequestObjectResult>(result);
-		//}
+		[Fact]
+		public async Task UpdateBookingAsync_ReturnsBadRequest_WhenCommandIsNull()
+		{
+			// Act
+			var result = await _bookingsController.UpdateBookingAsync(null);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result); 
+		}
+
+		[Fact]
+		public async Task UpdateBookingAsync_ReturnsBadRequest_WhenBookingDTOIsNull()
+		{
+			// Arrange
+			var updateCommand = new UpdateBookingCommand { BookingDTO = null };
+
+			// Act
+			var result = await _bookingsController.UpdateBookingAsync(updateCommand);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result); 
+		}
+
+		[Fact]
+		public async Task UpdateBookingAsync_ReturnsBadRequest_WhenResultIsNotSuccessful()
+		{
+			// Arrange
+			_bookingsController.ModelState.Clear();
+			var updateCommand = new UpdateBookingCommand { BookingDTO = new BookingUpdateDTO(
+				Guid.NewGuid(), "Test description", "Confirmed", "Test Street", "Test City", "Test PostalCode")};
+			var response = new BookingResponseDTO
+			{
+				IsSuccess = false,
+				Message = "Update failed",
+				Errors = [ "Error 1", "Error 2" ]
+			};
+			_mediatorMock.Setup(m => m.Send(It.IsAny<UpdateBookingCommand>(), default))
+				.ReturnsAsync(response); 
+
+			// Act
+			var result = await _bookingsController.UpdateBookingAsync(updateCommand);
+
+			// Assert
+			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+			var errors = Assert.IsAssignableFrom<IEnumerable<string>>(badRequestResult.Value);
+			Assert.Contains("Error 1", errors);
+			Assert.Contains("Error 2", errors);
+		}
 
 		[Fact]
 		public async Task ConfirmBookingAsync_ReturnsOk_WhenBookingConfirmed()
@@ -322,7 +366,7 @@ namespace CraftConnect.Tests
 			var detailsQuery = "test description";
 			var bookingResponse = new BookingResponseDTO();
 			_mediatorMock.Setup(m => m.Send(It.Is<GetBookingByDetailsQuery>(q => q.Description == detailsQuery), default))
-				.ReturnsAsync(bookingResponse); 
+				.ReturnsAsync(bookingResponse);
 
 			// Act
 			var result = await _bookingsController.GetBookingByDetailsAsync(detailsQuery);
@@ -359,6 +403,22 @@ namespace CraftConnect.Tests
 
 			// Assert
 			Assert.IsType<NotFoundObjectResult>(result);
+		}
+
+		[Fact]
+		public async Task GetBookingByDetailsAsync_ReturnsBadRequest_WhenDetailsIsNullOrWhiteSpace()
+		{
+			// Arrange
+			string detailsQuery = ""; // Test with empty string
+			string detailsQuery2 = "   "; // Test with whitespace
+
+			// Act
+			var result1 = await _bookingsController.GetBookingByDetailsAsync(detailsQuery);
+			var result2 = await _bookingsController.GetBookingByDetailsAsync(detailsQuery2);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result1);
+			Assert.IsType<BadRequestObjectResult>(result2);
 		}
 	}
 }

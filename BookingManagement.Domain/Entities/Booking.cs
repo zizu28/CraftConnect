@@ -2,7 +2,7 @@
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.IntegrationEvents;
 using Core.SharedKernel.ValueObjects;
-using NodaTime;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace BookingManagement.Domain.Entities
@@ -14,12 +14,13 @@ namespace BookingManagement.Domain.Entities
 		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public BookingStatus Status { get; private set; }
 		public Address ServiceAddress { get; private set; }
-		public JobDetails Details { get; private set; }
-		public uint RowVersion { get; private set; }
-		public LocalDateTime StartDate { get; private set; }
-		public LocalDateTime EndDate { get; private set; }
-		public LocalTime CreatedAt { get; private set; } = new LocalTime(
-					DateTime.UtcNow.Hour, DateTime.UtcNow.Minute, DateTime.UtcNow.Second, DateTime.UtcNow.Millisecond);
+		public string Details { get; private set; }
+
+		[Timestamp]
+		public byte[] RowVersion { get; private set; }
+		public DateTime StartDate { get; private set; }
+		public DateTime EndDate { get; private set; }
+		public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 		public List<BookingLineItem> LineItems { get; private set; } = [];
 
 		private Booking()
@@ -28,7 +29,7 @@ namespace BookingManagement.Domain.Entities
 		}
 
 		public static Booking Create(Guid customerId, Guid craftmanId, 
-			Address address, LocalDateTime startDate, LocalDateTime endDate)
+			Address address, string details, DateTime startDate, DateTime endDate)
 		{
 			if(customerId == Guid.Empty || craftmanId == Guid.Empty || address == null)
 			{
@@ -40,6 +41,7 @@ namespace BookingManagement.Domain.Entities
 				CustomerId = customerId,
 				CraftmanId = craftmanId,
 				ServiceAddress = address,
+				Details = details,
 				Status = BookingStatus.Pending,
 				StartDate = startDate,
 				EndDate = endDate
@@ -59,19 +61,6 @@ namespace BookingManagement.Domain.Entities
 			}
 			var lineItem = new BookingLineItem(Id, description, price, quantity);
 			LineItems.Add(lineItem);
-		}
-
-		public void AddJobDetails(string description)
-		{
-			if(Status != BookingStatus.Pending)
-			{
-				throw new InvalidOperationException("Cannot add job details to a booking that is not in a pending state.");
-			}
-			if(string.IsNullOrWhiteSpace(description))
-			{
-				throw new ArgumentException("Job description cannot be empty.");
-			}
-			Details ??= new JobDetails(Id, description);
 		}
 
 		public void ConfirmBooking()
@@ -104,23 +93,6 @@ namespace BookingManagement.Domain.Entities
 			}
 			Status = BookingStatus.Cancelled;
 			AddIntegrationEvent(new BookingCancelledIntegrationEvent(Id, reason));
-		}
-
-
-		public void UpdateJobDetails(string newDescription)
-		{
-			if(Status == BookingStatus.Cancelled || Status == BookingStatus.Completed)
-			{
-				throw new InvalidOperationException("Cannot update job details of a completed or cancelled booking.");
-			}
-			if(string.IsNullOrWhiteSpace(newDescription))
-			{
-				throw new ArgumentException("Job description cannot be empty.");
-			}
-			Details = new JobDetails(Id, newDescription);
-			AddIntegrationEvent(new BookingUpdatedIntegrationEvent(Id, CustomerId, CraftmanId, StartDate,
-				EndDate, Status, CalculateTotalPrice(), new LocalDateTime(DateTime.UtcNow.Year,
-				DateTime.UtcNow.Month, DateTime.UtcNow.Day, DateTime.UtcNow.Hour, DateTime.UtcNow.Minute)));
 		}
 
 		public decimal CalculateTotalPrice()

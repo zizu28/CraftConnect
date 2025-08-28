@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.ValueObjects;
 using Core.SharedKernel.IntegrationEvents;
+using System.ComponentModel.DataAnnotations;
 
 namespace UserManagement.Domain.Entities
 {
@@ -18,6 +19,8 @@ namespace UserManagement.Domain.Entities
 		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public UserRole Role { get; set; }
 		public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+		[Timestamp]
+		public byte[] RowVersion { get; set; }
 		public List<RefreshToken> RefreshTokens { get; set; } = [];
 
 		public User() {}

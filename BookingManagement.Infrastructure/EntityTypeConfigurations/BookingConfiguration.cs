@@ -23,20 +23,12 @@ namespace BookingManagement.Infrastructure.EntityTypeConfigurations
 				sa.Property(a => a.Street).IsRequired().HasMaxLength(100).HasColumnName("Street");
 				sa.Property(a => a.PostalCode).IsRequired().HasMaxLength(5).HasColumnName("PostalCode");
 			});
-			builder.OwnsOne(b => b.Details, details =>
-			{
-				details.Property(d => d.Id).HasColumnName("DetailsId");
-				details.Property(details => details.BookingId).IsRequired().HasColumnName("BookingId");
-				details.Property(d => d.Description).IsRequired().HasMaxLength(1000).HasColumnName("Description");
-			});
-			
-			builder.Property(b => b.StartDate).IsRequired().HasColumnType("timestamp without timezone");
-			builder.Property(b => b.EndDate).IsRequired().HasColumnType("timestamp without timezone");
-			builder.Property(b => b.CreatedAt).IsRequired().HasColumnType("time without time zone");
+			builder.Property(b => b.Details).HasMaxLength(1000);
+			builder.Property(b => b.StartDate).IsRequired();
+			builder.Property(b => b.EndDate).IsRequired();
 			builder.HasMany(b => b.LineItems).WithOne().HasForeignKey(bi => bi.BookingId);
 			builder.Ignore(b => b.DomainEvents);
-			builder.Property(b => b.RowVersion).IsRowVersion()
-				.HasColumnType("xmin").ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
+			builder.Property(b => b.RowVersion).IsRowVersion().ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
 		}
 	}
 }

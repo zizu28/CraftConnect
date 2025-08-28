@@ -69,10 +69,10 @@ namespace Infrastructure.Persistence.Data
 			Console.WriteLine("Successfully retrieved connection string.");
 
 			var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-			optionsBuilder.UseNpgsql(connectionString, options =>
+			optionsBuilder.UseSqlServer(connectionString, options =>
 			{
 				options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
-				options.EnableRetryOnFailure(); // Add resilience for design-time operations
+				options.EnableRetryOnFailure();
 			});
 
 			Console.WriteLine("DbContext configured successfully.");

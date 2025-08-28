@@ -1,5 +1,5 @@
 ﻿using Hangfire;
-using Hangfire.PostgreSql;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,15 +10,20 @@ namespace Infrastructure.BackgroundJobs
 	{
 		public static IServiceCollection AddBackgroundJobs(this IServiceCollection services, IConfiguration config)
 		{
+			var hangfireConnectionString = config.GetConnectionString("HangfireConnection");
 			services.AddHangfire(configuration =>
 			{
 				configuration.SetDataCompatibilityLevel(CompatibilityLevel.Version_180);
 				configuration.UseSimpleAssemblyNameTypeSerializer();
 				configuration.UseRecommendedSerializerSettings();
-				configuration.UsePostgreSqlStorage(p =>
+				configuration.UseSqlServerStorage(hangfireConnectionString, new SqlServerStorageOptions
 				{
-					p.UseNpgsqlConnection(config.GetConnectionString("HangfireConnection"));
-				}); 
+					CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+					SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+					QueuePollInterval = TimeSpan.Zero,
+					UseRecommendedIsolationLevel = true,
+					DisableGlobalLocks = true
+				});
 			});
 
 			services.AddHangfireServer(options =>

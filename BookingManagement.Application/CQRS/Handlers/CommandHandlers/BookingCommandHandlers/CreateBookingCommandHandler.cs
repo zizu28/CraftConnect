@@ -35,7 +35,7 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 			var booking = Booking.Create(request.BookingDTO.CustomerId,
 								request.BookingDTO.CraftmanId,
 								new Address(request.BookingDTO.Street, request.BookingDTO.City, request.BookingDTO.PostalCode),
-								request.BookingDTO.StartDate, request.BookingDTO.EndDate);
+								request.BookingDTO.InitialDescription, request.BookingDTO.StartDate, request.BookingDTO.EndDate);
 
 			var bookingCreatedIntegrationEvent = new BookingRequestedIntegrationEvent
 			{

@@ -26,6 +26,7 @@ namespace UserManagement.Infrastructure.EntityTypeConfigurations
 				phone.Property(p => p.CountryCode).IsRequired().HasMaxLength(5)
 				.HasColumnName("PhoneCountryCode");
 			});
+			builder.Property(b => b.RowVersion).IsRowVersion().ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
 			builder.Property(u => u.Role).HasConversion(
 				role => role.ToString(),
 				roleString => Enum.Parse<UserRole>(roleString, true))

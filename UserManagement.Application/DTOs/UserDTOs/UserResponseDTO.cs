@@ -1,6 +1,4 @@
-﻿using NodaTime;
-
-namespace UserManagement.Application.DTOs.UserDTOs
+﻿namespace UserManagement.Application.DTOs.UserDTOs
 {
 	public class UserResponseDTO
 	{

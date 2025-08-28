@@ -46,7 +46,7 @@ namespace BookingManagement.Infrastructure.RepositoryImplementations
 			var booking = await dbContext.Bookings
 				.Include(b => b.LineItems)
 				.AsNoTracking()
-				.FirstOrDefaultAsync(b => b.Details.Description.Contains(details), cancellationToken);
+				.FirstOrDefaultAsync(b => b.Details.Contains(details), cancellationToken);
 			return booking!;
 		}
 

@@ -1,10 +1,8 @@
-﻿using NodaTime;
-
-namespace Core.SharedKernel.ValueObjects
+﻿namespace Core.SharedKernel.ValueObjects
 {
-	public record DateTimeRange(LocalDateTime Start, LocalDateTime End)
+	public record DateTimeRange(DateTime Start, DateTime End)
 	{
 		public bool IsValid => Start < End;
-		public Period Duration => Period.Between(Start, End);
+		public TimeSpan Duration => End - Start;
 	}
 }

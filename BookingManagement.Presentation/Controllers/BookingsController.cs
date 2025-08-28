@@ -70,33 +70,21 @@ namespace BookingManagement.Presentation.Controllers
 			return Ok(result);
 		}
 
-		[HttpPost("create-booking-details")]
-		public async Task<IActionResult> CreateBookingJobDetailsAsync([FromBody] CreateBookingDetailsCommand command)
+		[HttpPut("update-booking")]
+		public async Task<IActionResult> UpdateBookingAsync([FromBody] UpdateBookingCommand command)
 		{
-			if (command == null || command.JobDetails.BookingId == Guid.Empty)
+			if (command == null || command.BookingDTO == null)
 			{
-				return BadRequest("Invalid booking data.");
+				return BadRequest("Booking data cannot be null.");
 			}
 			var result = await mediator.Send(command);
-			if (result == null || !result.IsSuccess)
+			if (result == null)
 			{
-				return BadRequest(result?.Message ?? "Failed to create booking details.");
+				return NotFound($"Booking with ID {command.BookingDTO.BookingId} not found.");
 			}
-			return Ok(result);
-		}
-
-		[HttpPut("update-booking-details")]
-		public async Task<IActionResult> UpdateBookingJobDetailsAsync([FromBody] UpdateBookingDetailsCommand command)
-		{
-			if (command == null || command.JobDetails.BookingId == Guid.Empty)
+			if (!result.IsSuccess)
 			{
-				return BadRequest("Invalid booking data.");
-			}
-
-			var result = await mediator.Send(command);
-			if (string.IsNullOrWhiteSpace(result))
-			{
-				return NotFound($"Booking with ID {command.JobDetails.BookingId} not found or update failed.");
+				return BadRequest(result.Errors);
 			}
 			return Ok(result);
 		}

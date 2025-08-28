@@ -15,7 +15,7 @@ namespace UserManagement.Application.Extensions
 				mt.AddEntityFrameworkOutbox<ApplicationDbContext>(config =>
 				{
 					config.QueryDelay = TimeSpan.FromSeconds(30);
-					config.UsePostgres().UseBusOutbox();
+					config.UseSqlServer().UseBusOutbox();
 				});
 				mt.SetKebabCaseEndpointNameFormatter();
 				mt.AddConsumers(typeof(UserManagementApplicationExtensions).Assembly);

@@ -14,7 +14,10 @@ namespace BookingManagement.Application.CQRS.Handlers.QueryHandlers.BookingLineI
 		{
 			var lineItem = await lineItemRepository.GetByIdAsync(request.Id, cancellationToken)
 				?? throw new KeyNotFoundException($"Booking line item with ID {request.Id} not found.");
-			return mapper.Map<BookingLineItemResponseDTO>(lineItem);
+			var response = mapper.Map<BookingLineItemResponseDTO>(lineItem);
+			response.IsSuccess = true;
+			response.Message = "Booking line item retrieved successfully.";
+			return response;
 		}
 	}
 }

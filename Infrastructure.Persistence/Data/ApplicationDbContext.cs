@@ -3,7 +3,6 @@ using Core.SharedKernel.ValueObjects;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Domain.Entities;
-using Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime;
 
 namespace Infrastructure.Persistence.Data
 {
@@ -15,18 +14,9 @@ namespace Infrastructure.Persistence.Data
 		public DbSet<Craftman> Craftmen { get; set; }
 		public DbSet<Booking> Bookings { get; set; }
 		public DbSet<BookingLineItem> BookingLineItems { get; set; }
-		public DbSet<JobDetails> JobDetails { get; set; }
 		//public DbSet<Product> Products { get; set; }
 		//public DbSet<Category> Categories { get; set; }
 		//public DbSet<Inventory> Inventories { get; set; }
-
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		{
-			optionsBuilder.UseNpgsql(opt =>
-			{
-				opt.UseNodaTime();
-			});
-		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -45,6 +35,7 @@ namespace Infrastructure.Persistence.Data
 
 			//modelBuilder.Owned<DateTimeRange>();
 			modelBuilder.Owned<Address>();
+			modelBuilder.Owned<JobDetails>();
 
 			//modelBuilder.Owned<Image>();
 

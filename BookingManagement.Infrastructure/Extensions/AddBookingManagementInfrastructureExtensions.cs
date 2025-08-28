@@ -14,14 +14,13 @@ namespace BookingManagement.Infrastructure.Extensions
 		{
 			services.AddScoped<IBookingRepository, BookingRepository>();
 			services.AddScoped<IBookingLineItemRepository, BookingLineItemRepository>();
-			services.AddScoped<IJobDetailsRepository, JobDetailsRepository>();
 
 			services.AddMassTransit(mt =>
 			{
 				mt.AddEntityFrameworkOutbox<ApplicationDbContext>(config =>
 				{
 					config.QueryDelay = TimeSpan.FromSeconds(30);
-					config.UsePostgres().UseBusOutbox();
+					config.UseSqlServer().UseBusOutbox();
 				});
 				mt.SetKebabCaseEndpointNameFormatter();
 				mt.AddConsumers(typeof(BookingManagementApplicationExtensions).Assembly);				
