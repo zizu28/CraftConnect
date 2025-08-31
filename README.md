@@ -1,6 +1,6 @@
 # CraftConnect Modular Monolith
 
-Welcome to **CraftConnect** – a modern, modular monolith platform built with .NET 9 and C# 13! This solution is designed for scalability, maintainability, and developer happiness. Whether you're a contributor, tester, or just exploring, this README will guide you through the essentials.
+Welcome to **CraftConnect** â€“ a modern, modular monolith platform built with .NET 9 and C# 13! This solution is designed for scalability, maintainability, and developer happiness. Whether you're a contributor, tester, or just exploring, this README will guide you through the essentials.
 
 ---
 
@@ -77,7 +77,7 @@ Contains application logic, CQRS handlers, DTOs, and validators for product inve
 ---
 
 ## Build & Test
-
+[![.NET](https://github.com/zizu28/CraftConnect/actions/workflows/dotnet.yml/badge.svg)](https://github.com/zizu28/CraftConnect/actions/workflows/dotnet.yml)
 - Target Framework: **.NET 9**
 - CI/CD: GitHub Actions (`.github/workflows/dotnet.yml`)
 - Unit tests: `CraftConnect.Tests` (run automatically on push to `main`)
@@ -112,9 +112,9 @@ dotnet test CraftConnect.Tests/CraftConnect.Tests.csproj
 
 ## API Endpoints
 
-- `/users/*` – User Management
-- `/bookings/*` – Booking Management
-- `/products/*` – Product Inventory
+- `/users/*` â€“ User Management
+- `/bookings/*` â€“ Booking Management
+- `/products/*` â€“ Product Inventory
 
 Explore endpoints with Swagger or Postman for a hands-on experience!
 
