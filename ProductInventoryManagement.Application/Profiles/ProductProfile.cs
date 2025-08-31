@@ -19,13 +19,14 @@ namespace ProductInventoryManagement.Application.Profiles
 			CreateMap<ProductUpdateDTO, Product>()
 				.ForMember(dest => dest.Name, opt => opt.Condition(src => src.Name != null))
 				.ForMember(dest => dest.Description, opt => opt.Condition(src => src.Description != null))
-				.ForMember(dest => dest.Price, opt => opt.Condition(src => src.Price.HasValue))
-				.ForMember(dest => dest.CategoryId, opt => opt.Condition(src => src.CategoryId.HasValue));
+				.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+				.ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId));
 
 			CreateMap<Product, ProductResponseDTO>()
 				.ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.Id))
 				.ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.Inventory.Quantity))
-				.ForMember(dest => dest.CraftmanId, opt => opt.MapFrom(src => src.CraftmanId));
+				.ForMember(dest => dest.CraftmanId, opt => opt.MapFrom(src => src.CraftmanId))
+				.ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
 
 			CreateMap<Image, ImageResponseDTO>();
 		}

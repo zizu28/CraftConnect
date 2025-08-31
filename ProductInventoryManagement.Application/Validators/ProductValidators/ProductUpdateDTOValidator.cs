@@ -12,20 +12,16 @@ namespace ProductInventoryManagement.Application.Validators.ProductValidators
 				.When(p => p.Name != null);
 
 			RuleFor(p => p.Price)
-				.GreaterThan(0).WithMessage("Price must be a positive value.")
-				.When(p => p.Price.HasValue);
+				.GreaterThan(0).WithMessage("Price must be a positive value.");
 
 			RuleFor(p => p.CategoryId)
-				.NotEmpty().WithMessage("Category ID must not be empty.")
-				.When(p => p.CategoryId.HasValue);
+				.NotEmpty().WithMessage("Category ID must not be empty.");
 
 			RuleFor(p => p.CraftmanId)
-				.NotEmpty().WithMessage("Supplier ID must not be empty.")
-				.When(p => p.CraftmanId.HasValue);
+				.NotEmpty().WithMessage("Supplier ID must not be empty.");
 
 			RuleFor(p => p.StockQuantity)
-				.GreaterThanOrEqualTo(0).WithMessage("Stock quantity cannot be negative.")
-				.When(p => p.StockQuantity.HasValue);
+				.GreaterThanOrEqualTo(0).WithMessage("Stock quantity cannot be negative.");
 		}
 	}
 }

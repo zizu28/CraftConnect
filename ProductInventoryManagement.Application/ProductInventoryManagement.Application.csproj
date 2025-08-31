@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="CQRS\Handlers\CommandHandlers\" />
-    <Folder Include="Extensions\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="15.0.1" />
     <PackageReference Include="FluentValidation" Version="12.0.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
@@ -23,6 +18,10 @@
     <ProjectReference Include="..\Core.Logging\Core.Logging.csproj" />
     <ProjectReference Include="..\Infrastructure.BackgroundJobs\Infrastructure.BackgroundJobs.csproj" />
     <ProjectReference Include="..\ProductInventoryManagement.Domain\ProductInventoryManagement.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
 </Project>

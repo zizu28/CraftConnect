@@ -25,10 +25,6 @@ namespace ProductInventoryManagement.Application.Validators.ProductValidators
 
 			RuleFor(p => p.StockQuantity)
 				.GreaterThanOrEqualTo(0).WithMessage("Stock quantity cannot be negative.");
-
-			RuleFor(p => p.ImageUrls)
-				.Must((dto, urls) => urls.Count == dto.ImageAltTexts.Count)
-				.WithMessage("Number of image URLs must match number of alt texts.");
 		}
 	}
 }

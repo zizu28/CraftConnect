@@ -8,7 +8,5 @@
 		public required Guid CategoryId { get; set; }
 		public required Guid CraftmanId { get; set; }
 		public required int StockQuantity { get; set; }
-		public List<string> ImageUrls { get; set; } = [];
-		public List<string> ImageAltTexts { get; set; } = [];
 	}
 }

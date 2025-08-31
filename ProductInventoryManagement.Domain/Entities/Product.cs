@@ -1,5 +1,6 @@
 ﻿using Core.SharedKernel.Domain;
 using Core.SharedKernel.ValueObjects;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProductInventoryManagement.Domain.Entities
 {
@@ -10,10 +11,12 @@ namespace ProductInventoryManagement.Domain.Entities
 		public decimal Price { get; private set; }
 		public Guid CategoryId { get; private set; }
 		public Guid CraftmanId { get; private set; }
-		public Guid InventoryId { get; private set; }
 		public Inventory Inventory { get; private set; }
-		public List<Image> Images { get; private set; } = [];
+		private List<Image> _images { get; set; } = [];
+		public IReadOnlyCollection<Image> Images => _images.AsReadOnly();
 		public bool IsActive { get; private set; }
+		[Timestamp]
+		public byte[] RowVersion { get; set; }
 		public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 		public DateTime LastModified { get; private set; }
 
@@ -36,6 +39,49 @@ namespace ProductInventoryManagement.Domain.Entities
 			IsActive = true;
 			CreatedAt = DateTime.UtcNow;
 			LastModified = DateTime.UtcNow;
+		}
+
+		public static Product Create(string name, string description, decimal price, int quantity, Guid categoryId,
+			Guid craftmanId)
+		{
+			if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(description))
+			{
+				throw new ArgumentException("Name and description cannot be empty.");
+			}
+			if (price <= 0)
+			{
+				throw new ArgumentException("Price must be greater than zero.");
+			}
+			var product = new Product(name, description, price, categoryId)
+			{
+				CraftmanId = craftmanId
+			};
+			product.InitializeInventory(quantity);
+			return product;
+		}
+
+		public static Product Update(Guid productId, string name, string description, decimal price, 
+			Guid categoryId, Guid craftmanId)
+		{
+			if (productId == Guid.Empty)
+			{
+				throw new ArgumentException("Product ID cannot be empty.");
+			}
+			if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(description))
+			{
+				throw new ArgumentException("Name and description cannot be empty.");
+			}
+			if (price <= 0)
+			{
+				throw new ArgumentException("Price must be greater than zero.");
+			}
+			var product = new Product(name, description, price, categoryId)
+			{
+				Id = productId,
+				CraftmanId = craftmanId,
+				LastModified = DateTime.UtcNow
+			};
+			return product;
 		}
 
 		public void ChangeCategory(Guid newCategoryId)
@@ -127,7 +173,7 @@ namespace ProductInventoryManagement.Domain.Entities
 			{
 				throw new ArgumentNullException(nameof(image), "Image cannot be null.");
 			}
-			Images.Add(image);
+			_images.Add(image);
 			LastModified = DateTime.UtcNow;
 		}
 
@@ -137,7 +183,7 @@ namespace ProductInventoryManagement.Domain.Entities
 			{
 				throw new ArgumentNullException(nameof(image), "Image cannot be null.");
 			}
-			if (!Images.Remove(image))
+			if (!_images.Remove(image))
 			{
 				throw new InvalidOperationException("Image not found in product images.");
 			}

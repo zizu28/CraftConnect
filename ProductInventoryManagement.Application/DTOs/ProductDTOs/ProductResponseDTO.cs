@@ -10,6 +10,9 @@
 		public Guid CategoryId { get; set; }
 		public Guid CraftmanId { get; set; }
 		public bool IsActive { get; set; }
-		public List<ImageResponseDTO> Images { get; set; } = new List<ImageResponseDTO>();
+		public List<ImageResponseDTO> Images { get; set; } = [];
+		public bool IsSuccess { get; set; }
+		public string Message { get; set; } = string.Empty;
+		public List<string> Errors { get; set; } = [];
 	}
 }
