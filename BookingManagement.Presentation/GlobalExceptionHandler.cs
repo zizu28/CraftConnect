@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using UserManagement.Application.Exceptions;
 
-namespace UserManagement.Presentation
+namespace BookingManagement.Presentation
 {
 	public class GlobalExceptionHandler : IExceptionHandler
 	{
@@ -22,8 +21,6 @@ namespace UserManagement.Presentation
 					InvalidOperationException => (int)StatusCodes.Status409Conflict,
 					NotImplementedException => (int)StatusCodes.Status501NotImplemented,
 					TimeoutException => (int)StatusCodes.Status408RequestTimeout,
-					NotFoundException => (int)StatusCodes.Status404NotFound,
-					BadRequestException => (int)StatusCodes.Status400BadRequest,
 					_ => (int)StatusCodes.Status500InternalServerError
 				};
 				await httpContext.Response.WriteAsJsonAsync(new ProblemDetails

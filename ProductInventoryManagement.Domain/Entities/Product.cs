@@ -60,30 +60,6 @@ namespace ProductInventoryManagement.Domain.Entities
 			return product;
 		}
 
-		public static Product Update(Guid productId, string name, string description, decimal price, 
-			Guid categoryId, Guid craftmanId)
-		{
-			if (productId == Guid.Empty)
-			{
-				throw new ArgumentException("Product ID cannot be empty.");
-			}
-			if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(description))
-			{
-				throw new ArgumentException("Name and description cannot be empty.");
-			}
-			if (price <= 0)
-			{
-				throw new ArgumentException("Price must be greater than zero.");
-			}
-			var product = new Product(name, description, price, categoryId)
-			{
-				Id = productId,
-				CraftmanId = craftmanId,
-				LastModified = DateTime.UtcNow
-			};
-			return product;
-		}
-
 		public void ChangeCategory(Guid newCategoryId)
 		{
 			if (newCategoryId == Guid.Empty)

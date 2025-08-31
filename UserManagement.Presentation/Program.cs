@@ -7,6 +7,7 @@ using Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Application.Extensions;
 using UserManagement.Infrastructure.Extensions;
+using UserManagement.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,9 +27,11 @@ builder.Services.AddMessageBroker(builder.Configuration);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 //builder.Services.AddSqlServer<ApplicationDbContext>("CraftConnectDb");
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 var app = builder.Build();
 
+app.UseExceptionHandler(opt => { });
 app.MapDefaultEndpoints();
 app.AddHangfireDashBoard();
 // Configure the HTTP request pipeline.

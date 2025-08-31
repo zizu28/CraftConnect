@@ -37,15 +37,8 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.P
 					logger.LogWarning("Product with ID: {ProductId} not found for update.", request.ProductDTO.ProductId);
 					return response;
 				}
-				var newProduct = Product.Update(
-					request.ProductDTO.ProductId,
-					request.ProductDTO.Name,
-					request.ProductDTO.Description,
-					request.ProductDTO.Price,
-					request.ProductDTO.CategoryId,
-					request.ProductDTO.CraftmanId);
 
-				mapper.Map(newProduct, existingProduct);
+				mapper.Map(request.ProductDTO, existingProduct);
 				await productRepository.UpdateAsync(existingProduct, cancellationToken);
 				await productRepository.SaveChangesAsync(cancellationToken);
 				var productResponseDTO = mapper.Map<ProductResponseDTO>(existingProduct);
