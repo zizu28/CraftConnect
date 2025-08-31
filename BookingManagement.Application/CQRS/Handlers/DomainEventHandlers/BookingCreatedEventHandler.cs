@@ -22,13 +22,13 @@ namespace BookingManagement.Application.CQRS.Handlers.DomainEventHandlers
 				throw new InvalidOperationException($"Booking with ID {domainEvent.BookingId} already exists.");
 			}
 			var newBooking = Booking.Create(booking!.CustomerId, booking!.CraftmanId,
-				booking!.ServiceAddress, booking.Details, booking.StartDate, booking.EndDate);
+				booking!.ServiceAddress,domainEvent.Description, booking.StartDate, booking.EndDate);
 			var bookingCreatedIntegrationEvent = new BookingRequestedIntegrationEvent
 			{
 				BookingId = newBooking.Id,
 				CraftspersonId = newBooking.CraftmanId,
-				CustomerId = newBooking.CustomerId,
-				ServiceAddress = $"{newBooking.ServiceAddress.Street}, {newBooking.ServiceAddress.City}, {newBooking.ServiceAddress.PostalCode}"
+				Description = newBooking.Details.Description,
+				ServiceAddress = newBooking.ServiceAddress
 			};
 			await messageBroker.PublishAsync(bookingCreatedIntegrationEvent, cancellationToken);
 		}

@@ -10,14 +10,14 @@ namespace BookingManagement.Domain.Entities
 		private JobDetails()
 		{
 		}
-		internal JobDetails(Guid bookingId, string description)
+		public JobDetails(Guid bookingId, string description)
 		{
 			Id = Guid.NewGuid();
 			BookingId = bookingId;
 			Description = description;
 		}
 
-		internal void UpdateDescription(string description)
+		public void UpdateDescription(string description)
 		{
 			Description = description;
 		}

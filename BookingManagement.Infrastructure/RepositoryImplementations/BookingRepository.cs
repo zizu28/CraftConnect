@@ -40,13 +40,13 @@ namespace BookingManagement.Infrastructure.RepositoryImplementations
 				.ToListAsync(cancellationToken));
 		}
 
-		public async Task<Booking> GetBookingByDetails(string details, CancellationToken cancellationToken = default)
+		public async Task<Booking> GetBookingByDetails(JobDetails details, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(details);
 			var booking = await dbContext.Bookings
 				.Include(b => b.LineItems)
 				.AsNoTracking()
-				.FirstOrDefaultAsync(b => b.Details.Contains(details), cancellationToken);
+				.FirstOrDefaultAsync(b => b.Details.Id == details.Id, cancellationToken);
 			return booking!;
 		}
 

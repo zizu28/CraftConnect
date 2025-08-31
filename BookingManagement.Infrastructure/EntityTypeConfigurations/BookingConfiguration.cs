@@ -23,7 +23,11 @@ namespace BookingManagement.Infrastructure.EntityTypeConfigurations
 				sa.Property(a => a.Street).IsRequired().HasMaxLength(100).HasColumnName("Street");
 				sa.Property(a => a.PostalCode).IsRequired().HasMaxLength(5).HasColumnName("PostalCode");
 			});
-			builder.Property(b => b.Details).HasMaxLength(1000);
+			builder.OwnsOne(booking => booking.Details, jobDetails =>
+			{
+				jobDetails.Property(jd => jd.Id).IsRequired().HasColumnName("JobId");
+				jobDetails.Property(jd => jd.Description).IsRequired().HasMaxLength(1000).HasColumnName("Description");
+			});
 			builder.Property(b => b.StartDate).IsRequired();
 			builder.Property(b => b.EndDate).IsRequired();
 			builder.HasMany(b => b.LineItems).WithOne().HasForeignKey(bi => bi.BookingId);

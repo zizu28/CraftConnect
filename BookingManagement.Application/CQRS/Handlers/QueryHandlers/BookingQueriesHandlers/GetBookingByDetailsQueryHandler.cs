@@ -2,6 +2,7 @@
 using BookingManagement.Application.Contracts;
 using BookingManagement.Application.CQRS.Queries.BookingQueries;
 using BookingManagement.Application.DTOs.BookingDTOs;
+using BookingManagement.Domain.Entities;
 using MediatR;
 
 namespace BookingManagement.Application.CQRS.Handlers.QueryHandlers.BookingQueriesHandlers
@@ -12,9 +13,13 @@ namespace BookingManagement.Application.CQRS.Handlers.QueryHandlers.BookingQueri
 	{
 		public async Task<BookingResponseDTO> Handle(GetBookingByDetailsQuery request, CancellationToken cancellationToken)
 		{
-			var booking = await bookingRepository.GetBookingByDetails(request.Description, cancellationToken)
+			var details = new JobDetails(request.BookingId, request.Description);
+			var booking = await bookingRepository.GetBookingByDetails(details, cancellationToken)
 				?? throw new ApplicationException("Booking with the specified details not found.");
-			return mapper.Map<BookingResponseDTO>(booking);
+			var response = mapper.Map<BookingResponseDTO>(booking);
+			response.Message = $"Booking with ID {response.BookingId} succesfully retrieved.";
+			response.IsSuccess = true;
+			return response;
 		}
 	}
 }

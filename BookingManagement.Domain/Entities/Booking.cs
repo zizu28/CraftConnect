@@ -14,7 +14,7 @@ namespace BookingManagement.Domain.Entities
 		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public BookingStatus Status { get; private set; }
 		public Address ServiceAddress { get; private set; }
-		public string Details { get; private set; }
+		public JobDetails Details { get; private set; }
 
 		[Timestamp]
 		public byte[] RowVersion { get; private set; }
@@ -29,23 +29,23 @@ namespace BookingManagement.Domain.Entities
 		}
 
 		public static Booking Create(Guid customerId, Guid craftmanId, 
-			Address address, string details, DateTime startDate, DateTime endDate)
+			Address address, string description, DateTime startDate, DateTime endDate)
 		{
-			if(customerId == Guid.Empty || craftmanId == Guid.Empty || address == null)
+			if (customerId == Guid.Empty || craftmanId == Guid.Empty || address == null)
 			{
 				throw new ArgumentException("Invalid booking parameters.");
 			}
-			var booking = new Booking()
+			var booking = new Booking
 			{
 				Id = Guid.NewGuid(),
 				CustomerId = customerId,
 				CraftmanId = craftmanId,
 				ServiceAddress = address,
-				Details = details,
 				Status = BookingStatus.Pending,
 				StartDate = startDate,
 				EndDate = endDate
 			};
+			booking.Details = new JobDetails(booking.Id, description);
 			return booking;
 		}
 

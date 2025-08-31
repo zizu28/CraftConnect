@@ -1,4 +1,5 @@
 ﻿using Core.SharedKernel.Domain;
+using Core.SharedKernel.ValueObjects;
 
 namespace Core.SharedKernel.IntegrationEvents
 {
@@ -7,8 +8,9 @@ namespace Core.SharedKernel.IntegrationEvents
 		public Guid EventId => Guid.NewGuid();
 		public DateTime OccuredOn => DateTime.UtcNow;
 		public Guid BookingId { get; set; }
-		public Guid CustomerId { get; set; }
 		public Guid CraftspersonId { get; set; }
-		public string ServiceAddress { get; set; }
+		public Address ServiceAddress { get; set; }
+		public string Description { get; set; }
+		public GeoLocation Location { get; set; }
 	}
 }

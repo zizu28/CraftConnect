@@ -40,14 +40,16 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 			var bookingCreatedIntegrationEvent = new BookingRequestedIntegrationEvent
 			{
 				BookingId = booking.Id,
-				CustomerId = booking.CustomerId,
 				CraftspersonId = booking.CraftmanId,
-				ServiceAddress = booking.ServiceAddress.ToString()
+				ServiceAddress = booking.ServiceAddress,
+				Description = booking.Details.Description,
+				Location = new GeoLocation(request.Location.Latitude, request.Location.Longitude)
 			};
 
 			await bookingRepository.AddAsync(booking, cancellationToken);
 			await publisher.PublishAsync(bookingCreatedIntegrationEvent, cancellationToken);
-			
+			await publisher.SendAsync("booking-created-event", bookingCreatedIntegrationEvent, cancellationToken);
+
 			await bookingRepository.SaveChangesAsync(cancellationToken);
 
 			booking.ClearEvents();
