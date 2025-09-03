@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Workflow inputs"
-      if: ${{ github.event_name == "push" }}
+      if: ${{ github.event_name == 'workflow_dispatch' }}
       run: |
           echo "Homedrive is: ${{ inputs.homedrive }}"
           echo "Log level is: ${{ inputs.loglevel }}"
