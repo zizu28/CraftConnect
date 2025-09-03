@@ -22,7 +22,7 @@ on:
       environment:
         description: "Environment to run tests against"
         type: environment
-      tags:
+      tag:
         description: "Apply tag after a successful test run"
         required: true
         type: boolean
@@ -32,6 +32,13 @@ jobs:
     name: "Build CraftConnect"
     runs-on: ubuntu-latest
     steps:
+    - name: "Workflow inputs"
+      if: ${{ github.event_name == "push" }}
+      run: |
+          echo "Homedrive is: ${{ inputs.homedrive }}"
+          echo "Log level is: ${{ inputs.loglevel }}"
+          echo "Environment is: ${{ inputs.environment }}"
+          echo "Tag source: ${{ inputs.tag }}"
     - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
