@@ -14,22 +14,21 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.QueryHandlers.Pro
 	{
 		public async Task<ProductResponseDTO> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
 		{
+			var response = new ProductResponseDTO();
 			logger.LogInformation("Handling GetProductByIdQuery");
 			var product = await productRepository.GetByIdAsync(request.ProductId, cancellationToken);
 			if (product == null)
 			{
 				logger.LogWarning("Product with ID {ProductId} not found", request.ProductId);
-				return new ProductResponseDTO
-				{
-					IsSuccess = false,
-					Message = "Product not found",
-					Errors = ["Product with the specified ID does not exist."]
-				};
+				response.Message = "Product not found";
+				response.IsSuccess = false;
+				response.Errors = ["Product with the specified ID does not exist."];
+				return response;
 			}
-			var productDTO = mapper.Map<ProductResponseDTO>(product);
-			productDTO.Message = "Product retrieved successfully";
-			productDTO.IsSuccess = true;
-			return productDTO;
+			response = mapper.Map<ProductResponseDTO>(product);
+			response.Message = "Product retrieved successfully";
+			response.IsSuccess = true;
+			return response;
 		}
 	}
 }

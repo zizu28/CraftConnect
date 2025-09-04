@@ -27,4 +27,6 @@ builder.AddProject<Projects.BookingManagement_Presentation>("bookingmanagement")
 	.WithReference(rabbitmq)
 	.WaitFor(rabbitmq);
 
+builder.AddProject<Projects.ProductInventoryManagement_Presentation>("productinventorymanagement-presentation");
+
 builder.Build().Run();
