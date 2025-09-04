@@ -6,12 +6,39 @@ name: .NET
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      homedrive:
+        description: "The home drive on the machine."
+        required: true
+      loglevel:
+        description: "Log level"
+        default: "warning"
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+      environment:
+        description: "Environment to run tests against"
+        type: environment
+      tag:
+        description: "Apply tag after a successful test run"
+        required: true
+        type: boolean
 
 jobs:
   build:
     name: "Build CraftConnect"
     runs-on: ubuntu-latest
     steps:
+    - name: "Workflow inputs"
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      run: |
+          echo "Homedrive is: ${{ inputs.homedrive }}"
+          echo "Log level is: ${{ inputs.loglevel }}"
+          echo "Environment is: ${{ inputs.environment }}"
+          echo "Tag source: ${{ inputs.tag }}"
     - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
