@@ -132,3 +132,141 @@ The `ApplicationDbContext` manages the following entities:
 - **Background Jobs**: Asynchronous processing capabilities
 
 ---
+
+## API Endpoints
+
+The platform exposes RESTful APIs organized by domain modules with comprehensive CRUD operations:
+
+### User Management APIs
+```
+GET    /api/users              - Get all users with filtering and pagination
+GET    /api/users/{id}         - Get user by ID with full profile details
+POST   /api/users              - Register new user (customer or craftsperson)
+PUT    /api/users/{id}         - Update user profile information
+DELETE /api/users/{id}         - Soft delete user account
+GET    /api/users/craftsmen    - Get all verified craftspeople
+GET    /api/users/customers    - Get all active customers
+POST   /api/users/verify       - Verify craftsperson credentials
+```
+
+### Booking Management APIs
+```
+GET    /api/bookings                    - Get bookings with filters (status, date range)
+GET    /api/bookings/{id}               - Get booking details with line items
+POST   /api/bookings                    - Create new booking request
+PUT    /api/bookings/{id}               - Update booking details
+DELETE /api/bookings/{id}               - Cancel booking
+POST   /api/bookings/{id}/confirm       - Confirm booking (craftsperson action)
+POST   /api/bookings/{id}/complete      - Mark booking as completed
+GET    /api/bookings/customer/{id}      - Get customer's booking history
+GET    /api/bookings/craftsman/{id}     - Get craftsperson's bookings
+```
+
+### Product Inventory Management APIs
+```
+GET    /api/products                    - Get products with filtering and search
+GET    /api/products/{id}               - Get product details with inventory
+POST   /api/products                    - Create new product (craftsperson only)
+PUT    /api/products/{id}               - Update product information
+DELETE /api/products/{id}               - Delete product
+POST   /api/products/{id}/images        - Upload product images
+DELETE /api/products/{id}/images/{imageId} - Remove product image
+PUT    /api/products/{id}/inventory     - Update product inventory
+POST   /api/products/{id}/reserve       - Reserve product quantity
+POST   /api/products/{id}/release       - Release reserved quantity
+
+GET    /api/categories                  - Get all categories (hierarchical)
+GET    /api/categories/{id}             - Get category by ID
+POST   /api/categories                  - Create new category
+PUT    /api/categories/{id}             - Update category details
+DELETE /api/categories/{id}             - Delete category
+GET    /api/categories/{id}/products    - Get products in category
+```
+
+### Integration Events (Internal)
+```
+BookingRequestedIntegrationEvent     - Triggers user notification workflow
+BookingConfirmedIntegrationEvent     - Updates inventory and schedules
+BookingCompletedIntegrationEvent     - Processes payments and reviews
+ProductOutOfStockIntegrationEvent    - Notifies inventory management
+UserVerifiedIntegrationEvent         - Enables craftsperson features
+```
+
+### API Features
+- **Authentication**: JWT-based with refresh token support
+- **Authorization**: Role-based access control (Customer, Craftsperson, Admin)
+- **Validation**: Comprehensive input validation with detailed error responses
+- **Pagination**: Cursor-based pagination for large datasets
+- **Filtering**: Advanced filtering and search capabilities
+- **Rate Limiting**: API throttling to prevent abuse
+- **Swagger Documentation**: Interactive API documentation at `/swagger`
+
+---
+
+## Getting Started
+
+### Prerequisites
+- **.NET 9 SDK** - [Download here](https://dotnet.microsoft.com/download/dotnet/9.0)
+- **SQL Server** (Local DB, Express, or full version)
+- **Visual Studio 2022** or **VS Code** with C# extensions
+- **Git** for version control
+
+### Quick Start Guide
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/zizu28/CraftConnect.git
+   cd CraftConnect
+   ```
+
+2. **Restore Dependencies**
+   ```bash
+   dotnet restore
+   ```
+
+3. **Update Database Connection**
+   - Configure your SQL Server connection string in `appsettings.json`
+   - Ensure SQL Server is running and accessible
+
+4. **Run Database Migrations**
+   ```bash
+   dotnet ef database update --project Infrastructure.Persistence
+   ```
+
+5. **Build the Solution**
+   ```bash
+   dotnet build
+   ```
+
+6. **Run the Application**
+   ```bash
+   dotnet run --project CraftConnect.AppHost
+   ```
+
+7. **Access the Application**
+   - API: `https://localhost:5001`
+   - Swagger UI: `https://localhost:5001/swagger`
+
+### Development Workflow
+
+```bash
+# Create a new feature branch
+git checkout -b feature/your-feature-name
+
+# Make your changes and test
+dotnet test
+
+# Build and verify no errors
+dotnet build
+
+# Commit your changes
+git add .
+git commit -m "feat: add your feature description"
+
+# Push to remote
+git push origin feature/your-feature-name
+
+# Create pull request on GitHub
+```
+
+---
