@@ -13,9 +13,13 @@ namespace ProductInventoryManagement.Infrastructure.RepositoryImplementations
 			ArgumentException.ThrowIfNullOrEmpty(entity.Name, nameof(entity.Name));
 			await dbContext.Categories.AddAsync(entity, cancellationToken);
 		}
-		public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+		public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
 		{
-			throw new NotImplementedException();
+			var category = await FindBy(c => c.Id == id, cancellationToken);
+			if (category != null)
+			{
+				dbContext.Categories.Remove(category);
+			}
 		}
 		public async Task<Category> FindBy(Expression<Func<Category, bool>> predicate, CancellationToken cancellationToken = default)
 		{
@@ -31,10 +35,22 @@ namespace ProductInventoryManagement.Infrastructure.RepositoryImplementations
 		}
 		public async Task<Category> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
 		{
-			var category = await dbContext.Categories
-				.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+			var category = await FindBy(c => c.Id == id, cancellationToken);
 			return category!;
 		}
+
+		public async Task<Category> GetCategoryByNameAsync(string name, CancellationToken cancellationToken = default)
+		{
+			var categories = await GetAllAsync(cancellationToken);
+			var category = await FindBy(c => c.Name == name, cancellationToken)
+				?? throw new KeyNotFoundException($"Category with name '{name}' not found.");
+			if (categories.Count(c => c.Name == name) > 1)
+			{
+				throw new InvalidOperationException($"Multiple categories with name '{name}' found.");
+			}
+			return category;
+		}
+
 		public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
 		{
 			await dbContext.SaveChangesAsync(cancellationToken);

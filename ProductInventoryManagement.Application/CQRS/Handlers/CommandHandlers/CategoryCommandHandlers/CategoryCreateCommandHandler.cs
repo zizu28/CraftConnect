@@ -23,7 +23,7 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.C
 			{
 				response.IsSuccess = false;
 				response.Message = "Category creation failed due to validation errors.";
-				response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+				response.Errors = [.. validationResult.Errors.Select(e => e.ErrorMessage)];
 				logger.LogWarning("Category creation failed due to validation errors: {Errors}", response.Errors);
 				return response;
 			}

@@ -40,14 +40,13 @@ namespace Infrastructure.Persistence.Data
 			modelBuilder.Owned<Image>();
 			modelBuilder.Owned<Inventory>();
 
-			modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-
 			var applicationsToScan = AppDomain.CurrentDomain.GetAssemblies()
 				.Where(a => a.FullName != null && (
 						a.FullName.StartsWith("UserManagement.Infrastructure.EntityTypeConfigurations") ||
-						a.FullName.StartsWith("BookingManagement.Infrastructure.EntityTypeConfigurations") 
-						|| a.FullName.StartsWith("ProductInventoryManagement.Infrastructure.EntityTypeConfigurations")
-						));
+						a.FullName.StartsWith("BookingManagement.Infrastructure.EntityTypeConfigurations") || 
+						a.FullName.StartsWith("ProductInventoryManagement.Infrastructure.EntityTypeConfigurations")
+						)
+				);
 
 			foreach (var assembly in applicationsToScan)
 			{

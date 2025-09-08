@@ -1,8 +1,8 @@
 using Core.Logging;
-using CraftConnect.ServiceDefaults;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;

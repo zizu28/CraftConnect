@@ -38,11 +38,29 @@
         "Limit": 15
       }
     },
-    // --- Product Inventory Management Service Routes ---
+    // --- Product Inventory Management Product Service Routes ---
     {
-      "UpstreamPathTemplate": "/productinventories/{everything}",
+      "UpstreamPathTemplate": "/products/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "DownstreamPathTemplate": "/api/productinventories/{everything}",
+      "DownstreamPathTemplate": "/api/products/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7238
+        }
+      ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "30s",
+        "Limit": 15
+      }
+    },
+    // --- Product Inventory Management Categories Service Routes ---
+    {
+      "UpstreamPathTemplate": "/categories/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/categories/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {

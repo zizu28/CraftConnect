@@ -10,17 +10,11 @@ namespace UserManagement.Application.Extensions
 		public static IServiceCollection AddUserApplicationExtensions(
 			this IServiceCollection services, IConfiguration configuration)
 		{
-			services.AddMassTransit(mt =>
-			{
-				mt.AddEntityFrameworkOutbox<ApplicationDbContext>(config =>
-				{
-					config.QueryDelay = TimeSpan.FromSeconds(30);
-					config.UseSqlServer().UseBusOutbox();
-				});
-				mt.SetKebabCaseEndpointNameFormatter();
-				mt.AddConsumers(typeof(UserManagementApplicationExtensions).Assembly);
+			//services.AddMassTransit(mt =>
+			//{
+			//	mt.AddConsumersFromNamespaceContaining(typeof(UserManagementApplicationExtensions));
 
-			});
+			//});
 
 			services.AddHttpContextAccessor();
 			services.AddMediatR(config =>

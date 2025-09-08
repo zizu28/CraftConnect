@@ -12,16 +12,10 @@ namespace ProductInventoryManagement.Infrastructure.Extensions
 	{
 		public static IServiceCollection ProductInventoryManagementInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
 		{
-			services.AddMassTransit(mt =>
-			{
-				mt.AddEntityFrameworkOutbox<ApplicationDbContext>(config =>
-				{
-					config.QueryDelay = TimeSpan.FromSeconds(30);
-					config.UseSqlServer().UseBusOutbox();
-				});
-				mt.SetKebabCaseEndpointNameFormatter();
-				mt.AddConsumers(typeof(ProductInventoryManagementInfrastructureExtensions).Assembly);
-			});
+			//services.AddMassTransit(mt =>
+			//{
+			//	mt.AddConsumersFromNamespaceContaining(typeof(ProductInventoryManagementInfrastructureExtensions));
+			//});
 
 			services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseSqlServer(

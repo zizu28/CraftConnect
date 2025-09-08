@@ -29,6 +29,18 @@ namespace ProductInventoryManagement.Presentation.Controllers
 			return Ok(category);
 		}
 
+		[HttpGet("{name}")]
+		public async Task<IActionResult> GetCategoriesByNameAsync(string name, CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(name))
+			{
+				return BadRequest("Name parameter is required.");
+			}
+			var query = new GetCategoryByNameQuery { Name = name };
+			var categories = await mediator.Send(query, cancellationToken);
+			return Ok(categories);
+		}
+
 		[HttpPost]
 		public async Task<IActionResult> CreateCategoryAsync([FromBody] CategoryCreateCommand command, CancellationToken cancellationToken)
 		{
@@ -37,7 +49,7 @@ namespace ProductInventoryManagement.Presentation.Controllers
 				return BadRequest(ModelState);
 			}
 			var response = await mediator.Send(command, cancellationToken);
-			return CreatedAtAction(nameof(GetCategoryByIdAsync), new { id = response.CategoryId }, null);
+			return Ok(response);
 		}
 
 		[HttpPut("{id:guid}")]
@@ -67,8 +79,8 @@ namespace ProductInventoryManagement.Presentation.Controllers
 				return BadRequest(ModelState);
 			}
 			var command = new DeleteCategoryCommand { CategoryId = id };
-			await mediator.Send(command, cancellationToken);
-			return NoContent();
+			var isDeleted = await mediator.Send(command, cancellationToken);
+			return Ok(isDeleted);
 		}
 	}
 }
