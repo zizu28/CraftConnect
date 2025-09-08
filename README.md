@@ -83,11 +83,39 @@ dotnet run --project CraftConnect.AppHost/CraftConnect.AppHost.csproj
 
 ## API Endpoints
 
-- `/users/*` – User Management
-- `/bookings/*` – Booking Management
-- `/products/*` – Product Inventory
+The platform exposes RESTful APIs organized by domain modules:
 
-Explore endpoints with Swagger or Postman for a hands-on experience!
+### User Management
+- `GET /api/users` – Get all users
+- `GET /api/users/{id}` – Get user by ID
+- `POST /api/users` – Create new user
+- `PUT /api/users/{id}` – Update user
+- `DELETE /api/users/{id}` – Delete user
+
+### Booking Management
+- `GET /api/bookings` – Get all bookings
+- `GET /api/bookings/{id}` – Get booking by ID
+- `POST /api/bookings` – Create new booking
+- `PUT /api/bookings/{id}` – Update booking
+- `DELETE /api/bookings/{id}` – Cancel booking
+
+### Product Inventory Management
+- `GET /api/products` – Get all products
+- `GET /api/products/{id}` – Get product by ID
+- `POST /api/products` – Create new product
+- `PUT /api/products/{id}` – Update product
+- `DELETE /api/products/{id}` – Delete product
+- `GET /api/categories` – Get all categories (tested in CategoriesControllerTests)
+- `GET /api/categories/{id}` – Get category by ID
+- `POST /api/categories` – Create new category
+- `PUT /api/categories/{id}` – Update category
+- `DELETE /api/categories/{id}` – Delete category
+
+### Integration Events
+- `BookingRequestedIntegrationEvent` – Consumed by UserManagement module
+- Domain events for cross-module communication via MassTransit
+
+Explore endpoints with Swagger UI when running the application, or use Postman for API testing!
 
 ---
 
