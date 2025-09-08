@@ -6,73 +6,23 @@ Welcome to **CraftConnect** – a modern, modular monolith platform built with .
 
 ## Project Structure
 
-Below is a detailed breakdown of the main projects in the repository:
+The repository is organized into multiple projects, each responsible for a distinct domain or infrastructure concern:
 
-### Infrastructure.BackgroundJobs
-Provides background job processing capabilities for asynchronous tasks and scheduled operations.
-
-### Infrastructure.Cache
-Implements caching mechanisms to improve performance and reduce database load.
-
-### Core.SharedKernel
-Contains shared domain kernel types, base entities, and value objects used across modules.
-
-### Infrastructure.PDFGeneration
-Handles PDF generation for reports, invoices, and other document needs.
-
-### Infrastructure.EmailService
-Manages email sending, templates, and notifications for the platform.
-
-### Core.Logging
-Provides structured logging infrastructure for traceability and debugging.
-
-### Core.EventServices
-Implements event-driven communication and integration events between modules.
-
-### Infrastructure.Persistence
-Defines the database context and persistence logic for all modules.
-
-### Core.APIGateway
-Acts as the API Gateway, centralizing routing, rate limiting, and service orchestration.
-
-### UserManagement.Domain
-Defines domain models and business logic for user management.
-
-### UserManagement.Application
-Contains application logic, CQRS handlers, DTOs, and validators for user management.
-
-### UserManagement.Infrastructure
-Implements repositories and infrastructure services for user management.
-
-### UserManagement.Presentation
-Exposes user management API controllers and endpoints.
-
-### CraftConnect.AppHost
-The main application host, responsible for bootstrapping and running the platform.
-
-### CraftConnect.ServiceDefaults
-Provides default configuration and service registration for the platform.
-
-### BookingManagement.Domain
-Defines domain models and business logic for booking management.
-
-### BookingManagement.Application
-Contains application logic, CQRS handlers, DTOs, and validators for booking management.
-
-### BookingManagement.Infrastructure
-Implements repositories and infrastructure services for booking management.
-
-### BookingManagement.Presentation
-Exposes booking management API controllers and endpoints.
-
-### CraftConnect.Tests
-Contains xUnit tests for CraftConnect modules, ensuring code quality and reliability.
-
-### ProductInventoryManagement.Domain
-Defines domain models and business logic for product inventory management.
-
-### ProductInventoryManagement.Application
-Contains application logic, CQRS handlers, DTOs, and validators for product inventory management.
+- **Core.SharedKernel**: Shared domain abstractions, base entities, and value objects used across modules.
+- **Core.Logging**: Centralized logging services for traceability and debugging.
+- **Core.EventServices**: Event handling and integration event abstractions for decoupled communication.
+- **Core.APIGateway**: API gateway for routing, rate limiting, and service orchestration.
+- **UserManagement.Domain/Application/Infrastructure/Presentation**: User and craftsperson management, including domain models, application logic, repositories, and API endpoints.
+- **BookingManagement.Domain/Application/Infrastructure/Presentation**: Booking lifecycle management, including domain models, application logic, repositories, and API endpoints.
+- **ProductInventoryManagement.Domain/Application**: Product and inventory management, including domain models, business logic, and application services.
+- **Infrastructure.BackgroundJobs**: Background job processing for asynchronous and scheduled operations.
+- **Infrastructure.Cache**: Distributed caching to improve performance and reduce database load.
+- **Infrastructure.EmailService**: Email notification services and templates.
+- **Infrastructure.PDFGeneration**: PDF document generation for reports and invoices.
+- **Infrastructure.Persistence**: Data persistence and repository implementations.
+- **CraftConnect.AppHost**: Main application host and entry point for the platform.
+- **CraftConnect.ServiceDefaults**: Service configuration defaults for the platform.
+- **CraftConnect.Tests**: Unit and integration tests for all modules.
 
 ---
 
@@ -102,11 +52,15 @@ dotnet test CraftConnect.Tests/CraftConnect.Tests.csproj
 
 ## Key Concepts
 
-- **Modular Monolith**: Each business domain (Booking, User, Product Inventory) is a separate module, following Clean Architecture and DDD principles.
-- **CQRS**: Command and Query Responsibility Segregation for scalable, maintainable code.
-- **API Gateway**: Centralized routing and orchestration for all modules.
-- **Event-Driven**: Integration events for decoupled communication between modules.
-- **Validation & Logging**: Robust input validation and structured logging for reliability.
+- **Modular Monolith**: Each business domain (Booking, User Management, Product Inventory) is a separate module following Clean Architecture and Domain-Driven Design (DDD) principles. Each module has its own Domain, Application, Infrastructure, and Presentation layers.
+- **CQRS with MediatR**: Command and Query Responsibility Segregation pattern implemented using MediatR for scalable, maintainable code. Commands handle write operations while queries handle read operations.
+- **API Gateway**: Centralized routing and orchestration for all modules using Core.APIGateway project.
+- **Event-Driven Architecture**: Integration events using MassTransit for decoupled communication between modules (e.g., BookingRequestedIntegrationEventConsumer).
+- **Domain Entities**: Rich domain models like Product entity with business logic, validation, and aggregate root patterns.
+- **Repository Pattern**: Abstracted data access through IUserRepository and other repository interfaces.
+- **Background Processing**: Asynchronous task processing using Infrastructure.BackgroundJobs.
+- **Comprehensive Testing**: Unit tests using xUnit, Moq for mocking, and test coverage for controllers like CategoriesController.
+- **Validation & Logging**: Robust input validation and structured logging using Core.Logging for reliability and traceability.
 
 ---
 
