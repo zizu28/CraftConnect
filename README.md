@@ -270,3 +270,241 @@ git push origin feature/your-feature-name
 ```
 
 ---
+
+## Testing Strategy
+
+### Unit Testing Framework
+- **xUnit**: Primary testing framework for all test scenarios
+- **Moq**: Dependency mocking for isolated unit tests
+- **FluentAssertions**: Readable and comprehensive assertions
+- **Test Coverage**: Comprehensive coverage across all layers
+
+### Test Organization
+```
+CraftConnect.Tests/
+├── Controllers/           # API controller tests
+│   ├── CategoriesControllerTests.cs
+│   ├── UsersControllerTests.cs
+│   └── BookingsControllerTests.cs
+├── Domain/               # Domain logic tests
+├── Application/          # Application service tests
+├── Infrastructure/       # Repository and infrastructure tests
+└── Integration/          # End-to-end integration tests
+```
+
+### Test Patterns and Examples
+
+**Controller Testing Pattern** (from `CategoriesControllerTests`):
+```csharp
+[Fact]
+public async Task GetCategoryByIdAsync_ReturnsOkResult_WhenCategoryExists()
+{
+    // Arrange - Setup test data and mock dependencies
+    var categoryId = Guid.NewGuid();
+    var categoryResponse = new CategoryResponseDTO { CategoryId = categoryId };
+    _mediatorMock.Setup(m => m.Send(It.Is<GetCategoryByIdQuery>(q => q.Id == categoryId), 
+                      It.IsAny<CancellationToken>()))
+                 .ReturnsAsync(categoryResponse);
+
+    // Act - Execute the method under test
+    var result = await _controller.GetCategoryByIdAsync(categoryId, CancellationToken.None);
+
+    // Assert - Verify expected outcomes
+    var okResult = Assert.IsType<OkObjectResult>(result);
+    var returnValue = Assert.IsType<CategoryResponseDTO>(okResult.Value);
+    Assert.Equal(categoryId, returnValue.CategoryId);
+}
+```
+
+### Test Scenarios Covered
+- **Happy Path Scenarios**: Successful CRUD operations, valid data processing
+- **Error Handling**: Not found scenarios, validation failures, business rule violations
+- **Edge Cases**: Boundary conditions, null inputs, empty collections
+- **Concurrency**: Optimistic concurrency control with RowVersion
+- **Integration Events**: Event publishing and consumption workflows
+- **Authentication**: JWT token validation and role-based authorization
+
+### Running Tests
+```bash
+# Run all tests
+dotnet test
+
+# Run tests with detailed output
+dotnet test --verbosity normal
+
+# Run tests with coverage collection
+dotnet test --collect:"XPlat Code Coverage"
+
+# Run specific test class
+dotnet test --filter "CategoriesControllerTests"
+
+# Run tests matching pattern
+dotnet test --filter "Category"
+
+# Generate coverage report (requires coverlet)
+dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults
+```
+
+---
+
+## Project Structure Deep Dive
+
+### Clean Architecture Layers
+
+```
+src/
+├── Core/                           # Shared kernel and cross-cutting concerns
+│   ├── Core.SharedKernel/         # Domain base classes, value objects
+│   ├── Core.Logging/              # Structured logging abstraction
+│   ├── Core.EventServices/        # Event handling infrastructure
+│   └── Core.APIGateway/           # API gateway and routing
+│
+├── Infrastructure/                 # External concerns and cross-cutting infrastructure
+│   ├── Infrastructure.Persistence/      # Database context and configurations
+│   ├── Infrastructure.Cache/           # Distributed caching implementation
+│   ├── Infrastructure.BackgroundJobs/  # Hangfire/Quartz job processing
+│   ├── Infrastructure.EmailService/    # SMTP and email templating
+│   └── Infrastructure.PDFGeneration/   # PDF creation and manipulation
+│
+├── Modules/                        # Business domain modules (bounded contexts)
+│   ├── UserManagement/
+│   │   ├── UserManagement.Domain/        # Entities, value objects, domain services
+│   │   ├── UserManagement.Application/   # CQRS, DTOs, validators, app services
+│   │   ├── UserManagement.Infrastructure/ # Repositories, external service adapters
+│   │   └── UserManagement.Presentation/  # Controllers, SignalR hubs, API contracts
+│   │
+│   ├── BookingManagement/          # Booking lifecycle and workflow management
+│   └── ProductInventoryManagement/ # Product catalog and inventory control
+│
+├── Host/                          # Application composition root
+│   ├── CraftConnect.AppHost/      # Main application startup and configuration
+│   └── CraftConnect.ServiceDefaults/ # Shared service registrations
+│
+└── Tests/
+    └── CraftConnect.Tests/        # Unit, integration, and end-to-end tests
+```
+
+### Domain Model Relationships
+
+```
+User (Abstract Base)
+├── Customer
+│   ├── UserAddress (Value Object)
+│   └── PaymentMethod (Enum)
+└── Craftman
+    ├── Skills[] (Value Object Collection)
+    ├── HourlyRate (Money Value Object)
+    └── VerificationStatus (Enum)
+
+Booking (Aggregate Root)
+├── BookingLineItems[]
+├── Address (Value Object)
+├── JobDetails (Value Object)
+└── BookingStatus (Enum)
+
+Product (Aggregate Root)
+├── Category (Reference)
+├── Inventory (Value Object)
+├── Images[] (Value Object Collection)
+└── Craftman (Reference)
+```
+
+---
+
+## Configuration and Deployment
+
+### Environment Configuration
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=CraftConnectDb;Trusted_Connection=true"
+  },
+  "JwtSettings": {
+    "Secret": "your-secret-key",
+    "ExpiryInHours": 24,
+    "RefreshTokenExpiryInDays": 30
+  },
+  "MassTransit": {
+    "ConnectionString": "your-message-broker-connection"
+  },
+  "EmailSettings": {
+    "SmtpServer": "smtp.your-provider.com",
+    "SmtpPort": 587,
+    "EnableSsl": true
+  }
+}
+```
+
+### Docker Support
+```dockerfile
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+COPY ["CraftConnect.AppHost/CraftConnect.AppHost.csproj", "CraftConnect.AppHost/"]
+RUN dotnet restore "CraftConnect.AppHost/CraftConnect.AppHost.csproj"
+COPY . .
+WORKDIR "/src/CraftConnect.AppHost"
+RUN dotnet build "CraftConnect.AppHost.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "CraftConnect.AppHost.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "CraftConnect.AppHost.dll"]
+```
+
+---
+
+## Contributing
+
+We welcome contributions from the community! Please follow these guidelines:
+
+### Development Guidelines
+1. **Fork the repository** and create a feature branch
+2. **Follow C# coding conventions** and maintain consistency
+3. **Write unit tests** for new functionality
+4. **Update documentation** for API changes
+5. **Ensure all tests pass** before submitting PR
+
+### Code Quality Standards
+- **Clean Code**: Follow SOLID principles and clean code practices
+- **Domain-Driven Design**: Maintain rich domain models and business logic in domain layer
+- **CQRS Pattern**: Separate commands and queries appropriately
+- **Error Handling**: Implement comprehensive error handling and logging
+- **Performance**: Consider performance implications and optimization opportunities
+
+### Pull Request Process
+1. Ensure your branch is up to date with main
+2. Run all tests and ensure they pass
+3. Update README.md if needed for new features
+4. Submit PR with clear description and test evidence
+5. Address feedback promptly during code review
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## Support and Documentation
+
+- **GitHub Issues**: Report bugs and request features
+- **GitHub Discussions**: Community discussions and Q&A
+- **API Documentation**: Available at `/swagger` when running the application
+- **Architecture Documentation**: See `/docs` folder for detailed design documents
+
+### Contact Information
+- **Repository**: [https://github.com/zizu28/CraftConnect](https://github.com/zizu28/CraftConnect)
+- **Maintainer**: [@zizu28](https://github.com/zizu28)
+
+---
+
+**Happy Coding with CraftConnect! 🚀**
