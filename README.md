@@ -139,3 +139,53 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Need Help?
 
 Open an issue or contact the maintainers. Happy coding!
+
+---
+
+## Testing Strategy
+
+The project implements comprehensive testing strategies to ensure code quality and reliability:
+
+### Unit Testing
+- **Framework**: xUnit with Moq for mocking dependencies
+- **Coverage**: Controller tests, domain logic, and application services
+- **Example**: `CategoriesControllerTests` with scenarios for CRUD operations
+- **Patterns**: Arrange-Act-Assert (AAA) pattern for clear test structure
+
+### Test Scenarios Covered
+- **Happy Path**: Successful operations (e.g., GetAllCategoriesAsync returns OK)
+- **Error Handling**: Not found scenarios, validation errors, model state validation
+- **Edge Cases**: ID mismatches, null responses, invalid inputs
+- **Async Operations**: All tests use async/await patterns with CancellationToken
+
+### Test Structure Example
+```csharp
+[Fact]
+public async Task GetCategoryByIdAsync_ReturnsOkResult_WhenCategoryExists()
+{
+    // Arrange - Setup test data and mocks
+    var categoryId = Guid.NewGuid();
+    var categoryResponse = new CategoryResponseDTO { CategoryId = categoryId };
+    _mediatorMock.Setup(m => m.Send(It.Is<GetCategoryByIdQuery>(q => q.Id == categoryId), It.IsAny<CancellationToken>()))
+                 .ReturnsAsync(categoryResponse);
+
+    // Act - Execute the method under test
+    var result = await _controller.GetCategoryByIdAsync(categoryId, CancellationToken.None);
+
+    // Assert - Verify the expected outcome
+    var okResult = Assert.IsType<OkObjectResult>(result);
+    var returnValue = Assert.IsType<CategoryResponseDTO>(okResult.Value);
+    Assert.Equal(categoryId, returnValue.CategoryId);
+}
+```
+
+### Running Tests
+```sh
+# Run all tests
+dotnet test
+
+# Run tests with coverage
+dotnet test --collect:"XPlat Code Coverage"
+
+# Run specific test class
+dotnet test --filter "CategoriesControllerTests"
