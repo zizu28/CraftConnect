@@ -92,3 +92,43 @@ The `ApplicationDbContext` manages the following entities:
 - **Event Sourcing**: Domain event handling and integration events
 
 ---
+
+## Technology Stack
+
+### Framework & Language
+- **.NET 9**: Latest .NET framework with performance improvements and new features
+- **C# 13**: Modern C# with collection expressions, primary constructors, and enhanced pattern matching
+- **Entity Framework Core**: ORM for database operations with Code First approach
+- **ASP.NET Core**: Web API framework with minimal APIs and controllers
+
+### Architecture Patterns
+- **Clean Architecture**: Separation of concerns with clear layer boundaries
+- **Domain-Driven Design (DDD)**: Rich domain models and aggregate roots
+- **CQRS with MediatR**: Command and Query separation for scalable operations
+- **Repository Pattern**: Abstracted data access layer
+- **Event-Driven Architecture**: Decoupled communication via domain and integration events
+
+### Messaging & Communication
+- **MassTransit**: Message bus for reliable message handling and event processing
+- **Integration Events**: Cross-module communication (e.g., BookingRequestedIntegrationEvent)
+- **Inbox/Outbox Pattern**: Message reliability and transactional messaging
+
+### Data & Persistence
+- **SQL Server**: Primary database (configurable via connection strings)
+- **Entity Type Configurations**: Modular entity configuration per domain
+- **Value Objects**: Owned entity types for complex value objects
+- **Optimistic Concurrency**: RowVersion/Timestamp for conflict resolution
+
+### Testing Framework
+- **xUnit**: Unit testing framework with comprehensive test coverage
+- **Moq**: Mocking framework for dependency isolation
+- **Arrange-Act-Assert Pattern**: Consistent test structure
+- **Integration Tests**: End-to-end testing capabilities
+
+### DevOps & Quality
+- **GitHub Actions**: CI/CD pipeline for automated builds and tests
+- **Swagger/OpenAPI**: API documentation and testing interface
+- **Structured Logging**: Comprehensive logging with Core.Logging
+- **Background Jobs**: Asynchronous processing capabilities
+
+---
