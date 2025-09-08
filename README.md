@@ -28,24 +28,41 @@ The repository is organized into multiple projects, each responsible for a disti
 
 ## Build & Test
 [![.NET](https://github.com/zizu28/CraftConnect/actions/workflows/dotnet.yml/badge.svg)](https://github.com/zizu28/CraftConnect/actions/workflows/dotnet.yml)
-- Target Framework: **.NET 9**
-- CI/CD: GitHub Actions (`.github/workflows/dotnet.yml`)
-- Unit tests: `CraftConnect.Tests` (run automatically on push to `main`)
 
-### Quickstart
+### Technologies & Framework
+- **Target Framework**: .NET 9
+- **Language**: C# 13 with latest language features
+- **Testing Framework**: xUnit with Moq for mocking
+- **Architecture**: Clean Architecture with CQRS pattern
+- **Messaging**: MassTransit for event-driven communication
+- **ORM**: Entity Framework Core for data persistence
+- **DI Container**: Built-in .NET dependency injection
+
+### CI/CD Pipeline
+- Automated builds and tests via GitHub Actions (`.github/workflows/dotnet.yml`)
+- Unit tests run automatically on push to `main` branch
+- Test coverage includes controller tests (e.g., CategoriesControllerTests)
+
+### Development Commands
 
 ```sh
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/zizu28/CraftConnect.git
 
 # Restore dependencies
 dotnet restore
 
-# Build the solution
+# Build the entire solution
 dotnet build
 
-# Run tests
+# Run all tests
+dotnet test
+
+# Run tests for specific project
 dotnet test CraftConnect.Tests/CraftConnect.Tests.csproj
+
+# Run the application
+dotnet run --project CraftConnect.AppHost/CraftConnect.AppHost.csproj
 ```
 
 ---
