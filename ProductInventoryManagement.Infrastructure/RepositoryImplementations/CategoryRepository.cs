@@ -11,6 +11,12 @@ namespace ProductInventoryManagement.Infrastructure.RepositoryImplementations
 		public async Task AddAsync(Category entity, CancellationToken cancellationToken = default)
 		{
 			ArgumentException.ThrowIfNullOrEmpty(entity.Name, nameof(entity.Name));
+			var categories = await GetAllAsync(cancellationToken);
+			var existingCategory = categories.Any(c => c.Name == entity.Name);
+			if (existingCategory)
+			{
+				throw new ApplicationException($"Category with name {entity.Name} already exists");
+			}
 			await dbContext.Categories.AddAsync(entity, cancellationToken);
 		}
 		public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
@@ -41,13 +47,8 @@ namespace ProductInventoryManagement.Infrastructure.RepositoryImplementations
 
 		public async Task<Category> GetCategoryByNameAsync(string name, CancellationToken cancellationToken = default)
 		{
-			var categories = await GetAllAsync(cancellationToken);
 			var category = await FindBy(c => c.Name == name, cancellationToken)
-				?? throw new KeyNotFoundException($"Category with name '{name}' not found.");
-			if (categories.Count(c => c.Name == name) > 1)
-			{
-				throw new InvalidOperationException($"Multiple categories with name '{name}' found.");
-			}
+				?? throw new ArgumentException($"Category with name {name} not found");
 			return category;
 		}
 
