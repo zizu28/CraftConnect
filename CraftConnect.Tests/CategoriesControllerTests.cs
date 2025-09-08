@@ -69,7 +69,7 @@ namespace CraftConnect.Tests
 		}
 
 		[Fact]
-		public async Task CreateCategoryAsync_ReturnsCreatedAtActionResult_WhenCategoryIsCreated()
+		public async Task CreateCategoryAsync_ReturnsOk_WhenCategoryIsCreated()
 		{
 			// Arrange
 			var command = new CategoryCreateCommand();
@@ -81,11 +81,8 @@ namespace CraftConnect.Tests
 			var result = await _controller.CreateCategoryAsync(command, CancellationToken.None);
 
 			// Assert
-			var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-			Assert.Equal(nameof(CategoriesController.GetCategoryByIdAsync), createdAtActionResult.ActionName);
-			Assert.Equal(categoryResponse.CategoryId, createdAtActionResult.RouteValues["id"]);
-			// The controller passes 'null' as the value to CreatedAtAction, so we check for null
-			Assert.Null(createdAtActionResult.Value);
+			var createdAtActionResult = Assert.IsType<OkObjectResult>(result);
+			Assert.IsAssignableFrom<CategoryResponseDTO>(createdAtActionResult.Value);
 		}
 
 		[Fact]
@@ -173,7 +170,7 @@ namespace CraftConnect.Tests
 		}
 
 		[Fact]
-		public async Task DeleteCategoryAsync_ReturnsNoContent_WhenCategoryIsDeleted()
+		public async Task DeleteCategoryAsync_ReturnsOk_WhenCategoryIsDeleted()
 		{
 			// Arrange
 			var categoryId = Guid.NewGuid();
@@ -184,7 +181,7 @@ namespace CraftConnect.Tests
 			var result = await _controller.DeleteCategoryAsync(categoryId, CancellationToken.None);
 
 			// Assert
-			Assert.IsType<NoContentResult>(result);
+			Assert.IsType<OkObjectResult>(result);
 		}
 
 		[Fact]
