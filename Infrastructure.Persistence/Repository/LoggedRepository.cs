@@ -7,15 +7,11 @@ using System.Linq.Expressions;
 
 namespace Infrastructure.Persistence.Repository
 {
-	public abstract class LoggedRepository<T> : BaseRepository<T> where T : class
+	public abstract class LoggedRepository<T>(
+		ApplicationDbContext dbContext, 
+		ILoggingService<LoggedRepository<T>> logger) : BaseRepository<T>(dbContext) where T : class
 	{
-		private readonly ILoggingService<LoggedRepository<T>> _logger;
-
-		protected LoggedRepository(ApplicationDbContext dbContext, ILoggingService<LoggedRepository<T>> logger) 
-			: base(dbContext)
-		{
-			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
-		}
+		private readonly ILoggingService<LoggedRepository<T>> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
 		public override async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
 		{

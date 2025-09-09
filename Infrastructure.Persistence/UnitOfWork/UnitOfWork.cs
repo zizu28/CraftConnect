@@ -11,15 +11,10 @@ namespace Infrastructure.Persistence.UnitOfWork
 		Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
 	}
 
-	public class UnitOfWork : IUnitOfWork
+	public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
 	{
-		private readonly ApplicationDbContext _context;
+		private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 		private IDbContextTransaction? _transaction;
-
-		public UnitOfWork(ApplicationDbContext context)
-		{
-			_context = context ?? throw new ArgumentNullException(nameof(context));
-		}
 
 		public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 		{

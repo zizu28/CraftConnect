@@ -7,12 +7,8 @@ using System.Linq.Expressions;
 
 namespace ProductInventoryManagement.Infrastructure.RepositoryImplementations
 {
-	public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
+	public class CategoryRepository(ApplicationDbContext dbContext) : BaseRepository<Category>(dbContext), ICategoryRepository
 	{
-		public CategoryRepository(ApplicationDbContext dbContext) : base(dbContext)
-		{
-		}
-
 		public override async Task AddAsync(Category entity, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(entity);
