@@ -1,4 +1,5 @@
 ﻿using Core.Logging;
+using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
 using ProductInventoryManagement.Application.CQRS.Commands.ProductCommands;
@@ -7,7 +8,8 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.P
 {
 	public class DeleteProductCommandHandler(
 		IProductRepository productRepository,
-		ILoggingService<DeleteProductCommandHandler> logger) : IRequestHandler<DeleteProductCommand, bool>
+		ILoggingService<DeleteProductCommandHandler> logger,
+		IUnitOfWork unitOfWork) : IRequestHandler<DeleteProductCommand, bool>
 	{
 		public async Task<bool> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
 		{
@@ -19,8 +21,10 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.P
 					logger.LogWarning("Product with ID: {ProductId} not found for deletion.", request.ProductId);
 					return false;
 				}
-				await productRepository.DeleteAsync(existingProduct.Id, cancellationToken);
-				await productRepository.SaveChangesAsync(cancellationToken);
+				await unitOfWork.ExecuteInTransactionAsync(async () =>
+				{
+					await productRepository.DeleteAsync(existingProduct.Id, cancellationToken);
+				}, cancellationToken);
 				logger.LogInformation("Product deleted successfully with ID: {ProductId}", existingProduct.Id);
 			}
 			catch (Exception ex)

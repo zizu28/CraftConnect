@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core.Logging;
+using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
 using ProductInventoryManagement.Application.CQRS.Commands.ProductCommands;
@@ -12,7 +13,8 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.P
 	public class UpdateProductCommandHandler(
 		IProductRepository productRepository,
 		IMapper mapper,
-		ILoggingService<UpdateProductCommandHandler> logger) : IRequestHandler<UpdateProductCommand, ProductResponseDTO>
+		ILoggingService<UpdateProductCommandHandler> logger,
+		IUnitOfWork unitOfWork) : IRequestHandler<UpdateProductCommand, ProductResponseDTO>
 	{
 		public async Task<ProductResponseDTO> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
 		{
@@ -39,8 +41,10 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.P
 				}
 
 				mapper.Map(request.ProductDTO, existingProduct);
-				await productRepository.UpdateAsync(existingProduct, cancellationToken);
-				await productRepository.SaveChangesAsync(cancellationToken);
+				await unitOfWork.ExecuteInTransactionAsync(async () =>
+				{
+					await productRepository.UpdateAsync(existingProduct, cancellationToken);
+				}, cancellationToken);
 				var productResponseDTO = mapper.Map<ProductResponseDTO>(existingProduct);
 				response = productResponseDTO;
 				response.IsSuccess = true;

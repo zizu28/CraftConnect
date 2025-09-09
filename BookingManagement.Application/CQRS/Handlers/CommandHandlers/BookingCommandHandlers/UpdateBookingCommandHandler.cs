@@ -4,6 +4,7 @@ using BookingManagement.Application.CQRS.Commands.BookingCommands;
 using BookingManagement.Application.DTOs.BookingDTOs;
 using BookingManagement.Application.Validators.BookingValidators;
 using Core.Logging;
+using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 
 namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCommandHandlers
@@ -11,7 +12,8 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 	public class UpdateBookingCommandHandler(
 		IBookingRepository bookingRepository,
 		ILoggingService<UpdateBookingCommandHandler> logger,
-		IMapper mapper) : IRequestHandler<UpdateBookingCommand, BookingResponseDTO>
+		IMapper mapper,
+		IUnitOfWork unitOfWork) : IRequestHandler<UpdateBookingCommand, BookingResponseDTO>
 	{
 		public async Task<BookingResponseDTO> Handle(UpdateBookingCommand request, CancellationToken cancellationToken)
 		{
@@ -22,19 +24,22 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 			{
 				response.IsSuccess = false;
 				response.Message = "Validation failed.";
-				response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+				response.Errors = [.. validationResult.Errors.Select(e => e.ErrorMessage)];
 				return response;
 			}
-			var booking = await bookingRepository.GetByIdAsync(request.BookingDTO.BookingId, cancellationToken)
+			await unitOfWork.ExecuteInTransactionAsync(async () =>
+			{
+				var booking = await bookingRepository.GetByIdAsync(request.BookingDTO.BookingId, cancellationToken)
 				?? throw new KeyNotFoundException($"Booking with ID {request.BookingDTO.BookingId} not found.");
-			mapper.Map(request.BookingDTO, booking);
-			await bookingRepository.UpdateAsync(booking, cancellationToken);
-			await bookingRepository.SaveChangesAsync(cancellationToken);
+				mapper.Map(request.BookingDTO, booking);
+				await bookingRepository.UpdateAsync(booking, cancellationToken);
 
-			logger.LogInformation($"Booking with ID {booking.Id} updated successfully.");
-			response = mapper.Map<BookingResponseDTO>(booking);
-			response.IsSuccess = true;
-			response.Message = "Booking updated successfully.";
+				logger.LogInformation($"Booking with ID {booking.Id} updated successfully.");
+				response = mapper.Map<BookingResponseDTO>(booking);
+				response.IsSuccess = true;
+				response.Message = "Booking updated successfully.";
+			}, cancellationToken);
+			
 			return response;
 		}
 	}

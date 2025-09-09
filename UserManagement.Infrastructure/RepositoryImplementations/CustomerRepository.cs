@@ -22,6 +22,11 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			dbContext.Customers.Remove(customer);
 		}
 
+		public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
+		{
+			return await dbContext.Customers.AnyAsync(c => c.Id == id, cancellationToken);
+		}
+
 		public async Task<Customer> FindBy(Expression<Func<Customer, bool>> predicate, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(predicate);

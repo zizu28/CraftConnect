@@ -4,6 +4,7 @@ using Core.Logging;
 using Core.SharedKernel.IntegrationEvents;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
+using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
@@ -18,8 +19,8 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 		ILoggingService<RegisterUserCommandHandler> logger, 
 		IUserRepository user,
 		IMessageBroker eventBus, 
-		IBackgroundJobService backgroundJob)
-		: IRequestHandler<RegisterUserCommand, UserResponseDTO>
+		IBackgroundJobService backgroundJob,
+		IUnitOfWork unitOfWork) : IRequestHandler<RegisterUserCommand, UserResponseDTO>
 	{
 		public async Task<UserResponseDTO> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
 		{
@@ -36,38 +37,38 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 					userResponse.Message = "User with this email already exists.";
 					return userResponse;
 				}
-				logger.LogInformation("Creating new user with email {Email}.", request.User!.Email);
-				request.User!.Password = BCrypt.Net.BCrypt.HashPassword(
-					request.User.Password!, 
-					salt: BCrypt.Net.BCrypt.GenerateSalt(12));
+				await unitOfWork.ExecuteInTransactionAsync(async () =>
+				{
+					logger.LogInformation("Creating new user with email {Email}.", request.User!.Email);
+					request.User!.Password = BCrypt.Net.BCrypt.HashPassword(
+						request.User.Password!,
+						salt: BCrypt.Net.BCrypt.GenerateSalt(12));
 
-				var newUser = mapper.Map<User>(request.User);
-				newUser.PasswordHash = request.User.Password;
+					var newUser = mapper.Map<User>(request.User);
+					newUser.PasswordHash = request.User.Password;
 
-				await user.AddAsync(newUser, cancellationToken);
-				var userRegisteredEvent = new UserRegisteredIntegrationEvent(newUser.Id, newUser.Email, newUser.Role);
-				await eventBus.PublishAsync(userRegisteredEvent, cancellationToken);
+					await user.AddAsync(newUser, cancellationToken);
+					var userRegisteredEvent = new UserRegisteredIntegrationEvent(newUser.Id, newUser.Email, newUser.Role);
+					await eventBus.PublishAsync(userRegisteredEvent, cancellationToken);
 
-				await user.SaveChangesAsync(cancellationToken);
+					backgroundJob.Enqueue<IGmailService>(
+						"default",
+						email => email.SendEmailAsync(
+							newUser.Email.Address,
+							$"Welcome {newUser.FirstName}",
+							$"A welcome message to {newUser.FirstName} using Asp.Nt Core.",
+							false,
+							CancellationToken.None
+						)
+					);
 
-				backgroundJob.Enqueue<IGmailService>(
-					"default",
-					email => email.SendEmailAsync(
-						newUser.Email.Address,
-						$"Welcome {newUser.FirstName}",
-						$"A welcome message to {newUser.FirstName} using Asp.Nt Core.",
-						false,
-						CancellationToken.None
-					)
-				);			
-
-				userResponse.UserId = newUser.Id;
-				userResponse.Email = newUser.Email.Address;
-				userResponse.PhoneNumber = newUser.Phone.Number;
-				userResponse.Role = newUser.Role.ToString();
-				userResponse.CreatedAt = DateTime.UtcNow;
-				userResponse.Message = "User registration successful.";
-				//await cacheService.SetAsync($"user:{userResponse.UserId}", userResponse, cancellationToken);
+					userResponse.UserId = newUser.Id;
+					userResponse.Email = newUser.Email.Address;
+					userResponse.PhoneNumber = newUser.Phone.Number;
+					userResponse.Role = newUser.Role.ToString();
+					userResponse.CreatedAt = DateTime.UtcNow;
+					userResponse.Message = "User registration successful.";
+				}, cancellationToken);
 				return userResponse;
 			}
 			

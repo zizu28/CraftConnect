@@ -4,6 +4,7 @@ using Core.Logging;
 using Core.SharedKernel.IntegrationEvents;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
+using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
 using ProductInventoryManagement.Application.CQRS.Commands.ProductCommands;
@@ -18,7 +19,8 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.P
 		IMapper mapper,
 		ILoggingService<ProductCreateCommandHandler> logger,
 		IBackgroundJobService backgroundJob,
-		IMessageBroker messageBroker) : IRequestHandler<CreateProductCommand, ProductResponseDTO>
+		IMessageBroker messageBroker,
+		IUnitOfWork unitOfWork) : IRequestHandler<CreateProductCommand, ProductResponseDTO>
 	{
 		public async Task<ProductResponseDTO> Handle(CreateProductCommand request, CancellationToken cancellationToken)
 		{
@@ -42,19 +44,21 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.P
 					request.ProductDTO.StockQuantity,
 					request.ProductDTO.CategoryId,
 					request.ProductDTO.CraftmanId);
-
-				await productRepository.AddAsync(productEntity, cancellationToken);
-				await messageBroker.PublishAsync(new ProductCreatedIntegrationEvent
+				await unitOfWork.ExecuteInTransactionAsync(async () =>
 				{
-					ProductId = response.ProductId,
-					ProductName = response.Name,
-					CategoryId = response.CategoryId,
-					CraftmanId = response.CraftmanId,
-					Price = response.Price,
-					StockQuantity = response.StockQuantity,
-					IsActive = response.IsActive
+					await productRepository.AddAsync(productEntity, cancellationToken);
+					await messageBroker.PublishAsync(new ProductCreatedIntegrationEvent
+					{
+						ProductId = response.ProductId,
+						ProductName = response.Name,
+						CategoryId = response.CategoryId,
+						CraftmanId = response.CraftmanId,
+						Price = response.Price,
+						StockQuantity = response.StockQuantity,
+						IsActive = response.IsActive
+					}, cancellationToken);
 				}, cancellationToken);
-				await productRepository.SaveChangesAsync(cancellationToken);
+				
 				var productResponseDTO = mapper.Map<ProductResponseDTO>(productEntity);
 				response.IsSuccess = true;
 				response.Message = "Product created successfully.";

@@ -21,6 +21,11 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			dbContext.Craftmen.Remove(craftman);
 		}
 
+		public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
+		{
+			return await dbContext.Craftmen.AnyAsync(c => c.Id == id, cancellationToken);
+		}
+
 		public async Task<Craftman> FindBy(Expression<Func<Craftman, bool>> predicate, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(predicate);

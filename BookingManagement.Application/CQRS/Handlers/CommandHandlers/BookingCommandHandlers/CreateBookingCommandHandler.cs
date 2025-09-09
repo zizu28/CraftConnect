@@ -8,6 +8,7 @@ using Core.EventServices;
 using Core.Logging;
 using Core.SharedKernel.IntegrationEvents;
 using Core.SharedKernel.ValueObjects;
+using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 
 namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCommandHandlers
@@ -16,7 +17,8 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 		IBookingRepository bookingRepository,
 		ILoggingService<CreateBookingCommandHandler> logger,
 		IMapper mapper,
-		IMessageBroker publisher) : IRequestHandler<CreateBookingCommand, BookingResponseDTO>
+		IMessageBroker publisher,
+		IUnitOfWork unitOfWork) : IRequestHandler<CreateBookingCommand, BookingResponseDTO>
 	{
 		public async Task<BookingResponseDTO> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
 		{
@@ -32,6 +34,7 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 				return response;
 			}
 			logger.LogInformation("Booking creation metadata successfully validated.");
+			
 			var booking = Booking.Create(request.BookingDTO.CustomerId,
 								request.BookingDTO.CraftmanId,
 								new Address(request.BookingDTO.Street, request.BookingDTO.City, request.BookingDTO.PostalCode),
@@ -46,11 +49,12 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 				Location = new GeoLocation(request.Location.Latitude, request.Location.Longitude)
 			};
 
-			await bookingRepository.AddAsync(booking, cancellationToken);
-			await publisher.PublishAsync(bookingCreatedIntegrationEvent, cancellationToken);
-			await publisher.SendAsync("booking-created-event", bookingCreatedIntegrationEvent, cancellationToken);
-
-			await bookingRepository.SaveChangesAsync(cancellationToken);
+			await unitOfWork.ExecuteInTransactionAsync(async () =>
+			{
+				await bookingRepository.AddAsync(booking, cancellationToken);
+				await publisher.PublishAsync(bookingCreatedIntegrationEvent, cancellationToken);
+				await publisher.SendAsync("booking-created-event", bookingCreatedIntegrationEvent, cancellationToken);
+			}, cancellationToken);
 
 			booking.ClearEvents();
 			logger.LogInformation("Booking with ID {BookingId} successfully created.", booking.Id);

@@ -3,7 +3,6 @@ using Infrastructure.Persistence.Repository;
 using Microsoft.EntityFrameworkCore;
 using ProductInventoryManagement.Application.Contracts;
 using ProductInventoryManagement.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace ProductInventoryManagement.Infrastructure.RepositoryImplementations
 {

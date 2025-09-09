@@ -3,6 +3,7 @@ using Core.EventServices;
 using Core.Logging;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
+using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
@@ -19,7 +20,8 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 		IBackgroundJobService backgroundJob,
 		ICustomerRepository customerRepository, 
 		ITokenProvider tokenProvider,
-		IMessageBroker publisher) : IRequestHandler<RegisterCustomerCommand, CustomerResponseDTO>
+		IMessageBroker publisher,
+		IUnitOfWork unitOfWork) : IRequestHandler<RegisterCustomerCommand, CustomerResponseDTO>
 	{
 		public async Task<CustomerResponseDTO> Handle(RegisterCustomerCommand request, CancellationToken cancellationToken)
 		{
@@ -42,51 +44,54 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				response.Message = "Customer with this email already exists.";
 				return response;
 			}
-			logger.LogInformation("Creating new customer with email {Email}.", request.Customer!.Email);
-			request.Customer!.Password = BCrypt.Net.BCrypt.HashPassword(
-				request.Customer.Password!,
-				salt: BCrypt.Net.BCrypt.GenerateSalt(12));
 
-			var newUser = mapper.Map<Customer>(request.Customer);
-			newUser.PasswordHash = request.Customer.Password;
+			await unitOfWork.ExecuteInTransactionAsync(async () =>
+			{
+				logger.LogInformation("Creating new customer with email {Email}.", request.Customer!.Email);
+				request.Customer!.Password = BCrypt.Net.BCrypt.HashPassword(
+					request.Customer.Password!,
+					salt: BCrypt.Net.BCrypt.GenerateSalt(12));
 
+				var newUser = mapper.Map<Customer>(request.Customer);
+				newUser.PasswordHash = request.Customer.Password;
+
+
+				await customerRepository.AddAsync(newUser, cancellationToken);
+				var userRegisteredEvent = new UserCreatedIntegrationEvent(newUser);
+				await publisher.PublishAsync(userRegisteredEvent, cancellationToken);
+
+				backgroundJob.Enqueue<IGmailService>(
+					"default",
+					email => email.SendEmailAsync(
+						newUser.Email.Address,
+						$"Welcome {newUser.FirstName}",
+						$"This is a welcome message for {newUser.FirstName}",
+						false,
+						CancellationToken.None
+					)
+				);
+
+				var emailConfirmationToken = tokenProvider.GenerateCustomerEmailConfirmationToken(newUser);
+				backgroundJob.Enqueue<IGmailService>(
+					"default",
+					email => email.ConfirmEmailAsync(
+						newUser.Email.Address,
+						"Confirm Email",
+						$"Confirm your email for {newUser.FirstName}. " +
+						$"Please confirm your email by clicking the link: " +
+						$"<a href='https://example.com/confirm-email?token={emailConfirmationToken}'>Confirm Email</a>"
+						, cancellationToken)
+				);
+
+				response.CustomerId = newUser.Id;
+				response.Email = newUser.Email.Address;
+				response.Phone = newUser.Phone.Number;
+				response.Address = newUser.Address?.ToString() ?? string.Empty;
+				response.PreferredPaymentMethod = newUser.PreferredPaymentMethod.ToString();
+				response.Message = "Customer registration successful.";
+				response.IsSuccess = true;
+			}, cancellationToken);
 			
-			await customerRepository.AddAsync(newUser, cancellationToken);
-			var userRegisteredEvent = new UserCreatedIntegrationEvent(newUser);
-			await publisher.PublishAsync(userRegisteredEvent, cancellationToken);
-			await customerRepository.SaveChangesAsync(cancellationToken);
-
-
-			backgroundJob.Enqueue<IGmailService>(
-				"default",
-				email => email.SendEmailAsync(
-					newUser.Email.Address,
-					$"Welcome {newUser.FirstName}",
-					$"This is a welcome message for {newUser.FirstName}",
-					false,
-					CancellationToken.None
-				)
-			);
-
-			var emailConfirmationToken = tokenProvider.GenerateCustomerEmailConfirmationToken(newUser);
-			backgroundJob.Enqueue<IGmailService>(
-				"default",
-				email => email.ConfirmEmailAsync(
-					newUser.Email.Address,
-					"Confirm Email",
-					$"Confirm your email for {newUser.FirstName}. " +
-					$"Please confirm your email by clicking the link: " +
-					$"<a href='https://example.com/confirm-email?token={emailConfirmationToken}'>Confirm Email</a>"
-					, cancellationToken)
-			);
-
-			response.CustomerId = newUser.Id;
-			response.Email = newUser.Email.Address;
-			response.Phone = newUser.Phone.Number;
-			response.Address = newUser.Address?.ToString() ?? string.Empty;
-			response.PreferredPaymentMethod = newUser.PreferredPaymentMethod.ToString();
-			response.Message = "Customer registration successful.";
-			response.IsSuccess = true;
 
 			//var confirmationToken = await GenerateEmailConfirmationToken(newUser);
 			return response;

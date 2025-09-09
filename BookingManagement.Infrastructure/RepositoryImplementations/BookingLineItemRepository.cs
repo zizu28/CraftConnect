@@ -27,6 +27,11 @@ namespace BookingManagement.Infrastructure.RepositoryImplementations
 			dbContext.BookingLineItems.Remove(entity);
 		}
 
+		public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
+		{
+			return await dbContext.BookingLineItems.AnyAsync(e => e.Id == id, cancellationToken);
+		}
+
 		public async Task<BookingLineItem> FindBy(Expression<Func<BookingLineItem, bool>> predicate, CancellationToken cancellationToken = default)
 		{
 			if (predicate == null)
