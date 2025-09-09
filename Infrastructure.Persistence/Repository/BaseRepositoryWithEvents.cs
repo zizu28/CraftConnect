@@ -1,16 +1,10 @@
-using Core.SharedKernel.Contracts;
 using Core.SharedKernel.Domain;
 using Infrastructure.Persistence.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repository
 {
-	public abstract class BaseRepositoryWithEvents<T> : BaseRepository<T> where T : AggregateRoot
+	public abstract class BaseRepositoryWithEvents<T>(ApplicationDbContext dbContext) : BaseRepository<T>(dbContext) where T : AggregateRoot
 	{
-		protected BaseRepositoryWithEvents(ApplicationDbContext dbContext) : base(dbContext)
-		{
-		}
-
 		public override async Task AddAsync(T entity, CancellationToken cancellationToken = default)
 		{
 			await base.AddAsync(entity, cancellationToken);
@@ -28,7 +22,7 @@ namespace Infrastructure.Persistence.Repository
 			var domainEvents = entity.DomainEvents.ToList();
 			
 			// Clear events to prevent re-processing
-			entity.ClearDomainEvents();
+			entity.ClearEvents();
 
 			foreach (var domainEvent in domainEvents)
 			{
