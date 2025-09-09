@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Persistence.Data;
+using Infrastructure.Persistence.UnitOfWork;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,7 @@ namespace ProductInventoryManagement.Infrastructure.Extensions
 					b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 			services.AddScoped<IProductRepository, ProductRepository>();
 			services.AddScoped<ICategoryRepository, CategoryRepository>();
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			return services;
 		}
 	}

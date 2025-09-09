@@ -20,11 +20,15 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			dbContext.Users.Remove(user);
 		}
 
-		public async Task<User> FindBy(Expression<Func<User, bool>> predicate, CancellationToken cancellationToken = default)
+		public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
+		{
+			return await dbContext.Users.AnyAsync(u => u.Id == id, cancellationToken);
+		}
+
+		public async Task<User?> FindBy(Expression<Func<User, bool>> predicate, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(predicate);
-			var user = await dbContext.Users.FirstOrDefaultAsync(predicate, cancellationToken);
-			return user!;
+			return await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(predicate, cancellationToken);
 		}
 
 		public async Task<IEnumerable<User>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -32,27 +36,21 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			return await dbContext.Users.AsNoTracking().ToListAsync(cancellationToken);
 		}
 
-		public async Task<User> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
+		public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
 		{
-			var user = await FindBy(u => u.Email.Address == email, cancellationToken);
-			return user;
+			return await FindBy(u => u.Email.Address == email, cancellationToken);
 		}
 
-		public async Task<User> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+		public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
 		{
-			var user = await FindBy(u => u.Id == id, cancellationToken);
-			return user;
+			return await FindBy(u => u.Id == id, cancellationToken);
 		}
 
-		public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-		{
-			await dbContext.SaveChangesAsync(cancellationToken);
-		}
-
-		public async Task UpdateAsync(User entity, CancellationToken cancellationToken = default)
+		public Task UpdateAsync(User entity, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(entity);
 			dbContext.Users.Update(entity);
+			return Task.CompletedTask;
 		}
 	}
 }

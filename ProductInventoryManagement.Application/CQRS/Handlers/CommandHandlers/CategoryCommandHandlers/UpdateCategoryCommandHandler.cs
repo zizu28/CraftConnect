@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core.Logging;
+using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
 using ProductInventoryManagement.Application.CQRS.Commands.CategoryCommands;
@@ -11,7 +12,8 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.C
 	public class UpdateCategoryCommandHandler(
 		ICategoryRepository categoryRepository,
 		ILoggingService<UpdateCategoryCommandHandler> logger,
-		IMapper mapper) : IRequestHandler<UpdateCategoryCommand, CategoryResponseDTO>
+		IMapper mapper,
+		IUnitOfWork unitOfWork) : IRequestHandler<UpdateCategoryCommand, CategoryResponseDTO>
 	{
 		public async Task<CategoryResponseDTO> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
 		{
@@ -26,6 +28,7 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.C
 				logger.LogWarning("Category update failed due to validation errors: {Errors}", response.Errors);
 				return response;
 			}
+			await unitOfWork.BeginTransactionAsync(cancellationToken);
 			try
 			{
 				var category = await categoryRepository.GetByIdAsync(request.CategoryUpdateDTO.CategoryId, cancellationToken);
@@ -39,7 +42,7 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.C
 
 				mapper.Map(request.CategoryUpdateDTO, category);
 				await categoryRepository.UpdateAsync(category, cancellationToken);
-				await categoryRepository.SaveChangesAsync(cancellationToken);
+				await unitOfWork.SaveChangesAsync(cancellationToken);
 				response = mapper.Map<CategoryResponseDTO>(category);
 				response.IsSuccess = true;
 				response.Message = "Category updated successfully.";
@@ -52,6 +55,7 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.C
 				response.Message = "An error occurred while updating the category.";
 				response.Errors = [.. validationResult.Errors.Select(e => e.ErrorMessage)];
 				logger.LogError(ex, "An error occurred while updating the category: {Message}", ex.Message);
+				await unitOfWork.RollbackTransactionAsync(cancellationToken);
 				return response;
 			}
 		}

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Infrastructure.Persistence.UnitOfWork;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using UserManagement.Application.Contracts;
 using UserManagement.Infrastructure.RepositoryImplementations;
@@ -11,9 +12,9 @@ namespace UserManagement.Infrastructure.Extensions
 		{
 			services.AddScoped<ITokenProvider, TokenProvider>();
 			services.AddScoped<IUserRepository, UserRepository>();
-			services.AddScoped<ITokenProvider, TokenProvider>();
 			services.AddScoped<ICustomerRepository, CustomerRepository>();
 			services.AddScoped<ICraftsmanRepository, CraftmanRepository>();
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			return services;
 		}
 	}

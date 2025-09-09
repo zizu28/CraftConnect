@@ -50,11 +50,6 @@ namespace Infrastructure.Persistence.Repository
 			return await _dbSet.AsNoTracking().FirstOrDefaultAsync(e => EF.Property<Guid>(e, "Id") == id, cancellationToken);
 		}
 
-		public virtual async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-		{
-			await _dbContext.SaveChangesAsync(cancellationToken);
-		}
-
 		public virtual Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(entity);

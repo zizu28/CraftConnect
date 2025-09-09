@@ -1,9 +1,6 @@
 ﻿using BookingManagement.Application.Contracts;
-using BookingManagement.Application.Extensions;
 using BookingManagement.Infrastructure.RepositoryImplementations;
-using Core.EventServices;
-using Infrastructure.Persistence.Data;
-using MassTransit;
+using Infrastructure.Persistence.UnitOfWork;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,6 +16,7 @@ namespace BookingManagement.Infrastructure.Extensions
 			//});
 			services.AddScoped<IBookingRepository, BookingRepository>();
 			services.AddScoped<IBookingLineItemRepository, BookingLineItemRepository>();
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 			return services;
 		}

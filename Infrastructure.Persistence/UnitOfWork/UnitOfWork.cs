@@ -3,14 +3,6 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.Persistence.UnitOfWork
 {
-	public interface IUnitOfWork : IDisposable
-	{
-		Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
-		Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
-		Task CommitTransactionAsync(CancellationToken cancellationToken = default);
-		Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
-	}
-
 	public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
 	{
 		private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -44,6 +36,39 @@ namespace Infrastructure.Persistence.UnitOfWork
 				await _transaction.RollbackAsync(cancellationToken);
 				await _transaction.DisposeAsync();
 				_transaction = null;
+			}
+		}
+
+		public async Task ExecuteInTransactionAsync(Func<Task> operation, CancellationToken cancellationToken = default)
+		{
+			using var transaction = await BeginTransactionAsync(cancellationToken);
+			try
+			{
+				await operation();
+				await SaveChangesAsync(cancellationToken);
+				await CommitTransactionAsync(cancellationToken);
+			}
+			catch
+			{
+				await RollbackTransactionAsync(cancellationToken);
+				throw;
+			}
+		}
+
+		public async Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> operation, CancellationToken cancellationToken = default)
+		{
+			using var transaction = await BeginTransactionAsync(cancellationToken);
+			try
+			{
+				var result = await operation();
+				await SaveChangesAsync(cancellationToken);
+				await CommitTransactionAsync(cancellationToken);
+				return result;
+			}
+			catch
+			{
+				await RollbackTransactionAsync(cancellationToken);
+				throw;
 			}
 		}
 

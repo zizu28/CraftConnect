@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core.Logging;
+using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
 using ProductInventoryManagement.Application.CQRS.Commands.CategoryCommands;
@@ -11,6 +12,7 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.C
 {
 	public class CategoryCreateCommandHandler(
 		ICategoryRepository categoryRepository,
+		IUnitOfWork unitOfWork,
 		ILoggingService<CategoryCreateCommandHandler> logger,
 		IMapper mapper) : IRequestHandler<CategoryCreateCommand, CategoryResponseDTO>
 	{
@@ -27,15 +29,17 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.C
 				logger.LogWarning("Category creation failed due to validation errors: {Errors}", response.Errors);
 				return response;
 			}
+			await unitOfWork.BeginTransactionAsync(cancellationToken);
 			try
 			{
 				var categoryEntity = mapper.Map<Category>(request.CategoryCreateDTO);
 				await categoryRepository.AddAsync(categoryEntity, cancellationToken);
-				await categoryRepository.SaveChangesAsync(cancellationToken);
+				await unitOfWork.SaveChangesAsync(cancellationToken);
 				response = mapper.Map<CategoryResponseDTO>(categoryEntity);
 				response.IsSuccess = true;
 				response.Message = "Category created successfully.";
 				logger.LogInformation("Category created successfully with ID: {CategoryId}", response.CategoryId);
+				await unitOfWork.CommitTransactionAsync(cancellationToken);
 				return response;
 			}
 			catch (Exception ex)
@@ -44,6 +48,7 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.C
 				response.Message = "An error occurred while creating the category.";
 				response.Errors = [.. validationResult.Errors.Select(e => e.ErrorMessage)];
 				logger.LogError(ex, "An error occurred while creating the category: {Message}", ex.Message);
+				await unitOfWork.RollbackTransactionAsync(cancellationToken);
 				return response;
 			}
 		}
