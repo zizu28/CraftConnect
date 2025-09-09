@@ -2,6 +2,7 @@
 using Core.SharedKernel.ValueObjects;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using PaymentManagement.Domain.Entities;
 using ProductInventoryManagement.Domain.Entities;
 using UserManagement.Domain.Entities;
 
@@ -36,7 +37,8 @@ namespace Infrastructure.Persistence.Data
 			//modelBuilder.Owned<DateTimeRange>();
 			modelBuilder.Owned<Address>();
 			modelBuilder.Owned<JobDetails>();
-
+			modelBuilder.Owned<PaymentTransaction>();
+			modelBuilder.Owned<Refund>();
 			modelBuilder.Owned<Image>();
 			modelBuilder.Owned<Inventory>();
 
@@ -44,7 +46,8 @@ namespace Infrastructure.Persistence.Data
 				.Where(a => a.FullName != null && (
 						a.FullName.StartsWith("UserManagement.Infrastructure.EntityTypeConfigurations") ||
 						a.FullName.StartsWith("BookingManagement.Infrastructure.EntityTypeConfigurations") || 
-						a.FullName.StartsWith("ProductInventoryManagement.Infrastructure.EntityTypeConfigurations")
+						a.FullName.StartsWith("ProductInventoryManagement.Infrastructure.EntityTypeConfigurations") ||
+						a.FullName.StartsWith("PaymentManagement.Infrastructure.EntityTypeConfigurations")
 						)
 				);
 

@@ -8,5 +8,9 @@
 		MobilePayment,
 		DirectDebit,
 		Stripe,
+		CreditCard,
+		DebitCard,
+		PayPal,
+		Cryptocurrency
 	}
 }
