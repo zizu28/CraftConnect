@@ -3,13 +3,16 @@ using Core.SharedKernel.Enums;
 using Core.SharedKernel.IntegrationEvents;
 using Core.SharedKernel.ValueObjects;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PaymentManagement.Domain.Entities
 {
 	public class Invoice : AggregateRoot
 	{
 		public string InvoiceNumber { get; private set; }
+		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public InvoiceStatus Status { get; private set; }
+		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public InvoiceType Type { get; private set; }
 		public Guid IssuedTo { get; private set; }
 		public Guid IssuedBy { get; private set; }

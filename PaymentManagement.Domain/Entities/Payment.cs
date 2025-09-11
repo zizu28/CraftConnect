@@ -3,6 +3,7 @@ using Core.SharedKernel.Enums;
 using Core.SharedKernel.IntegrationEvents;
 using Core.SharedKernel.ValueObjects;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PaymentManagement.Domain.Entities
 {
@@ -18,7 +19,9 @@ namespace PaymentManagement.Domain.Entities
 		public Guid? OrderId { get; private set; }
 		public Guid? PayerId { get; private set; }
 		public Guid? RecipientId { get; private set; }
+		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public PaymentMethod PaymentMethod { get; private set; }
+		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public PaymentStatus Status { get; private set; }
 		public Address BillingAddress { get; private set; }
 		public string? FailureReason { get; private set; }

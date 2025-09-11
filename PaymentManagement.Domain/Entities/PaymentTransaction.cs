@@ -1,12 +1,14 @@
 ﻿using Core.SharedKernel.Domain;
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.ValueObjects;
+using System.Text.Json.Serialization;
 
 namespace PaymentManagement.Domain.Entities
 {
 	public class PaymentTransaction : Entity
 	{
 		public Guid PaymentId { get; private set; }
+		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public PaymentTransactionType Type { get; private set; }
 		public Money Amount { get; private set; }
 		public string Description { get; private set; }

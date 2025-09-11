@@ -1,6 +1,7 @@
 ﻿using Core.SharedKernel.Domain;
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.ValueObjects;
+using System.Text.Json.Serialization;
 
 namespace PaymentManagement.Domain.Entities
 {
@@ -9,6 +10,7 @@ namespace PaymentManagement.Domain.Entities
 		public Guid PaymentId { get; private set; }
 		public Money Amount { get; private set; }
 		public string Reason { get; private set; }
+		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public RefundStatus Status { get; private set; }
 		public Guid InitiatedBy { get; private set; }
 		public DateTime CreatedAt { get; private set; }
