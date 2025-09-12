@@ -1,6 +1,24 @@
 # CraftConnect Modular Monolith
 
-Welcome to **CraftConnect** – a modern, modular monolith platform built with .NET 9 and C# 13! This solution connects craftspeople with customers through a comprehensive booking and product management system. The platform follows Clean Architecture principles and Domain-Driven Design patterns for scalability, maintainability, and developer happiness.
+Welcome to **CraftConnect** – a modern, modular monolith platform built with .NET 9 and C# 13! This solution connects craftspeople with customers through a comprehensive booking and product management system. The platform follows Clean Architecture principles, Domain-Driven Design patterns, and implements the **Unit of Work pattern** for robust transaction management.
+
+---
+
+## 🚀 **Latest Updates**
+
+### **Unit of Work Pattern Implementation** ✅
+- **Centralized Transaction Management**: All database operations now use the Unit of Work pattern
+- **Enhanced Repository Pattern**: Removed `SaveChangesAsync()` from repositories - now handled by UnitOfWork
+- **Transaction Safety**: All command handlers use `ExecuteInTransactionAsync()` for atomic operations
+- **Improved Error Handling**: Automatic rollback on exceptions with proper transaction boundaries
+- **Dependency Injection**: UnitOfWork registered in all module infrastructure extensions
+
+### **PaymentManagement Module Added** 🆕
+- **Complete Payment Processing**: Support for payment authorization, capture, completion, and refunds
+- **Invoice Management**: Comprehensive invoicing system with line items, tax calculations, and status tracking
+- **Integration Events**: Cross-module communication for payment-related workflows
+- **Domain-Driven Design**: Rich aggregate roots with business logic encapsulation
+- **Owned Entities**: PaymentTransaction and Refund as owned entities for better consistency
 
 ---
 
@@ -11,6 +29,7 @@ CraftConnect is a sophisticated platform that enables:
 - **Customer Management**: Customer registration, preferences, and booking history
 - **Booking System**: End-to-end booking lifecycle from creation to completion
 - **Product Inventory**: Product catalog with inventory management for craftspeople
+- **Payment Processing**: Secure payment handling, invoicing, and refund management
 - **Integration Events**: Event-driven communication between modules using MassTransit
 
 ---
@@ -24,7 +43,11 @@ The repository follows a **modular monolith** architecture with clear separation
 - **Core.Logging**: Centralized structured logging infrastructure for traceability and debugging
 - **Core.EventServices**: Event handling abstractions and integration event infrastructure
 - **Core.APIGateway**: API gateway for routing, rate limiting, and service orchestration
-- **Infrastructure.Persistence**: Centralized data persistence with Entity Framework Core and ApplicationDbContext
+- **Infrastructure.Persistence**: 
+  - Centralized data persistence with Entity Framework Core
+  - **Unit of Work Implementation** with transaction management helpers
+  - Base repository pattern without `SaveChangesAsync()` 
+  - ApplicationDbContext with all domain entities
 - **Infrastructure.Cache**: Distributed caching implementation for performance optimization
 - **Infrastructure.BackgroundJobs**: Background job processing for asynchronous and scheduled operations
 - **Infrastructure.EmailService**: Email notification services with template support
@@ -36,24 +59,38 @@ The repository follows a **modular monolith** architecture with clear separation
 
 #### User Management Module
 - **UserManagement.Domain**: Domain entities (User, Customer, Craftman), value objects, and business rules
-- **UserManagement.Application**: CQRS handlers, DTOs, validators, and application services
-- **UserManagement.Infrastructure**: Repository implementations and infrastructure services
+- **UserManagement.Application**: CQRS handlers with Unit of Work, DTOs, validators, and application services
+- **UserManagement.Infrastructure**: Repository implementations and infrastructure services with UnitOfWork DI
 - **UserManagement.Presentation**: API controllers and endpoints for user operations
 
 #### Booking Management Module
 - **BookingManagement.Domain**: Booking lifecycle, line items, and business logic
-- **BookingManagement.Application**: Booking CQRS operations and workflow management
-- **BookingManagement.Infrastructure**: Booking data persistence and external service integrations
+- **BookingManagement.Application**: Booking CQRS operations with transactional workflow management
+- **BookingManagement.Infrastructure**: Booking data persistence and external service integrations with UnitOfWork DI
 - **BookingManagement.Presentation**: Booking API endpoints and controllers
 
 #### Product Inventory Management Module
 - **ProductInventoryManagement.Domain**: Product entities, categories, inventory management
-- **ProductInventoryManagement.Application**: Product CQRS operations, DTOs, and business logic
-- **ProductInventoryManagement.Infrastructure**: Product repository implementations and data access
+- **ProductInventoryManagement.Application**: Product CQRS operations with transactional inventory updates
+- **ProductInventoryManagement.Infrastructure**: Product repository implementations with UnitOfWork DI
 - **ProductInventoryManagement.Presentation**: Product and category API controllers
+
+#### **Payment Management Module** 🆕
+- **PaymentManagement.Domain**: 
+  - **Payment** aggregate root with payment lifecycle management
+  - **Invoice** aggregate root with invoicing and billing functionality
+  - **PaymentTransaction** and **Refund** as owned entities
+  - Rich domain models with business rule enforcement
+- **PaymentManagement.Application**: 
+  - CQRS handlers for payment and invoice operations
+  - Comprehensive DTOs and FluentValidation validators
+  - AutoMapper profiles for entity-DTO mapping
+  - Integration event handling for cross-module communication
 
 ### Testing
 - **CraftConnect.Tests**: Comprehensive unit and integration tests using xUnit and Moq
+- **Repository Tests**: Integration tests for Unit of Work pattern
+- **Payment Tests**: Domain logic tests for payment and invoice aggregates
 
 ---
 
@@ -75,6 +112,13 @@ The `ApplicationDbContext` manages the following entities:
 - **Products**: Product catalog with inventory management
 - **Categories**: Hierarchical product categorization system
 
+### **Payment Entities** 🆕
+- **Payments**: Payment processing with support for bookings, orders, and invoices
+- **Invoices**: Invoice management with line items, tax calculations, and payment tracking
+- **PaymentTransactions**: Payment transaction history (owned by Payment)
+- **Refunds**: Refund processing and tracking (owned by Payment)
+- **InvoiceLineItems**: Individual items within invoices
+
 ### Value Objects (Owned Types)
 - **Money**: Currency and amount handling
 - **Email**: Email validation and formatting
@@ -86,6 +130,9 @@ The `ApplicationDbContext` manages the following entities:
 - **JobDetails**: Booking job specifications
 - **Image**: Product and profile image management
 - **Inventory**: Stock quantity tracking
+- **InvoiceRecipient**: Invoice recipient information with business/individual support
+- **PaymentTransaction**: Payment operation audit trail (owned entity)
+- **Refund**: Refund details and status tracking (owned entity)
 
 ### MassTransit Integration
 - **Inbox/Outbox Pattern**: Message reliability with state entities
@@ -106,11 +153,12 @@ The `ApplicationDbContext` manages the following entities:
 - **Domain-Driven Design (DDD)**: Rich domain models and aggregate roots
 - **CQRS with MediatR**: Command and Query separation for scalable operations
 - **Repository Pattern**: Abstracted data access layer
+- **Unit of Work Pattern**: Centralized transaction management
 - **Event-Driven Architecture**: Decoupled communication via domain and integration events
 
 ### Messaging & Communication
 - **MassTransit**: Message bus for reliable message handling and event processing
-- **Integration Events**: Cross-module communication (e.g., BookingRequestedIntegrationEvent)
+- **Integration Events**: Cross-module communication (e.g., BookingRequestedIntegrationEvent, PaymentCompletedIntegrationEvent)
 - **Inbox/Outbox Pattern**: Message reliability and transactional messaging
 
 ### Data & Persistence
@@ -118,6 +166,7 @@ The `ApplicationDbContext` manages the following entities:
 - **Entity Type Configurations**: Modular entity configuration per domain
 - **Value Objects**: Owned entity types for complex value objects
 - **Optimistic Concurrency**: RowVersion/Timestamp for conflict resolution
+- **Owned Entities**: PaymentTransaction and Refund as owned entities for better consistency
 
 ### Testing Framework
 - **xUnit**: Unit testing framework with comprehensive test coverage
@@ -183,13 +232,65 @@ DELETE /api/categories/{id}             - Delete category
 GET    /api/categories/{id}/products    - Get products in category
 ```
 
+### **Payment Management APIs** 🆕
+```
+# Payment Operations
+GET    /api/payments                    - Get payments with filtering and pagination
+GET    /api/payments/{id}               - Get payment details with transactions and refunds
+POST   /api/payments                    - Create new payment (booking/order/invoice)
+PUT    /api/payments/{id}               - Update payment information
+POST   /api/payments/{id}/authorize     - Authorize payment
+POST   /api/payments/{id}/capture       - Capture authorized payment
+POST   /api/payments/{id}/complete      - Complete payment (one-step)
+POST   /api/payments/{id}/cancel        - Cancel payment
+POST   /api/payments/{id}/fail          - Mark payment as failed
+
+# Refund Operations
+POST   /api/payments/{id}/refunds       - Process refund for payment
+GET    /api/payments/{id}/refunds       - Get refunds for payment
+PUT    /api/refunds/{id}/complete       - Complete refund processing
+PUT    /api/refunds/{id}/fail           - Mark refund as failed
+
+# Invoice Operations
+GET    /api/invoices                    - Get invoices with filtering and search
+GET    /api/invoices/{id}               - Get invoice details with line items
+POST   /api/invoices                    - Create new invoice
+PUT    /api/invoices/{id}               - Update invoice details
+DELETE /api/invoices/{id}               - Cancel invoice
+POST   /api/invoices/{id}/send          - Send invoice to recipient
+POST   /api/invoices/{id}/pay           - Mark invoice as paid
+POST   /api/invoices/{id}/overdue       - Mark invoice as overdue
+
+# Invoice Line Items
+POST   /api/invoices/{id}/lineitems     - Add line item to invoice
+PUT    /api/invoices/{id}/lineitems/{itemId} - Update line item
+DELETE /api/invoices/{id}/lineitems/{itemId} - Remove line item
+POST   /api/invoices/{id}/discount      - Apply discount to invoice
+```
+
 ### Integration Events (Internal)
 ```
+# Existing Events
 BookingRequestedIntegrationEvent     - Triggers user notification workflow
 BookingConfirmedIntegrationEvent     - Updates inventory and schedules
 BookingCompletedIntegrationEvent     - Processes payments and reviews
 ProductOutOfStockIntegrationEvent    - Notifies inventory management
 UserVerifiedIntegrationEvent         - Enables craftsperson features
+
+# Payment Events 🆕
+PaymentInitiatedIntegrationEvent     - Payment creation for booking/order/invoice
+PaymentAuthorizedIntegrationEvent    - Payment authorization successful
+PaymentCompletedIntegrationEvent     - Payment captured/completed
+PaymentFailedIntegrationEvent        - Payment processing failed
+PaymentCancelledIntegrationEvent     - Payment cancelled by user/system
+RefundProcessedIntegrationEvent      - Refund processed for payment
+
+# Invoice Events 🆕
+InvoiceGeneratedIntegrationEvent     - Invoice created and sent
+InvoicePaidIntegrationEvent          - Invoice fully paid
+InvoicePartiallyPaidIntegrationEvent - Invoice partially paid
+InvoiceOverdueIntegrationEvent       - Invoice overdue notification
+InvoiceCancelledIntegrationEvent     - Invoice cancelled
 ```
 
 ### API Features
@@ -200,6 +301,144 @@ UserVerifiedIntegrationEvent         - Enables craftsperson features
 - **Filtering**: Advanced filtering and search capabilities
 - **Rate Limiting**: API throttling to prevent abuse
 - **Swagger Documentation**: Interactive API documentation at `/swagger`
+
+---
+
+## 🏗️ **Payment Management Architecture Details**
+
+### **Domain Model Design**
+
+#### **Payment Aggregate Root**
+```csharp
+public class Payment : AggregateRoot
+{
+    // Core Properties
+    public Money Amount { get; private set; }
+    public PaymentStatus Status { get; private set; }
+    public PaymentMethod PaymentMethod { get; private set; }
+    
+    // Context References
+    public Guid? BookingId { get; private set; }
+    public Guid? OrderId { get; private set; }
+    public Guid? InvoiceId { get; private set; }
+    
+    // Owned Entities
+    public IReadOnlyCollection<PaymentTransaction> Transactions { get; }
+    public IReadOnlyCollection<Refund> Refunds { get; }
+    
+    // Factory Methods
+    public static Payment CreateForBooking(...);
+    public static Payment CreateForOrder(...);
+    public static Payment CreateForInvoice(...);
+    
+    // Business Operations
+    public void Authorize(string externalTransactionId);
+    public void Capture();
+    public void Complete(string externalTransactionId);
+    public Refund ProcessRefund(Money amount, string reason, Guid initiatedBy);
+}
+```
+
+#### **Invoice Aggregate Root**
+```csharp
+public class Invoice : AggregateRoot
+{
+    // Core Properties
+    public string InvoiceNumber { get; private set; }
+    public InvoiceStatus Status { get; private set; }
+    public Money TotalAmount { get; private set; }
+    
+    // Recipient Information
+    public InvoiceRecipient Recipient { get; private set; }
+    public Address BillingAddress { get; private set; }
+    
+    // Line Items
+    public IReadOnlyCollection<InvoiceLineItem> LineItems { get; }
+    
+    // Factory Methods
+    public static Invoice CreateForBooking(...);
+    public static Invoice CreateForOrder(...);
+    
+    // Business Operations
+    public void AddLineItem(string description, decimal unitPrice, int quantity);
+    public void Send();
+    public void MarkAsPaid(Guid paymentId, Money amountPaid);
+    public void ApplyDiscount(Money discountAmount);
+}
+```
+
+### **Integration Event Flow**
+
+#### **Payment Processing Flow**
+```
+1. Payment Creation
+   → PaymentInitiatedIntegrationEvent
+   ├─ BookingManagement: Update booking status
+   ├─ UserManagement: Notify participants
+   └─ Infrastructure.EmailService: Send confirmation
+
+2. Payment Authorization
+   → PaymentAuthorizedIntegrationEvent
+   ├─ BookingManagement: Reserve resources
+   └─ ProductInventoryManagement: Hold inventory
+
+3. Payment Completion
+   → PaymentCompletedIntegrationEvent
+   ├─ BookingManagement: Confirm booking
+   ├─ ProductInventoryManagement: Update inventory
+   ├─ UserManagement: Update payment history
+   └─ Infrastructure.EmailService: Send receipt
+
+4. Refund Processing
+   → RefundProcessedIntegrationEvent
+   ├─ BookingManagement: Update booking status
+   ├─ ProductInventoryManagement: Adjust inventory
+   └─ UserManagement: Update refund history
+```
+
+#### **Invoice Processing Flow**
+```
+1. Invoice Generation
+   → InvoiceGeneratedIntegrationEvent
+   ├─ UserManagement: Notify recipient
+   ├─ Infrastructure.EmailService: Send invoice
+   └─ Infrastructure.PDFGeneration: Generate PDF
+
+2. Invoice Payment
+   → InvoicePaidIntegrationEvent
+   ├─ BookingManagement: Update booking status
+   ├─ UserManagement: Update payment records
+   └─ Infrastructure.EmailService: Send payment confirmation
+
+3. Invoice Overdue
+   → InvoiceOverdueIntegrationEvent
+   ├─ UserManagement: Notify parties
+   ├─ Infrastructure.EmailService: Send reminder
+   └─ Infrastructure.BackgroundJobs: Schedule follow-ups
+```
+
+### **Database Configuration**
+
+#### **Owned Entity Configuration**
+```csharp
+// PaymentTransaction as owned entity
+builder.OwnsMany(p => p.Transactions, transaction =>
+{
+    transaction.WithOwner().HasForeignKey(nameof(PaymentTransaction.PaymentId));
+    transaction.HasKey(t => t.Id);
+    transaction.Property(t => t.Type).IsRequired();
+    transaction.OwnsOne(t => t.Amount);
+});
+
+// Refund as owned entity
+builder.OwnsMany(p => p.Refunds, refund =>
+{
+    refund.WithOwner().HasForeignKey(nameof(Refund.PaymentId));
+    refund.HasKey(r => r.Id);
+    refund.Property(r => r.Status).IsRequired();
+    refund.OwnsOne(r => r.Amount);
+});
+```
 
 ---
 
@@ -230,7 +469,7 @@ UserVerifiedIntegrationEvent         - Enables craftsperson features
 
 4. **Run Database Migrations**
    ```bash
-   dotnet ef database update --project Infrastructure.Persistence
+   dotnet ef database update --project Infrastructure.Persistence --startup-project CraftConnect.AppHost
    ```
 
 5. **Build the Solution**
@@ -285,8 +524,11 @@ CraftConnect.Tests/
 ├── Controllers/           # API controller tests
 │   ├── CategoriesControllerTests.cs
 │   ├── UsersControllerTests.cs
-│   └── BookingsControllerTests.cs
+│   ├── BookingsControllerTests.cs
+│   └── PaymentsControllerTests.cs 🆕
 ├── Domain/               # Domain logic tests
+│   ├── PaymentTests.cs 🆕
+│   └── InvoiceTests.cs 🆕
 ├── Application/          # Application service tests
 ├── Infrastructure/       # Repository and infrastructure tests
 └── Integration/          # End-to-end integration tests
@@ -323,6 +565,8 @@ public async Task GetCategoryByIdAsync_ReturnsOkResult_WhenCategoryExists()
 - **Concurrency**: Optimistic concurrency control with RowVersion
 - **Integration Events**: Event publishing and consumption workflows
 - **Authentication**: JWT token validation and role-based authorization
+- **Payment Processing**: Payment lifecycle testing with various scenarios
+- **Invoice Management**: Invoice creation, line item management, and payment tracking
 
 ### Running Tests
 ```bash
@@ -336,10 +580,10 @@ dotnet test --verbosity normal
 dotnet test --collect:"XPlat Code Coverage"
 
 # Run specific test class
-dotnet test --filter "CategoriesControllerTests"
+dotnet test --filter "PaymentTests"
 
 # Run tests matching pattern
-dotnet test --filter "Category"
+dotnet test --filter "Payment"
 
 # Generate coverage report (requires coverlet)
 dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults
@@ -374,7 +618,11 @@ src/
 │   │   └── UserManagement.Presentation/  # Controllers, SignalR hubs, API contracts
 │   │
 │   ├── BookingManagement/          # Booking lifecycle and workflow management
-│   └── ProductInventoryManagement/ # Product catalog and inventory control
+│   ├── ProductInventoryManagement/ # Product catalog and inventory control
+│   └── PaymentManagement/ 🆕       # Payment processing and invoice management
+│       ├── PaymentManagement.Domain/        # Payment and Invoice aggregates
+│       ├── PaymentManagement.Application/   # CQRS handlers, DTOs, validators
+│       └── PaymentManagement.Infrastructure/ # Repository implementations (future)
 │
 ├── Host/                          # Application composition root
 │   ├── CraftConnect.AppHost/      # Main application startup and configuration
@@ -407,6 +655,20 @@ Product (Aggregate Root)
 ├── Inventory (Value Object)
 ├── Images[] (Value Object Collection)
 └── Craftman (Reference)
+
+Payment (Aggregate Root) 🆕
+├── PaymentTransactions[] (Owned Entities)
+├── Refunds[] (Owned Entities)
+├── Money (Value Object)
+├── Address (Value Object)
+└── PaymentStatus (Enum)
+
+Invoice (Aggregate Root) 🆕
+├── InvoiceLineItems[]
+├── InvoiceRecipient (Value Object)
+├── Address (Value Object)
+├── Money (Value Objects)
+└── InvoiceStatus (Enum)
 ```
 
 ---
@@ -431,6 +693,14 @@ Product (Aggregate Root)
     "SmtpServer": "smtp.your-provider.com",
     "SmtpPort": 587,
     "EnableSsl": true
+  },
+  "PaymentSettings": {
+    "StripeSecretKey": "your-stripe-secret-key",
+    "StripePublishableKey": "your-stripe-publishable-key",
+    "PayPalClientId": "your-paypal-client-id",
+    "PayPalClientSecret": "your-paypal-client-secret",
+    "DefaultCurrency": "USD",
+    "RefundProcessingDays": 7
   }
 }
 ```
