@@ -5,10 +5,11 @@ namespace Infrastructure.Persistence.Repository
 {
 	public abstract class BaseRepositoryWithEvents<T>(ApplicationDbContext dbContext) : BaseRepository<T>(dbContext) where T : AggregateRoot
 	{
-		public override async Task AddAsync(T entity, CancellationToken cancellationToken = default)
+		public override async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
 		{
 			await base.AddAsync(entity, cancellationToken);
 			await DispatchDomainEventsAsync(entity, cancellationToken);
+			return entity;
 		}
 
 		public override async Task UpdateAsync(T entity, CancellationToken cancellationToken = default)

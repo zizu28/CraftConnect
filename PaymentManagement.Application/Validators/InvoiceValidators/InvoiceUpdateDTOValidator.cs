@@ -11,9 +11,9 @@ namespace PaymentManagement.Application.Validators.InvoiceValidators
 				.NotEmpty().WithMessage("Invoice ID is required.")
 				.Must(id => id != Guid.Empty).WithMessage("Invoice ID cannot be empty GUID.");
 
-			When(i => i.DueDate.HasValue, () =>
+			When(i => i.DueDate != null, () =>
 			{
-				RuleFor(i => i.DueDate.Value)
+				RuleFor(i => i.DueDate)
 					.GreaterThanOrEqualTo(DateTime.UtcNow.Date).WithMessage("Due date cannot be in the past.");
 			});
 

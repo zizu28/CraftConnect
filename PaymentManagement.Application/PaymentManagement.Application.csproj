@@ -14,12 +14,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Core.EventServices\Core.EventServices.csproj" />
+    <ProjectReference Include="..\Core.Logging\Core.Logging.csproj" />
+    <ProjectReference Include="..\Infrastructure.BackgroundJobs\Infrastructure.BackgroundJobs.csproj" />
+    <ProjectReference Include="..\Infrastructure.EmailService\Infrastructure.EmailService.csproj" />
     <ProjectReference Include="..\PaymentManagement.Domain\PaymentManagement.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Consumers\" />
-    <Folder Include="CQRS\Queries\" />
     <Folder Include="Extensions\" />
   </ItemGroup>
 

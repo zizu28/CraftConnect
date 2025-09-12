@@ -8,12 +8,11 @@ namespace ProductInventoryManagement.Infrastructure.RepositoryImplementations
 {
 	public class CategoryRepository(ApplicationDbContext dbContext) : BaseRepository<Category>(dbContext), ICategoryRepository
 	{
-		public override async Task AddAsync(Category entity, CancellationToken cancellationToken = default)
+		public override async Task<Category> AddAsync(Category entity, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(entity);
 			ArgumentException.ThrowIfNullOrWhiteSpace(entity.Name, nameof(entity.Name));
 
-			// Check for duplicate category names
 			var existsWithSameName = await _dbSet
 				.AnyAsync(c => c.Name.ToLower() == entity.Name.ToLower(), cancellationToken);
 			
@@ -22,7 +21,8 @@ namespace ProductInventoryManagement.Infrastructure.RepositoryImplementations
 				throw new InvalidOperationException($"Category with name '{entity.Name}' already exists");
 			}
 
-			await base.AddAsync(entity, cancellationToken);
+			var category = await base.AddAsync(entity, cancellationToken);
+			return category;
 		}
 
 		public override async Task<Category?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -73,6 +73,11 @@ namespace ProductInventoryManagement.Infrastructure.RepositoryImplementations
 				.AsNoTracking()
 				.Where(c => c.ParentCategoryId == null)
 				.ToListAsync(cancellationToken);
+		}
+
+		Task IRepository<Category>.AddAsync(Category entity, CancellationToken cancellationToken)
+		{
+			return AddAsync(entity, cancellationToken);
 		}
 	}
 }

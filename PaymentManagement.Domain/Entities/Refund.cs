@@ -7,7 +7,6 @@ namespace PaymentManagement.Domain.Entities
 {
 	public class Refund : Entity
 	{
-		public Guid PaymentId { get; private set; }
 		public Money Amount { get; private set; }
 		public string Reason { get; private set; }
 		[JsonConverter(typeof(JsonStringEnumConverter))]
@@ -23,8 +22,7 @@ namespace PaymentManagement.Domain.Entities
 		{
 			return new Refund
 			{
-				Id = Guid.NewGuid(),
-				PaymentId = paymentId,
+				Id = paymentId,
 				Amount = amount,
 				Reason = reason,
 				InitiatedBy = initiatedBy,

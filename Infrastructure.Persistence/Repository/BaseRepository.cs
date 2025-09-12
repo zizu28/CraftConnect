@@ -16,10 +16,11 @@ namespace Infrastructure.Persistence.Repository
 			_dbSet = _dbContext.Set<T>();
 		}
 
-		public virtual async Task AddAsync(T entity, CancellationToken cancellationToken = default)
+		public virtual async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(entity);
 			await _dbSet.AddAsync(entity, cancellationToken);
+			return entity;
 		}
 
 		public virtual async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)

@@ -36,7 +36,7 @@ namespace Infrastructure.Persistence.Repository
 			}
 		}
 
-		public override async Task AddAsync(T entity, CancellationToken cancellationToken = default)
+		public override async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
 		{
 			var stopwatch = Stopwatch.StartNew();
 			try
@@ -55,6 +55,7 @@ namespace Infrastructure.Persistence.Repository
 					typeof(T).Name, stopwatch.ElapsedMilliseconds);
 				throw;
 			}
+			return entity;
 		}
 
 		public override async Task UpdateAsync(T entity, CancellationToken cancellationToken = default)

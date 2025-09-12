@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace PaymentManagement.Application.DTOs.RefundDTOs
+﻿namespace PaymentManagement.Application.DTOs.RefundDTOs
 {
 	public class RefundCreateDTO
 	{
@@ -8,7 +6,10 @@ namespace PaymentManagement.Application.DTOs.RefundDTOs
 
 		public required decimal Amount { get; set; }
 
-		public required string Reason { get; set; } = string.Empty;
+		public required string Currency { get; set; }
+		public required string Reason { get; set; }
+		public string Status { get; set; } = "Pending";
+		public string ExternalRefundId { get; set; } = string.Empty;
 
 		public required Guid InitiatedBy { get; set; }
 	}

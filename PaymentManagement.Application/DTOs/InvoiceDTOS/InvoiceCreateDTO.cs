@@ -11,11 +11,17 @@ namespace PaymentManagement.Application.DTOs.InvoiceDTOS
 
 		public required Guid IssuedBy { get; set; }
 
-		public Guid? BookingId { get; set; }
+		public decimal SubTotal { get; set; } = 0;
+		public decimal TaxAmount { get; set; } = 0;
+		public decimal DiscountAmount { get; set; } = 0;
+		public decimal TotalAmount { get; set; } = 0;
+
+		public Guid BookingId { get; set; }
 		public Guid? OrderId { get; set; }
 
-		public DateTime? DueDate { get; set; }
+		public DateTime DueDate { get; set; }
 
+		public string InvoiceStatus { get; set; } = string.Empty;
 		public required string Currency { get; set; } = string.Empty;
 
 		public decimal TaxRate { get; set; } = 0;
@@ -37,6 +43,7 @@ namespace PaymentManagement.Application.DTOs.InvoiceDTOS
 		public string? RecipientTaxId { get; set; }
 
 		public string? RecipientRegistrationNumber { get; set; }
+		public string? RecipientCountryCode { get; set; }
 
 		public required string BillingStreet { get; set; } = string.Empty;
 
@@ -44,9 +51,9 @@ namespace PaymentManagement.Application.DTOs.InvoiceDTOS
 
 		public required string BillingPostalCode { get; set; } = string.Empty;
 
-		public string? BillingState { get; set; }
+		//public string? BillingState { get; set; }
 
-		public string? BillingCountry { get; set; }
+		//public string? BillingCountry { get; set; }
 
 		public List<InvoiceLineItemCreateDTO> LineItems { get; set; } = [];
 	}

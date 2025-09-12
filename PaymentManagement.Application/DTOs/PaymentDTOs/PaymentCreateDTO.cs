@@ -8,14 +8,14 @@
 
 		public required string PaymentMethod { get; set; }
 		public required string PaymentStatus { get; set; }
-
+		public required string PaymentType { get; set; }
 		public required Guid PayerId { get; set; }
 
 		public required Guid RecipientId { get; set; }
 
-		public Guid? BookingId { get; set; }
-		public Guid? OrderId { get; set; }
-		public Guid? InvoiceId { get; set; }
+		public Guid BookingId { get; set; }
+		public Guid OrderId { get; set; }
+		public Guid InvoiceId { get; set; }
 
 		public string? Description { get; set; }
 

@@ -2,8 +2,7 @@
 {
 	public class RefundResponseDTO
 	{
-		public Guid Id { get; set; }
-		public Guid PaymentId { get; set; }
+		public Guid RefundId { get; set; }
 		public decimal Amount { get; set; }
 		public string Currency { get; set; } = string.Empty;
 		public string Reason { get; set; } = string.Empty;

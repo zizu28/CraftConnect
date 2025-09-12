@@ -23,6 +23,8 @@ namespace PaymentManagement.Domain.Entities
 		public PaymentMethod PaymentMethod { get; private set; }
 		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public PaymentStatus Status { get; private set; }
+		[JsonConverter(typeof(JsonStringEnumConverter))]
+		public PaymentType PaymentType { get; private set; }
 		public Address BillingAddress { get; private set; }
 		public string? FailureReason { get; private set; }
 		public DateTime CreatedAt { get; private set; }
@@ -39,9 +41,9 @@ namespace PaymentManagement.Domain.Entities
 		private Payment() { }
 
 		public static Payment CreateForBooking(
-			Guid bookingId, Money amount, string currency, Guid payerId,
+			Guid bookingId, Money amount, Guid payerId,
 			Guid recipientId, PaymentMethod paymentMethod, Address billingAddress,
-			string? description = null)
+			string paymentType = "Booking", string? description = null)
 		{
 			ValidatePaymentCreation(amount, payerId, recipientId, paymentMethod, billingAddress);
 			var payment = new Payment
@@ -49,7 +51,7 @@ namespace PaymentManagement.Domain.Entities
 				Id = Guid.NewGuid(),
 				BookingId = bookingId,
 				Amount = amount,
-				Currency = currency,
+				PaymentType = Enum.Parse<PaymentType>(paymentType, true),
 				PayerId = payerId,
 				RecipientId = recipientId,
 				PaymentMethod = paymentMethod,
@@ -64,9 +66,9 @@ namespace PaymentManagement.Domain.Entities
 		}
 
 		public static Payment CreateForOrder(
-			Guid orderId, Money amount, string currency, Guid payerId,
+			Guid orderId, Money amount, Guid payerId,
 			Guid recipientId, PaymentMethod paymentMethod, Address billingAddress,
-			string? description = null)
+			string paymentType = "Order", string? description = null)
 		{
 			ValidatePaymentCreation(amount, payerId, recipientId, paymentMethod, billingAddress);
 			var payment = new Payment
@@ -74,10 +76,10 @@ namespace PaymentManagement.Domain.Entities
 				Id = Guid.NewGuid(),
 				OrderId = orderId,
 				Amount = amount,
-				Currency = currency,
 				PayerId = payerId,
 				RecipientId = recipientId,
 				PaymentMethod = paymentMethod,
+				PaymentType = Enum.Parse<PaymentType>(paymentType, true),
 				BillingAddress = billingAddress,
 				Description = description,
 				Status = PaymentStatus.Pending,
@@ -89,9 +91,9 @@ namespace PaymentManagement.Domain.Entities
 		}
 
 		public static Payment CreateForInvoice(
-			Guid invoiceId, Money amount, string currency, Guid payerId,
+			Guid invoiceId, Money amount, Guid payerId,
 			Guid recipientId, PaymentMethod paymentMethod, Address billingAddress,
-			string? description = null)
+			string paymentType = "Invoice", string? description = null)
 		{
 			ValidatePaymentCreation(amount, payerId, recipientId, paymentMethod, billingAddress);
 			var payment = new Payment
@@ -99,10 +101,10 @@ namespace PaymentManagement.Domain.Entities
 				Id = Guid.NewGuid(),
 				InvoiceId = invoiceId,
 				Amount = amount,
-				Currency = currency,
 				PayerId = payerId,
 				RecipientId = recipientId,
 				PaymentMethod = paymentMethod,
+				PaymentType = Enum.Parse<PaymentType>(paymentType, true),
 				BillingAddress = billingAddress,
 				Description = description,
 				Status = PaymentStatus.Pending,

@@ -19,6 +19,12 @@ namespace PaymentManagement.Application.Validators.PaymentValidators
 			RuleFor(p => p.PaymentMethod)
 				.IsInEnum().WithMessage("Payment method must be a valid enum value.");
 
+			RuleFor(p => p.PaymentType)
+				.IsInEnum().WithMessage("Payment type must be a valid enum value.");
+
+			RuleFor(p => p.PaymentStatus)
+				.IsInEnum().WithMessage("Payment status must be a valid enum value.");
+
 			RuleFor(p => p.PayerId)
 				.NotEmpty().WithMessage("Payer ID is required.")
 				.Must(id => id != Guid.Empty).WithMessage("Payer ID cannot be empty GUID.");
@@ -33,7 +39,7 @@ namespace PaymentManagement.Application.Validators.PaymentValidators
 				.WithName("PayerId/RecipientId");
 
 			RuleFor(p => p)
-				.Must(p => p.BookingId.HasValue || p.OrderId.HasValue || p.InvoiceId.HasValue)
+				.Must(p => p.BookingId != null || p.OrderId != null || p.InvoiceId != null)
 				.WithMessage("At least one context (BookingId, OrderId, or InvoiceId) must be provided.")
 				.WithName("Context");
 
@@ -53,12 +59,6 @@ namespace PaymentManagement.Application.Validators.PaymentValidators
 				.MaximumLength(20).WithMessage("Billing postal code cannot exceed 20 characters.")
 				.Matches(@"^[A-Za-z0-9\s-]+$").WithMessage("Postal code contains invalid characters.");
 
-			//RuleFor(p => p.BillingState)
-			//	.MaximumLength(100).WithMessage("Billing state cannot exceed 100 characters.");
-
-			//RuleFor(p => p.BillingCountry)
-			//	.MaximumLength(100).WithMessage("Billing country cannot exceed 100 characters.");
-
 			When(p => !string.IsNullOrEmpty(p.CardLast4Digits), () =>
 			{
 				RuleFor(p => p.CardLast4Digits)
@@ -74,7 +74,7 @@ namespace PaymentManagement.Application.Validators.PaymentValidators
 
 			When(p => p.CardExpiryDate.HasValue, () =>
 			{
-				RuleFor(p => p.CardExpiryDate.Value)
+				RuleFor(p => p.CardExpiryDate!.Value)
 					.GreaterThan(DateTime.UtcNow).WithMessage("Card expiry date must be in the future.");
 			});
 

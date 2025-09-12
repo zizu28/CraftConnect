@@ -7,7 +7,7 @@ namespace PaymentManagement.Application.DTOs.InvoiceDTOS
 	{
 		public required Guid InvoiceId { get; set; }
 
-		public DateTime? DueDate { get; set; }
+		public DateTime DueDate { get; set; }
 
 		public decimal? TaxRate { get; set; }
 
