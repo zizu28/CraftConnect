@@ -70,7 +70,7 @@ namespace PaymentManagement.Presentation.Controllers
 			{
 				return BadRequest("Invalid invoice ID.");
 			}
-			var command = new DeleteInvoiceCommand { InvoiceId = id };
+			var command = new CancelInvoiceCommand { InvoiceId = id };
 			await mediator.Send(command);
 			return NoContent();
 		}

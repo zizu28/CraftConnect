@@ -188,7 +188,6 @@ namespace PaymentManagement.Domain.Entities
 
 			AddTransaction(PaymentTransactionType.Refund, refundAmount, reason);
 
-			// Check if fully refunded
 			if (totalRefunded + refundAmount.Amount == Amount.Amount)
 			{
 				Status = PaymentStatus.Refunded;

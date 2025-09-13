@@ -14,9 +14,9 @@ namespace PaymentManagement.Application.DTOs.PaymentDTOs
 
 		public string? BillingPostalCode { get; set; }
 
-		public string? BillingState { get; set; }
+		//public string? BillingState { get; set; }
 
-		public string? BillingCountry { get; set; }
+		//public string? BillingCountry { get; set; }
 
 		public string? Status { get; set; }
 

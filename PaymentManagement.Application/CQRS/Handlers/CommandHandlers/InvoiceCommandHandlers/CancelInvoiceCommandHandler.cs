@@ -2,7 +2,7 @@
 using Core.Logging;
 using Core.SharedKernel.IntegrationEvents.InvoiceIntegrationEvents;
 using Infrastructure.BackgroundJobs;
-using Infrastructure.EmailService;
+using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using PaymentManagement.Application.Contracts;
@@ -10,14 +10,14 @@ using PaymentManagement.Application.CQRS.Commands.InvoiceCommands;
 
 namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.InvoiceCommandHandlers
 {
-	public class DeleteInvoiceCommandHandler(
+	public class CancelInvoiceCommandHandler(
 		IInvoiceRepository invoiceRepository,
-		ILoggingService<DeleteInvoiceCommandHandler> logger,
+		ILoggingService<CancelInvoiceCommandHandler> logger,
 		IMessageBroker messageBroker,
 		IBackgroundJobService backgroundJob,
-		IUnitOfWork unitOfWork) : IRequestHandler<DeleteInvoiceCommand, Unit>
+		IUnitOfWork unitOfWork) : IRequestHandler<CancelInvoiceCommand, Unit>
 	{
-		public async Task<Unit> Handle(DeleteInvoiceCommand request, CancellationToken cancellationToken)
+		public async Task<Unit> Handle(CancelInvoiceCommand request, CancellationToken cancellationToken)
 		{
 			var existingInvoice = await invoiceRepository.GetByIdAsync(request.InvoiceId, cancellationToken);
 			if (existingInvoice == null)
@@ -25,18 +25,18 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.InvoiceCom
 				logger.LogWarning($"Invoice with ID {request.InvoiceId} not found.");
 				throw new KeyNotFoundException($"Invoice with ID {request.InvoiceId} not found.");
 			}
+			existingInvoice.Cancel(request.Reason);
+			var domainEvents = existingInvoice.DomainEvents.ToList();
+			var cancelledEvent = domainEvents.OfType<InvoiceCancelledIntegrationEvent>().FirstOrDefault();
 			await unitOfWork.ExecuteInTransactionAsync(async () =>
 			{
-				await invoiceRepository.DeleteAsync(existingInvoice.Id, cancellationToken);
-				await messageBroker.PublishAsync(
-					new InvoiceCancelledIntegrationEvent(
-						existingInvoice.Id,
-						existingInvoice.InvoiceNumber,
-						existingInvoice.IssuedTo,
-						request.Reason), cancellationToken);
+				await invoiceRepository.UpdateAsync(existingInvoice, cancellationToken);
+				if(cancelledEvent != null)
+					await messageBroker.PublishAsync(cancelledEvent, cancellationToken);
+				existingInvoice.ClearEvents();
 			}, cancellationToken);
 
-			backgroundJob.Enqueue<IEmailService>(
+			backgroundJob.Enqueue<IGmailService>(
 				"InvoiceDelete",
 				invoice => invoice.SendEmailAsync(
 					existingInvoice.Recipient.Email.Address.ToString(),

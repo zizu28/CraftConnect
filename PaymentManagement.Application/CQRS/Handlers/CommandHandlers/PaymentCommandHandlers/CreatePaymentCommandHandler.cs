@@ -5,7 +5,7 @@ using Core.SharedKernel.Enums;
 using Core.SharedKernel.IntegrationEvents.PaymentsIntegrationEvents;
 using Core.SharedKernel.ValueObjects;
 using Infrastructure.BackgroundJobs;
-using Infrastructure.EmailService;
+using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using PaymentManagement.Application.Contracts;
@@ -61,15 +61,19 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 						request.PaymentDTO.PaymentType, request.PaymentDTO.Description),
 				};
 
+				var domainEvents = paymentEntity.DomainEvents.ToList();
+				var initiatedEvent = domainEvents
+					.OfType<PaymentInitiatedIntegrationEvent>()
+					.FirstOrDefault();
+
 				await unitOfWork.ExecuteInTransactionAsync(async () =>
 				{
 					await paymentRepository.AddAsync(paymentEntity, cancellationToken);
-					await messageBroker.PublishAsync(new PaymentInitiatedIntegrationEvent(
-						paymentEntity.Id, paymentEntity.InvoiceId, paymentEntity.Amount,
-						paymentEntity.PayerId, paymentEntity.RecipientId), cancellationToken);
+					await messageBroker.PublishAsync(initiatedEvent!, cancellationToken);
+					paymentEntity.ClearEvents();
 				}, cancellationToken);
 
-				backgroundJob.Enqueue<IEmailService>(
+				backgroundJob.Enqueue<IGmailService>(
 					"PaymentInitiated",
 					payment => payment.SendEmailAsync(
 						request.RecipientEmail,

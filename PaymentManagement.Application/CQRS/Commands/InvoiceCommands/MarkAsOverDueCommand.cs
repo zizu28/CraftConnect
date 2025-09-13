@@ -2,9 +2,9 @@
 
 namespace PaymentManagement.Application.CQRS.Commands.InvoiceCommands
 {
-	public class DeleteInvoiceCommand : IRequest<Unit>
+	public class MarkAsOverDueCommand : IRequest
 	{
 		public Guid InvoiceId { get; set; }
-		public string Reason { get; set; } = string.Empty;
+		public string RecipientEmail { get; set; }
 	}
 }

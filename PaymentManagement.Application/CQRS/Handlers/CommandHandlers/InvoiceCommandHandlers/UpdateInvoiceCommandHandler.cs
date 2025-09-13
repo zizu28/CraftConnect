@@ -3,7 +3,7 @@ using Core.EventServices;
 using Core.Logging;
 using Core.SharedKernel.IntegrationEvents.InvoiceIntegrationEvents;
 using Infrastructure.BackgroundJobs;
-using Infrastructure.EmailService;
+using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using PaymentManagement.Application.Contracts;
@@ -53,7 +53,7 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.InvoiceCom
 						request.InvoiceDTO.DueDate), cancellationToken);
 				}, cancellationToken);
 
-				backgroundJob.Enqueue<IEmailService>(
+				backgroundJob.Enqueue<IGmailService>(
 					"UpdateInvoice",
 					invoice => invoice.SendEmailAsync(
 						existingInvoice!.Recipient.Email.Address.ToString(),

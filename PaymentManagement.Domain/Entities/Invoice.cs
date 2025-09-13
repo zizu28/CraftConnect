@@ -167,8 +167,8 @@ namespace PaymentManagement.Domain.Entities
 			lineItem.Update(
 				description ?? lineItem.Description,
 				unitPrice.HasValue ? new Money(unitPrice.Value, Currency) : lineItem.UnitPrice,
-				quantity ?? lineItem.Quantity);
-
+				quantity ?? lineItem.Quantity
+			);
 			RecalculateTotals();
 		}
 

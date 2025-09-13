@@ -2,7 +2,7 @@
 using Core.Logging;
 using Core.SharedKernel.IntegrationEvents.PaymentsIntegrationEvents;
 using Infrastructure.BackgroundJobs;
-using Infrastructure.EmailService;
+using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using PaymentManagement.Application.Contracts;
@@ -27,15 +27,19 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 			}
 			try
 			{
+				existingPayment.Cancel(request.Reason);
+				var domainEvents = existingPayment.DomainEvents.ToList();
+				var cancelledEvent = domainEvents
+					.OfType<PaymentCancelledIntegrationEvent>()
+					.FirstOrDefault();
+
 				await unitOfWork.ExecuteInTransactionAsync(async () =>
 				{
 					await paymentRepository.DeleteAsync(existingPayment.Id, cancellationToken);
-					await messageBroker.PublishAsync(new PaymentCancelledIntegrationEvent(
-						request.Id, existingPayment.BookingId, existingPayment.OrderId,
-						existingPayment.InvoiceId, existingPayment.FailureReason!,
-						existingPayment.PayerId, existingPayment.RecipientId), cancellationToken);
+					await messageBroker.PublishAsync(cancelledEvent!, cancellationToken);
+					existingPayment.ClearEvents();
 				}, cancellationToken);
-				backgroundJob.Enqueue<IEmailService>(
+				backgroundJob.Enqueue<IGmailService>(
 					"PaymentDeleted",
 					emailService => emailService.SendEmailAsync(
 						request.Email,
