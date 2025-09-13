@@ -1,5 +1,5 @@
 ﻿using Core.Logging;
-using Core.SharedKernel.IntegrationEvents;
+using Core.SharedKernel.IntegrationEvents.BookingIntegrationEvents;
 using MassTransit;
 using UserManagement.Application.Contracts;
 

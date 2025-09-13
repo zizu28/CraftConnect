@@ -18,6 +18,8 @@ namespace Infrastructure.Persistence.Data
 		public DbSet<BookingLineItem> BookingLineItems { get; set; }
 		public DbSet<Product> Products { get; set; }
 		public DbSet<Category> Categories { get; set; }
+		public DbSet<Payment> Payments { get; set; }
+		public DbSet<Invoice> Invoices { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -41,6 +43,7 @@ namespace Infrastructure.Persistence.Data
 			modelBuilder.Owned<Refund>();
 			modelBuilder.Owned<Image>();
 			modelBuilder.Owned<Inventory>();
+			modelBuilder.Owned<InvoiceRecipient>();
 
 			var applicationsToScan = AppDomain.CurrentDomain.GetAssemblies()
 				.Where(a => a.FullName != null && (

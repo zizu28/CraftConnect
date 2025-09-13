@@ -3,8 +3,7 @@ using BookingManagement.Application.CQRS.Commands.BookingCommands;
 using BookingManagement.Application.Validators.BookingValidators;
 using Core.EventServices;
 using Core.Logging;
-using Core.SharedKernel.Domain;
-using Core.SharedKernel.IntegrationEvents;
+using Core.SharedKernel.IntegrationEvents.BookingIntegrationEvents;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 

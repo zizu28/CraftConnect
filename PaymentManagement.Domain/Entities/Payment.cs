@@ -1,6 +1,7 @@
 ﻿using Core.SharedKernel.Domain;
 using Core.SharedKernel.Enums;
-using Core.SharedKernel.IntegrationEvents;
+using Core.SharedKernel.IntegrationEvents.PaymentsIntegrationEvents;
+using Core.SharedKernel.IntegrationEvents.RefundIntegrationEvents;
 using Core.SharedKernel.ValueObjects;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;

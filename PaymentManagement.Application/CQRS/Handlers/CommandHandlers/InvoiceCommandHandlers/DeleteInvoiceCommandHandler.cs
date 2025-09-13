@@ -1,6 +1,6 @@
 ﻿using Core.EventServices;
 using Core.Logging;
-using Core.SharedKernel.IntegrationEvents;
+using Core.SharedKernel.IntegrationEvents.InvoiceIntegrationEvents;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.UnitOfWork;

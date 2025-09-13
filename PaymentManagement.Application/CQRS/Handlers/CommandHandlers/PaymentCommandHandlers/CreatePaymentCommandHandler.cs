@@ -2,7 +2,7 @@
 using Core.EventServices;
 using Core.Logging;
 using Core.SharedKernel.Enums;
-using Core.SharedKernel.IntegrationEvents;
+using Core.SharedKernel.IntegrationEvents.PaymentsIntegrationEvents;
 using Core.SharedKernel.ValueObjects;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;

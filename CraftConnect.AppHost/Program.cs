@@ -29,4 +29,6 @@ builder.AddProject<Projects.BookingManagement_Presentation>("bookingmanagement")
 
 builder.AddProject<Projects.ProductInventoryManagement_Presentation>("productinventorymanagement-presentation");
 
+builder.AddProject<Projects.PaymentManagement_Presentation>("paymentmanagement-presentation");
+
 builder.Build().Run();

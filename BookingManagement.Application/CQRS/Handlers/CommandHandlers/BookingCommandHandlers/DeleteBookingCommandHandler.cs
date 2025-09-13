@@ -2,7 +2,7 @@
 using BookingManagement.Application.CQRS.Commands.BookingCommands;
 using Core.EventServices;
 using Core.Logging;
-using Core.SharedKernel.IntegrationEvents;
+using Core.SharedKernel.IntegrationEvents.BookingIntegrationEvents;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;

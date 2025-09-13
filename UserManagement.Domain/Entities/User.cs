@@ -2,8 +2,8 @@
 using System.Text.Json.Serialization;
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.ValueObjects;
-using Core.SharedKernel.IntegrationEvents;
 using System.ComponentModel.DataAnnotations;
+using Core.SharedKernel.IntegrationEvents.AllUserActivitiesIntegrationEvents;
 
 namespace UserManagement.Domain.Entities
 {

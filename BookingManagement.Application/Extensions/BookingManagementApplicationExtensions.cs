@@ -1,6 +1,6 @@
 ﻿using BookingManagement.Application.CQRS.Handlers.DomainEventHandlers;
 using Core.SharedKernel.Domain;
-using Core.SharedKernel.IntegrationEvents;
+using Core.SharedKernel.IntegrationEvents.BookingIntegrationEvents;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

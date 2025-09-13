@@ -14,9 +14,14 @@ namespace ProductInventoryManagement.Infrastructure.RepositoryImplementations
 			await dbContext.Products.AddAsync(entity, cancellationToken);
 		}
 
-		public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+		public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
 		{
-			throw new NotImplementedException();
+			var existingPoduct = await GetByIdAsync(id, cancellationToken);
+			if(existingPoduct == null)
+			{
+
+			}
+			dbContext.Products.Remove(existingPoduct!);
 		}
 
 		public async Task<Product> FindBy(Expression<Func<Product, bool>> predicate, CancellationToken cancellationToken = default)

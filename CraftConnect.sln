@@ -103,6 +103,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentManagement.Domain", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentManagement.Application", "PaymentManagement.Application\PaymentManagement.Application.csproj", "{FD0AF51F-89CC-402D-AF2D-5FE748960E53}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentManagement.Infrastructure", "PaymentManagement.Infrastructure\PaymentManagement.Infrastructure.csproj", "{D5BD6929-98DB-4D07-92AD-0812DEEC60BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentManagement.Presentation", "PaymentManagement.Presentation\PaymentManagement.Presentation.csproj", "{2D2FEAA2-F0EB-E706-4D71-8F9403582327}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -213,6 +217,14 @@ Global
 		{FD0AF51F-89CC-402D-AF2D-5FE748960E53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD0AF51F-89CC-402D-AF2D-5FE748960E53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD0AF51F-89CC-402D-AF2D-5FE748960E53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5BD6929-98DB-4D07-92AD-0812DEEC60BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5BD6929-98DB-4D07-92AD-0812DEEC60BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5BD6929-98DB-4D07-92AD-0812DEEC60BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5BD6929-98DB-4D07-92AD-0812DEEC60BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D2FEAA2-F0EB-E706-4D71-8F9403582327}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D2FEAA2-F0EB-E706-4D71-8F9403582327}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D2FEAA2-F0EB-E706-4D71-8F9403582327}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D2FEAA2-F0EB-E706-4D71-8F9403582327}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -264,6 +276,8 @@ Global
 		{EE660A20-DE86-4D04-B443-290A522291E1} = {8BDA57C6-1FBB-4271-8081-E754CA592CE2}
 		{F2B9CA72-D51A-4046-B3D3-7E5A84DF9A6D} = {1CB90ECE-B898-4B19-AAAE-18B2ECCF6B7E}
 		{FD0AF51F-89CC-402D-AF2D-5FE748960E53} = {1CB90ECE-B898-4B19-AAAE-18B2ECCF6B7E}
+		{D5BD6929-98DB-4D07-92AD-0812DEEC60BF} = {1CB90ECE-B898-4B19-AAAE-18B2ECCF6B7E}
+		{2D2FEAA2-F0EB-E706-4D71-8F9403582327} = {1CB90ECE-B898-4B19-AAAE-18B2ECCF6B7E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AE8EE197-C711-4DB1-9B30-88451F22C899}

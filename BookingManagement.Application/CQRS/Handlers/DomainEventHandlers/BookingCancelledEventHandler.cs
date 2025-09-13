@@ -2,7 +2,7 @@
 using Core.EventServices;
 using Core.SharedKernel.Domain;
 using Core.SharedKernel.Enums;
-using Core.SharedKernel.IntegrationEvents;
+using Core.SharedKernel.IntegrationEvents.BookingIntegrationEvents;
 
 namespace BookingManagement.Application.CQRS.Handlers.DomainEventHandlers
 {

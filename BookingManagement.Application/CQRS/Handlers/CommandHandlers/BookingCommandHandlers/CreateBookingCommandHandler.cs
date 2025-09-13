@@ -6,7 +6,7 @@ using BookingManagement.Application.Validators.BookingValidators;
 using BookingManagement.Domain.Entities;
 using Core.EventServices;
 using Core.Logging;
-using Core.SharedKernel.IntegrationEvents;
+using Core.SharedKernel.IntegrationEvents.BookingIntegrationEvents;
 using Core.SharedKernel.ValueObjects;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;

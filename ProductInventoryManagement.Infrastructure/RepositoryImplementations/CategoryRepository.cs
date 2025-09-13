@@ -46,7 +46,6 @@ namespace ProductInventoryManagement.Infrastructure.RepositoryImplementations
 			ArgumentNullException.ThrowIfNull(entity);
 			ArgumentException.ThrowIfNullOrWhiteSpace(entity.Name, nameof(entity.Name));
 
-			// Check for duplicate names excluding current entity
 			var existsWithSameName = await _dbSet
 				.AnyAsync(c => c.Name.ToLower() == entity.Name.ToLower() && c.Id != entity.Id, cancellationToken);
 			
@@ -58,7 +57,6 @@ namespace ProductInventoryManagement.Infrastructure.RepositoryImplementations
 			await base.UpdateAsync(entity, cancellationToken);
 		}
 
-		// Additional category-specific methods
 		public async Task<IEnumerable<Category>> GetSubCategoriesAsync(Guid parentCategoryId, CancellationToken cancellationToken = default)
 		{
 			return await _dbSet

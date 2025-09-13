@@ -253,6 +253,164 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("OutboxState");
                 });
 
+            modelBuilder.Entity("PaymentManagement.Domain.Entities.Invoice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("BookingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("IssuedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("IssuedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("IssuedTo")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("PaidDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TaxRate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Terms")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("PaymentManagement.Domain.Entities.InvoiceLineItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ItemCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.ToTable("InvoiceLineItem");
+                });
+
+            modelBuilder.Entity("PaymentManagement.Domain.Entities.Payment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("AuthorizedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("BookingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CapturedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExternalTransactionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FailureReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("InvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PayerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PaymentIntentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("RecipientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("ProductInventoryManagement.Domain.Entities.Category", b =>
                 {
                     b.Property<Guid>("Id")
@@ -436,26 +594,6 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BookingManagement.Domain.Entities.Booking", b =>
                 {
-                    b.OwnsOne("BookingManagement.Domain.Entities.JobDetails", "Details", b1 =>
-                        {
-                            b1.Property<Guid>("BookingId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Description")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<Guid>("Id")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.HasKey("BookingId");
-
-                            b1.ToTable("Bookings");
-
-                            b1.WithOwner()
-                                .HasForeignKey("BookingId");
-                        });
-
                     b.OwnsOne("Core.SharedKernel.ValueObjects.Address", "ServiceAddress", b1 =>
                         {
                             b1.Property<Guid>("BookingId")
@@ -472,6 +610,26 @@ namespace Infrastructure.Persistence.Migrations
                             b1.Property<string>("Street")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("BookingId");
+
+                            b1.ToTable("Bookings");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BookingId");
+                        });
+
+                    b.OwnsOne("BookingManagement.Domain.Entities.JobDetails", "Details", b1 =>
+                        {
+                            b1.Property<Guid>("BookingId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Description")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uniqueidentifier");
 
                             b1.HasKey("BookingId");
 
@@ -509,6 +667,380 @@ namespace Infrastructure.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("InboxMessageId", "InboxConsumerId")
                         .HasPrincipalKey("MessageId", "ConsumerId");
+                });
+
+            modelBuilder.Entity("PaymentManagement.Domain.Entities.Invoice", b =>
+                {
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.InvoiceRecipient", "Recipient", b1 =>
+                        {
+                            b1.Property<Guid>("InvoiceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.HasKey("InvoiceId");
+
+                            b1.ToTable("Invoices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvoiceId");
+                        });
+
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.Address", "BillingAddress", b1 =>
+                        {
+                            b1.Property<Guid>("InvoiceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("InvoiceId");
+
+                            b1.ToTable("Invoices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvoiceId");
+                        });
+
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.Money", "DiscountAmount", b1 =>
+                        {
+                            b1.Property<Guid>("InvoiceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("InvoiceId");
+
+                            b1.ToTable("Invoices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvoiceId");
+                        });
+
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.Money", "SubTotal", b1 =>
+                        {
+                            b1.Property<Guid>("InvoiceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("InvoiceId");
+
+                            b1.ToTable("Invoices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvoiceId");
+                        });
+
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.Money", "TaxAmount", b1 =>
+                        {
+                            b1.Property<Guid>("InvoiceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("InvoiceId");
+
+                            b1.ToTable("Invoices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvoiceId");
+                        });
+
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.Money", "TotalAmount", b1 =>
+                        {
+                            b1.Property<Guid>("InvoiceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("InvoiceId");
+
+                            b1.ToTable("Invoices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvoiceId");
+                        });
+
+                    b.Navigation("BillingAddress")
+                        .IsRequired();
+
+                    b.Navigation("DiscountAmount")
+                        .IsRequired();
+
+                    b.Navigation("Recipient")
+                        .IsRequired();
+
+                    b.Navigation("SubTotal")
+                        .IsRequired();
+
+                    b.Navigation("TaxAmount")
+                        .IsRequired();
+
+                    b.Navigation("TotalAmount")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PaymentManagement.Domain.Entities.InvoiceLineItem", b =>
+                {
+                    b.HasOne("PaymentManagement.Domain.Entities.Invoice", null)
+                        .WithMany("LineItems")
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.Money", "TotalPrice", b1 =>
+                        {
+                            b1.Property<Guid>("InvoiceLineItemId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("InvoiceLineItemId");
+
+                            b1.ToTable("InvoiceLineItem");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvoiceLineItemId");
+                        });
+
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.Money", "UnitPrice", b1 =>
+                        {
+                            b1.Property<Guid>("InvoiceLineItemId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("InvoiceLineItemId");
+
+                            b1.ToTable("InvoiceLineItem");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvoiceLineItemId");
+                        });
+
+                    b.Navigation("TotalPrice")
+                        .IsRequired();
+
+                    b.Navigation("UnitPrice")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PaymentManagement.Domain.Entities.Payment", b =>
+                {
+                    b.HasOne("PaymentManagement.Domain.Entities.Invoice", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("InvoiceId");
+
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.Money", "Amount", b1 =>
+                        {
+                            b1.Property<Guid>("PaymentId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("PaymentId");
+
+                            b1.ToTable("Payments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PaymentId");
+                        });
+
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.Address", "BillingAddress", b1 =>
+                        {
+                            b1.Property<Guid>("PaymentId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("PaymentId");
+
+                            b1.ToTable("Payments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PaymentId");
+                        });
+
+                    b.OwnsMany("PaymentManagement.Domain.Entities.PaymentTransaction", "Transactions", b1 =>
+                        {
+                            b1.Property<Guid>("PaymentId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<Guid>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<string>("Description")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("ExternalTransactionId")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<int>("Type")
+                                .HasColumnType("int");
+
+                            b1.HasKey("PaymentId", "Id");
+
+                            b1.ToTable("PaymentTransaction");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PaymentId");
+
+                            b1.OwnsOne("Core.SharedKernel.ValueObjects.Money", "Amount", b2 =>
+                                {
+                                    b2.Property<Guid>("PaymentTransactionPaymentId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<Guid>("PaymentTransactionId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<decimal>("Amount")
+                                        .HasColumnType("decimal(18,2)");
+
+                                    b2.Property<string>("Currency")
+                                        .IsRequired()
+                                        .HasColumnType("nvarchar(max)");
+
+                                    b2.HasKey("PaymentTransactionPaymentId", "PaymentTransactionId");
+
+                                    b2.ToTable("PaymentTransaction");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("PaymentTransactionPaymentId", "PaymentTransactionId");
+                                });
+
+                            b1.Navigation("Amount")
+                                .IsRequired();
+                        });
+
+                    b.OwnsMany("PaymentManagement.Domain.Entities.Refund", "Refunds", b1 =>
+                        {
+                            b1.Property<Guid>("PaymentId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<Guid>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<string>("ExternalRefundId")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<Guid>("InitiatedBy")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<DateTime?>("ProcessedAt")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<string>("Reason")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<int>("Status")
+                                .HasColumnType("int");
+
+                            b1.HasKey("PaymentId", "Id");
+
+                            b1.ToTable("Refund");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PaymentId");
+
+                            b1.OwnsOne("Core.SharedKernel.ValueObjects.Money", "Amount", b2 =>
+                                {
+                                    b2.Property<Guid>("RefundPaymentId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<Guid>("RefundId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<decimal>("Amount")
+                                        .HasColumnType("decimal(18,2)");
+
+                                    b2.Property<string>("Currency")
+                                        .IsRequired()
+                                        .HasColumnType("nvarchar(max)");
+
+                                    b2.HasKey("RefundPaymentId", "RefundId");
+
+                                    b2.ToTable("Refund");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("RefundPaymentId", "RefundId");
+                                });
+
+                            b1.Navigation("Amount")
+                                .IsRequired();
+                        });
+
+                    b.Navigation("Amount")
+                        .IsRequired();
+
+                    b.Navigation("BillingAddress")
+                        .IsRequired();
+
+                    b.Navigation("Refunds");
+
+                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("ProductInventoryManagement.Domain.Entities.Product", b =>
@@ -628,6 +1160,32 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("UserManagement.Domain.Entities.Craftman", b =>
                 {
+                    b.OwnsMany("Core.SharedKernel.ValueObjects.Skill", "Skills", b1 =>
+                        {
+                            b1.Property<Guid>("CraftmanId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<int>("YearsOfExperience")
+                                .HasColumnType("int");
+
+                            b1.HasKey("CraftmanId", "Id");
+
+                            b1.ToTable("Skill");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CraftmanId");
+                        });
+
                     b.OwnsOne("Core.SharedKernel.ValueObjects.Money", "HourlyRate", b1 =>
                         {
                             b1.Property<Guid>("CraftmanId")
@@ -650,32 +1208,6 @@ namespace Infrastructure.Persistence.Migrations
                             b1.HasKey("CraftmanId");
 
                             b1.ToTable("Users");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CraftmanId");
-                        });
-
-                    b.OwnsMany("Core.SharedKernel.ValueObjects.Skill", "Skills", b1 =>
-                        {
-                            b1.Property<Guid>("CraftmanId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("YearsOfExperience")
-                                .HasColumnType("int");
-
-                            b1.HasKey("CraftmanId", "Id");
-
-                            b1.ToTable("Skill");
 
                             b1.WithOwner()
                                 .HasForeignKey("CraftmanId");
@@ -755,6 +1287,13 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("BookingManagement.Domain.Entities.Booking", b =>
                 {
                     b.Navigation("LineItems");
+                });
+
+            modelBuilder.Entity("PaymentManagement.Domain.Entities.Invoice", b =>
+                {
+                    b.Navigation("LineItems");
+
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("UserManagement.Domain.Entities.User", b =>
