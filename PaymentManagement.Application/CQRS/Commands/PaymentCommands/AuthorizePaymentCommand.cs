@@ -2,7 +2,7 @@
 
 namespace PaymentManagement.Application.CQRS.Commands.PaymentCommands
 {
-	public class AuthorizePaymentCommand : IRequest<bool>
+	public class AuthorizePaymentCommand : IRequest
 	{
 		public Guid PaymentId { get; set; }
 		public string RecipientEmail { get; set; }

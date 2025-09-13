@@ -9,7 +9,7 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.InvoiceCom
 	public class UpdateLineItemCommandHandler(
 		IInvoiceRepository invoiceRepository,
 		IUnitOfWork unitOfWork,
-		ILoggingService<UpdateInvoiceCommandHandler> logger) : IRequestHandler<UpdateLineItemCommand>
+		ILoggingService<UpdateLineItemCommandHandler> logger) : IRequestHandler<UpdateLineItemCommand>
 	{
 		public async Task Handle(UpdateLineItemCommand request, CancellationToken cancellationToken)
 		{

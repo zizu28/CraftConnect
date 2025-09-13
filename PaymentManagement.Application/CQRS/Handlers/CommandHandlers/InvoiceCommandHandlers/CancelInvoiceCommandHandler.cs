@@ -40,11 +40,11 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.InvoiceCom
 				"InvoiceDelete",
 				invoice => invoice.SendEmailAsync(
 					existingInvoice.Recipient.Email.Address.ToString(),
-					"INVOICE DELETED",
-					$"Invoice with ID {request.InvoiceId} has been deleted successfully.",
+					"INVOICE CANCELLED",
+					$"Invoice with ID {request.InvoiceId} has been cancelled successfully.",
 					false,
 					CancellationToken.None));
-			logger.LogInformation($"Invoice with ID {request.InvoiceId} deleted successfully.");
+			logger.LogInformation($"Invoice with ID {request.InvoiceId} cancelled successfully.");
 			return Unit.Value;
 		}
 	}

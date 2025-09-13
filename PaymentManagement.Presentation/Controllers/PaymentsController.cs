@@ -27,6 +27,19 @@ namespace PaymentManagement.Presentation.Controllers
 			}
 			return Ok(payment);
 		}
+
+		[HttpGet]
+		public async Task<IActionResult> GetAvailableRefundAmountAsync([FromRoute] Guid paymentId)
+		{
+			if (paymentId == Guid.Empty)
+			{
+				return BadRequest("Invalid payment ID.");
+			}
+			var query = new GetAvailableRefundAmountQuery { PaymentId = paymentId };
+			var amount = await mediator.Send(query);
+			return Ok(amount);
+		}
+
 		[HttpPost]
 		public async Task<IActionResult> CreatePaymentAsync([FromBody] CreatePaymentCommand command)
 		{
@@ -41,6 +54,7 @@ namespace PaymentManagement.Presentation.Controllers
 			var createdPayment = await mediator.Send(command);
 			return Ok(createdPayment);
 		}
+
 		[HttpPut("{id:guid}")]
 		public async Task<IActionResult> UpdatePaymentAsync(Guid id, [FromBody] UpdatePaymentCommand command)
 		{
@@ -59,6 +73,67 @@ namespace PaymentManagement.Presentation.Controllers
 			}
 			return Ok(updatedPayment);
 		}
+
+		[HttpPut]
+		public async Task<IActionResult> AuthorizePaymentAsync([FromBody] AuthorizePaymentCommand command)
+		{
+			if (command == null)
+			{
+				return BadRequest("Command data is null.");
+			}
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+			await mediator.Send(command);
+			return NoContent();
+		}
+
+		[HttpPut]
+		public async Task<IActionResult> CompletePaymentAsync([FromBody] CompletePaymentCommand command)
+		{
+			if (command == null)
+			{
+				return BadRequest("Command data is null.");
+			}
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+			await mediator.Send(command);
+			return NoContent();
+		}
+
+		[HttpPut]
+		public async Task<IActionResult> FailPaymentAsync([FromBody] FailedPaymentCommand command)
+		{
+			if (command == null)
+			{
+				return BadRequest("Command data is null.");
+			}
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+			await mediator.Send(command);
+			return NoContent();
+		}
+
+		[HttpPut]
+		public async Task<IActionResult> RefundPaymentAsync([FromBody] RefundPaymentCommand command)
+		{
+			if (command == null)
+			{
+				return BadRequest("Command data is null.");
+			}
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+			await mediator.Send(command);
+			return NoContent();
+		}
+
 		[HttpDelete("{id:guid}")]
 		public async Task<IActionResult> DeletePaymentAsync(Guid id, string email)
 		{

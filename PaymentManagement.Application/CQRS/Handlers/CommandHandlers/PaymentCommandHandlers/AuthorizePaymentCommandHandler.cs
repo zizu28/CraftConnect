@@ -15,9 +15,9 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 		ILoggingService<AuthorizePaymentCommandHandler> logger,
 		IUnitOfWork unitOfWork,
 		IMessageBroker messageBroker,
-		IBackgroundJobService backgroundJob) : IRequestHandler<AuthorizePaymentCommand, bool>
+		IBackgroundJobService backgroundJob) : IRequestHandler<AuthorizePaymentCommand>
 	{
-		public async Task<bool> Handle(AuthorizePaymentCommand request, CancellationToken cancellationToken)
+		public async Task Handle(AuthorizePaymentCommand request, CancellationToken cancellationToken)
 		{
 			ArgumentNullException.ThrowIfNull(request, nameof(request));
 			logger.LogInformation("Starting authorization for payment {PaymentId}", request.PaymentId);
@@ -26,11 +26,10 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 			if (payment == null)
 			{
 				logger.LogWarning("Payment {PaymentId} not found", paymentId);
-				return false;
 			}
 			try
 			{
-				payment.Authorize(request.ExternalTransactionId, request.PaymentIntentId);
+				payment!.Authorize(request.ExternalTransactionId, request.PaymentIntentId);
 				var domainEvents = payment.DomainEvents.ToList();
 				var authorizedEvent = domainEvents
 					.OfType<PaymentAuthorizedIntegrationEvent>()
@@ -51,12 +50,10 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 						$"Payment with ID {paymentId} has been authorized",
 						false,
 						CancellationToken.None));
-				return true;
 			}
 			catch (Exception ex)
 			{
 				logger.LogError(ex, "Error authorizing payment {PaymentId}: {ErrorMessage}", paymentId, ex.Message);
-				return false;
 			}
 		}
 	}
