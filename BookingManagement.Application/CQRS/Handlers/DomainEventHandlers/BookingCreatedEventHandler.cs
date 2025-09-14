@@ -23,13 +23,8 @@ namespace BookingManagement.Application.CQRS.Handlers.DomainEventHandlers
 			}
 			var newBooking = Booking.Create(booking!.CustomerId, booking!.CraftmanId,
 				booking!.ServiceAddress,domainEvent.Description, booking.StartDate, booking.EndDate);
-			var bookingCreatedIntegrationEvent = new BookingRequestedIntegrationEvent
-			{
-				BookingId = newBooking.Id,
-				CraftspersonId = newBooking.CraftmanId,
-				Description = newBooking.Details.Description,
-				ServiceAddress = newBooking.ServiceAddress
-			};
+			var bookingCreatedIntegrationEvent = new BookingRequestedIntegrationEvent(newBooking.Id, newBooking.CraftmanId,
+				newBooking.ServiceAddress, domainEvent.Description);
 			await messageBroker.PublishAsync(bookingCreatedIntegrationEvent, cancellationToken);
 		}
 	}

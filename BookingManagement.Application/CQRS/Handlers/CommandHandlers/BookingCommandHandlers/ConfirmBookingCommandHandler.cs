@@ -13,7 +13,6 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 	public class ConfirmBookingCommandHandler(
 		IBookingRepository bookingRepository,
 		ILoggingService<ConfirmBookingCommandHandler> logger,
-		IMessageBroker messageBroker,
 		IUnitOfWork unitOfWork) : IRequestHandler<ConfirmBookingCommand, Unit>
 	{
 		public async Task<Unit> Handle(ConfirmBookingCommand request, CancellationToken cancellationToken)
@@ -29,16 +28,7 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 				booking.ConfirmBooking();
 				await bookingRepository.UpdateAsync(booking, cancellationToken);
 
-				var bookingConfirmedEvent = new BookingConfirmedIntegrationEvent(
-					request.BookingId,
-					request.CustomerId,
-					request.CraftmanId,
-					booking.CalculateTotalPrice(),
-					request.ConfirmedAt);
-				await messageBroker.PublishAsync(bookingConfirmedEvent, cancellationToken);
-
 				logger.LogInformation($"Booking with ID {request.BookingId} confirmed by Craftman with ID {request.CraftmanId} at {request.ConfirmedAt}.");
-				booking.ClearEvents();
 				logger.LogInformation($"Booking with ID {request.BookingId} confirmed successfully.");
 			}, cancellationToken);
 			

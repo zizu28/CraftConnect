@@ -46,6 +46,9 @@ namespace BookingManagement.Domain.Entities
 				EndDate = endDate
 			};
 			booking.Details = new JobDetails(booking.Id, description);
+			
+			booking.AddIntegrationEvent(new BookingRequestedIntegrationEvent(booking.Id, booking.CraftmanId,
+				booking.ServiceAddress, booking.Details.Description));
 			return booking;
 		}
 
@@ -61,6 +64,12 @@ namespace BookingManagement.Domain.Entities
 			}
 			var lineItem = new BookingLineItem(Id, description, price, quantity);
 			LineItems.Add(lineItem);
+			AddIntegrationEvent(new BookingLineItemIntegrationEvent(
+				lineItem.BookingId, lineItem.Id,
+				lineItem.Description,
+				lineItem.Price,
+				lineItem.Quantity
+			));
 		}
 
 		public void ConfirmBooking()

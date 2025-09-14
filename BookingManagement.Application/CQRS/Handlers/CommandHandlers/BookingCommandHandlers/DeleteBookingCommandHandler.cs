@@ -4,6 +4,7 @@ using Core.EventServices;
 using Core.Logging;
 using Core.SharedKernel.IntegrationEvents.BookingIntegrationEvents;
 using Infrastructure.BackgroundJobs;
+using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 
@@ -25,17 +26,26 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 				booking.CancelBooking(request.Reason);
 
 				await bookingRepository.DeleteAsync(booking.Id, cancellationToken);
+				var domainEvents = booking.DomainEvents.ToList();
+				var cancelledEvent = domainEvents.OfType<BookingCancelledIntegrationEvent>().FirstOrDefault();
 
-				var bookingCancelledEvent = new BookingCancelledIntegrationEvent(booking.Id, request.Reason);
-				await messageBroker.PublishAsync(bookingCancelledEvent, cancellationToken);
-
+				if (cancelledEvent != null) 
+				{
+					await messageBroker.PublishAsync(cancelledEvent, cancellationToken);
+				}
+				
 				logger.LogInformation($"Booking with ID {request.BookingId} deleted successfully.");
 				booking.ClearEvents();
 
-				backgroundJob.Enqueue<IMessageBroker>(
+				backgroundJob.Enqueue<IGmailService>(
 					"delete-booking-event",
-					broker => broker.SendAsync("delete-booking", new BookingCancelledIntegrationEvent(
-												booking.Id, request.Reason), cancellationToken));
+					broker => broker.SendEmailAsync(
+						request.RecipientEmail,
+						"BOOKING CANCELLED",
+						$"Your booking with ID {request.BookingId} has been cancelled.",
+						false,
+						CancellationToken.None
+						));
 			}, cancellationToken);
 			
 

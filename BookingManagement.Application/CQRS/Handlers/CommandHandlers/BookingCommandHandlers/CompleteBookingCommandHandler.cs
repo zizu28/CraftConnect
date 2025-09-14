@@ -12,7 +12,6 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 	public class CompleteBookingCommandHandler(
 		ILoggingService<CompleteBookingCommandHandler> logger,
 		IBookingRepository bookingRepository,
-		IMessageBroker messageBroker,
 		IUnitOfWork unitOfWork) : IRequestHandler<CompleteBookingCommand, Unit>
 	{
 		public async Task<Unit> Handle(CompleteBookingCommand request, CancellationToken cancellationToken)
@@ -24,18 +23,14 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 				logger.LogWarning("Validation failed for CompleteBookingCommand: {Errors}", validationResult.Errors);
 				return Unit.Value;
 			}
+
+			var booking = await bookingRepository.GetByIdAsync(request.BookingId, cancellationToken)
+					?? throw new InvalidOperationException($"Booking with ID {request.BookingId} not found.");
 			await unitOfWork.ExecuteInTransactionAsync(async () =>
 			{
-				var booking = await bookingRepository.GetByIdAsync(request.BookingId, cancellationToken)
-				?? throw new InvalidOperationException($"Booking with ID {request.BookingId} not found.");
 				booking.CompleteBooking();
 				await bookingRepository.UpdateAsync(booking, cancellationToken);
-				var newEvent = new BookingCompletedIntegrationEvent(booking.Id, booking.CustomerId,
-															booking.CraftmanId, booking.CalculateTotalPrice());
-				await messageBroker.PublishAsync(newEvent, cancellationToken);
-
 				logger.LogInformation("Booking with ID {BookingId} has been completed successfully.", request.BookingId);
-				booking.ClearEvents();
 			}, cancellationToken);
 			
 			return Unit.Value;

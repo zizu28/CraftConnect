@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookingManagement.Application.Contracts;
 using BookingManagement.Application.CQRS.Commands.BookingCommands;
+using BookingManagement.Application.CQRS.Handlers.DomainEventHandlers;
 using BookingManagement.Application.DTOs.BookingDTOs;
 using BookingManagement.Application.Validators.BookingValidators;
 using BookingManagement.Domain.Entities;
@@ -34,29 +35,19 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 				return response;
 			}
 			logger.LogInformation("Booking creation metadata successfully validated.");
-			
-			var booking = Booking.Create(request.BookingDTO.CustomerId,
-								request.BookingDTO.CraftmanId,
-								new Address(request.BookingDTO.Street, request.BookingDTO.City, request.BookingDTO.PostalCode),
-								request.BookingDTO.InitialDescription, request.BookingDTO.StartDate, request.BookingDTO.EndDate);
 
-			var bookingCreatedIntegrationEvent = new BookingRequestedIntegrationEvent
-			{
-				BookingId = booking.Id,
-				CraftspersonId = booking.CraftmanId,
-				ServiceAddress = booking.ServiceAddress,
-				Description = booking.Details.Description,
-				Location = new GeoLocation(request.Location.Latitude, request.Location.Longitude)
-			};
-
+			var booking = Booking.Create(request.BookingDTO.CustomerId, request.BookingDTO.CraftmanId,
+				new Address(request.BookingDTO.Street, request.BookingDTO.City, request.BookingDTO.PostalCode),
+				request.BookingDTO.InitialDescription, request.BookingDTO.StartDate, request.BookingDTO.EndDate);
+			var domainEvents = booking.DomainEvents.ToList();
+			var bookingCreatedEvent = domainEvents.OfType<BookingRequestedIntegrationEvent>().FirstOrDefault();
 			await unitOfWork.ExecuteInTransactionAsync(async () =>
 			{
 				await bookingRepository.AddAsync(booking, cancellationToken);
-				await publisher.PublishAsync(bookingCreatedIntegrationEvent, cancellationToken);
-				await publisher.SendAsync("booking-created-event", bookingCreatedIntegrationEvent, cancellationToken);
+				if(bookingCreatedEvent != null)
+					await publisher.PublishAsync(bookingCreatedEvent, cancellationToken);
+				booking.ClearEvents();
 			}, cancellationToken);
-
-			booking.ClearEvents();
 			logger.LogInformation("Booking with ID {BookingId} successfully created.", booking.Id);
 
 			response = mapper.Map<BookingResponseDTO>(booking);
