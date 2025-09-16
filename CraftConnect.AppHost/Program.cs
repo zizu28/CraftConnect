@@ -31,4 +31,6 @@ builder.AddProject<Projects.ProductInventoryManagement_Presentation>("productinv
 
 builder.AddProject<Projects.PaymentManagement_Presentation>("paymentmanagement-presentation");
 
+builder.AddProject<Projects.CraftConnect_WebUI>("craftconnect-webui");
+
 builder.Build().Run();
