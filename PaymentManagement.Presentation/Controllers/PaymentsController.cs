@@ -28,7 +28,7 @@ namespace PaymentManagement.Presentation.Controllers
 			return Ok(payment);
 		}
 
-		[HttpGet]
+		[HttpGet("availabe-refund-amount")]
 		public async Task<IActionResult> GetAvailableRefundAmountAsync([FromRoute] Guid paymentId)
 		{
 			if (paymentId == Guid.Empty)
@@ -40,7 +40,28 @@ namespace PaymentManagement.Presentation.Controllers
 			return Ok(amount);
 		}
 
-		[HttpPost]
+		[HttpGet("verify-payment")]
+		public async Task<IActionResult> VerifyPaymentAsync([FromBody] VerifyPaymentCommand command)
+		{
+			if(command == null)
+			{
+				return BadRequest("Command data is null.");
+			}
+
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+			var result = await mediator.Send(command);
+			var (message, isValid) = result;
+			if (!isValid)
+			{
+				return BadRequest(message);
+			}
+			return Ok(result);
+		}
+
+		[HttpPost("create-payment")]
 		public async Task<IActionResult> CreatePaymentAsync([FromBody] CreatePaymentCommand command)
 		{
 			if (command == null)
@@ -55,7 +76,7 @@ namespace PaymentManagement.Presentation.Controllers
 			return Ok(createdPayment);
 		}
 
-		[HttpPut("{id:guid}")]
+		[HttpPut("update-payment/{id:guid}")]
 		public async Task<IActionResult> UpdatePaymentAsync(Guid id, [FromBody] UpdatePaymentCommand command)
 		{
 			if (command == null || id != command.PaymentDTO.PaymentId)
@@ -74,7 +95,7 @@ namespace PaymentManagement.Presentation.Controllers
 			return Ok(updatedPayment);
 		}
 
-		[HttpPut]
+		[HttpPut("authorize-payment")]
 		public async Task<IActionResult> AuthorizePaymentAsync([FromBody] AuthorizePaymentCommand command)
 		{
 			if (command == null)
@@ -89,7 +110,7 @@ namespace PaymentManagement.Presentation.Controllers
 			return NoContent();
 		}
 
-		[HttpPut]
+		[HttpPut("complete-payment")]
 		public async Task<IActionResult> CompletePaymentAsync([FromBody] CompletePaymentCommand command)
 		{
 			if (command == null)
@@ -104,7 +125,7 @@ namespace PaymentManagement.Presentation.Controllers
 			return NoContent();
 		}
 
-		[HttpPut]
+		[HttpPut("fail-payment")]
 		public async Task<IActionResult> FailPaymentAsync([FromBody] FailedPaymentCommand command)
 		{
 			if (command == null)
@@ -119,7 +140,7 @@ namespace PaymentManagement.Presentation.Controllers
 			return NoContent();
 		}
 
-		[HttpPut]
+		[HttpPut("refund-payment")]
 		public async Task<IActionResult> RefundPaymentAsync([FromBody] RefundPaymentCommand command)
 		{
 			if (command == null)
@@ -134,7 +155,7 @@ namespace PaymentManagement.Presentation.Controllers
 			return NoContent();
 		}
 
-		[HttpDelete("{id:guid}")]
+		[HttpDelete("delete-payment/{id:guid}")]
 		public async Task<IActionResult> DeletePaymentAsync(Guid id, string email)
 		{
 			var command = new DeletePaymentCommand { Id = id, Email =  email };

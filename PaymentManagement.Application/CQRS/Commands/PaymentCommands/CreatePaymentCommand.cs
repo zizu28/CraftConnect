@@ -7,5 +7,6 @@ namespace PaymentManagement.Application.CQRS.Commands.PaymentCommands
 	{
 		public string RecipientEmail { get; set; }
 		public PaymentCreateDTO PaymentDTO { get; set; }
+		public decimal TransactionCharge { get; set; }
 	}
 }

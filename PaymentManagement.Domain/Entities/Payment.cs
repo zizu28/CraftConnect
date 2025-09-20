@@ -12,6 +12,7 @@ namespace PaymentManagement.Domain.Entities
 	{
 		public Money Amount { get; private set; }
 		public string Currency { get; private set; }
+		public string Reference { get; private set; }
 		public string? ExternalTransactionId { get; private set; }
 		public string? PaymentIntentId { get; private set; }
 		public string? Description { get; private set; }
@@ -29,6 +30,7 @@ namespace PaymentManagement.Domain.Entities
 		public Address BillingAddress { get; private set; }
 		public string? FailureReason { get; private set; }
 		public DateTime CreatedAt { get; private set; }
+		public DateTime ModifiedAt { get; private set; }
 		public DateTime? ProcessedAt { get; private set; }
 		public DateTime? AuthorizedAt { get; private set; }
 		public DateTime? CapturedAt { get; private set; }
@@ -44,7 +46,7 @@ namespace PaymentManagement.Domain.Entities
 		public static Payment CreateForBooking(
 			Guid bookingId, Money amount, Guid payerId,
 			Guid recipientId, PaymentMethod paymentMethod, Address billingAddress,
-			string paymentType = "Booking", string? description = null)
+			string reference, string paymentType = "Booking", string? description = null)
 		{
 			ValidatePaymentCreation(amount, payerId, recipientId, paymentMethod, billingAddress);
 			var payment = new Payment
@@ -58,6 +60,7 @@ namespace PaymentManagement.Domain.Entities
 				PaymentMethod = paymentMethod,
 				BillingAddress = billingAddress,
 				Description = description,
+				Reference = reference,
 				Status = PaymentStatus.Pending,
 				CreatedAt = DateTime.UtcNow
 			};
@@ -69,7 +72,7 @@ namespace PaymentManagement.Domain.Entities
 		public static Payment CreateForOrder(
 			Guid orderId, Money amount, Guid payerId,
 			Guid recipientId, PaymentMethod paymentMethod, Address billingAddress,
-			string paymentType = "Order", string? description = null)
+			string reference, string paymentType = "Order", string? description = null)
 		{
 			ValidatePaymentCreation(amount, payerId, recipientId, paymentMethod, billingAddress);
 			var payment = new Payment
@@ -82,6 +85,7 @@ namespace PaymentManagement.Domain.Entities
 				PaymentMethod = paymentMethod,
 				PaymentType = Enum.Parse<PaymentType>(paymentType, true),
 				BillingAddress = billingAddress,
+				Reference = reference,
 				Description = description,
 				Status = PaymentStatus.Pending,
 				CreatedAt = DateTime.UtcNow
@@ -94,7 +98,7 @@ namespace PaymentManagement.Domain.Entities
 		public static Payment CreateForInvoice(
 			Guid invoiceId, Money amount, Guid payerId,
 			Guid recipientId, PaymentMethod paymentMethod, Address billingAddress,
-			string paymentType = "Invoice", string? description = null)
+			string reference, string paymentType = "Invoice", string? description = null)
 		{
 			ValidatePaymentCreation(amount, payerId, recipientId, paymentMethod, billingAddress);
 			var payment = new Payment
@@ -107,6 +111,7 @@ namespace PaymentManagement.Domain.Entities
 				PaymentMethod = paymentMethod,
 				PaymentType = Enum.Parse<PaymentType>(paymentType, true),
 				BillingAddress = billingAddress,
+				Reference = reference,
 				Description = description,
 				Status = PaymentStatus.Pending,
 				CreatedAt = DateTime.UtcNow

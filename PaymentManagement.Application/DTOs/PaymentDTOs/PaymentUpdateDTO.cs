@@ -25,5 +25,6 @@ namespace PaymentManagement.Application.DTOs.PaymentDTOs
 		public string? PaymentIntentId { get; set; }
 
 		public string? FailureReason { get; set; }
+		public DateTime ModifiedAt { get; set; }
 	}
 }
