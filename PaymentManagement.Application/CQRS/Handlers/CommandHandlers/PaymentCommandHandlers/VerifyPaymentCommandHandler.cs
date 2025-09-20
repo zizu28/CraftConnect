@@ -16,6 +16,10 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 		IMapper mapper,
 		IUnitOfWork unitOfWork) : IRequestHandler<VerifyPaymentCommand, (string Message, bool Status)>
 	{
+		//public VerifyPaymentCommandHandler(PayStackApi payStackApi)
+		//{
+		//	payStackApi = new PayStackApi();
+		//}
 		public async Task<(string Message, bool Status)> Handle(VerifyPaymentCommand request, CancellationToken cancellationToken)
 		{
 			var payment = await paymentRepository.GetByIdAsync(request.PaymentDTO.PaymentId, cancellationToken);

@@ -172,6 +172,294 @@ namespace CraftConnect.Tests
 
         #endregion
 
+        #region VerifyPaymentAsync Tests
+
+        [Fact]
+        public async Task VerifyPaymentAsync_ReturnsOkResult_WhenVerificationSucceeds()
+        {
+            // Arrange
+            var command = new VerifyPaymentCommand
+            {
+                Reference = "test_reference_123",
+                PaymentDTO = new PaymentUpdateDTO
+                {
+                    PaymentId = Guid.NewGuid(),
+                    Status = "success",
+                    ModifiedAt = DateTime.UtcNow
+                }
+            };
+
+            var expectedResult = ("Payment verified successfully.", true);
+            _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(expectedResult);
+
+            // Act
+            var result = await _controller.VerifyPaymentAsync(command);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(expectedResult, okResult.Value);
+        }
+
+        [Fact]
+        public async Task VerifyPaymentAsync_ReturnsBadRequest_WhenVerificationFails()
+        {
+            // Arrange
+            var command = new VerifyPaymentCommand
+            {
+                Reference = "invalid_reference",
+                PaymentDTO = new PaymentUpdateDTO
+                {
+                    PaymentId = Guid.NewGuid(),
+                    Status = "failed"
+                }
+            };
+
+            var expectedResult = ("Payment verification failed.", false);
+            _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(expectedResult);
+
+            // Act
+            var result = await _controller.VerifyPaymentAsync(command);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Payment verification failed.", badRequestResult.Value);
+        }
+
+        [Fact]
+        public async Task VerifyPaymentAsync_ReturnsBadRequest_WhenCommandIsNull()
+        {
+            // Arrange
+            VerifyPaymentCommand command = null;
+
+            // Act
+            var result = await _controller.VerifyPaymentAsync(command);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Command data is null.", badRequestResult.Value);
+        }
+
+        [Fact]
+        public async Task VerifyPaymentAsync_ReturnsBadRequest_WhenModelStateIsInvalid()
+        {
+            // Arrange
+            var command = new VerifyPaymentCommand
+            {
+                Reference = "test_reference",
+                PaymentDTO = new PaymentUpdateDTO { PaymentId = Guid.NewGuid() }
+            };
+            _controller.ModelState.AddModelError("Reference", "Reference is required");
+
+            // Act
+            var result = await _controller.VerifyPaymentAsync(command);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsType<SerializableError>(badRequestResult.Value);
+        }
+
+        [Fact]
+        public async Task VerifyPaymentAsync_CallsMediatorWithCorrectCommand()
+        {
+            // Arrange
+            var command = new VerifyPaymentCommand
+            {
+                Reference = "test_reference_456",
+                PaymentDTO = new PaymentUpdateDTO
+                {
+                    PaymentId = Guid.NewGuid(),
+                    Status = "success"
+                }
+            };
+
+            var expectedResult = ("Payment verified successfully.", true);
+            _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(expectedResult);
+
+            // Act
+            await _controller.VerifyPaymentAsync(command);
+
+            // Assert
+            _mediatorMock.Verify(m => m.Send(command, It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        [InlineData("   ")]
+        public async Task VerifyPaymentAsync_HandlesInvalidReference(string reference)
+        {
+            // Arrange
+            var command = new VerifyPaymentCommand
+            {
+                Reference = reference,
+                PaymentDTO = new PaymentUpdateDTO { PaymentId = Guid.NewGuid() }
+            };
+
+            var expectedResult = ("Invalid reference provided.", false);
+            _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(expectedResult);
+
+            // Act
+            var result = await _controller.VerifyPaymentAsync(command);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Invalid reference provided.", badRequestResult.Value);
+        }
+
+        [Fact]
+        public async Task VerifyPaymentAsync_HandlesPaymentNotFound()
+        {
+            // Arrange
+            var command = new VerifyPaymentCommand
+            {
+                Reference = "valid_reference",
+                PaymentDTO = new PaymentUpdateDTO { PaymentId = Guid.NewGuid() }
+            };
+
+            _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
+                         .ThrowsAsync(new KeyNotFoundException("Payment not found"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => _controller.VerifyPaymentAsync(command));
+        }
+
+        [Fact]
+        public async Task VerifyPaymentAsync_HandlesExternalServiceException()
+        {
+            // Arrange
+            var command = new VerifyPaymentCommand
+            {
+                Reference = "test_reference",
+                PaymentDTO = new PaymentUpdateDTO { PaymentId = Guid.NewGuid() }
+            };
+
+            _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
+                         .ThrowsAsync(new InvalidOperationException("External service error"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _controller.VerifyPaymentAsync(command));
+        }
+
+        [Theory]
+        [InlineData("success", true)]
+        [InlineData("failed", false)]
+        [InlineData("abandoned", false)]
+        [InlineData("pending", false)]
+        public async Task VerifyPaymentAsync_HandlesVariousVerificationStatuses(string status, bool expectedSuccess)
+        {
+            // Arrange
+            var command = new VerifyPaymentCommand
+            {
+                Reference = "test_reference",
+                PaymentDTO = new PaymentUpdateDTO
+                {
+                    PaymentId = Guid.NewGuid(),
+                    Status = status
+                }
+            };
+
+            var expectedMessage = expectedSuccess ? "Payment verified successfully." : "Payment verification failed.";
+            var expectedResult = (expectedMessage, expectedSuccess);
+
+            _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(expectedResult);
+
+            // Act
+            var result = await _controller.VerifyPaymentAsync(command);
+
+            // Assert
+            if (expectedSuccess)
+            {
+                var okResult = Assert.IsType<OkObjectResult>(result);
+                Assert.Equal(expectedResult, okResult.Value);
+            }
+            else
+            {
+                var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+                Assert.Equal(expectedMessage, badRequestResult.Value);
+            }
+        }
+
+        [Fact]
+        public async Task VerifyPaymentAsync_DoesNotCallMediator_WhenCommandIsNull()
+        {
+            // Arrange
+            VerifyPaymentCommand command = null;
+
+            // Act
+            await _controller.VerifyPaymentAsync(command);
+
+            // Assert
+            _mediatorMock.Verify(m => m.Send(It.IsAny<VerifyPaymentCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task VerifyPaymentAsync_DoesNotCallMediator_WhenModelStateIsInvalid()
+        {
+            // Arrange
+            var command = new VerifyPaymentCommand
+            {
+                Reference = "test_reference",
+                PaymentDTO = new PaymentUpdateDTO { PaymentId = Guid.NewGuid() }
+            };
+            _controller.ModelState.AddModelError("Reference", "Reference is required");
+
+            // Act
+            await _controller.VerifyPaymentAsync(command);
+
+            // Assert
+            _mediatorMock.Verify(m => m.Send(It.IsAny<VerifyPaymentCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task VerifyPaymentAsync_HandlesTimeoutException()
+        {
+            // Arrange
+            var command = new VerifyPaymentCommand
+            {
+                Reference = "timeout_reference",
+                PaymentDTO = new PaymentUpdateDTO { PaymentId = Guid.NewGuid() }
+            };
+
+            _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
+                         .ThrowsAsync(new TimeoutException("Payment verification timeout"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<TimeoutException>(() => _controller.VerifyPaymentAsync(command));
+        }
+
+        [Fact]
+        public async Task VerifyPaymentAsync_HandlesVerificationWithCustomMessage()
+        {
+            // Arrange
+            var command = new VerifyPaymentCommand
+            {
+                Reference = "custom_reference",
+                PaymentDTO = new PaymentUpdateDTO
+                {
+                    PaymentId = Guid.NewGuid(),
+                    Status = "success"
+                }
+            };
+
+            var customResult = ("Payment verified with additional details.", true);
+            _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(customResult);
+
+            // Act
+            var result = await _controller.VerifyPaymentAsync(command);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(customResult, okResult.Value);
+        }
+
+        #endregion
+
         #region CreatePaymentAsync Tests
 
         [Fact]
@@ -185,6 +473,7 @@ namespace CraftConnect.Tests
                 { 
                     Amount = 100.00m, 
                     Currency = "USD",
+                    Reference = "test_ref_123",
                     PaymentMethod = "CreditCard",
                     PaymentStatus = "Pending",
                     PaymentType = "Booking",
@@ -247,6 +536,7 @@ namespace CraftConnect.Tests
                 { 
                     Amount = 100.00m, 
                     Currency = "USD",
+                    Reference = "test_ref_456",
                     PaymentMethod = "CreditCard",
                     PaymentStatus = "Pending",
                     PaymentType = "Booking",
@@ -726,6 +1016,7 @@ namespace CraftConnect.Tests
                 { 
                     Amount = 100.00m, 
                     Currency = "USD",
+                    Reference = "test_ref_789",
                     PaymentMethod = "CreditCard",
                     PaymentStatus = "Pending",
                     PaymentType = "Booking",
@@ -741,6 +1032,23 @@ namespace CraftConnect.Tests
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentException>(() => _controller.CreatePaymentAsync(command));
+        }
+
+        [Fact]
+        public async Task VerifyPaymentAsync_PropagatesException_WhenMediatorThrows()
+        {
+            // Arrange
+            var command = new VerifyPaymentCommand
+            {
+                Reference = "test_reference",
+                PaymentDTO = new PaymentUpdateDTO { PaymentId = Guid.NewGuid() }
+            };
+
+            _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
+                         .ThrowsAsync(new InvalidOperationException("External service error"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _controller.VerifyPaymentAsync(command));
         }
 
         #endregion

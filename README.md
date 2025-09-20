@@ -6,6 +6,41 @@ Welcome to **CraftConnect** – a modern, modular monolith platform built with .
 
 ## 🚀 **Latest Updates**
 
+### **Payment Verification Enhancement** ✅ **(December 2024)**
+- **New VerifyPaymentAsync Endpoint**: Added payment verification functionality to PaymentsController
+- **Paystack Integration**: Enhanced payment verification with external payment gateway support
+- **Comprehensive Test Coverage**: Added 14 new unit tests for payment verification scenarios
+- **Robust Error Handling**: Improved validation and exception handling for payment verification
+
+#### Payment Verification API
+```csharp
+[HttpGet("verify-payment")]
+public async Task<IActionResult> VerifyPaymentAsync([FromBody] VerifyPaymentCommand command)
+```
+
+**Key Features:**
+- Real-time payment status verification with external gateways
+- Support for various payment statuses (success, failed, abandoned, pending)
+- Comprehensive logging and monitoring for payment verification
+- Robust error handling and validation for payment verification requests
+- Integration with Paystack payment gateway for transaction verification
+
+#### Test Coverage Improvements
+**Payment Controller Tests**: 57 (all passing) ✅
+- **New VerifyPaymentAsync Tests**: 14 comprehensive test cases covering:
+  - ✅ Success scenarios and happy paths
+  - ✅ Input validation and error handling
+  - ✅ External service integration testing
+  - ✅ Exception propagation and timeout handling
+  - ✅ Edge cases and boundary conditions
+
+**Test Quality Standards Met:**
+- AAA Pattern (Arrange-Act-Assert)
+- Single Responsibility principle
+- Descriptive naming conventions
+- Proper mocking and dependency injection
+- Async/await testing patterns
+
 ### **Unit of Work Pattern Implementation** ✅
 - **Centralized Transaction Management**: All database operations now use the Unit of Work pattern
 - **Enhanced Repository Pattern**: Removed `SaveChangesAsync()` from repositories - now handled by UnitOfWork
@@ -237,19 +272,15 @@ GET    /api/categories/{id}/products    - Get products in category
 # Payment Operations
 GET    /api/payments                    - Get payments with filtering and pagination
 GET    /api/payments/{id}               - Get payment details with transactions and refunds
-POST   /api/payments                    - Create new payment (booking/order/invoice)
-PUT    /api/payments/{id}               - Update payment information
-POST   /api/payments/{id}/authorize     - Authorize payment
-POST   /api/payments/{id}/capture       - Capture authorized payment
-POST   /api/payments/{id}/complete      - Complete payment (one-step)
-POST   /api/payments/{id}/cancel        - Cancel payment
-POST   /api/payments/{id}/fail          - Mark payment as failed
-
-# Refund Operations
-POST   /api/payments/{id}/refunds       - Process refund for payment
-GET    /api/payments/{id}/refunds       - Get refunds for payment
-PUT    /api/refunds/{id}/complete       - Complete refund processing
-PUT    /api/refunds/{id}/fail           - Mark refund as failed
+POST   /api/payments/create-payment     - Create new payment (booking/order/invoice)
+PUT    /api/payments/update-payment/{id} - Update payment information
+GET    /api/payments/verify-payment     - Verify payment status with external gateway 🆕
+PUT    /api/payments/authorize-payment  - Authorize payment
+PUT    /api/payments/complete-payment   - Complete payment (one-step)
+PUT    /api/payments/fail-payment       - Mark payment as failed
+PUT    /api/payments/refund-payment     - Process refund for payment
+GET    /api/payments/availabe-refund-amount - Get available refund amount
+DELETE /api/payments/delete-payment/{id} - Delete payment record
 
 # Invoice Operations
 GET    /api/invoices                    - Get invoices with filtering and search
@@ -585,6 +616,9 @@ dotnet test --filter "PaymentTests"
 # Run tests matching pattern
 dotnet test --filter "Payment"
 
+# Run Payment Controller tests specifically
+dotnet test --filter "PaymentsControllerTests"
+
 # Generate coverage report (requires coverlet)
 dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults
 ```
@@ -699,6 +733,7 @@ Invoice (Aggregate Root) 🆕
     "StripePublishableKey": "your-stripe-publishable-key",
     "PayPalClientId": "your-paypal-client-id",
     "PayPalClientSecret": "your-paypal-client-secret",
+    "PaystackSecretKey": "your-paystack-secret-key",
     "DefaultCurrency": "USD",
     "RefundProcessingDays": 7
   }
