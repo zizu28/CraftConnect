@@ -16,6 +16,7 @@ namespace PaymentManagement.Presentation.Controllers
 			var payments = await mediator.Send(query);
 			return Ok(payments);
 		}
+		
 		[HttpGet("{id:guid}")]
 		public async Task<IActionResult> GetPaymentByIdAsync(Guid id)
 		{
@@ -26,6 +27,27 @@ namespace PaymentManagement.Presentation.Controllers
 				return NotFound();
 			}
 			return Ok(payment);
+		}
+
+		[HttpGet("transactions")]
+		public async Task<IActionResult> GetAllPaymentTransactionsAsync([FromQuery] Guid? paymentId = null)
+		{
+			var query = new GetAllPaymentTransactionsQuery { PaymentId = paymentId ?? Guid.Empty };
+			var transactions = await mediator.Send(query);
+			return Ok(transactions);
+		}
+
+		[HttpGet("{id:guid}/transactions")]
+		public async Task<IActionResult> GetPaymentTransactionsByPaymentIdAsync(Guid id)
+		{
+			if (id == Guid.Empty)
+			{
+				return BadRequest("Invalid payment ID.");
+			}
+			
+			var query = new GetAllPaymentTransactionsQuery { PaymentId = id };
+			var transactions = await mediator.Send(query);
+			return Ok(transactions);
 		}
 
 		[HttpGet("availabe-refund-amount")]

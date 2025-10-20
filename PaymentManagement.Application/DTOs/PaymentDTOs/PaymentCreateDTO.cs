@@ -5,7 +5,6 @@
 		public required decimal Amount { get; set; }
 
 		public required string Currency { get; set; } = string.Empty;
-		public required string Reference { get; set; } = string.Empty;
 
 		public required string PaymentMethod { get; set; }
 		public required string PaymentStatus { get; set; } = "Pending";

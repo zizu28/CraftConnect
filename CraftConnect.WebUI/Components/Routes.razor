@@ -1,6 +1,14 @@
-﻿<Router AppAssembly="typeof(Program).Assembly">
+﻿@using System.Reflection
+<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="@assemblies">
     <Found Context="routeData">
         <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>
+
+@code {
+    Assembly[] assemblies = new Assembly[]
+    {
+        typeof(UserManagement.Domain.Entities.CraftsmanProfileUpdateDTO).Assembly
+    };
+}

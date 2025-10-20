@@ -1,4 +1,4 @@
-html, body {
+/*html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -57,4 +57,88 @@ h1:focus {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
+}*/
+
+/* wwwroot/css/app.css or a global stylesheet */
+
+/* Import Bootstrap Icons (or similar icon library) */
+/* Example: if using CDN */
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
+
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #f4f6f9; /* Light background for the overall page */
+    color: #333;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+/* General Button Styles (can be overridden by component-scoped styles) */
+.btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Primary Button */
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background-color: white;
+    color: #007bff;
+    border: 1px solid #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.btn-secondary:hover {
+    background-color: #e2e6ea;
+    border-color: #dae0e5;
+}
+
+.btn-secondary-outline {
+    background-color: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+}
+
+    .btn-secondary-outline:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+.landing-page-container {
+    padding-top: 80px; /* To account for fixed navbar */
 }

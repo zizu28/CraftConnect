@@ -30,7 +30,7 @@ app.MapDefaultEndpoints();
 
 app.UseExceptionHandler(opt => { });
 app.UseHttpsRedirection();
-
+app.UseCors("PaystackCors");
 app.UseAuthorization();
 
 app.MapControllers();

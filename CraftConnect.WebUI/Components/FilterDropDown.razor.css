@@ -1,0 +1,34 @@
+﻿.dropdown-container {
+    position: relative;
+}
+
+.filter-select {
+    padding: 8px 30px 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background-color: white;
+    appearance: none; /* Hide default dropdown arrow */
+    cursor: pointer;
+    font-size: 0.95rem;
+    min-width: 120px;
+}
+
+.dropdown-label {
+    position: absolute;
+    left: 10px;
+    top: -10px;
+    background: white;
+    padding: 0 5px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: black;
+    pointer-events: none;
+}
+
+@media (max-width: 480px) {
+    .filter-select {
+        width: 100%;
+        min-width: 100px;
+        margin-bottom: 10px;
+    }
+}

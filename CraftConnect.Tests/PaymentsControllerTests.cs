@@ -5,6 +5,7 @@ using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
 using PaymentManagement.Application.CQRS.Queries.PaymentQueries;
 using PaymentManagement.Application.DTOs.PaymentDTOs;
 using PaymentManagement.Presentation.Controllers;
+using PaymentManagement.Domain.Entities;
 using Core.SharedKernel.ValueObjects;
 using Core.SharedKernel.Enums;
 
@@ -120,6 +121,139 @@ namespace CraftConnect.Tests
 
             // Assert
             _mediatorMock.Verify(m => m.Send(It.Is<GetPaymentByIdQuery>(q => q.PaymentId == paymentId), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        #endregion
+
+        #region GetAllPaymentTransactionsAsync Tests
+
+        [Fact]
+        public async Task GetAllPaymentTransactionsAsync_ReturnsOkResult_WithAllTransactions_WhenNoPaymentIdProvided()
+        {
+            // Arrange
+            var transactions = new List<PaymentTransaction>
+            {
+                PaymentTransaction.Create(Guid.NewGuid(), PaymentTransactionType.Payment, new Money(100m, "USD"), "Payment completed"),
+                PaymentTransaction.Create(Guid.NewGuid(), PaymentTransactionType.Authorization, new Money(200m, "EUR"), "Payment authorized")
+            };
+            _mediatorMock.Setup(m => m.Send(It.Is<GetAllPaymentTransactionsQuery>(q => q.PaymentId == Guid.Empty), It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(transactions);
+
+            // Act
+            var result = await _controller.GetAllPaymentTransactionsAsync();
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsAssignableFrom<IEnumerable<PaymentTransaction>>(okResult.Value);
+            Assert.Equal(2, returnValue.Count());
+        }
+
+        [Fact]
+        public async Task GetAllPaymentTransactionsAsync_ReturnsOkResult_WithFilteredTransactions_WhenPaymentIdProvided()
+        {
+            // Arrange
+            var paymentId = Guid.NewGuid();
+            var transactions = new List<PaymentTransaction>
+            {
+                PaymentTransaction.Create(paymentId, PaymentTransactionType.Payment, new Money(100m, "USD"), "Payment completed"),
+                PaymentTransaction.Create(paymentId, PaymentTransactionType.Authorization, new Money(100m, "USD"), "Payment authorized")
+            };
+            _mediatorMock.Setup(m => m.Send(It.Is<GetAllPaymentTransactionsQuery>(q => q.PaymentId == paymentId), It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(transactions);
+
+            // Act
+            var result = await _controller.GetAllPaymentTransactionsAsync(paymentId);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsAssignableFrom<IEnumerable<PaymentTransaction>>(okResult.Value);
+            Assert.Equal(2, returnValue.Count());
+        }
+
+        [Fact]
+        public async Task GetAllPaymentTransactionsAsync_ReturnsOkResult_WithEmptyList_WhenNoTransactions()
+        {
+            // Arrange
+            var emptyTransactions = new List<PaymentTransaction>();
+            _mediatorMock.Setup(m => m.Send(It.IsAny<GetAllPaymentTransactionsQuery>(), It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(emptyTransactions);
+
+            // Act
+            var result = await _controller.GetAllPaymentTransactionsAsync();
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsAssignableFrom<IEnumerable<PaymentTransaction>>(okResult.Value);
+            Assert.Empty(returnValue);
+        }
+
+        #endregion
+
+        #region GetPaymentTransactionsByPaymentIdAsync Tests
+
+        [Fact]
+        public async Task GetPaymentTransactionsByPaymentIdAsync_ReturnsOkResult_WhenPaymentIdIsValid()
+        {
+            // Arrange
+            var paymentId = Guid.NewGuid();
+            var transactions = new List<PaymentTransaction>
+            {
+                PaymentTransaction.Create(paymentId, PaymentTransactionType.Payment, new Money(100m, "USD"), "Payment completed"),
+                PaymentTransaction.Create(paymentId, PaymentTransactionType.Authorization, new Money(100m, "USD"), "Payment authorized")
+            };
+            _mediatorMock.Setup(m => m.Send(It.Is<GetAllPaymentTransactionsQuery>(q => q.PaymentId == paymentId), It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(transactions);
+
+            // Act
+            var result = await _controller.GetPaymentTransactionsByPaymentIdAsync(paymentId);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsAssignableFrom<IEnumerable<PaymentTransaction>>(okResult.Value);
+            Assert.Equal(2, returnValue.Count());
+        }
+
+        [Fact]
+        public async Task GetPaymentTransactionsByPaymentIdAsync_ReturnsBadRequest_WhenPaymentIdIsEmpty()
+        {
+            // Arrange
+            var paymentId = Guid.Empty;
+
+            // Act
+            var result = await _controller.GetPaymentTransactionsByPaymentIdAsync(paymentId);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Invalid payment ID.", badRequestResult.Value);
+        }
+
+        [Fact]
+        public async Task GetPaymentTransactionsByPaymentIdAsync_DoesNotCallMediator_WhenPaymentIdIsEmpty()
+        {
+            // Arrange
+            var paymentId = Guid.Empty;
+
+            // Act
+            await _controller.GetPaymentTransactionsByPaymentIdAsync(paymentId);
+
+            // Assert
+            _mediatorMock.Verify(m => m.Send(It.IsAny<GetAllPaymentTransactionsQuery>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task GetPaymentTransactionsByPaymentIdAsync_CallsMediatorWithCorrectQuery()
+        {
+            // Arrange
+            var paymentId = Guid.NewGuid();
+            var transactions = new List<PaymentTransaction>();
+            _mediatorMock.Setup(m => m.Send(It.IsAny<GetAllPaymentTransactionsQuery>(), It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(transactions);
+
+            // Act
+            await _controller.GetPaymentTransactionsByPaymentIdAsync(paymentId);
+
+            // Assert
+            _mediatorMock.Verify(m => m.Send(It.Is<GetAllPaymentTransactionsQuery>(q => q.PaymentId == paymentId), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         #endregion
@@ -473,7 +607,6 @@ namespace CraftConnect.Tests
                 { 
                     Amount = 100.00m, 
                     Currency = "USD",
-                    Reference = "test_ref_123",
                     PaymentMethod = "CreditCard",
                     PaymentStatus = "Pending",
                     PaymentType = "Booking",
@@ -536,7 +669,6 @@ namespace CraftConnect.Tests
                 { 
                     Amount = 100.00m, 
                     Currency = "USD",
-                    Reference = "test_ref_456",
                     PaymentMethod = "CreditCard",
                     PaymentStatus = "Pending",
                     PaymentType = "Booking",
@@ -1016,7 +1148,6 @@ namespace CraftConnect.Tests
                 { 
                     Amount = 100.00m, 
                     Currency = "USD",
-                    Reference = "test_ref_789",
                     PaymentMethod = "CreditCard",
                     PaymentStatus = "Pending",
                     PaymentType = "Booking",
@@ -1049,6 +1180,17 @@ namespace CraftConnect.Tests
 
             // Act & Assert
             await Assert.ThrowsAsync<InvalidOperationException>(() => _controller.VerifyPaymentAsync(command));
+        }
+
+        [Fact]
+        public async Task GetAllPaymentTransactionsAsync_PropagatesException_WhenMediatorThrows()
+        {
+            // Arrange
+            _mediatorMock.Setup(m => m.Send(It.IsAny<GetAllPaymentTransactionsQuery>(), It.IsAny<CancellationToken>()))
+                         .ThrowsAsync(new InvalidOperationException("Database error"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _controller.GetAllPaymentTransactionsAsync());
         }
 
         #endregion

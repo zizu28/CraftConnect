@@ -1,0 +1,37 @@
+﻿<header class="navbar-container specific-search-nav">
+    <div class="navbar-content">
+        <a href="/" class="brand-logo">
+            <img src="/images/craftconnect-logo.png" alt="CraftConnect Logo" />
+            CraftConnect
+        </a>
+
+        <button class="hamburger-btn" @onclick="ToggleMenu">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <nav class="nav-links @(isMenuOpen ? "open" : "")">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/explore" class="nav-link">Explore</a>
+            <a href="/about" class="nav-link">About</a>
+
+            <div class="integrated-search">
+                <i class="bi bi-search search-icon-sm"></i>
+                <input type="text" placeholder="Search" />
+            </div>
+
+            <a href="/post-project" class="btn btn-primary">Post a Project</a>
+            <a href="/profile" class="profile-avatar-link">
+                <img src="/images/user-avatar.jpg" alt="User Avatar" class="profile-avatar" />
+            </a>
+        </nav>
+    </div>
+</header>
+
+@code {
+    private bool isMenuOpen = false;
+
+    private void ToggleMenu()
+    {
+        isMenuOpen = !isMenuOpen;
+    }
+}

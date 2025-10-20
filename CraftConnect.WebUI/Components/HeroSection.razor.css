@@ -1,0 +1,111 @@
+﻿.hero-container {
+    position: relative;
+    height: 70vh;
+    background-image: url('/images/hero-background.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    margin-top: 80px; /* Adjust for fixed navbar height */
+    padding: 20px; /* Ensure general padding */
+    box-sizing: border-box;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    padding: 20px;
+}
+
+    .hero-content h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .hero-content p {
+        font-size: 1.25rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Space between buttons on desktop */
+}
+
+    .hero-buttons .btn {
+        padding: 12px 25px;
+        border-radius: 5px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+.btn-secondary-outline {
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+}
+
+/* --- Mobile-Specific Styles (Max Width 600px) --- */
+@media (max-width: 600px) {
+    .hero-container {
+        height: 50vh; /* Reduce height on small screens */
+    }
+
+    .hero-content h1 {
+        font-size: 2rem; /* Shrink H1 text */
+    }
+
+    .hero-content p {
+        font-size: 1rem; /* Shrink paragraph text */
+    }
+
+    .hero-buttons {
+        flex-direction: column; /* Stack buttons vertically */
+        gap: 10px; /* Reduce gap between stacked buttons */
+        width: 100%; /* Use full width */
+        max-width: 300px; /* Control max width of stacked buttons */
+        margin: 0 auto;
+    }
+
+        .hero-buttons .btn {
+            width: 100%; /* Make each button fill the container width */
+            margin: 0; /* Remove horizontal margins */
+        }
+}
+
+@media (max-width: 400px) {
+    .hero-container {
+        padding: 10px; /* Reduce padding on very small screens */
+    }
+    .hero-content h1 {
+        font-size: 1.5rem; /* Further shrink H1 text */
+    }
+    .hero-content p {
+        font-size: 0.9rem; /* Further shrink paragraph text */
+    }
+}

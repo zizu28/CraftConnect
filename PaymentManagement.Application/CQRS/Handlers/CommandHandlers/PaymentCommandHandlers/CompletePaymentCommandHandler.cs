@@ -5,8 +5,10 @@ using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using PaymentManagement.Application.Contracts;
 using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
+using PayStack.Net;
 
 namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCommandHandlers
 {

@@ -1,0 +1,38 @@
+﻿@using Core.SharedKernel.Domain
+@using Core.SharedKernel.ValueObjects
+@using UserManagement.Domain.Entities
+
+<h3 class="section-title">Skills</h3>
+<p class="section-hint">List your top skills and years of experience.</p>
+
+@for (var i = 0; i < Skills.Count; i++)
+{
+    <div class="skill-row">
+        <InputText @bind-Value="Skills[i].Name" class="form-control skill-name-input" placeholder="e.g. Woodworking, Pottery" />
+        <InputNumber @bind-Value="Skills[i].YearsOfExperience" class="form-control skill-years-input" placeholder="Years" />
+        <button type="button" class="btn btn-remove" @onclick="() => RemoveSkill(Skills[i])">Remove</button>
+    </div>
+}
+
+<button type="button" class="btn btn-add" @onclick="AddSkill">Add Skill</button>
+
+@code {
+    // The type is now the domain entity Skill
+    [Parameter]
+    public List<SkillsDTO> Skills { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<List<SkillsDTO>> SkillsChanged { get; set; }
+
+    private async Task AddSkill()
+    {
+        Skills.Add(new SkillsDTO("", 0));
+        await SkillsChanged.InvokeAsync(Skills);
+    }
+
+    private async Task RemoveSkill(SkillsDTO skillToRemove)
+    {
+        Skills.Remove(skillToRemove);
+        await SkillsChanged.InvokeAsync(Skills);
+    }
+}

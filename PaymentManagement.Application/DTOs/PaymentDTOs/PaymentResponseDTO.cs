@@ -10,6 +10,8 @@ namespace PaymentManagement.Application.DTOs.PaymentDTOs
 		public decimal Amount { get; set; }
 		public string Currency { get; set; } = string.Empty;
 		public string Status { get; set; } = string.Empty;
+		public string Reference { get; set; } = string.Empty;
+		public string AuthorizationUrl { get; set; } = string.Empty;
 		public string PaymentMethod { get; set; } = string.Empty;
 		public string? ExternalTransactionId { get; set; }
 		public string? PaymentIntentId { get; set; }

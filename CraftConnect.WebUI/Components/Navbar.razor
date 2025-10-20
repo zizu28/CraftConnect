@@ -1,0 +1,31 @@
+﻿<header class="navbar-container">
+    <div class="navbar-content">
+        <a href="/" class="brand-logo">
+            <img src="/images/craftconnect-logo.png" alt="CraftConnect Logo" />
+            CraftConnect
+        </a>
+
+        @* Hamburger Button - visible only on mobile *@
+        <button class="hamburger-btn" @onclick="ToggleMenu">
+            <i class="bi bi-list"></i>
+        </button>
+
+        @* Navigation Links - hidden on mobile until toggled *@
+        <nav class="nav-links @(isMenuOpen ? "open" : "")">
+            <a href="/about">About</a>
+            <a href="/services">Services</a>
+            <a href="/contact">Contact</a>
+            <button class="btn btn-secondary">Join Now</button>
+            <button class="btn btn-primary">Find Services</button>
+        </nav>
+    </div>
+</header>
+
+@code {
+    private bool isMenuOpen = false;
+
+    private void ToggleMenu()
+    {
+        isMenuOpen = !isMenuOpen;
+    }
+}

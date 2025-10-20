@@ -1,0 +1,94 @@
+﻿@page "/profile/edit"
+@using Blazored.FluentValidation
+@using Core.SharedKernel.Domain
+@using Core.SharedKernel.Enums
+@using Core.SharedKernel.ValueObjects
+@using UserManagement.Domain.Entities
+@inject NavigationManager NavigationManager
+
+<EditForm FormName="profile-setup" Enhance Model="@ProfileData">
+    <FluentValidationValidator Validator="@profileValidator" />
+    <ValidationSummary />
+
+    @* --- 1. Personal Information --- *@
+        <h3 class="section-title">Personal Information</h3>
+        <p class="section-hint">This information will be publicly visible, so be careful what you share.</p>
+
+        <div class="profile-picture-row">
+            <div class="profile-label">Profile Picture</div>
+            <img src="@(ProfileData.ProfileImageUrl.Any() ? ProfileData.ProfileImageUrl : "/images/default-avatar.png")" alt="Profile" class="profile-img" />
+            <button type="button" class="btn btn-link">Change</button>
+        </div>
+
+        <div class="form-group">
+            <label>First Name</label>
+            <InputText @bind-Value="ProfileData.FirstName" class="form-control" />
+            <ValidationMessage For="@(() => ProfileData.FirstName)" />  
+        </div>
+
+    <div class="form-group">
+        <label>Last Name</label>
+        <InputText @bind-Value="ProfileData.LastName" class="form-control" />
+        <ValidationMessage For="@(() => ProfileData.LastName)" />
+    </div>
+        
+        <div class="form-group">
+            <label>Profession</label>
+            @* The Profession property is an enum on the Craftman entity *@
+            <InputSelect @bind-Value="ProfileData.Profession" class="form-control">
+                @foreach (var profession in Enum.GetValues<Profession>())
+                {
+                    <option value="@profession">@profession</option>
+                }
+            </InputSelect>
+        </div>
+        
+        <div class="form-group">
+            <label>Bio</label>
+            @* Mapped to Craftman.Bio *@
+            <InputTextArea @bind-Value="ProfileData.Bio" class="form-control" placeholder="Write a few sentences about yourself." />
+        </div>
+
+    @* --- 2. Skills (Using the Domain Skill Entity) --- *@
+
+        @* --- 3. Portfolio & 4. Work Experience (Components remain the same, binding to DTO lists) --- *@
+        @* <PortfolioEditor @bind-Projects="ProfileData.Portfolio" /> *@
+        <WorkExperienceEditor @bind-WorkEntries="ProfileData.WorkExperience" />
+
+        @* --- 5. Contact Information (No changes here) --- *@
+        <h3 class="section-title">Contact Information</h3>
+        <p class="section-hint">How can potential clients reach you?</p>
+
+        <div class="form-group">
+            <label>Email address</label>
+            <InputText @bind-Value="ProfileData.EmailAddress" class="form-control" />
+        <ValidationMessage For="@(() => ProfileData.EmailAddress)" />
+        </div>
+        <div class="form-group">
+            <label>Phone Number</label>
+            <InputText @bind-Value="ProfileData.PhoneNumber" class="form-control" />
+        <ValidationMessage For="@(() => ProfileData.PhoneNumber)" />
+        </div>
+        <div class="form-group">
+            <label>Location</label>
+            <InputText @bind-Value="ProfileData.Location" class="form-control" />
+        <ValidationMessage For="@(() => ProfileData.Location)" />
+        </div>
+
+        @* --- Actions --- *@
+        <div class="form-actions">
+            <button type="button" class="btn btn-secondary" @onclick="@(() => NavigationManager.NavigateTo("/"))">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Profile</button>
+        </div>
+</EditForm>
+
+@code {
+    private CraftsmanProfileUpdateDTO ProfileData = new();
+    private ProfileSetupValidator profileValidator = new();
+
+    protected override void OnInitialized()
+    {
+        ProfileData.Skills.Add(new SkillsDTO("", 0));
+        ProfileData.WorkExperience.Add(new WorkEntry());
+    }
+}

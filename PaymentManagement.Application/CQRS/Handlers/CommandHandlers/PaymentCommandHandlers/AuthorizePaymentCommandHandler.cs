@@ -5,8 +5,10 @@ using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using PaymentManagement.Application.Contracts;
 using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
+using PayStack.Net;
 
 namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCommandHandlers
 {
@@ -15,8 +17,10 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 		ILoggingService<AuthorizePaymentCommandHandler> logger,
 		IUnitOfWork unitOfWork,
 		IMessageBroker messageBroker,
-		IBackgroundJobService backgroundJob) : IRequestHandler<AuthorizePaymentCommand>
+		IBackgroundJobService backgroundJob,
+		IConfiguration config) : IRequestHandler<AuthorizePaymentCommand>
 	{
+		private readonly PayStackApi payStackApi = new(config["Paystack:SecretKey"]);
 		public async Task Handle(AuthorizePaymentCommand request, CancellationToken cancellationToken)
 		{
 			ArgumentNullException.ThrowIfNull(request, nameof(request));
@@ -29,6 +33,7 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 			}
 			try
 			{
+				//payStackApi.Transactions.CheckAuthorization(request.AuthorizationCode, request.Email, request.AmountInKobo);
 				payment!.Authorize(request.ExternalTransactionId, request.PaymentIntentId);
 				var domainEvents = payment.DomainEvents.ToList();
 				var authorizedEvent = domainEvents

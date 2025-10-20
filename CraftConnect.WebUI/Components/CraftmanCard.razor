@@ -1,0 +1,33 @@
+﻿@using CraftConnect.WebUI.ViewModels
+
+<div class="craftsman-card">
+    <div class="badge-container">
+        <span class="badge @(Craftsman.Badge.Replace(" ", "-").ToLower())">@Craftsman.Badge</span>
+    </div>
+    <div class="profile-image-box" style="background-image: url('@Craftsman.ImageUrl');"></div>
+
+    <div class="card-body">
+        <h3>@Craftsman.Name</h3>
+        <p class="description">@Craftsman.Description</p>
+        <p class="experience">@Craftsman.ExperienceSummary</p>
+    </div>
+
+    <div class="card-footer">
+        <div class="rating-info">
+            <i class="bi bi-star-fill rating-star"></i>
+            <span>@Craftsman.Rating (@Craftsman.ReviewCount reviews)</span>
+        </div>
+        <button class="btn btn-view-profile" @onclick="() => NavigateToProfile(Craftsman.Id)">View Profile</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public CraftmanViewModel Craftsman { get; set; } = default!;
+
+    private void NavigateToProfile(Guid id)
+    {
+        // TODO: Navigation logic
+        Console.WriteLine($"Navigating to profile: {id}");
+    }
+}

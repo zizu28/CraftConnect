@@ -1,0 +1,243 @@
+﻿/* Components/Navbar.razor.css */
+
+/* --- Default (Desktop/Tablet) Styles --- */
+/*.navbar-container {
+    background-color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-sizing: border-box;*/ /* Include padding/border in element's total width/height */
+/*}
+
+.navbar-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+    .brand-logo img {
+        height: 40px;
+        margin-right: 10px;
+    }
+
+.hamburger-btn {
+    display: none;*/ /* Hidden by default on desktop */
+    /*background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #333;
+    z-index: 1001;*/ /* Ensure button is above menu */
+/*}
+
+.nav-links {
+    display: flex;*/ /* Horizontal on desktop */
+    /*align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+    .nav-links a,
+    .nav-links button {
+        margin-left: 20px;
+        text-decoration: none;*/
+        /* ... (rest of button/link styles) ... */
+    /*}*/
+
+/* Primary Button (blue) */
+/*.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+    padding: 8px 15px;
+    border-radius: 5px;
+}*/
+
+/* Secondary Button (light blue/white border) */
+/*.btn-secondary {
+    background-color: white;
+    color: #007bff;
+    border: 1px solid #007bff;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+    .btn-primary:hover, .btn-secondary:hover {
+        opacity: 0.9;
+    }*/
+
+/* --- Mobile-Specific Styles (Max Width 768px) --- */
+/*@media (max-width: 768px) {
+    .navbar-container {
+        padding: 1rem;
+    }
+
+    .hamburger-btn {
+        display: block;*/ /* Show the hamburger button */
+    /*}
+
+    .nav-links {
+        position: fixed;
+        top: 60px;*/ /* Adjust based on your header height */
+        /*left: 0;
+        width: 100%;
+        height: 0;*/ /* Initially collapsed height */
+        /*display: flex;
+        flex-direction: column;*/ /* Stack links vertically */
+        /*background-color: white;
+        box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
+        overflow-y: hidden;*/ /* Hide overflow content */
+        /*transition: height 0.3s ease-in-out, padding 0.3s ease-in-out;
+    }
+
+        .nav-links.open {
+            height: auto;*/ /* Expand height when open */
+            /*max-height: 100vh;*/ /* Prevents overflow */
+            /*padding: 10px 0;
+            overflow-y: auto;*/ /* Allow scrolling if many links */
+        /*}
+
+        .nav-links a,
+        .nav-links button {
+            width: 90%;
+            margin: 8px auto;*/ /* Center items and add spacing */
+            /*text-align: center;
+            padding: 12px 15px;
+            box-sizing: border-box;
+        }
+
+        .nav-links button {
+            margin-left: auto;*/ /* Override desktop margin */
+        /*}
+}*/
+
+/* Components/Navbar.razor.css */
+
+/* --- Base Styles (Applied to all sizes) --- */
+.navbar-container {
+    background-color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-sizing: border-box;
+}
+
+.navbar-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+    .brand-logo img {
+        height: 40px;
+        margin-right: 10px;
+    }
+
+.hamburger-btn {
+    display: none; /* Default: Hidden */
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #333;
+    z-index: 1001;
+}
+
+.nav-links {
+    display: flex; /* Default: Visible and Horizontal */
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+    .nav-links a,
+    .nav-links button {
+        margin-left: 20px;
+        text-decoration: none;
+        /* ... (rest of link and button styles) ... */
+    }
+
+/* --- Mobile-Specific Styles (Max Width 768px - Tablet and smaller) --- */
+@media (max-width: 768px) {
+    .navbar-container {
+        padding: 1rem;
+    }
+
+    .hamburger-btn {
+        display: block; /* Show the hamburger button */
+    }
+
+    .nav-links {
+        /* Hide links by default on mobile */
+        display: none;
+    }
+
+        /* Override the mobile 'display: none' when the menu is open */
+        .nav-links.open {
+            position: fixed;
+            top: 66px; /* Below the header height (e.g., 66px) */
+            left: 0;
+            width: 100%;
+            display: flex; /* Make it visible */
+            flex-direction: column;
+            background-color: white;
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            height: auto;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+
+        .nav-links a,
+        .nav-links button {
+            width: 90%;
+            margin: 8px auto;
+            text-align: center;
+            padding: 12px 15px;
+            box-sizing: border-box;
+        }
+}
+
+/* --- Extra Small/Minimal Device Styles (Max Width 480px) --- */
+@media (max-width: 480px) {
+    .brand-logo {
+        font-size: 1.2rem; /* Shrink logo text */
+    }
+
+        .brand-logo img {
+            height: 30px; /* Shrink logo image */
+        }
+}

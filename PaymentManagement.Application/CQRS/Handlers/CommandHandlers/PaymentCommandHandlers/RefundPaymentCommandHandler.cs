@@ -7,8 +7,10 @@ using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using PaymentManagement.Application.Contracts;
 using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
+using PayStack.Net;
 
 namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCommandHandlers
 {
@@ -17,8 +19,10 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 		IUnitOfWork unitOfWork,
 		ILoggingService<RefundPaymentCommandHandler> logger,
 		IMessageBroker messageBroker,
-		IBackgroundJobService backgroundJob) : IRequestHandler<RefundPaymentCommand, Unit>
+		IBackgroundJobService backgroundJob,
+		IConfiguration configuration) : IRequestHandler<RefundPaymentCommand, Unit>
 	{
+		private readonly PayStackApi payStack = new(configuration["Paystack:SecretKey"]);
 		public async Task<Unit> Handle(RefundPaymentCommand request, CancellationToken cancellationToken)
 		{
 			var payment = await paymentRepository.GetByIdAsync(request.PaymentId, cancellationToken);
@@ -29,6 +33,7 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 			}
 			try
 			{
+				
 				payment.ProcessRefund(new Money(request.RefundAmount, request.Currency), request.Reason, request.InitiatedBy);
 				var domainEvents = payment.DomainEvents.ToList();
 				var refundEvent = domainEvents.OfType<RefundProcessedIntegrationEvent>().FirstOrDefault();

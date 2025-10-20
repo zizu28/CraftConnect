@@ -2,6 +2,7 @@
 using Core.Logging;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using PaymentManagement.Application.Contracts;
 using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
@@ -12,14 +13,12 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 	public class VerifyPaymentCommandHandler(
 		IPaymentRepository paymentRepository,
 		ILoggingService<VerifyPaymentCommandHandler> logger,
-		PayStackApi payStackApi,
 		IMapper mapper,
-		IUnitOfWork unitOfWork) : IRequestHandler<VerifyPaymentCommand, (string Message, bool Status)>
+		IUnitOfWork unitOfWork,
+		IConfiguration config) : IRequestHandler<VerifyPaymentCommand, (string Message, bool Status)>
 	{
-		//public VerifyPaymentCommandHandler(PayStackApi payStackApi)
-		//{
-		//	payStackApi = new PayStackApi();
-		//}
+		private readonly PayStackApi payStackApi = new(config["Paystack:SecretKey"]);
+		
 		public async Task<(string Message, bool Status)> Handle(VerifyPaymentCommand request, CancellationToken cancellationToken)
 		{
 			var payment = await paymentRepository.GetByIdAsync(request.PaymentDTO.PaymentId, cancellationToken);

@@ -1,0 +1,99 @@
+﻿@if (TotalPages > 1)
+{
+    <nav class="pagination-container" aria-label="Page navigation">
+        <ul class="pagination-list">
+            <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+                <button class="page-link" @onclick="() => ChangePage(CurrentPage - 1)" disabled="@(CurrentPage == 1)">
+                    &laquo;
+                </button>
+            </li>
+
+            @foreach (var Page in GetPageNumbers())
+            {
+                if (Page == 0) // Represents '...'
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item @(Page == CurrentPage ? "active" : "")">
+                        <button class="page-link" @onclick="() => ChangePage(Page)">
+                            @Page
+                        </button>
+                    </li>
+                }
+            }
+
+            <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+                <button class="page-link" @onclick="() => ChangePage(CurrentPage + 1)" disabled="@(CurrentPage == TotalPages)">
+                    &raquo;
+                </button>
+            </li>
+        </ul>
+    </nav>
+}
+
+@code {
+    [Parameter]
+    public int CurrentPage { get; set; }
+
+    [Parameter]
+    public int TotalPages { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnPageChange { get; set; }
+
+    // Number of pages to show around the current page
+    private const int MaxPagesToShow = 5;
+
+    private async Task ChangePage(int page)
+    {
+        if (page > 0 && page <= TotalPages)
+        {
+            await OnPageChange.InvokeAsync(page);
+        }
+    }
+
+    private IEnumerable<int> GetPageNumbers()
+    {
+        var pages = new List<int>();
+        var startPage = Math.Max(1, CurrentPage - (MaxPagesToShow / 2));
+        var endPage = Math.Min(TotalPages, startPage + MaxPagesToShow - 1);
+
+        if (endPage - startPage + 1 < MaxPagesToShow)
+        {
+            startPage = Math.Max(1, endPage - MaxPagesToShow + 1);
+        }
+
+        // Always show the first page
+        if (startPage > 1)
+        {
+            pages.Add(1);
+            if (startPage > 2)
+            {
+                pages.Add(0); // ...
+            }
+        }
+
+        // Show pages in the middle block
+        for (var i = startPage; i <= endPage; i++)
+        {
+            pages.Add(i);
+        }
+
+        // Always show the last page
+        if (endPage < TotalPages)
+        {
+            if (endPage < TotalPages - 1)
+            {
+                pages.Add(0); // ...
+            }
+            pages.Add(TotalPages);
+        }
+
+        // Deduplicate and ensure order
+        return pages.Distinct().OrderBy(p => p).ToList();
+    }
+}

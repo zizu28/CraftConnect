@@ -1,0 +1,51 @@
+﻿@using UserManagement.Domain.Entities
+
+<h3 class="section-title">Work Experience</h3>
+<p class="section-hint">Detail your past roles and responsibilities.</p>
+
+@foreach (var entry in WorkEntries)
+{
+    <div class="work-entry-card">
+        <div class="form-group">
+            <label>Company/Studio</label>
+            <InputText @bind-Value="entry.Company" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Position</label>
+            <InputText @bind-Value="entry.Position" class="form-control" />
+        </div>
+        <div class="date-range-row form-group">
+            <label>Dates</label>
+            <InputDate @bind-Value="entry.StartDate" class="form-control" />
+            <span>—</span>
+            <InputDate @bind-Value="entry.EndDate" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Responsibilities</label>
+            <InputTextArea @bind-Value="entry.Responsibilities" class="form-control" />
+        </div>
+        <button type="button" class="btn btn-remove-section" @onclick="() => RemoveEntry(entry)">Remove Experience</button>
+    </div>
+}
+
+<button type="button" class="btn btn-add" @onclick="AddEntry">Add Experience</button>
+
+@code {
+    [Parameter]
+    public List<WorkEntry> WorkEntries { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<List<WorkEntry>> WorkEntriesChanged { get; set; }
+
+    private async Task AddEntry()
+    {
+        WorkEntries.Add(new WorkEntry());
+        await WorkEntriesChanged.InvokeAsync(WorkEntries);
+    }
+
+    private async Task RemoveEntry(WorkEntry entryToRemove)
+    {
+        WorkEntries.Remove(entryToRemove);
+        await WorkEntriesChanged.InvokeAsync(WorkEntries);
+    }
+}

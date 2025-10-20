@@ -1,0 +1,16 @@
+﻿<div class="feature-item-card">
+    <i class="@IconClass feature-icon"></i>
+    <h3>@Title</h3>
+    <p>@Description</p>
+</div>
+
+@code {
+    [Parameter]
+    public string IconClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Description { get; set; } = string.Empty;
+}

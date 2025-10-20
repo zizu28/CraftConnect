@@ -1,0 +1,30 @@
+﻿.feature-item-card {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+    .feature-item-card:hover {
+        transform: translateY(-5px);
+    }
+
+.feature-icon {
+    font-size: 3rem;
+    color: #007bff;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.feature-item-card h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.feature-item-card p {
+    font-size: 1rem;
+    color: #666;
+}

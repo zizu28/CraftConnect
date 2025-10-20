@@ -8,6 +8,7 @@ using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using PaymentManagement.Application.Contracts;
 using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
@@ -25,10 +26,13 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 		IMessageBroker messageBroker,
 		IBackgroundJobService backgroundJob,
 		IUnitOfWork unitOfWork,
-		PayStackApi payStack) : IRequestHandler<CreatePaymentCommand, PaymentResponseDTO>
+		IConfiguration configuration,
+		IHttpClientFactory? httpClient) : IRequestHandler<CreatePaymentCommand, PaymentResponseDTO>
 	{
+		private readonly PayStackApi payStack = new(configuration["Paystack:SecretKey"]);
 		public async Task<PaymentResponseDTO> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
 		{
+			var paystackHttpClient = httpClient?.CreateClient("PaystackClient");
 			var response = new PaymentResponseDTO();
 			var validator = new PaymentCreateDTOValidator();
 			var validationResult = await validator.ValidateAsync(request.PaymentDTO, cancellationToken);
@@ -46,7 +50,6 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 					Email = request.RecipientEmail,
 					Currency = request.PaymentDTO.Currency,
 					TransactionCharge = (int)(request.TransactionCharge * 100),
-					CallbackUrl = "https://my-callback-url.com", // I will resolve this later in production
 				};
 
 				logger.LogInformation($"Request to PayStack:: {JsonConvert.SerializeObject(paystackRequest)}");
@@ -61,21 +64,21 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 							request.PaymentDTO.PayerId, request.PaymentDTO.RecipientId,
 							Enum.Parse<PaymentMethod>(request.PaymentDTO.PaymentMethod, true), new Address(request.PaymentDTO.BillingStreet,
 								request.PaymentDTO.BillingCity, request.PaymentDTO.BillingPostalCode),
-							request.PaymentDTO.Reference, request.PaymentDTO.PaymentType, request.PaymentDTO.Description),
+							paystackResponse.Data.Reference, request.PaymentDTO.PaymentType, request.PaymentDTO.Description),
 
 						"invoice" => Payment.CreateForInvoice(
 							request.PaymentDTO.InvoiceId, new Money(request.PaymentDTO.Amount, request.PaymentDTO.Currency),
 							request.PaymentDTO.PayerId, request.PaymentDTO.RecipientId,
 							Enum.Parse<PaymentMethod>(request.PaymentDTO.PaymentMethod, true), new Address(request.PaymentDTO.BillingStreet,
 								request.PaymentDTO.BillingCity, request.PaymentDTO.BillingPostalCode),
-							request.PaymentDTO.Reference, request.PaymentDTO.PaymentType, request.PaymentDTO.Description),
+							paystackResponse.Data.Reference, request.PaymentDTO.PaymentType, request.PaymentDTO.Description),
 
 						_ => Payment.CreateForOrder(
 							request.PaymentDTO.OrderId, new Money(request.PaymentDTO.Amount, request.PaymentDTO.Currency),
 							request.PaymentDTO.PayerId, request.PaymentDTO.RecipientId,
 							Enum.Parse<PaymentMethod>(request.PaymentDTO.PaymentMethod, true), new Address(request.PaymentDTO.BillingStreet,
 								request.PaymentDTO.BillingCity, request.PaymentDTO.BillingPostalCode),
-							request.PaymentDTO.Reference, request.PaymentDTO.PaymentType, request.PaymentDTO.Description),
+							paystackResponse.Data.Reference, request.PaymentDTO.PaymentType, request.PaymentDTO.Description),
 					};
 
 					var domainEvents = paymentEntity.DomainEvents.ToList();
@@ -85,6 +88,8 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 
 					await unitOfWork.ExecuteInTransactionAsync(async () =>
 					{
+						var httpResponse = await paystackHttpClient!.GetAsync(paystackResponse.Data.AuthorizationUrl,HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+
 						await paymentRepository.AddAsync(paymentEntity, cancellationToken);
 						await messageBroker.PublishAsync(initiatedEvent!, cancellationToken);
 						paymentEntity.ClearEvents();
@@ -102,6 +107,8 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 					response = mapper.Map<PaymentResponseDTO>(paymentEntity);
 					response.IsSuccess = true;
 					response.Message = "Payment created successfully.";
+					response.AuthorizationUrl = paystackResponse.Data.AuthorizationUrl;
+					response.Reference = paystackResponse.Data.Reference;
 				}
 			}
 			catch (Exception ex)

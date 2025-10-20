@@ -1,0 +1,20 @@
+﻿<div class="feature-section-container">
+    <div class="feature-section-header">
+        <h2>@Title</h2>
+        <p>@Description</p>
+    </div>
+    <div class="feature-items-grid">
+        @FeatureItems
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Description { get; set; } = string.Empty;
+
+    [Parameter]
+    public RenderFragment? FeatureItems { get; set; }
+}
