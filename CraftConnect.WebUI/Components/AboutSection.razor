@@ -1,0 +1,12 @@
+﻿<div class="section-container about-section">
+    <h3>About @Name</h3>
+    <p class="bio-content">@Bio</p>
+</div>
+
+@code {
+    [Parameter]
+    public string Name { get; set; } = string.Empty; // Passed from parent (e.g., Profile.Name)
+
+    [Parameter]
+    public string Bio { get; set; } = string.Empty; // The long descriptive text
+}

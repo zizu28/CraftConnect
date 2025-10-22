@@ -1,0 +1,101 @@
+﻿@page "/craftsman/{id:guid}"
+@inject IHttpClientFactory Http
+
+<div class="back-link-container">
+    <a href="/find-craftmen" class="back-link">
+        <i class="bi bi-arrow-left"></i> Back to search results
+    </a>
+</div>
+<div class="public-profile-container">
+    <div class="header-section">
+        <img src="@Profile.AvatarUrl" alt="@Profile.Name" class="profile-avatar" />
+        <div class="info-block">
+            <h2>@Profile.Name</h2>
+            <p class="location-text">@Profile.Location</p>
+            <div class="rating-stars">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <i class="bi bi-star-fill @(i <= Math.Floor(Profile.AvgRating) ? "filled" : "")"></i>
+                }
+                <span class="review-count">(@Profile.ReviewCount reviews)</span>
+            </div>
+        </div>
+        <button class="btn btn-quote">Request a Quote</button>
+    </div>
+
+    @* --- Navigation Tabs --- *@
+    <div class="nav-tabs-container">
+        <div class="nav-tabs">
+            <button class="tab-btn @(ActiveTab == "Portfolio" ? "active" : "")" @onclick="@(() => ActiveTab = "Portfolio")">Portfolio</button>
+            <button class="tab-btn @(ActiveTab == "Skills" ? "active" : "")" @onclick="@(() => ActiveTab = "Skills")">Skills</button>
+            <button class="tab-btn @(ActiveTab == "Reviews" ? "active" : "")" @onclick="@(() => ActiveTab = "Reviews")">Reviews</button>
+            <button class="tab-btn @(ActiveTab == "About" ? "active" : "")" @onclick="@(() => ActiveTab = "About")">About</button>
+        </div>
+    </div>
+    
+    <div class="content-area">
+        @switch (ActiveTab)
+        {
+            case "Portfolio":
+                <PortfolioSection PortfolioItems="@Profile.Portfolio" />
+                break;
+            case "Skills":
+                <SkillsSection Skills="@Profile.Skills" />
+                break;
+            case "Reviews":
+                <ReviewsSection Reviews="@Profile.Reviews" />
+                break;
+            case "About":
+                <AboutSection Bio="@Profile.Bio" />
+                break;
+        }
+    </div>
+    
+    <div class="bottom-cta-container">
+        <p class="cta-title">Have a project in mind?</p>
+        <p class="cta-subtext">I'd love to hear about it. Reach out for a free consultation.</p>
+        <button class="btn btn-contact">Contact Eleanor</button>
+        @* <div class="social-links">
+            <i class="bi bi-facebook"></i>
+            <i class="bi bi-twitter"></i>
+            <i class="bi bi-instagram"></i>
+        </div> *@
+    </div>
+    <Footer />
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private CraftsmanPublicProfileVM Profile { get; set; } = new();
+    private string ActiveTab { get; set; } = "Portfolio";
+
+    protected override void OnInitialized()
+    {
+        // Mock Data Initialization
+        Profile = GetMockProfile();
+    }
+
+    // Mock Data based on the image
+    private CraftsmanPublicProfileVM GetMockProfile()
+    {
+        return new CraftsmanPublicProfileVM
+        {
+            Portfolio = new List<PortfolioItemVM>
+            {
+                new() { ImageUrl = "/images/p-table1.jpg", Category = "Tables" },
+                new() { ImageUrl = "/images/p-chairs1.jpg", Category = "Chairs" },
+                new() { ImageUrl = "/images/p-cabinet1.jpg", Category = "Cabinets" },
+                new() { ImageUrl = "/images/p-table2.jpg", Category = "Tables" },
+                new() { ImageUrl = "/images/p-table3.jpg", Category = "Tables" },
+                new() { ImageUrl = "/images/p-cabinet2.jpg", Category = "Cabinets" }
+            },
+            Reviews = new List<ReviewVM>
+            {
+                new() { ReviewerName = "James R.", Rating = 5.0M, Comment = "Eleanor built a custom dining table for our family, and the craftsmanship is absolutely breathtaking...", DatePosted = DateTime.Parse("Oct 20, 2023") },
+                new() { ReviewerName = "Sarah L.", Rating = 5.0M, Comment = "I commissioned a set of rocking chairs, and they exceeded all my expectations. The attention to detail is incredible...", DatePosted = DateTime.Parse("Sep 05, 2023") }
+            }
+        };
+    }
+}

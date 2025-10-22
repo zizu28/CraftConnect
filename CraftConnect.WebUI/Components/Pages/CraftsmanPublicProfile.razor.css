@@ -1,0 +1,201 @@
+﻿/* --- Container for the Tabs --- */
+.nav-tabs-container {
+    width: 100%;
+    /* Apply a light border at the bottom of the entire tab area */
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 30px;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.nav-tabs {
+    /* Flexbox for equal spacing */
+    display: flex;
+    justify-content: flex-start; /* Aligns them to the left */
+    max-width: 1200px; /* Adjust to match your main content width */
+    margin: 0 auto;
+    /* Removed border-bottom here to use the container's border-bottom */
+}
+
+.bottom-cta-container {
+    width: 100%;
+    /* The magical gradient transition:
+    It starts as white/transparent at the top (0%) and fades to a light blue (#f0f8ff)
+    which matches the background color of the footer.
+    */
+    background: linear-gradient( to bottom, rgba(255, 255, 255, 0) 0%, /* Start completely transparent */
+    #f7f9fc 30%, /* Fade to very light grey */
+    #f0f8ff 100% /* Solid light blue at the bottom */
+    );
+    /* Ensure content is centered and padded */
+    padding: 60px 20px 0 20px;
+    text-align: center;
+    box-sizing: border-box;
+    margin-top: 50px;
+}
+
+    .bottom-cta-container .cta-title {
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .bottom-cta-container .cta-subtext {
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+
+    .bottom-cta-container .btn-contact {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 4px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        cursor: pointer;
+    }
+
+.social-links i {
+    font-size: 1.2rem;
+    color: #888;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+    .social-links i:hover {
+        color: #007bff;
+    }
+
+
+/* ==================================
+   GLOBAL FOOTER (Alignment & Color)
+   ================================== */
+
+/* Assuming Footer.razor renders a div with class 'site-footer' */
+.site-footer {
+    /* Continuation of the gradient color */
+    background-color: #f0f8ff;
+    padding: 20px 20px;
+    text-align: center;
+    border-top: 1px solid #e0e7ed; /* Subtle separator line */
+}
+
+.footer-content {
+    /* Ensure content is centered, which fixes "poor alignment" */
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap; /* Allows links to wrap on mobile */
+    gap: 15px; /* Spacing between links/elements */
+    font-size: 0.9rem;
+}
+
+    .footer-content a {
+        color: #555;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+        .footer-content a:hover {
+            color: #007bff;
+        }
+
+.copyright {
+    width: 100%; /* Ensure copyright text is centered below links */
+    margin-top: 10px;
+    color: #777;
+}
+
+/* --- Tab Button Styling and UX --- */
+.tab-btn {
+    /* Flex-grow to distribute space equally */
+    flex-grow: 0;
+    flex-basis: auto; /* Take only the space needed */
+
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #555;
+    padding: 10px 20px 15px 20px;
+    margin-right: 30px; /* Space between the tab buttons */
+    /* Decoration and Transition */
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-bottom 0.2s;
+}
+
+    .tab-btn:hover {
+        color: #000;
+        /* Optional: Show a subtle border on hover */
+        border-bottom: 3px solid #f0f0f0;
+    }
+
+    /* --- Active Tab Styling (The Blue Indicator) --- */
+    .tab-btn.active {
+        color: #007bff; /* Bright blue text */
+        font-weight: 600;
+        border-bottom: 3px solid #007bff; /* Thick blue indicator line */
+    }
+
+        .tab-btn.active:hover {
+            color: #007bff;
+        }
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 600px) {
+    .nav-tabs-container {
+        padding: 0 10px;
+    }
+
+    .nav-tabs {
+        /* On small screens, allow them to wrap or scroll if necessary, 
+           or ensure they take the full width */
+        gap: 10px;
+        justify-content: space-between;
+    }
+
+    .tab-btn {
+        flex-grow: 1; /* Force equal width distribution on mobile */
+        margin-right: 0;
+        padding: 10px 5px 15px 5px;
+        font-size: 0.9rem;
+    }
+}
+
+.back-link-container {
+    max-width: 900px; /* Match your content width */
+    margin: 30px auto 10px auto;
+    padding: 0 20px;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #6c757d; /* Muted color */
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+    .back-link i {
+        font-size: 1.2rem;
+    }
+
+    .back-link:hover {
+        color: #007bff; /* Primary color on hover for good UX */
+    }
+
+/* Ensure the profile container has the necessary margin to accommodate the link */
+.public-profile-container {
+    max-width: 900px;
+    margin: 0 auto 50px auto; /* Adjust top margin as needed */
+    /* ... rest of container styles ... */
+}

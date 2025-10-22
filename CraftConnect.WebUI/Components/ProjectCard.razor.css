@@ -1,0 +1,103 @@
+﻿.project-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.user-avatar-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+}
+
+.project-info h4 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    color: #007bff;
+}
+
+.description {
+    font-size: 0.9rem;
+    color: #666;
+    height: 60px; /* Constrain height */
+    overflow: inherit;
+}
+
+.project-tags {
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.skill-tag {
+    display: inline-block;
+    background-color: #f0f8ff;
+    color: #007bff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.project-details {
+    margin-bottom: 20px;
+    border-top: 1px dashed #eee;
+    padding-top: 15px;
+    flex-grow: 1;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+    .detail-row i {
+        color: #007bff;
+        font-size: 1rem;
+    }
+
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.btn-view-details {
+    background-color: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+    padding: 10px 15px;
+    border-radius: 4px;
+    flex-grow: 1;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-submit-proposal {
+    background-color: #ffc107;
+    color: #333;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    flex-grow: 1;
+    font-weight: 600;
+    cursor: pointer;
+}

@@ -157,3 +157,24 @@
         display: none;
     }
 }
+
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: var(--text-color); /* Use theme variable */
+    cursor: pointer;
+    padding: 5px;
+    margin-right: 10px;
+    transition: color 0.2s;
+}
+
+    .theme-toggle-btn:hover {
+        color: var(--primary-color);
+    }
+
+/* Ensure the navbar background uses the theme variable */
+.navbar-container.dashboard-nav {
+    background-color: var(--navbar-bg);
+    box-shadow: var(--navbar-shadow);
+}

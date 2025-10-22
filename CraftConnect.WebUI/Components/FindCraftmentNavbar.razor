@@ -1,4 +1,7 @@
-﻿<header class="navbar-container specific-search-nav">
+﻿@using CraftConnect.WebUI.Services
+@inject ThemeService ThemeService
+
+<header class="navbar-container specific-search-nav">
     <div class="navbar-content">
         <a href="/" class="brand-logo">
             <img src="/images/craftconnect-logo.png" alt="CraftConnect Logo" />
@@ -10,6 +13,9 @@
         </button>
 
         <nav class="nav-links @(isMenuOpen ? "open" : "")">
+            <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+                <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon" : "bi-sun")"></i>
+            </button>
             <a href="/" class="nav-link">Home</a>
             <a href="/explore" class="nav-link">Explore</a>
             <a href="/about" class="nav-link">About</a>
@@ -33,5 +39,20 @@
     private void ToggleMenu()
     {
         isMenuOpen = !isMenuOpen;
+    }
+
+    protected override void OnInitialized()
+    {
+        ThemeService.OnThemeChanged += OnThemeChangedHandler;
+    }
+
+    private void OnThemeChangedHandler()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= OnThemeChangedHandler;
     }
 }

@@ -1,0 +1,105 @@
+﻿.filter-sidebar {
+    padding: 0 10px 20px 0;
+}
+
+    .filter-sidebar h3 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+.filter-group {
+    margin-bottom: 20px;
+}
+
+    .filter-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+/* Keyword Search Styling */
+.search-input-box {
+    position: relative;
+}
+
+    .search-input-box input {
+        width: 100%;
+        padding: 10px 10px 10px 40px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .search-input-box i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+    }
+
+/* Checkbox Styling */
+.checkbox-item {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .checkbox-item input[type="checkbox"] {
+        accent-color: #007bff;
+        width: 18px;
+        height: 18px;
+    }
+
+/* Budget Slider Styling */
+.slider-range {
+    padding: 0 5px;
+}
+
+    .slider-range input[type="range"] {
+        width: 100%;
+        -webkit-appearance: none;
+        height: 5px;
+        background: #ddd;
+        border-radius: 5px;
+    }
+
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Date Input & Location */
+.date-input, .form-control {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Action Buttons */
+.filter-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.btn-apply {
+    background-color: #007bff;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-reset {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+}

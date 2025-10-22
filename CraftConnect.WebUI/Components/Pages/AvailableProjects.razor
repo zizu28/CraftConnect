@@ -1,0 +1,140 @@
+﻿@page "/projects/available"
+@inject IHttpClientFactory HttpClientFactory
+
+<DashboardNavbar />
+
+<div class="main-dashboard-container">
+    <FilterSidebar @bind-SearchParameters="SearchParameters"
+                   OnApplyFilters="LoadProjectsAsync" />
+
+    <div class="results-area">
+        <div class="results-header">
+            <h1>Find Your Next Project</h1>
+            <p>Browse through opportunities posted by clients.</p>
+            <div class="sort-control">
+                <label>Sort by:</label>
+                <select @bind="SearchParameters.SortBy">
+                    <option value="Newest">Newest</option>
+                    <option value="Deadline">Deadline</option>
+                    <option value="Budget">Budget (High)</option>
+                </select>
+            </div>
+        </div>
+
+        @if (IsLoading)
+        {
+            <p class="loading-message">Fetching new projects...</p>
+        }
+        else if (Projects.Any())
+        {
+            <div class="projects-grid">
+                @foreach (var project in Projects)
+                {
+                    <ProjectCard Project="@project" />
+                }
+            </div>
+            <Pagination CurrentPage="@SearchParameters.PageNumber"
+                        TotalPages="@TotalPages"
+                        OnPageChange="HandlePageChange" />
+        }
+        else
+        {
+            <p class="no-results">No projects match your current filters.</p>
+        }
+    </div>
+</div>
+
+@code {
+    private List<ProjectViewModel> Projects { get; set; } = new();
+    private ProjectSearchParameters SearchParameters { get; set; } = new();
+    private bool IsLoading { get; set; } = true;
+    private int TotalItems = 25;
+    private int TotalPages => (int)Math.Ceiling((double)TotalItems / 9); // Assuming 9 items per page
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProjectsAsync();
+    }
+
+    private async Task HandlePageChange(int page)
+    {
+        SearchParameters.PageNumber = page;
+        await LoadProjectsAsync();
+    }
+
+    private async Task LoadProjectsAsync()
+    {
+        IsLoading = true;
+        // var bookingsClient = HttpClientFactory.CreateClient("Bookings");
+        // var bookingsResponse = await bookingsClient.GetAsync("api/bookings/");
+        await Task.Delay(500);
+        Projects = GetMockData().ToList();
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    // Placeholder data models
+    public record ProjectSearchParameters()
+    {
+        public string Keyword { get; set; } = string.Empty;
+        public string SortBy { get; set; } = "Newest";
+        public int PageNumber { get; set; } = 1;
+        public List<string> Skills { get; set; } = new();
+        public decimal MinBudget { get; set; } = 0;
+        public decimal MaxBudget { get; set; } = 0;
+        public DateTime? Deadline { get; set; } = null;
+        public string Location { get; set; } = string.Empty;
+    }
+    public record ProjectViewModel()
+    {
+        public Guid Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string UserAvatarUrl { get; set; } = string.Empty;
+        public List<string> Tags { get; set; } = new();
+        public string BudgetRange { get; set; } = string.Empty;
+        public string Deadline { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+    }
+
+
+    private IEnumerable<ProjectViewModel> GetMockData()
+    {
+        return new List<ProjectViewModel>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Custom Bookshelf for Living Room",
+                Description = "Looking for a skilled carpenter to build a custom, floor-to-ceiling bookshelf. Needs to be sturdy and match existing decor.",
+                UserAvatarUrl = "/images/p1.jpg",
+                Tags = new List<string>{"Woodworking", "Carpentry", "Furniture Design"},
+                BudgetRange = "$500 - $1000",
+                Deadline = "By Oct 31, 2024",
+                Location = "New York, NY"
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Hand-thrown Pottery Set",
+                Description = "Seeking a potter to create a custom 12-piece dinnerware set. Must be food-safe and dishwasher-safe.",
+                UserAvatarUrl = "/images/p2.jpg",
+                Tags = new List<string>{"Pottery", "Ceramics"},
+                BudgetRange = "$300 - $600",
+                Deadline = "By Nov 15, 2024",
+                Location = "Remote"
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Wrought Iron Garden Gate",
+                Description = "Need a custom wrought iron gate for my garden entrance. Looking for an ornate, classic design. Dimensions will be provided.",
+                UserAvatarUrl = "/images/p3.jpg",
+                Tags = new List<string>{"Metalwork", "Blacksmithing"},
+                BudgetRange = "$1200 - $2000",
+                Deadline = "By Dec 01, 2024",
+                Location = "Chicago, IL"
+            },
+        }.Skip((SearchParameters.PageNumber - 1) * 9).Take(9).ToList();
+    }
+}

@@ -1,0 +1,14 @@
+﻿<div class="section-container skills-section">
+    <h3>Skills & Services</h3>
+    <div class="skill-tag-list">
+        @foreach (var skill in Skills)
+        {
+            <span class="skill-service-tag">@skill</span>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<string> Skills { get; set; } = new();
+}

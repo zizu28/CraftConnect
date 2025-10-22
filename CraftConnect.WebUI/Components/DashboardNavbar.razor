@@ -1,7 +1,7 @@
 ﻿@using CraftConnect.WebUI.Services
 @inject ThemeService ThemeService
 
-<header class="navbar-container">
+<header class="navbar-container dashboard-nav">
     <div class="navbar-content">
         <a href="/" class="brand-logo">
             <img src="/images/craftconnect-logo.png" alt="CraftConnect Logo" />
@@ -13,16 +13,21 @@
             <i class="bi bi-list"></i>
         </button>
 
-        @* Navigation Links - hidden on mobile until toggled *@
+        @* Navigation Links and User Actions *@
         <nav class="nav-links @(isMenuOpen ? "open" : "")">
             <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
                 <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon" : "bi-sun")"></i>
             </button>
-            <a href="/about">About</a>
-            <a href="/services">Services</a>
-            <a href="/contact">Contact</a>
-            <button class="btn btn-secondary">Join Now</button>
-            <button class="btn btn-primary">Find Services</button>
+            @* Central Links *@
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+            <a href="/profile" class="nav-link">Profile</a>
+            <a href="/messages" class="nav-link">Messages</a>
+
+            @* Right Side Button & Avatar *@
+            <a href="/post-a-project" class="btn btn-primary btn-post-project">Post a Project</a>
+            <a href="/profile" class="profile-avatar-link">
+                <img src="/images/user-avatar.jpg" alt="User Avatar" class="profile-avatar" />
+            </a>
         </nav>
     </div>
 </header>

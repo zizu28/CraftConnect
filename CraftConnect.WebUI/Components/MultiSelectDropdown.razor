@@ -1,0 +1,73 @@
+﻿<div class="multi-select-container">
+    @* --- Display Box and Toggle --- *@
+    <div class="selected-items-box @(IsDropdownOpen ? "open" : "")" @onclick="ToggleDropdown">
+        @if (SelectedItems.Any())
+        {
+            @foreach (var item in SelectedItems)
+            {
+                <span class="selected-tag">
+                    @item
+                    <i class="bi bi-x-lg remove-icon" @onclick:stopPropagation="true" @onclick="() => RemoveItem(item)"></i>
+                </span>
+            }
+        }
+        else
+        {
+            <span class="placeholder-text">@Placeholder</span>
+        }
+        <i class="bi bi-chevron-down toggle-icon"></i>
+    </div>
+
+    @* --- Dropdown List --- *@
+    @if (IsDropdownOpen)
+    {
+        <div class="dropdown-list-box">
+            @foreach (var item in AvailableOptions.Except(SelectedItems))
+            {
+                <div class="dropdown-item" @onclick="() => AddItem(item)">
+                    @item
+                </div>
+            }
+            @if (!AvailableOptions.Except(SelectedItems).Any())
+            {
+                <div class="dropdown-item disabled">No more options</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<string> AvailableOptions { get; set; } = new();
+
+    [Parameter]
+    public List<string> SelectedItems { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<List<string>> SelectedItemsChanged { get; set; }
+
+    [Parameter]
+    public string Placeholder { get; set; } = "Select options...";
+
+    private bool IsDropdownOpen { get; set; } = false;
+
+    private void ToggleDropdown()
+    {
+        IsDropdownOpen = !IsDropdownOpen;
+    }
+
+    private async Task AddItem(string item)
+    {
+        if (!SelectedItems.Contains(item))
+        {
+            SelectedItems.Add(item);
+            await SelectedItemsChanged.InvokeAsync(SelectedItems);
+        }
+    }
+
+    private async Task RemoveItem(string item)
+    {
+        SelectedItems.Remove(item);
+        await SelectedItemsChanged.InvokeAsync(SelectedItems);
+    }
+}

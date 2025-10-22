@@ -1,0 +1,147 @@
+﻿/* --- Page and Card Layout --- */
+.page-container {
+    padding: 90px 20px 50px 20px;
+    background-color: #f7f9fa; /* Light background */
+    min-height: 100vh;
+}
+
+.project-form-card {
+    max-width: 650px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.form-title {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.form-subtitle {
+    color: #6c757d;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* --- Form Elements --- */
+.form-section {
+    margin-bottom: 20px;
+}
+
+.section-label, .contact-header {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.contact-header {
+    font-size: 1.3rem;
+    margin-top: 30px;
+    margin-bottom: 5px;
+    padding-top: 15px;
+}
+
+.input-hint {
+    color: #999;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.description-box {
+    min-height: 150px;
+    resize: vertical;
+}
+
+/* Budget Input Group Styling */
+.input-group {
+    display: flex;
+    align-items: center;
+}
+
+.input-prefix {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-right: none;
+    padding: 12px;
+    border-radius: 4px 0 0 4px;
+    color: #666;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.input-group .form-control {
+    border-radius: 0 4px 4px 0;
+    border-left: none;
+}
+
+/* --- Side-by-Side Layout (Budget & Timeline, Email & Phone) --- */
+.form-row-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* --- Submission Button --- */
+.form-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.btn-submit {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .btn-submit i {
+        font-size: 1.2rem;
+    }
+
+/* --- Media Queries (Responsiveness) --- */
+@media (max-width: 650px) {
+    .project-form-card {
+        padding: 20px;
+    }
+
+    .form-row-2col {
+        grid-template-columns: 1fr; /* Stack columns vertically on mobile */
+        gap: 0;
+    }
+
+        .form-row-2col .form-section {
+            margin-bottom: 20px;
+        }
+
+    .form-actions {
+        justify-content: stretch;
+    }
+
+    .btn-submit {
+        width: 100%;
+        justify-content: center;
+    }
+}

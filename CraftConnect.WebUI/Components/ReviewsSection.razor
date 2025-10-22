@@ -1,0 +1,27 @@
+﻿<div class="section-container">
+    <h3>Reviews</h3>
+    @foreach (var review in Reviews)
+    {
+        <div class="review-card">
+            <div class="review-header">
+                <img src="/images/default-avatar-sm.png" alt="@review.ReviewerName" class="reviewer-avatar" />
+                <div class="reviewer-info">
+                    <h4>@review.ReviewerName</h4>
+                    <div class="rating-stars-small">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="bi bi-star-fill @(i <= review.Rating ? "filled" : "")"></i>
+                        }
+                    </div>
+                </div>
+                <span class="review-date">@review.DatePosted.ToString("MMM dd, yyyy")</span>
+            </div>
+            <p class="review-comment">@review.Comment</p>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<ReviewVM> Reviews { get; set; } = new();
+}

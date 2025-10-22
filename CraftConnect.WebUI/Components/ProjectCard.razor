@@ -1,0 +1,45 @@
+﻿@using Core.SharedKernel.Domain
+@using CraftConnect.WebUI.ViewModels
+@using static CraftConnect.WebUI.Components.Pages.AvailableProjects
+
+<div class="project-card">
+    <div class="card-header">
+        <div class="user-avatar-box" style="background-image: url('@Project.UserAvatarUrl');"></div>
+        <div class="project-info">
+            <h4>@Project.Title</h4>
+            <p class="description">@Project.Description</p>
+        </div>
+    </div>
+
+    <div class="project-tags">
+        @foreach (var tag in Project.Tags)
+        {
+            <span class="skill-tag">@tag</span>
+        }
+    </div>
+
+    <div class="project-details">
+        <div class="detail-row">
+            <i class="bi bi-cash-stack"></i>
+            <span class="budget-range">@Project.BudgetRange</span>
+        </div>
+        <div class="detail-row">
+            <i class="bi bi-calendar-check"></i>
+            <span class="deadline-text">@Project.Deadline</span>
+        </div>
+        <div class="detail-row">
+            <i class="bi bi-geo-alt"></i>
+            <span class="location-text">@Project.Location</span>
+        </div>
+    </div>
+
+    <div class="card-actions">
+        <button class="btn btn-view-details">View Details</button>
+        <button class="btn btn-submit-proposal">Submit Proposal</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ProjectViewModel Project { get; set; } = default!;
+}

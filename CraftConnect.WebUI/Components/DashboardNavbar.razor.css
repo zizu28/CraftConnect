@@ -1,0 +1,174 @@
+﻿/* --- Base Layout & Positioning --- */
+.navbar-container.dashboard-nav {
+    background-color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.navbar-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 1.5rem;
+    /* Keeps logo on the far left */
+}
+
+    .brand-logo img {
+        height: 40px;
+        margin-right: 10px;
+    }
+
+.hamburger-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #333;
+    z-index: 1001;
+}
+
+/* --- Navigation Links and User Actions Flow --- */
+.nav-links {
+    display: flex;
+    align-items: center;
+    /* Pushes the link group and button/avatar away from the logo */
+    margin-left: auto;
+    gap: 25px;
+}
+
+/* Central Links */
+.nav-link {
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+    padding: 5px 0;
+    transition: color 0.2s;
+}
+
+    .nav-link:hover {
+        color: #007bff;
+    }
+
+/* --- Post a Project Button --- */
+.btn-primary.btn-post-project {
+    background-color: #ffc107; /* Yellow button matching the image */
+    color: #333;
+    border: 1px solid #ffc107;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .btn-primary.btn-post-project:hover {
+        background-color: #e0a800;
+    }
+
+/* --- Profile Avatar --- */
+.profile-avatar-link {
+    text-decoration: none;
+}
+
+.profile-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #007bff; /* Small blue ring */
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+/* --- Mobile Breakpoint (Max Width 768px) --- */
+@media (max-width: 768px) {
+    .navbar-container.dashboard-nav {
+        padding: 1rem;
+    }
+
+    .hamburger-btn {
+        display: block; /* Show the hamburger button */
+    }
+
+    .nav-links {
+        display: none; /* Hide menu entirely */
+    }
+
+        /* Mobile menu display logic */
+        .nav-links.open {
+            position: fixed;
+            top: 60px; /* Below the header */
+            left: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            height: auto;
+            padding: 10px 0;
+            align-items: flex-start; /* Stack items vertically */
+            gap: 0; /* Remove vertical gap */
+        }
+
+    .nav-link,
+    .btn-post-project,
+    .profile-avatar-link {
+        width: 100%; /* Take full width of the mobile menu */
+        padding: 12px 20px;
+        margin: 0;
+        border-bottom: 1px solid #eee;
+        box-sizing: border-box;
+        text-align: left;
+    }
+
+    .btn-post-project {
+        /* On mobile, make the button a full-width block */
+        border-radius: 0;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .profile-avatar-link {
+        /* Ensure avatar is still visible but part of the stacked flow */
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+}
+
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: var(--text-color); /* Use theme variable */
+    cursor: pointer;
+    padding: 5px;
+    margin-right: 10px;
+    transition: color 0.2s;
+}
+
+    .theme-toggle-btn:hover {
+        color: var(--primary-color);
+    }
+
+/* Ensure the navbar background uses the theme variable */
+.navbar-container.dashboard-nav {
+    background-color: var(--navbar-bg);
+    box-shadow: var(--navbar-shadow);
+}
