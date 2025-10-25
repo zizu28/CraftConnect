@@ -1,0 +1,65 @@
+﻿/* Components/CraftsmanDashboardNavbar.razor.css */
+
+.navbar-container.dashboard-nav {
+    /* KEY: Ensure solid white background */
+    background-color: #ffffff;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Clear, modern shadow */
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.navbar-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-logo {
+    color: #333333;
+    font-weight: 700;
+    font-size: 1.6rem;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Specific Button: Create Proposal */
+.btn-primary.btn-proposal {
+    background-color: #007bff; /* Solid Blue */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .btn-primary.btn-proposal:hover {
+        background-color: #0056b3;
+    }
+
+/* Icons and Avatar */
+.nav-icon-link i {
+    font-size: 1.3rem;
+    color: #555;
+    transition: color 0.2s;
+}
+
+.profile-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff; /* Ensures visibility against white background */
+    box-shadow: 0 0 0 1px #ccc;
+    cursor: pointer;
+}

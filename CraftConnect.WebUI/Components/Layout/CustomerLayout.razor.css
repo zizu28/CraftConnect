@@ -1,0 +1,34 @@
+﻿.customer-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: #F9FAFB; /* Gray-50 */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #111827; /* Gray-900 */
+}
+
+.main-view {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-body {
+    flex-grow: 1;
+    padding: 24px 32px;
+    overflow-y: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .customer-layout {
+        flex-direction: column;
+    }
+
+    .main-view {
+        width: 100%;
+    }
+
+    .content-body {
+        padding: 16px;
+    }
+}

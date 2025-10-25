@@ -1,0 +1,32 @@
+﻿.sidebar-nav-links {
+    padding: 10px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 20px;
+    margin: 0 0 5px 0;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+    .nav-link i {
+        font-size: 1.1rem;
+    }
+
+    .nav-link:hover {
+        background-color: #f0f5ff;
+    }
+    /* Key: Active link styling */
+    .nav-link.active {
+        background-color: #3f51b5; /* Dark blue/Indigo color from image */
+        color: white;
+        border-radius: 0 20px 20px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }

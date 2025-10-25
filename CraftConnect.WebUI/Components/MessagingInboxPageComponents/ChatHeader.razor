@@ -1,0 +1,18 @@
+﻿<div class="chat-header">
+    <div class="partner-details">
+        <img src="@Partner.AvatarUrl" alt="@Partner.Name" class="partner-avatar-lg" />
+        <div>
+            <p class="partner-name-lg">@Partner.Name</p>
+            <p class="partner-title">@Partner.Title</p>
+        </div>
+    </div>
+    <div class="chat-actions">
+        <i class="bi bi-telephone-fill"></i>
+        <i class="bi bi-camera-video-fill"></i>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public UserProfileVM Partner { get; set; } = default!;
+}

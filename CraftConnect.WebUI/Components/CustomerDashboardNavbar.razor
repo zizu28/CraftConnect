@@ -1,0 +1,28 @@
+﻿@inject NavigationManager NavManager
+
+<header class="navbar-container customer-dashboard-nav">
+    <div class="navbar-content">
+        <a href="/" class="brand-logo">
+            <img src="/images/craftconnect-logo.png" alt="CraftConnect Logo" />
+            CraftConnect
+        </a>
+
+        @* This area is intentionally empty to push the user profile to the right *@
+        <div class="navbar-spacer"></div>
+
+        @* Right Side Profile and Controls *@
+        <div class="user-actions">
+            <a href="/notifications" class="nav-icon-link">
+                <i class="bi bi-bell"></i>
+            </a>
+            
+            <a href="/profile" class="profile-avatar-link">
+                <img src="/images/user-avatar.jpg" alt="User Avatar" class="profile-avatar" />
+            </a>
+            
+            <button class="btn btn-primary btn-post-project" @onclick="@(() => NavManager.NavigateTo("/post-project"))">
+                Post a Project
+            </button>
+        </div>
+    </div>
+</header>

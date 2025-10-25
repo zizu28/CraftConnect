@@ -1,0 +1,70 @@
+﻿.dashboard-container h1 {
+    font-size: 1.875rem; /* 30px */
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* 66% 33% split */
+    gap: 32px;
+}
+
+.dashboard-col {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+    .section-header h2 {
+        font-size: 1.25rem; /* 20px */
+        font-weight: 600;
+    }
+
+.view-all-link {
+    font-size: 0.875rem; /* 14px */
+    font-weight: 500;
+    color: #4F46E5; /* Indigo-600 */
+    text-decoration: none;
+}
+
+    .view-all-link:hover {
+        text-decoration: underline;
+    }
+
+.card-list, .inbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* Stack columns */
+    }
+}
+
+@media (max-width: 640px) {
+    .stat-grid {
+        grid-template-columns: 1fr; /* Stack stat cards */
+    }
+
+    .dashboard-container h1 {
+        font-size: 1.5rem; /* 24px */
+    }
+}

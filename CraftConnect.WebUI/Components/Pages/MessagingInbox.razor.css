@@ -1,0 +1,48 @@
+﻿/* Pages/MessagingInbox.razor.css */
+
+.messaging-page-container {
+    display: flex;
+    height: 100vh; /* Takes full viewport height */
+    width: 100%;
+    background-color: #ffffff; /* Main chat area background */
+}
+
+/* --- Sidebar (Fixed) --- */
+.messaging-sidebar {
+    width: 280px;
+    background-color: #f7f9fc; /* Very light blue/gray background */
+    border-right: 1px solid #e0e0e0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden; /* Prevent sidebar scrollbar */
+}
+
+/* --- Main Chat Content (Flexible) --- */
+.messaging-main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    position: relative;
+    overflow-y: hidden;
+}
+
+.empty-chat-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #999;
+}
+
+/* --- Responsiveness --- */
+@media (max-width: 900px) {
+    .messaging-sidebar {
+        display: none; /* Hide sidebar entirely on small screens */
+    }
+
+    .messaging-main-content {
+        width: 100%;
+    }
+}

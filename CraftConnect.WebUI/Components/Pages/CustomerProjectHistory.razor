@@ -1,0 +1,105 @@
+﻿@page "/customer/project-history"
+@layout ProjectHistoryLayout
+@inject NavigationManager NavigationManager
+@using CraftConnect.WebUI.Components.CustomerProjectHistoryPageComponents
+@using CraftConnect.WebUI.Components.Layout
+
+<div class="project-history-page">
+    <h1 class="page-title">My Project History</h1>
+
+    <!-- Filter/Search Bar -->
+    <div class="filter-bar">
+        <div class="search-container">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+            </svg>
+            <input type="text" class="search-input" placeholder="Search by project or craftsman..." />
+        </div>
+        <div class="dropdown-filters">
+            <div class="filter-dropdown">
+                <select id="craftsmanFilter">
+                    <option value="0">Filter by Craftsman</option>
+                    <option value="1">Jane Doe</option>
+                    <option value="2">John Smith</option>
+                </select>
+                <svg class="dropdown-arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 011.06 0L10 11.94l3.72-3.72a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.22 9.28a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="filter-dropdown">
+                <select id="dateFilter">
+                    <option value="0">Sort by Date</option>
+                    <option value="1">Newest First</option>
+                    <option value="2">Oldest First</option>
+                </select>
+                <svg class="dropdown-arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 011.06 0L10 11.94l3.72-3.72a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.22 9.28a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project List -->
+    <div class="project-list">
+        @foreach (var project in projects)
+        {
+            <CustomerProjectHistoryCard Project="project" />
+        }
+
+        <!-- Empty State Card -->
+        <div class="empty-state-card">
+            <div class="empty-icon-container">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.31h5.418a.562.562 0 0 1 .321.988l-4.204 3.192a.563.563 0 0 0-.182.557l1.528 5.4a.562.562 0 0 1-.84.62l-4.766-3.13a.563.563 0 0 0-.651 0l-4.766 3.13a.562.562 0 0 1-.84-.62l1.528-5.4a.563.563 0 0 0-.182-.557l-4.204-3.192a.562.562 0 0 1 .321-.988H8.884a.563.563 0 0 0 .475-.31L11.48 3.5Z" />
+                </svg>
+            </div>
+            <h3>No More Projects Here</h3>
+            <p>You've reached the end of your project history. Find a craftsman to start your next project!</p>
+            <button class="btn-find-craftsman" 
+                @onclick="@(() => NavigationManager.NavigateTo("/find-craftmen"))">Find a Craftsman</button>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <CustomerPaginationControl CurrentPage="currentPage" TotalPages="totalPages" OnPageChanged="OnPageSelected" />
+</div>
+
+@code {
+    private List<ProjectHistoryItemVM> projects = new();
+    private int currentPage = 1;
+    private int totalPages = 3;
+
+    protected override void OnInitialized()
+    {
+        // Mock data for the project history
+        projects = new List<ProjectHistoryItemVM>
+        {
+            new ProjectHistoryItemVM
+            {
+                Id = Guid.NewGuid(),
+                ProjectTitle = "Custom Oak Bookshelf",
+                CraftsmanName = "Jane Doe",
+                CraftsmanAvatarUrl = "https://placehold.co/40x40/FDBA74/7C2D12?text=JD",
+                CompletedDate = new DateTime(2023, 10, 26),
+                Description = "A beautifully crafted bookshelf, tailored to fit the specific dimensions of my living room. The finish is exceptional and it's become a centerpiece of the space.",
+                ImageUrl = "https://placehold.co/240x160/EDEAE6/B6A49A?text=Bookshelf"
+            },
+            new ProjectHistoryItemVM
+            {
+                Id = Guid.NewGuid(),
+                ProjectTitle = "Hand-Forged Iron Gate",
+                CraftsmanName = "John Smith",
+                CraftsmanAvatarUrl = "https://placehold.co/40x40/B6A49A/4F46E5?text=JS",
+                CompletedDate = new DateTime(2023, 8, 15),
+                Description = "An intricate and sturdy iron gate for our garden entrance. The craftsmanship is superb, adding a touch of elegance and security to our home.",
+                ImageUrl = "https://placehold.co/240x160/4A6044/FFFFFF?text=Gate"
+            }
+        };
+    }
+
+    private void OnPageSelected(int page)
+    {
+        currentPage = page;
+        // Add logic here to fetch data for the new page
+    }
+}

@@ -1,0 +1,35 @@
+﻿@inject NavigationManager NavigationManager
+
+<header class="top-nav-header-history">
+    <div class="nav-content-history">
+        <div class="nav-left-history">
+            <a href="/" class="logo-history">
+                <svg class="logo-icon-history" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.412 15.655 9.75 21.75l3.745-4.012M9.252 8.655 7.5 14.75l3.745-4.012M14.748 8.655 13 14.75l3.745-4.012M13.248 15.655 11.5 21.75l3.745-4.012" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 6.75-1.5 1.5-1.5-1.5-1.5 1.5-1.5-1.5-1.5 1.5-1.5-1.5-3 3-1.5 1.5 4.5 4.5 4.5-4.5 1.5-1.5-3-3Zm-3.75 3 1.5-1.5 1.5 1.5" />
+                </svg>
+                <span class="logo-text-history">CraftConnect</span>
+            </a>
+            <nav class="main-navigation-history">
+                <a href="/explore" class="nav-link-history">Explore</a>
+                <a href="/customer/project-history" class="nav-link-history active">My Projects</a>
+                <a href="/customer/messages" class="nav-link-history">Messages</a>
+                <a href="/customer/profile" class="nav-link-history">Profile</a>
+            </nav>
+        </div>
+
+        <div class="nav-right-history">
+            <button class="btn-post-project" @onclick="@(() => NavigationManager.NavigateTo("/customer/post-project"))">Post a Project</button>
+            <button class="profile-btn-history">
+                <span class="avatar-history">JD</span>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button class="icon-btn-history mobile-menu-btn-history">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+        </button>
+    </div>
+</header>

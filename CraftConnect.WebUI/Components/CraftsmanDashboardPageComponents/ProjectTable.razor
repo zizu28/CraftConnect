@@ -1,0 +1,31 @@
+﻿<div class="dashboard-section project-table-section">
+    <h3>My Projects</h3>
+    <table class="project-table">
+        <thead>
+            <tr>
+                <th>Project</th>
+                <th>Client</th>
+                <th>Status</th>
+                <th>Due Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Projects)
+            {
+                <tr>
+                    <td>@item.Project</td>
+                    <td>@item.Client</td>
+                    <td><span class="status-tag @(item.Status.Replace(" ", "-").ToLower())">@item.Status</span></td>
+                    <td>@item.DueDate</td>
+                    <td><a href="/project/@item.Project">View Details</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter]
+    public List<ProjectItemVM> Projects { get; set; } = new();
+}

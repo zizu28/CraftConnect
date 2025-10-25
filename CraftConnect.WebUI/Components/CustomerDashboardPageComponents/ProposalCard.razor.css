@@ -1,0 +1,97 @@
+﻿.proposal-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB; /* Gray-200 */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+.proposal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.craftsman-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.craftsman-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.craftsman-name {
+    display: block;
+    font-weight: 600;
+    color: #111827;
+}
+
+.craftsman-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+    .craftsman-rating svg {
+        width: 16px;
+        height: 16px;
+        color: #F59E0B; /* Amber-500 */
+    }
+
+.proposal-price {
+    font-size: 1.125rem; /* 18px */
+    font-weight: 600;
+    color: #111827;
+}
+
+.proposal-excerpt {
+    font-size: 0.9rem;
+    color: #374151; /* Gray-700 */
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+.proposal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.action-btn {
+    flex-grow: 1;
+    padding: 8px 12px;
+    border: 1px solid;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.1s ease-in-out;
+}
+
+.btn-primary {
+    background-color: #4F46E5; /* Indigo-600 */
+    color: #FFFFFF;
+    border-color: #4F46E5;
+}
+
+    .btn-primary:hover {
+        background-color: #4338CA;
+    }
+
+.btn-secondary {
+    background-color: #FFFFFF;
+    color: #374151; /* Gray-700 */
+    border-color: #D1D5DB; /* Gray-300 */
+}
+
+    .btn-secondary:hover {
+        background-color: #F9FAFB;
+    }

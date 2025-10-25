@@ -1,14 +1,15 @@
 ﻿/* --- Base Styles (Applied to all sizes) --- */
 .navbar-container {
     background-color: white;
+    box-shadow: var(--navbar-shadow);
     padding: 1rem 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     position: fixed;
     width: 100%;
     top: 0;
     left: 0;
     z-index: 1000;
     box-sizing: border-box;
+    opacity: 1;
 }
 
 .navbar-content {

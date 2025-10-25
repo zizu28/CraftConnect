@@ -1,0 +1,23 @@
+﻿<div class="inbox-item">
+    <div class="sender-avatar @(Message.IsSupportTicket ? "avatar-support" : "avatar-user")">
+        @Message.SenderAvatarInitials
+    </div>
+    <div class="message-details">
+        <div class="message-top">
+            <span class="sender-name">@Message.SenderName</span>
+            <span class="message-time">@Message.ReceivedTime</span>
+        </div>
+        <p class="message-excerpt @(Message.IsRead ? "" : "unread")">
+            @Message.Excerpt
+        </p>
+    </div>
+    @if (!Message.IsRead)
+    {
+        <div class="unread-dot"></div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public InboxMessageVM Message { get; set; }
+}

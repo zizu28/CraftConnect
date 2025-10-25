@@ -1,0 +1,18 @@
+﻿@using CraftConnect.WebUI.Enums
+<span class="status-badge @StatusClass">
+    @Status.ToString()
+</span>
+
+@code {
+    [Parameter]
+    public ProposalStatus Status { get; set; }
+
+    private string StatusClass => Status switch
+    {
+        ProposalStatus.Pending => "status-pending",
+        ProposalStatus.Accepted => "status-accepted",
+        ProposalStatus.Rejected => "status-rejected",
+        ProposalStatus.Withdrawn => "status-withdrawn",
+        _ => ""
+    };
+}

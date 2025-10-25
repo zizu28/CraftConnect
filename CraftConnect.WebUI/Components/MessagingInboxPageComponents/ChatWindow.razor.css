@@ -1,0 +1,66 @@
+﻿.chat-window-content {
+    padding: 20px;
+    overflow-y: auto; /* Enables vertical scrolling for the chat history */
+    flex-grow: 1;
+}
+
+.message-row {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: flex-end;
+    max-width: 80%;
+}
+
+    .message-row.sent {
+        margin-left: auto;
+        justify-content: flex-end;
+    }
+
+    .message-row.received {
+        margin-right: auto;
+        justify-content: flex-start;
+    }
+
+.message-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 8px;
+    flex-shrink: 0;
+}
+
+.message-bubble {
+    padding: 10px 15px;
+    border-radius: 18px;
+    max-width: 100%;
+    position: relative;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.message-row.sent .message-bubble {
+    background-color: #3f51b5; /* Dark blue for sent messages */
+    color: white;
+    border-bottom-right-radius: 4px; /* Corner styling */
+}
+
+.message-row.received .message-bubble {
+    background-color: #f0f0f0; /* Light grey for received messages */
+    color: #333;
+    border-bottom-left-radius: 4px; /* Corner styling */
+}
+
+.message-text {
+    margin: 0 0 5px 0;
+}
+
+.message-time {
+    display: block;
+    text-align: right;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.8); /* Faded white for sent */
+}
+
+.message-row.received .message-time {
+    color: #888;
+}

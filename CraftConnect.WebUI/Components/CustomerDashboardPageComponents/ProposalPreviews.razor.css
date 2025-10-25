@@ -1,0 +1,16 @@
+﻿/* Components/ProposalPreviews.razor.css */
+
+.proposals-section {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    /* Ensure the whole card is clearly defined */
+    margin-bottom: 30px;
+}
+
+    .proposals-section h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }

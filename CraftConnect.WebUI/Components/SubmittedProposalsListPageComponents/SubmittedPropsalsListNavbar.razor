@@ -1,0 +1,51 @@
+﻿<nav class="top-nav-bar">
+    <div class="nav-left">
+        <a href="/" class="logo-container">
+            <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z" />
+                <path d="M12 6C8.69 6 6 8.69 6 12C6 15.31 8.69 18 12 18C15.31 18 18 15.31 18 12C18 8.69 15.31 6 12 6ZM12 16C9.79 16 8 14.21 8 12C8 9.79 9.79 8 12 8C14.21 8 16 9.79 16 12C16 14.21 14.21 16 12 16Z" />
+            </svg>
+            <span class="logo-text">CraftConnect</span>
+        </a>
+        <div class="nav-links">
+            <NavLink href="/projects" Match="NavLinkMatch.Prefix">Projects</NavLink>
+            <NavLink href="/customer/messages" Match="NavLinkMatch.Prefix">Messages</NavLink>
+            <NavLink href="/dashboard" Match="NavLinkMatch.Prefix">Profile</NavLink>
+        </div>
+    </div>
+    <div class="nav-right">
+        <div class="global-search-container">
+            <svg class="global-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+            </svg>
+            <input class="global-search-input" type="text" placeholder="Search" />
+        </div>
+        <div class="profile-icon">
+            <!-- User initial or image -->
+        </div>
+        <button class="mobile-menu-button" @onclick="ToggleMobileMenu">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+        </button>
+    </div>
+</nav>
+
+<!-- Mobile Menu (hidden by default) -->
+@if (isMobileMenuOpen)
+{
+    <div class="mobile-menu">
+        <NavLink href="/projects" Match="NavLinkMatch.Prefix">Projects</NavLink>
+        <NavLink href="/customer/messages" Match="NavLinkMatch.Prefix">Messages</NavLink>
+        <NavLink href="/dashboard" Match="NavLinkMatch.Prefix">Profile</NavLink>
+    </div>
+}
+
+@code {
+    private bool isMobileMenuOpen = false;
+
+    private void ToggleMobileMenu()
+    {
+        isMobileMenuOpen = !isMobileMenuOpen;
+    }
+}

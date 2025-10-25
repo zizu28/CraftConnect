@@ -1,0 +1,61 @@
+﻿.pagination-nav-history {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 16px; /* Space above pagination */
+    font-size: 0.9rem;
+    gap: 8px;
+}
+
+.page-link-history {
+    color: #374151; /* Gray-700 */
+    text-decoration: none;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background-color 0.1s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #D1D5DB; /* Gray-300 */
+    background-color: #FFFFFF;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+    .page-link-history svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .page-link-history.disabled {
+        color: #D1D5DB; /* Gray-300 */
+        cursor: default;
+        background-color: #F9FAFB; /* Gray-50 */
+    }
+
+    .page-link-history:not(.disabled):not(.active):hover {
+        background-color: #F9FAFB; /* Gray-50 */
+    }
+
+.page-numbers-history {
+    display: flex;
+    gap: 8px;
+}
+
+    .page-numbers-history .page-link-history {
+        /* Page numbers are more square */
+        min-width: 38px; /* Set min-width for square-ish look */
+        text-align: center;
+        font-weight: 500;
+    }
+
+        .page-numbers-history .page-link-history.active {
+            background-color: #0EA5E9; /* Sky-500 */
+            color: white;
+            font-weight: 600;
+            border-color: #0EA5E9;
+        }
+
+            .page-numbers-history .page-link-history.active:hover {
+                background-color: #0284C7; /* Sky-600 */
+            }

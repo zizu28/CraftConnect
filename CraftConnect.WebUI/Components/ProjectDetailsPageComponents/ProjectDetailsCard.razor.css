@@ -1,0 +1,81 @@
+﻿.project-details-card {
+    padding: 24px;
+}
+
+    .project-details-card .card-header {
+        font-size: 1.25rem; /* 20px */
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+.detail-label {
+    font-size: 0.875rem; /* 14px */
+    color: #6B7280; /* Gray-500 */
+    margin-bottom: 4px;
+    display: block;
+}
+
+.detail-value {
+    font-size: 1rem; /* 16px */
+    color: #111827; /* Gray-900 */
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.client-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.client-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #F3F4F6; /* Gray-100 */
+    color: #4B5563; /* Gray-600 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.client-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #111827;
+    display: block;
+}
+
+.client-meta {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+.project-link-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border: 1px solid #D1D5DB; /* Gray-300 */
+    border-radius: 6px;
+    background-color: #FFFFFF;
+    color: #374151; /* Gray-700 */
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.1s ease-in-out;
+}
+
+    .project-link-button:hover {
+        background-color: #F9FAFB; /* Gray-50 */
+    }
+
+    .project-link-button svg {
+        width: 16px;
+        height: 16px;
+        color: #6B7280;
+    }

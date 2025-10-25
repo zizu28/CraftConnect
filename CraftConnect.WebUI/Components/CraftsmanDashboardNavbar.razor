@@ -1,0 +1,35 @@
+﻿@using CraftConnect.WebUI.Services
+@inject ThemeService ThemeService
+
+<header class="navbar-container dashboard-nav">
+    <div class="navbar-content">
+        <a href="/" class="brand-logo">
+            <img src="/images/craftconnect-logo.png" alt="CraftConnect Logo" />
+            CraftConnect
+        </a>
+
+        <div class="nav-links">
+            <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+                <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon" : "bi-sun")"></i>
+            </button>
+            <a href="/proposal/create/@ProjectId" class="btn btn-primary btn-proposal">Create Proposal</a>
+            <a href="/notifications" class="nav-icon-link">
+                <i class="bi bi-bell"></i>
+            </a>
+            <a href="/profile" class="profile-avatar-link">
+                <img src="/images/user-avatar.jpg" alt="User Avatar" class="profile-avatar" />
+            </a>
+        </div>
+    </div>
+</header>
+
+@code {
+    [Parameter]
+    public Guid ProjectId { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        ProjectId = Guid.NewGuid();
+        return base.OnInitializedAsync();
+    }
+}

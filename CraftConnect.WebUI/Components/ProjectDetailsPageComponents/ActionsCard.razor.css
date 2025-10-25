@@ -1,0 +1,53 @@
+﻿.actions-card {
+    padding: 24px;
+}
+
+    .actions-card .card-header {
+        font-size: 1.25rem; /* 20px */
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+}
+
+    .action-btn:not(:last-child) {
+        margin-bottom: 12px;
+    }
+
+    .action-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+.btn-primary {
+    background-color: #4F46E5; /* Indigo-600 */
+    color: #FFFFFF;
+    border-color: #4F46E5;
+}
+
+    .btn-primary:hover {
+        background-color: #4338CA; /* Indigo-700 */
+    }
+
+.btn-secondary {
+    background-color: #F3F4F6; /* Gray-100 */
+    color: #374151; /* Gray-700 */
+    border-color: #F3F4F6;
+}
+
+    .btn-secondary:hover {
+        background-color: #E5E7EB; /* Gray-200 */
+    }

@@ -1,0 +1,61 @@
+﻿/* Components/ProjectTable.razor.css */
+
+.dashboard-section {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    /* KEY: Margin to separate from the Service Requests component below */
+    margin-bottom: 30px;
+}
+
+    .dashboard-section h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 25px;
+        color: #333333;
+    }
+
+.project-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .project-table th {
+        text-align: left;
+        color: #6c757d;
+        font-weight: 500;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .project-table td {
+        padding: 15px 0;
+        font-size: 0.95rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .project-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+.status-tag {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+}
+
+.in-progress {
+    background-color: #007bff;
+}
+
+.completed {
+    background-color: #28a745;
+}
+
+.pending-approval {
+    background-color: #ffc107;
+    color: #333;
+}

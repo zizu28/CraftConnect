@@ -1,0 +1,17 @@
+﻿<div class="metric-card">
+    <p class="metric-title">@Title</p>
+    <div class="metric-value-row">
+        <span class="metric-value" style="color: @AccentColor;">@Value</span>
+        @if (HasIndicator)
+        {
+            <span class="indicator" style="background-color: @AccentColor;"></span>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public string Value { get; set; } = string.Empty;
+    [Parameter] public string AccentColor { get; set; } = "#333";
+    [Parameter] public bool HasIndicator { get; set; } = false;
+}

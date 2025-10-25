@@ -1,0 +1,22 @@
+﻿.stat-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB; /* Gray-200 */
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+.stat-title {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #6B7280; /* Gray-500 */
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    display: block;
+    font-size: 2.25rem; /* 36px */
+    font-weight: 700;
+    color: #111827;
+}

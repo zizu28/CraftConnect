@@ -1,0 +1,30 @@
+﻿<div class="customer-proposal-card">
+    <div class="card-header">
+        <img class="craftsman-avatar" src="@Proposal.CraftsmanAvatarUrl" alt="@Proposal.CraftsmanName" />
+        <div class="craftsman-details">
+            <span class="name">@Proposal.CraftsmanName</span>
+            <div class="rating">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.793.73c.828.127 1.162 1.17.558 1.74l-3.468 3.633.82 4.98c.14.825-.718 1.46-1.47 1.088L10 16.273l-4.3 2.26c-.753.372-1.61-.263-1.47-1.088l.82-4.98-3.468-3.633c-.604-.57-.27-1.613.558-1.74l4.793-.73L9.132 2.884z" clip-rule="evenodd" />
+                </svg>
+                <span>@Proposal.Rating.ToString("F1")</span>
+                <span class="reviews">(@Proposal.ReviewCount)</span>
+            </div>
+        </div>
+        <div class="price">@Proposal.Price.ToString("C0")</div>
+    </div>
+
+    <p class="quote-summary">@Proposal.QuoteSummary</p>
+
+    <div class="card-actions">
+        <a href="/craftsman/@Proposal.Id" class="btn btn-view-portfolio">View Portfolio</a>
+        <button class="btn btn-reject">Reject</button>
+        <button class="btn btn-accept">Accept</button>
+        <button class="btn btn-more-info">More Info</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public CustomerProposalVM Proposal { get; set; } = new();
+}

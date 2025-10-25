@@ -2,22 +2,21 @@
 
 /* --- Default (Light) Theme Variables --- */
 :root {
-    --bg-color: #ffffff;
-    --text-color: #333333;
     --primary-color: #007bff;
     --secondary-bg: #f8f9fa;
-    --navbar-bg: #ffffff;
     --navbar-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 /* --- Dark Theme Variables --- */
 .dark {
-    --bg-color: #1a1a2e; /* Dark background */
+    /* Main body colors */
+    --bg-color: #1a1a2e;
     --text-color: #ffffff;
-    --primary-color: #64ffda; /* Light cyan for contrast */
-    --secondary-bg: #272740;
+    /* Component/Card Colors */
     --navbar-bg: #272740;
-    --navbar-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    --card-bg: #272740; /* Apply dark background to elements that are normally white */
+    --border-color: #3f3f5a; /* Darker border */
+    --subtle-text: #b0b0cc; /* Light gray text for subtitles/hints */
 }
 
 /* Apply colors globally */
@@ -27,6 +26,11 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
+.dashboard-nav .navbar-container { /* Target the nav container */
+    background-color: var(--navbar-bg);
+    box-shadow: var(--navbar-shadow);
+}
+
 /* Base button and link styles */
 .btn-primary {
     background-color: var(--primary-color);
@@ -34,14 +38,14 @@ body {
 }
 
 
-body {
+/*body {
     font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background-color: #f4f6f9; /* Light background for the overall page */
-    color: #333;
-}
+    background-color: #f4f6f9;*/ /* Light background for the overall page */
+    /*color: #333;
+}*/
 
 h1, h2, h3, h4, h5, h6 {
     margin-top: 0;

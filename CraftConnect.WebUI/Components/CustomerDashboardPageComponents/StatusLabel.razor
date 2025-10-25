@@ -1,0 +1,26 @@
+﻿@using CraftConnect.WebUI.Enums
+
+<span class="status-label @StatusClass">
+    @GetStatusText()
+</span>
+
+@code {
+    [Parameter]
+    public ServiceRequestStatus Status { get; set; }
+
+    private string StatusClass => Status switch
+    {
+        ServiceRequestStatus.InProgress => "status-blue",
+        ServiceRequestStatus.AwaitingProposals => "status-yellow",
+        ServiceRequestStatus.Completed => "status-green",
+        _ => "status-gray"
+    };
+
+    private string GetStatusText() => Status switch
+    {
+        ServiceRequestStatus.InProgress => "In Progress",
+        ServiceRequestStatus.AwaitingProposals => "Awaiting Proposals",
+        ServiceRequestStatus.Completed => "Completed",
+        _ => "Unknown"
+    };
+}

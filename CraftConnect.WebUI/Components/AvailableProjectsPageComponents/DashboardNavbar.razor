@@ -1,7 +1,8 @@
 ﻿@using CraftConnect.WebUI.Services
 @inject ThemeService ThemeService
+@implements IDisposable
 
-<header class="navbar-container post-project-nav">
+<header class="navbar-container dashboard-nav">
     <div class="navbar-content">
         <a href="/" class="brand-logo">
             <img src="/images/craftconnect-logo.png" alt="CraftConnect Logo" />
@@ -13,19 +14,21 @@
             <i class="bi bi-list"></i>
         </button>
 
-        @* Navigation Links and Buttons *@
+        @* Navigation Links and User Actions *@
         <nav class="nav-links @(isMenuOpen ? "open" : "")">
             <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
                 <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon" : "bi-sun")"></i>
             </button>
             @* Central Links *@
-            <a href="/explore" class="nav-link">Explore</a>
-            <a href="/how-it-works" class="nav-link">How it works</a>
-            <a href="/contact" class="nav-link">Contact</a>
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+            <a href="/profile" class="nav-link">Profile</a>
+            <a href="/customer/messages" class="nav-link">Messages</a>
 
-            @* Right Side Buttons *@
-            <a href="/post-a-project" class="btn btn-primary btn-post-project">Post a Project</a>
-            <a href="/login" class="btn btn-secondary btn-login">Log in</a>
+            @* Right Side Button & Avatar *@
+            <a href="/post-project" class="btn btn-primary btn-post-project">Post a Project</a>
+            <a href="/profile" class="profile-avatar-link">
+                <img src="/images/user-avatar.jpg" alt="User Avatar" class="profile-avatar" />
+            </a>
         </nav>
     </div>
 </header>

@@ -1,0 +1,12 @@
+﻿<div class="sidebar-header-user">
+    <img src="@User.AvatarUrl" alt="@User.Name" class="user-avatar" />
+    <div class="user-details">
+        <p class="name">@User.Name</p>
+        <p class="title">@User.Title</p>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public UserProfileVM User { get; set; } = default!;
+}

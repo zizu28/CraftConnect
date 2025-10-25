@@ -1,0 +1,98 @@
+﻿/* Proposals.razor.css */
+
+.header-with-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 16px; /* Space between title and filter */
+}
+
+.page-title {
+    font-size: 1.875rem; /* 30px */
+    font-weight: 700;
+    color: #111827; /* Gray-900 */
+    margin: 0; /* Reset default margin */
+}
+
+/* --- Filter Dropdown --- */
+.filter-dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between label and select */
+}
+
+.filter-label {
+    font-size: 0.9rem;
+    color: #374151; /* Gray-700 */
+    font-weight: 500;
+}
+
+select {
+    appearance: none; /* Remove default dropdown arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #FFFFFF;
+    border: 1px solid #D1D5DB; /* Gray-300 */
+    border-radius: 6px;
+    padding: 8px 32px 8px 12px; /* Add space for custom arrow */
+    font-size: 0.9rem;
+    color: #111827;
+    cursor: pointer;
+    line-height: 1.5; /* Ensure consistent height */
+}
+
+    select:focus {
+        outline: none;
+        border-color: #4F46E5; /* Indigo-600 */
+        box-shadow: 0 0 0 1px #4F46E5;
+    }
+
+.dropdown-arrow-icon {
+    position: absolute;
+    right: 12px; /* Position relative to .filter-dropdown, but aligned to select */
+    width: 20px;
+    height: 20px;
+    color: #9CA3AF; /* Gray-400 */
+    pointer-events: none; /* Make icon unclickable */
+}
+
+/* Adjust arrow position if filter label exists */
+.filter-dropdown select + .dropdown-arrow-icon {
+    right: 12px; /* Default right position */
+    transform: translateX(calc(100% + 8px - 32px)); /* Move left by label and gap width, then position */
+    /* More reliably: Position relative to the select element for simpler calculation */
+    /* This calculation is tricky with dynamic gap and label. Let's just adjust right for the select. */
+    /* A more robust way would be to wrap select and icon in their own relative div */
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .header-with-filter {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        gap: 12px;
+    }
+
+    .page-title {
+        font-size: 1.5rem; /* 24px */
+    }
+
+    .filter-dropdown {
+        width: 100%; /* Make dropdown full width */
+        justify-content: space-between;
+    }
+
+    select {
+        flex-grow: 1; /* Allow select to take available space */
+    }
+
+    .filter-dropdown select + .dropdown-arrow-icon {
+        right: 12px; /* Reset position */
+        transform: none;
+    }
+}

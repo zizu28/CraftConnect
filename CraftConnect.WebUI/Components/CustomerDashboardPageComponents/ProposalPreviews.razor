@@ -1,0 +1,13 @@
+﻿<div class="proposals-section dashboard-section">
+    <h3>Incoming Proposals</h3>
+
+    @foreach (var proposal in Proposals)
+    {
+        <ProposalCard Proposal="@proposal" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<CustomerProposalSummaryVM> Proposals { get; set; } = new();
+}

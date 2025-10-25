@@ -16,4 +16,8 @@
     <ProjectReference Include="..\UserManagement.Domain\UserManagement.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\ProposalCreationPageComponents\" />
+  </ItemGroup>
+
 </Project>

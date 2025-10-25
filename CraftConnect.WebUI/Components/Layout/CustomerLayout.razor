@@ -1,0 +1,22 @@
+﻿@using CraftConnect.WebUI.Components.CustomerDashboardPageComponents
+@inherits LayoutComponentBase
+
+<div class="customer-layout">
+    <CustomerSidebar User="currentUser" />
+    
+    <div class="main-view">
+        <CustomerTopBar User="currentUser" />
+        <main class="content-body">
+            @Body
+        </main>
+    </div>
+</div>
+
+@code {
+    private UserProfileVM currentUser = new UserProfileVM
+    {
+        Id = Guid.NewGuid(),
+        Name = "Jane Doe",
+        AvatarInitials = "JD"
+    };
+}

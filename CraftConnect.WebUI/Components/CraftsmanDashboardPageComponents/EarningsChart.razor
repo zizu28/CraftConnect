@@ -1,0 +1,23 @@
+﻿<div class="dashboard-section earnings-chart-section">
+    <h3>Earnings</h3>
+    <div class="earnings-header">
+        <p class="total-label">Last 3 Months</p>
+        <p class="total-value">Total: $@TotalEarnings.ToString("N0")</p>
+    </div>
+
+    @* --- Placeholder for Chart --- *@
+    <div class="chart-placeholder">
+        @* Replace this div with your actual charting library component (e.g., Chart.js, Plotly) *@
+        <div class="bar-chart-mock">
+            <div style="height: 50%;" title="Oct"></div>
+            <div style="height: 85%;" title="Nov"></div>
+            <div style="height: 70%;" title="Dec"></div>
+        </div>
+        <div class="month-labels"><span>Oct</span><span>Nov</span><span>Dec</span></div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public decimal TotalEarnings { get; set; }
+}

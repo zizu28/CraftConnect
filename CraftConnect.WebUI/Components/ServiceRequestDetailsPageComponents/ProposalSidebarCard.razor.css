@@ -1,0 +1,84 @@
+﻿.proposal-sidebar-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.craftsman-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.price {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.quote {
+    font-size: 0.875rem;
+    color: #374151;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    flex-grow: 1;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+}
+
+.btn-accept {
+    background-color: #4F46E5; /* Indigo-600 */
+    color: #FFFFFF;
+}
+
+    .btn-accept:hover {
+        background-color: #4338CA; /* Indigo-700 */
+    }
+
+.btn-message {
+    background-color: #FFFFFF;
+    color: #374151; /* Gray-700 */
+    border-color: #D1D5DB; /* Gray-300 */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+    .btn-message:hover {
+        background-color: #F9FAFB; /* Gray-50 */
+    }

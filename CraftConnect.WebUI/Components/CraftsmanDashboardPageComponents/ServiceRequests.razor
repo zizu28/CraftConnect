@@ -1,0 +1,21 @@
+﻿<div class="dashboard-section service-requests-section">
+    <h3>Recent Service Requests</h3>
+    @foreach (var req in Requests)
+    {
+        <div class="request-card">
+            <div class="request-content">
+                <p class="request-title">@req.Title</p>
+                <p class="request-description">@req.Description</p>
+            </div>
+            <div class="request-actions">
+                <button class="btn btn-view-details">View Details</button>
+                <button class="btn btn-decline">Decline</button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<ServiceRequestVM> Requests { get; set; } = new();
+}
