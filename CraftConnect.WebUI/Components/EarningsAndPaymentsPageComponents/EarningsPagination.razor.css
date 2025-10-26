@@ -1,0 +1,58 @@
+﻿.pagination-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.page-arrow, .page-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #CBD5E1; /* Slate-300 */
+    background-color: #FFFFFF;
+    color: #475569; /* Slate-600 */
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.page-arrow {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+}
+
+    .page-arrow svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .page-arrow.disabled {
+        color: #CBD5E1; /* Slate-300 */
+        background-color: #F8FAFC; /* Slate-50 */
+        cursor: not-allowed;
+    }
+
+    .page-arrow:not(.disabled):hover {
+        border-color: #94A3B8;
+    }
+
+.page-number {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+}
+
+    .page-number:hover {
+        border-color: #94A3B8;
+    }
+
+    .page-number.active {
+        background-color: #0284C7; /* Sky-600 */
+        border-color: #0284C7;
+        color: #FFFFFF;
+        font-weight: 600;
+        z-index: 1;
+    }
