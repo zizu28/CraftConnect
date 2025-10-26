@@ -1,0 +1,23 @@
+﻿.settings-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: #F9FAFB; /* Gray-50 */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.settings-content {
+    flex-grow: 1;
+    padding: 48px;
+    max-width: 900px; /* Constrain content width */
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .settings-layout {
+        flex-direction: column;
+    }
+
+    .settings-content {
+        padding: 24px;
+    }
+}

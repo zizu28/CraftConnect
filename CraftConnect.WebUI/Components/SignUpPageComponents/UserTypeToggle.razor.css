@@ -1,0 +1,45 @@
+﻿.toggle-container {
+    display: inline-flex;
+    background-color: #E5E7EB; /* Gray-200 */
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.toggle-btn {
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Inactive state */
+.toggle-btn {
+    background-color: transparent;
+    color: #4B5563; /* Gray-600 */
+}
+
+    /* Active state */
+    .toggle-btn.active {
+        background-color: #FB923C; /* Orange-400 (matches image) */
+        color: #451A03; /* Orange-900 (matches image text) */
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    /* Specific logic for customer inactive vs active */
+    .toggle-btn:not(.active) {
+        background-color: transparent;
+        color: #4B5563;
+    }
+
+    .toggle-btn.active:not(:first-child) { /* Customer Active */
+        background-color: #FFFFFF;
+        color: #1F2937;
+    }
+
+    .toggle-btn:first-child.active { /* Craftsperson Active */
+        background-color: #FB923C;
+        color: #451A03;
+    }

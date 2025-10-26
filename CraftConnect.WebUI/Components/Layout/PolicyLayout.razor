@@ -1,0 +1,67 @@
+﻿@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<div class="policy-layout-container">
+    <PolicyTopNav />
+    <div class="policy-layout-main">
+        <!--
+          STEP 1: Pass the activeSectionId to the sidebar component.
+        -->
+        <PolicySidebar ActiveSectionId="@activeSectionId" />
+
+        <!--
+          STEP 2: Give the main content area an ID for the observer to find.
+        -->
+        <main class="policy-content-area" id="main-policy-content">
+            @Body
+        </main>
+    </div>
+</div>
+
+@code {
+    // STEP 3: Add C# logic to manage state and JS Interop.
+    private string activeSectionId = "introduction"; // Default active section
+    private IJSObjectReference? module;
+    private DotNetObjectReference<PolicyLayout>? dotNetHelper;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetHelper = DotNetObjectReference.Create(this);
+            module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "/lib/bootstrap/dist/js/scrollspy.js");
+
+            if (module != null)
+            {
+                await module.InvokeVoidAsync("initScrollSpy", dotNetHelper, "#main-policy-content section[id]");
+            }
+        }
+    }
+
+    // STEP 4: Create the method that JavaScript will call
+    [JSInvokable]
+    public void SetActiveSection(string id)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            id = "introduction"; // Fallback
+        }
+
+        if (activeSectionId != id)
+        {
+            activeSectionId = id;
+            StateHasChanged();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (module != null)
+        {
+            await module.InvokeVoidAsync("cleanupScrollSpy");
+            await module.DisposeAsync();
+        }
+        dotNetHelper?.Dispose();
+    }
+}

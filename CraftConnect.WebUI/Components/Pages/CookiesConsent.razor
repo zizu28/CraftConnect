@@ -1,0 +1,97 @@
+﻿@page "/cookies"
+@using CraftConnect.WebUI.Components.CookiesConsentPageComponents
+@if (IsVisible)
+{
+    <div class="cookie-modal-overlay" @onclick="HandleOverlayClick">
+        <div class="cookie-modal-card" @onclick:stopPropagation="true">
+            <header class="modal-header">
+                <h2>Manage Your Cookie Preferences</h2>
+                <p>We use cookies to enhance your user experience and offer personalized services. Your privacy is important to us. Please review your cookie settings below.</p>
+            </header>
+
+            <div class="cookie-options">
+                <!-- Strictly Necessary Cookies -->
+                <div class="cookie-option">
+                    <div class="cookie-details">
+                        <h3>Strictly Necessary Cookies</h3>
+                        <p>These cookies are essential for the website to function and cannot be disabled. They are necessary for basic site functionality.</p>
+                    </div>
+                    <CookieToggle @bind-Value="model.StrictlyNecessary" IsDisabled="true" />
+                </div>
+
+                <!-- Analytics Cookies -->
+                <div class="cookie-option">
+                    <div class="cookie-details">
+                        <h3>Analytics Cookies</h3>
+                        <p>These cookies help us understand website traffic and user behavior to improve our platform. Disabling them will not affect your browsing experience.</p>
+                    </div>
+                    <CookieToggle @bind-Value="model.AnalyticsCookies" />
+                </div>
+
+                <!-- Marketing Cookies -->
+                <div class="cookie-option">
+                    <div class="cookie-details">
+                        <h3>Marketing Cookies</h3>
+                        <p>These cookies are used to personalize advertisements and track the effectiveness of our marketing campaigns. You can opt-out at any time.</p>
+                    </div>
+                    <CookieToggle @bind-Value="model.MarketingCookies" />
+                </div>
+            </div>
+
+            <footer class="modal-footer">
+                <button class="btn btn-primary" @onclick="AcceptAll">Accept All</button>
+                <button class="btn btn-secondary" @onclick="SavePreferences">Save My Choices</button>
+                <button class="btn btn-tertiary" @onclick="RejectAll">Reject All</button>
+                <a href="/privacy" class="privacy-link">Read our full Privacy Policy</a>
+            </footer>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; } = true; // Show by default for development
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private CookiePreferencesVM model = new();
+
+    private void AcceptAll()
+    {
+        model.AnalyticsCookies = true;
+        model.MarketingCookies = true;
+        Console.WriteLine("Accepted All");
+        // Save preferences and close
+        CloseModal();
+    }
+
+    private void SavePreferences()
+    {
+        // Preferences are already bound to 'model'
+        Console.WriteLine($"Saved: Analytics={model.AnalyticsCookies}, Marketing={model.MarketingCookies}");
+        // Save preferences and close
+        CloseModal();
+    }
+
+    private void RejectAll()
+    {
+        model.AnalyticsCookies = false;
+        model.MarketingCookies = false;
+        Console.WriteLine("Rejected All");
+        // Save preferences and close
+        CloseModal();
+    }
+    
+    private void HandleOverlayClick()
+    {
+        // Optionally close on overlay click
+        // CloseModal();
+    }
+
+    private async Task CloseModal()
+    {
+        IsVisible = false;
+        await OnClose.InvokeAsync();
+    }
+}

@@ -1,0 +1,20 @@
+﻿@using CraftConnect.WebUI.Enums
+
+<div class="toggle-container">
+    <button class="toggle-btn @(SelectedType == UserType.Craftperson ? "active" : "")"
+            @onclick="() => OnToggle.InvokeAsync(UserType.Craftperson)">
+        I am a Craftsperson
+    </button>
+    <button class="toggle-btn @(SelectedType == UserType.Customer ? "active" : "")"
+            @onclick="() => OnToggle.InvokeAsync(UserType.Customer)">
+        I am a Customer
+    </button>
+</div>
+
+@code {
+    [Parameter]
+    public UserType SelectedType { get; set; }
+
+    [Parameter]
+    public EventCallback<UserType> OnToggle { get; set; }
+}

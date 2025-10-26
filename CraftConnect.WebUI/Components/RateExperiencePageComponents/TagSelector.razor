@@ -1,0 +1,36 @@
+﻿<div class="tag-selector">
+    @foreach (var tag in AvailableTags)
+    {
+        <button type="button"
+                class="tag-btn @(IsSelected(tag) ? "active" : "")"
+                @onclick="() => ToggleTag(tag)">
+            @tag
+        </button>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<string> AvailableTags { get; set; } = new();
+
+    [Parameter]
+    public List<string> SelectedTags { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<List<string>> SelectedTagsChanged { get; set; }
+
+    private bool IsSelected(string tag) => SelectedTags.Contains(tag);
+
+    private async Task ToggleTag(string tag)
+    {
+        if (IsSelected(tag))
+        {
+            SelectedTags.Remove(tag);
+        }
+        else
+        {
+            SelectedTags.Add(tag);
+        }
+        await SelectedTagsChanged.InvokeAsync(SelectedTags);
+    }
+}

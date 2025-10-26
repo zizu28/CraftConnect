@@ -1,0 +1,28 @@
+﻿.tag-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag-btn {
+    padding: 8px 14px;
+    border: 1px solid #D1D5DB; /* Gray-300 */
+    background-color: #F9FAFB; /* Gray-50 */
+    color: #374151; /* Gray-700 */
+    border-radius: 20px; /* Pill shape */
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+}
+
+    .tag-btn:hover {
+        background-color: #F3F4F6;
+        border-color: #9CA3AF;
+    }
+
+    .tag-btn.active {
+        background-color: #E0E7FF; /* Indigo-100 */
+        border-color: #A5B4FC; /* Indigo-300 */
+        color: #4F46E5; /* Indigo-600 */
+    }

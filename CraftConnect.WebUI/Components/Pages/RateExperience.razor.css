@@ -1,0 +1,111 @@
+﻿h1 {
+    font-size: 2rem; /* 32px */
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 24px 0;
+    text-align: center;
+}
+
+.craftsman-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 32px;
+}
+
+.avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.craftsman-info .name {
+    display: block;
+    font-size: 1.125rem; /* 18px */
+    font-weight: 600;
+    color: #111827;
+}
+
+.craftsman-info .role {
+    font-size: 0.9rem;
+    color: #6B7280;
+}
+
+/* --- Form --- */
+.form-section {
+    margin-bottom: 24px;
+}
+
+    .form-section label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #374151; /* Gray-700 */
+        margin-bottom: 8px;
+    }
+
+.textarea-wrapper {
+    position: relative;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #D1D5DB; /* Gray-300 */
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    font-size: 0.9rem;
+    color: #111827;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    resize: vertical;
+    font-family: inherit;
+}
+
+    .form-control:focus {
+        outline: none;
+        border-color: #4F46E5; /* Indigo-600 */
+        box-shadow: 0 0 0 1px #4F46E5;
+    }
+
+    .form-control::placeholder {
+        color: #9CA3AF;
+    }
+
+.char-counter {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    font-size: 0.8rem;
+    color: #9CA3AF;
+}
+
+.form-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 32px;
+}
+
+.btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.1s;
+}
+
+.btn-primary {
+    background-color: #4F46E5; /* Indigo-600 */
+    color: white;
+}
+
+    .btn-primary:hover {
+        background-color: #4338CA; /* Indigo-700 */
+    }

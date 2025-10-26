@@ -1,0 +1,60 @@
+﻿@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<div class="terms-layout">
+    <TermsTopNav />
+    <div class="terms-main-container">
+        <TermsSidebar ActiveSectionId="@activeSectionId" />
+        <main class="terms-content" id="terms-content-area">
+            @Body
+        </main>
+    </div>
+    <TermsFooter />
+</div>
+
+@code {
+    private string activeSectionId = "introduction"; // Default active section
+    private IJSObjectReference? module;
+    private DotNetObjectReference<TermsLayout>? dotNetHelper;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetHelper = DotNetObjectReference.Create(this);
+            module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "/lib/bootstrap/dist/js/scrollspy.js");
+
+            if (module != null)
+            {
+                // Initialize the scroll-spy, targeting sections in our main content
+                await module.InvokeVoidAsync("initScrollSpy", dotNetHelper, "#terms-content-area section[id]");
+            }
+        }
+    }
+
+    [JSInvokable]
+    public void SetActiveSection(string id)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            id = "introduction"; // Fallback
+        }
+
+        if (activeSectionId != id)
+        {
+            activeSectionId = id;
+            StateHasChanged(); // Re-render to update the sidebar
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (module != null)
+        {
+            await module.InvokeVoidAsync("cleanupScrollSpy");
+            await module.DisposeAsync();
+        }
+        dotNetHelper?.Dispose();
+    }
+}

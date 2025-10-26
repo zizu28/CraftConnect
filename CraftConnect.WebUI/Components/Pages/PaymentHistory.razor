@@ -1,0 +1,137 @@
+﻿@page "/customer/payment-history"
+@layout PaymentLayout
+@using CraftConnect.WebUI.Components.Layout
+@using CraftConnect.WebUI.Components.PaymentHistoryPageComponents
+
+<div class="history-header">
+    <div class="header-text">
+        <h1>Payment History</h1>
+        <p>View and manage your past transactions.</p>
+    </div>
+    <button class="btn btn-export">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.418a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 2.946V2.75Z" />
+            <path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5a1.25 1.25 0 0 1-1.25 1.25H4.75A1.25 1.25 0 0 1 3.5 15.25v-2.5Z" />
+        </svg>
+        Export History
+    </button>
+</div>
+
+<!-- Filters -->
+<div class="filter-bar">
+    <div class="search-container">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9z" clip-rule="evenodd" />
+        </svg>
+        <input type="text" placeholder="Search by project or craftsman..." @bind="searchTerm" />
+    </div>
+    <div class="filter-dropdowns">
+        <div class="filter-group">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5h10.5a.75.75 0 0 0 0-1.5H4.75a.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
+            </svg>
+            <select @bind="dateFilter">
+                <option value="">Filter by Date</option>
+                <option value="last-30">Last 30 days</option>
+                <option value="last-90">Last 90 days</option>
+                <option value="2025">This Year</option>
+                <option value="2024">Last Year</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M4.5 3.75a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V6.75a3 3 0 0 0-3-3h-15ZM22.5 9H1.5V6.75a1.5 1.5 0 0 1 1.5-1.5h15a1.5 1.5 0 0 1 1.5 1.5V9Z" />
+            </svg>
+            <select @bind="paymentMethodFilter">
+                <option value="">Filter by Payment Method</option>
+                <option value="credit-card">Credit Card</option>
+                <option value="paypal">PayPal</option>
+                <option value="bank-transfer">Bank Transfer</option>
+                <option value="mobile-money">Mobile Money</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- Payment History Table -->
+<PaymentHistoryTable Items="FilteredItems" />
+
+<!-- Pagination -->
+<SimplePagination CurrentPage="currentPage" TotalItems="TotalItemCount" PageSize="pageSize" OnPageChanged="HandlePageChange" />
+
+@code {
+    private string searchTerm = "";
+    private string dateFilter = "";
+    private string paymentMethodFilter = "";
+    private int currentPage = 1;
+    private int pageSize = 5;
+
+    private List<PaymentHistoryItem> allItems = new();
+
+    private List<PaymentHistoryItem> FilteredItems
+    {
+        get
+        {
+            var items = allItems.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                items = items.Where(i =>
+                    i.Project.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    i.CraftsmanName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Add date and payment method filter logic here
+            if (!string.IsNullOrWhiteSpace(dateFilter))
+            {
+                var now = DateTime.UtcNow;
+                items = dateFilter.ToLower() switch
+                {
+                    "last-30" => items.Where(i => (now - i.Date).TotalDays <= 30),
+                    "last-90" => items.Where(i => (now - i.Date).TotalDays <= 90),
+                    "2025" => items.Where(i => i.Date.Year == 2025),
+                    "2024" => items.Where(i => i.Date.Year == 2024),
+                    _ => items
+                };
+            }
+
+            if (!string.IsNullOrWhiteSpace(paymentMethodFilter))
+            {
+                items = paymentMethodFilter.ToLower() switch
+                {
+                    "credit-card" => items.Where(i => i.PaymentMethod.Contains("Credit", StringComparison.OrdinalIgnoreCase)),
+                    "paypal" => items.Where(i => i.PaymentMethod.Contains("PayPal", StringComparison.OrdinalIgnoreCase)),
+                    "bank-transfer" => items.Where(i => i.PaymentMethod.Contains("Bank", StringComparison.OrdinalIgnoreCase)),
+                    "mobile-money" => items.Where(i => i.PaymentMethod.Contains("Mobile", StringComparison.OrdinalIgnoreCase)),
+                    _ => items
+                };
+            }
+
+            return items
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+    }
+
+    private int TotalItemCount => allItems.Count; // This should be FilteredItems.Count *before* pagination
+
+    protected override void OnInitialized()
+    {
+        // Mock data from image
+        allItems = new List<PaymentHistoryItem>
+        {
+            new PaymentHistoryItem { Id = Guid.NewGuid(), Project = "Kitchen Renovation", CraftsmanName = "John Smith", Date = new DateTime(2025, 10, 26), Amount = 2500.00m, PaymentMethod = "Credit Card" },
+            new PaymentHistoryItem { Id = Guid.NewGuid(), Project = "Custom Bookshelf", CraftsmanName = "Jane Doe", Date = new DateTime(2025, 10, 24), Amount = 800.00m, PaymentMethod = "PayPal" },
+            new PaymentHistoryItem { Id = Guid.NewGuid(), Project = "Plumbing Repair", CraftsmanName = "Mike Johnson", Date = new DateTime(2025, 10, 22), Amount = 150.00m, PaymentMethod = "Credit Card" },
+            new PaymentHistoryItem { Id = Guid.NewGuid(), Project = "Garden Landscaping", CraftsmanName = "Emily White", Date = new DateTime(2025, 10, 20), Amount = 1200.00m, PaymentMethod = "Bank Transfer" },
+            new PaymentHistoryItem { Id = Guid.NewGuid(), Project = "Electrical Wiring", CraftsmanName = "David Green", Date = new DateTime(2025, 10, 18), Amount = 450.00m, PaymentMethod = "Credit Card" }
+            // Add more items to test pagination
+        };
+    }
+
+    private void HandlePageChange(int newPage)
+    {
+        currentPage = newPage;
+    }
+}

@@ -1,0 +1,108 @@
+﻿@page "/"
+@layout LandingLayout
+@using CraftConnect.WebUI.Components.LandingPageComponents
+@using CraftConnect.WebUI.Components.Layout
+
+<!-- 1. Navigation -->
+<LandingNav />
+
+<!-- 2. Hero Section -->
+<div class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1>Connect with Skilled Craftsmen</h1>
+        <p>Find the perfect craftsman for your project or showcase your skills to a wider audience.</p>
+        <div class="hero-buttons">
+            <a href="/signup" class="btn btn-primary-light">Join as a Craftsman</a>
+            <a href="/find-craftmen" class="btn btn-secondary-light">Find a Craftsman</a>
+        </div>
+    </div>
+</div>
+
+<div class="page-content">
+    <!-- 3. "For Craftsmen" Section -->
+    <section class="features-section">
+        <h2>For Craftsmen</h2>
+        <p class="section-subtitle">Expand your reach and grow your business with CraftConnect.</p>
+        <div class="features-grid">
+            @foreach (var item in craftsmanFeatures)
+            {
+                <FeatureCard Feature="item" />
+            }
+        </div>
+    </section>
+
+    <!-- 4. "For Customers" Section -->
+    <section class="features-section customer-section">
+        <h2>For Customers</h2>
+        <p class="section-subtitle">Find skilled craftsmen and bring your ideas to life with CraftConnect.</p>
+        <div class="features-grid">
+            @foreach (var item in customerFeatures)
+            {
+                <FeatureCard Feature="item" />
+            }
+        </div>
+    </section>
+
+    <!-- 5. "Ready to Get Started?" CTA Section -->
+    <section class="cta-section">
+        <h2>Ready to Get Started?</h2>
+        <p>Join CraftConnect today and connect with skilled craftsmen or find the perfect craftsmen for your project.</p>
+        <a href="/signup" class="btn btn-primary-cta">Get Started Now</a>
+    </section>
+</div>
+
+<!-- 6. Footer -->
+<LandingFooter />
+
+@code {
+    private List<FeatureItem> craftsmanFeatures = new();
+    private List<FeatureItem> customerFeatures = new();
+
+    protected override void OnInitialized()
+    {
+        craftsmanFeatures = new List<FeatureItem>
+        {
+            new FeatureItem 
+            {
+                Title = "Showcase Your Skills",
+                Description = "Create a detailed profile highlighting your expertise and past work.",
+                IconSvgPath = "M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a.75.75 0 0 1 .75.127 8.25 8.25 0 0 1 1.018.52 7.47 7.47 0 0 1 .84.502 6.014 6.014 0 0 1 .72.43 4.936 4.936 0 0 1 .58.37c.19.12.38.241.57.361a.75.75 0 0 1-.58 1.342l-.001-.001a.75.75 0 0 1-.22-.054 5.686 5.686 0 0 0-.58-.26 6.176 6.176 0 0 0-.67-.28 7.323 7.323 0 0 0-.76-.248 8.706 8.706 0 0 0-1.018-.198.75.75 0 0 1 .127-.75Z M18.122 15.122a.75.75 0 0 1-.58 1.342l-.001-.001a.75.75 0 0 1-.22-.054 5.686 5.686 0 0 0-.58-.26 6.176 6.176 0 0 0-.67-.28 7.323 7.323 0 0 0-.76-.248 8.706 8.706 0 0 0-1.018-.198.75.75 0 1 1 .255-1.485 8.25 8.25 0 0 1 1.018.52 7.47 7.47 0 0 1 .84.502 6.014 6.014 0 0 1 .72.43 4.936 4.936 0 0 1 .58.37c.19.12.38.241.57.361Z"
+            },
+            new FeatureItem 
+            {
+                Title = "Connect with Clients",
+                Description = "Receive project inquiries directly from potential clients.",
+                IconSvgPath = "M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
+            },
+            new FeatureItem 
+            {
+                Title = "Manage Your Projects",
+                Description = "Track project progress and communicate effectively with clients.",
+                IconSvgPath = "M12 7.5a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z M18.89 8.003a.75.75 0 0 0-1.06-1.06l-1.5 1.5a.75.75 0 1 0 1.06 1.06l1.5-1.5ZM19.5 12a.75.75 0 0 0-.75-.75h-2.19a.75.75 0 0 0 0 1.5h2.19a.75.75 0 0 0 .75-.75Z M18.89 15.997a.75.75 0 1 0-1.06 1.06l1.5 1.5a.75.75 0 1 0 1.06-1.06l-1.5-1.5ZM15 18.89a.75.75 0 1 0 1.06 1.06l1.5-1.5a.75.75 0 1 0-1.06-1.06l-1.5 1.5ZM12 19.5a.75.75 0 0 0-.75.75v2.19a.75.75 0 0 0 1.5 0v-2.19a.75.75 0 0 0-.75-.75Z"
+            }
+        };
+
+        customerFeatures = new List<FeatureItem>
+        {
+            new FeatureItem 
+            {
+                Title = "Find the Right Craftsman",
+                Description = "Browse profiles and portfolios to find the perfect match for your project.",
+                IconSvgPath = "M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z M11.25 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z M15 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z M8.25 9.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z M9.75 11.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z M7.5 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z M9 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z M12 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z M14.25 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+            },
+            new FeatureItem 
+            {
+                Title = "Collaborate Seamlessly",
+                Description = "Communicate directly with craftsmen and track project progress.",
+                IconSvgPath = "M3 4.75A.75.75 0 0 1 3.75 4h12.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 4.75ZM3 9.75A.75.75 0 0 1 3.75 9h12.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 9.75ZM3 14.75A.75.75 0 0 1 3.75 14h12.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 14.75Z"
+            },
+            new FeatureItem 
+            {
+                Title = "Rate and Review",
+                Description = "Share your experience and help others find quality craftsmen.",
+                IconSvgPath = "M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.116 3.527 1.257 5.273c.27 1.131-1.009 2.036-1.96 1.425L12 18.354l-4.61 2.735c-.95.562-2.23 0-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76- .415-2.212.75-2.305l5.404-.434 2.082-5.005Z"
+            }
+        };
+    }
+}

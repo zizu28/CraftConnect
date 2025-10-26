@@ -1,0 +1,49 @@
+﻿<div class="checkout-card">
+    <h2 class="card-title">Payment Details</h2>
+    
+    <div class="form-group">
+        <label for="card-number">Card Number</label>
+        <div class="input-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4.5 3.75a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V6.75a3 3 0 0 0-3-3h-15ZM22.5 9H1.5V6.75a1.5 1.5 0 0 1 1.5-1.5h15a1.5 1.5 0 0 1 1.5 1.5V9Z" />
+            </svg>
+            <input id="card-number" class="form-control" placeholder="0000 0000 0000 0000"
+                   @bind="CardNumber" @bind:event="oninput" />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="expiration">Expiration Date</label>
+            <input id="expiration" class="form-control" placeholder="MM / YY"
+                   @bind="ExpirationDate" @bind:event="oninput" />
+        </div>
+        <div class="form-group">
+            <label for="cvc">
+                CVC
+                <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14Zm0-5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM7 5.5a1 1 0 0 1 1-1h.008a1 1 0 0 1 1 1v.008a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V5.5Z" clip-rule="evenodd" />
+                </svg>
+            </label>
+            <input id="cvc" class="form-control" placeholder="123"
+                   @bind="Cvc" @bind:event="oninput" />
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="name-on-card">Name on Card</label>
+        <input id="name-on-card" class="form-control"
+               @bind="NameOnCard" @bind:event="oninput" />
+    </div>
+</div>
+
+@code {
+    [Parameter] public string CardNumber { get; set; }
+    [Parameter] public EventCallback<string> CardNumberChanged { get; set; }
+    [Parameter] public string ExpirationDate { get; set; }
+    [Parameter] public EventCallback<string> ExpirationDateChanged { get; set; }
+    [Parameter] public string Cvc { get; set; }
+    [Parameter] public EventCallback<string> CvcChanged { get; set; }
+    [Parameter] public string NameOnCard { get; set; }
+    [Parameter] public EventCallback<string> NameOnCardChanged { get; set; }
+}

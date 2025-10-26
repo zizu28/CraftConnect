@@ -1,0 +1,65 @@
+﻿.sidebar-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+    .sidebar-card h3 {
+        font-size: 1.125rem; /* 18px */
+        font-weight: 600;
+        color: #111827;
+        margin: 0 0 20px 0;
+    }
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+    .form-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151; /* Gray-700 */
+        margin-bottom: 4px;
+    }
+
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #D1D5DB; /* Gray-300 */
+    border-radius: 6px;
+    background-color: #FFFFFF;
+    font-size: 0.9rem;
+    color: #111827;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+    .form-control:focus {
+        outline: none;
+        border-color: #3B82F6; /* Blue-500 */
+        box-shadow: 0 0 0 1px #3B82F6;
+    }
+
+textarea.form-control {
+    font-family: inherit;
+    resize: vertical;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 10px;
+    background-color: #3B82F6; /* Blue-500 */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+    .btn-submit:hover {
+        background-color: #2563EB; /* Blue-600 */
+    }

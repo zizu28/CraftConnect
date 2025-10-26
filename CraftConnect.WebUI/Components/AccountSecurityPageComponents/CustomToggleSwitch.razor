@@ -1,0 +1,36 @@
+﻿<label class="toggle-switch">
+    <input type="checkbox" @bind="CurrentValue" />
+    <span class="slider"></span>
+</label>
+
+@code {
+    private bool _currentValue;
+
+    [Parameter]
+    public bool Value
+    {
+        get => _currentValue;
+        set
+        {
+            if (_currentValue == value) return;
+            _currentValue = value;
+            ValueChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<bool> ValueChanged { get; set; }
+
+    private bool CurrentValue
+    {
+        get => _currentValue;
+        set
+        {
+            if (_currentValue != value)
+            {
+                _currentValue = value;
+                ValueChanged.InvokeAsync(value);
+            }
+        }
+    }
+}

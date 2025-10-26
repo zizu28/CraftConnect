@@ -1,0 +1,232 @@
+﻿.login-card {
+    width: 100%;
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0; /* Slate-200 */
+    border-radius: 12px;
+    padding: 32px 28px;
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.login-card-header {
+    text-align: center;
+}
+
+    .login-card-header h2 {
+        font-size: 1.5rem; /* 24px */
+        font-weight: 700;
+        color: #1E293B; /* Slate-800 */
+        margin: 0;
+    }
+
+    .login-card-header p {
+        font-size: 0.9rem;
+        color: #64748B; /* Slate-500 */
+        margin: 4px 0 0 0;
+    }
+
+/* --- Form --- */
+.login-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .label-row label {
+        font-size: 0.875rem; /* 14px */
+        font-weight: 500;
+        color: #334155; /* Slate-700 */
+    }
+
+.link-forgot {
+    font-size: 0.8rem;
+    color: #0EA5E9; /* Sky-500 */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+    .link-forgot:hover {
+        text-decoration: underline;
+    }
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    border: 1px solid #CBD5E1; /* Slate-300 */
+    border-radius: 6px;
+    background-color: #F8FAFC; /* Slate-50 */
+}
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0EA5E9; /* Sky-500 */
+        box-shadow: 0 0 0 1px #0EA5E9;
+        background-color: #FFFFFF;
+    }
+
+/* Validation */
+.validation-message {
+    font-size: 0.8rem;
+    color: #EF4444; /* Red-500 */
+}
+
+/* Password Field */
+.password-wrapper {
+    position: relative;
+}
+
+    .password-wrapper .form-control {
+        padding-right: 40px; /* Space for icon */
+    }
+
+.password-toggle-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: #94A3B8; /* Slate-400 */
+}
+
+    .password-toggle-btn:hover {
+        color: #475569; /* Slate-600 */
+    }
+
+    .password-toggle-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
+/* Checkbox */
+.form-group-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .form-group-checkbox label {
+        font-size: 0.875rem;
+        color: #475569; /* Slate-600 */
+        font-weight: 500;
+    }
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background-color: #0EA5E9; /* Sky-500 */
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.1s;
+    margin-top: 8px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+    .btn-submit:hover {
+        background-color: #0284C7; /* Sky-600 */
+    }
+
+/* --- Separator --- */
+.separator {
+    width: 100%;
+    text-align: center;
+    color: #94A3B8; /* Slate-400 */
+    font-size: 0.8rem;
+    font-weight: 500;
+    position: relative;
+    margin-top: 8px;
+}
+
+    .separator::before,
+    .separator::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 38%; /* Adjusted width */
+        height: 1px;
+        background-color: #E2E8F0; /* Slate-200 */
+    }
+
+    .separator::before {
+        left: 0;
+    }
+
+    .separator::after {
+        right: 0;
+    }
+
+/* --- Social Logins --- */
+.social-login-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #334155; /* Slate-700 */
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1; /* Slate-300 */
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+    .btn-social:hover {
+        background-color: #F8FAFC; /* Slate-50 */
+    }
+
+    .btn-social img {
+        width: 20px;
+        height: 20px;
+    }
+
+/* --- Sign Up Link --- */
+.signup-link {
+    font-size: 0.9rem;
+    color: #64748B; /* Slate-500 */
+    margin-top: 8px;
+    text-align: center;
+}
+
+    .signup-link a {
+        color: #0EA5E9; /* Sky-500 */
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
