@@ -1,0 +1,88 @@
+﻿.table-card-container {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0; /* Slate-200 */
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.chart-title {
+    font-size: 1.125rem; /* 18px */
+    font-weight: 600;
+    color: #1E293B; /* Slate-800 */
+    margin: 0 0 4px 0;
+}
+
+.table-description {
+    font-size: 0.9rem;
+    color: #64748B; /* Slate-500 */
+    margin: 0 0 24px 0;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.craftsmen-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .craftsmen-table th {
+        padding: 12px 16px;
+        background-color: #F8FAFC; /* Slate-50 */
+        text-align: left;
+        font-size: 0.75rem; /* 12px */
+        font-weight: 600;
+        color: #64748B; /* Slate-500 */
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid #E2E8F0; /* Slate-200 */
+    }
+
+    .craftsmen-table td {
+        padding: 16px 16px;
+        border-bottom: 1px solid #E2E8F0; /* Slate-200 */
+        font-size: 0.9rem;
+        color: #334155; /* Slate-700 */
+        vertical-align: middle;
+    }
+
+    .craftsmen-table tr:last-child td {
+        border-bottom: none;
+    }
+
+.cell-craftsman {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    color: #1E293B; /* Slate-800 */
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.cell-projects {
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.cell-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+    color: #475569; /* Slate-600 */
+    font-variant-numeric: tabular-nums;
+}
+
+    .cell-rating svg {
+        width: 16px;
+        height: 16px;
+        color: #F59E0B; /* Amber-500 */
+    }

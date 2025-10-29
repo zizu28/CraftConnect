@@ -1,0 +1,28 @@
+﻿.announcement-layout-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #F8FAFC; /* Slate-50 */
+}
+
+.announcement-main-content {
+    width: 100%;
+    max-width: 1280px; /* Constrain content width */
+    margin: 0 auto;
+    padding: 32px 48px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1E293B; /* Slate-800 */
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .announcement-main-content {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .announcement-main-content {
+        padding: 16px;
+    }
+}

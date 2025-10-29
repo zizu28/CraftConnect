@@ -1,0 +1,23 @@
+﻿.role-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem; /* 12px */
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* Colors from AdminUserManagement.png */
+.role-craftsman {
+    background-color: #DBEAFE; /* Blue-100 */
+    color: #1E40AF; /* Blue-800 */
+}
+
+.role-customer {
+    background-color: #FCE7F3; /* Pink-100 */
+    color: #9D174D; /* Pink-800 */
+}
+
+.role-admin {
+    background-color: #DCFCE7; /* Green-100 */
+    color: #166534; /* Green-800 */
+}

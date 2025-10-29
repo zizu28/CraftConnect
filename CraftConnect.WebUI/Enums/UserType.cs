@@ -3,6 +3,7 @@
 	public enum UserType
 	{
 		Craftperson,
-		Customer
+		Customer,
+		Admin
 	}
 }

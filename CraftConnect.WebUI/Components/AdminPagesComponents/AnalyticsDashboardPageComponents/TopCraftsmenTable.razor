@@ -1,0 +1,39 @@
+﻿<div class="table-card-container">
+    <h4 class="chart-title">Top Craftsmen</h4>
+    <p class="table-description">Based on completed projects this month.</p>
+
+    <div class="table-container">
+        <table class="craftsmen-table">
+            <thead>
+                <tr>
+                    <th>Craftsman</th>
+                    <th>Category</th>
+                    <th>Completed Projects</th>
+                    <th>Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var craftsman in Craftsmen)
+                {
+                    <tr>
+                        <td class="cell-craftsman">
+                            <img src="@craftsman.AvatarUrl" alt="@craftsman.Name" class="avatar" />
+                            <span>@craftsman.Name</span>
+                        </td>
+                        <td>@craftsman.Category</td>
+                        <td class="cell-projects">@craftsman.CompletedProjects</td>
+                        <td class="cell-rating">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.793.734c.854.13 1.198 1.166.576 1.78l-3.468 3.534.83 4.887c.143.84-.73 1.492-1.49 1.09l-4.27-2.308-4.27 2.308c-.76.402-1.633-.25-1.49-1.09l.83-4.887-3.468-3.534c-.622-.614-.278-1.65.576-1.78l4.793-.734 1.83-4.401z" clip-rule="evenodd" /></svg>
+                            @craftsman.Rating.ToString("F1")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<TopCraftsman> Craftsmen { get; set; } = new();
+}

@@ -1,0 +1,58 @@
+﻿@page "/verify-account"
+@layout VerificationLayout
+@using CraftConnect.WebUI.Components.AccountVerificationPageComponents
+@using CraftConnect.WebUI.Components.Layout
+@inject IJSRuntime JSRuntime
+
+<div class="verification-card">
+    <EditForm Model="model" OnValidSubmit="HandleVerification">
+        <DataAnnotationsValidator />
+
+        <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
+                <path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z" />
+            </svg>
+        </div>
+
+        <div class="card-header">
+            <h2>Check Your Inbox!</h2>
+            <p>We've sent a 6-digit verification code to your email address. Please enter it below to verify your account.</p>
+        </div>
+
+        <VerificationCodeInput @bind-Value="model" />
+        <ValidationMessage For="@(() => model.Code1)" />
+        
+        <button type="submit" class="btn btn-primary btn-block">Verify My Account</button>
+
+    </EditForm>
+
+    <div class="card-footer">
+        <span>Didn't receive a code?</span>
+        <a href="#" @onclick="ResendCode" @onclick:preventDefault="true">Resend</a>
+    </div>
+
+    <div class="back-to-login">
+        <a href="/login">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M12 8a.75.75 0 0 1-.75.75H5.81l1.72 1.72a.75.75 0 1 1-1.06 1.06l-3-3a.75.75 0 0 1 0-1.06l3-3a.75.75 0 1 1 1.06 1.06L5.81 7.25H11.25A.75.75 0 0 1 12 8Z" clip-rule="evenodd" /></svg>
+            Back to Log In
+        </a>
+    </div>
+</div>
+
+@code {
+    private VerificationViewModel model = new();
+
+    private void HandleVerification()
+    {
+        // Handle verification logic
+        string fullCode = model.GetFullCode();
+        Console.WriteLine($"Verifying code: {fullCode}");
+    }
+
+    private void ResendCode()
+    {
+        // Handle resend code logic
+        Console.WriteLine("Resending code...");
+    }
+}

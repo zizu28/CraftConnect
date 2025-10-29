@@ -1,0 +1,50 @@
+﻿.pagination-nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #E2E8F0; /* Slate-200 */
+    background-color: #FFFFFF;
+    color: #475569; /* Slate-600 */
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+    .page-link:not(:disabled):hover {
+        background-color: #F8FAFC; /* Slate-50 */
+        color: #1E293B; /* Slate-800 */
+    }
+
+    .page-link.active {
+        background-color: #4F46E5; /* Indigo-600 */
+        color: #FFFFFF;
+        border-color: #4F46E5;
+        z-index: 1;
+    }
+
+    .page-link:disabled {
+        color: #CBD5E1; /* Slate-300 */
+        cursor: not-allowed;
+    }
+
+.page-dots {
+    color: #475569; /* Slate-600 */
+    padding: 0 8px;
+}

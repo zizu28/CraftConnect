@@ -1,0 +1,47 @@
+﻿.currency-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+    .currency-status-badge::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+
+/* Active */
+.status-active {
+    background-color: #DCFCE7; /* Green-100 */
+    color: #22C55E; /* Green-500 */
+}
+
+    .status-active::before {
+        background-color: #22C55E; /* Green-500 */
+    }
+
+/* Inactive */
+.status-inactive {
+    background-color: #FEE2E2; /* Red-100 */
+    color: #EF4444; /* Red-500 */
+}
+
+    .status-inactive::before {
+        background-color: #EF4444; /* Red-500 */
+    }
+
+/* Default */
+.status-default {
+    background-color: #F1F5F9; /* Slate-100 */
+    color: #64748B; /* Slate-500 */
+}
+
+    .status-default::before {
+        background-color: #64748B; /* Slate-500 */
+    }

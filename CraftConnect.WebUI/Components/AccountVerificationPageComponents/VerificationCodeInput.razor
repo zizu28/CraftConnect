@@ -1,0 +1,58 @@
+﻿@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
+<div class="code-input-container" id="verification-code-form">
+    <InputText id="code-1" class="code-input" @bind-Value="Value.Code1" maxlength="1" @oninput="(e) => OnCodeChanged(e, 2)" />
+    <InputText id="code-2" class="code-input" @bind-Value="Value.Code2" maxlength="1" @oninput="(e) => OnCodeChanged(e, 3)" @onkeydown="(e) => OnBackspace(e, 1)" />
+    <InputText id="code-3" class="code-input" @bind-Value="Value.Code3" maxlength="1" @oninput="(e) => OnCodeChanged(e, 4)" @onkeydown="(e) => OnBackspace(e, 2)" />
+    <InputText id="code-4" class="code-input" @bind-Value="Value.Code4" maxlength="1" @oninput="(e) => OnCodeChanged(e, 5)" @onkeydown="(e) => OnBackspace(e, 3)" />
+    <InputText id="code-5" class="code-input" @bind-Value="Value.Code5" maxlength="1" @oninput="(e) => OnCodeChanged(e, 6)" @onkeydown="(e) => OnBackspace(e, 4)" />
+    <InputText id="code-6" class="code-input" @bind-Value="Value.Code6" maxlength="1" @oninput="(e) => OnCodeChanged(e, 0)" @onkeydown="(e) => OnBackspace(e, 5)" />
+</div>
+
+@code {
+    [Parameter] public VerificationViewModel Value { get; set; }
+    [Parameter] public EventCallback<VerificationViewModel> ValueChanged { get; set; }
+
+    private IJSObjectReference? module;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "/lib/bootstrap/dist/js/Verification.js");
+            await module.InvokeVoidAsync("init", "verification-code-form");
+        }
+    }
+
+    private async Task OnCodeChanged(ChangeEventArgs e, int next)
+    {
+        if (e.Value?.ToString()?.Length > 0 && next > 0)
+        {
+            await module.InvokeVoidAsync("focusNext", $"code-{next}");
+        }
+    }
+
+    private async Task OnBackspace(KeyboardEventArgs e, int prev)
+    {
+        if (e.Key == "Backspace")
+        {
+            // Check current input value *before* the keydown completes
+            var elementId = $"code-{prev + 1}";
+            bool isEmpty = await module.InvokeAsync<bool>("isInputValueEmpty", elementId);
+
+            if (isEmpty)
+            {
+                await module.InvokeVoidAsync("focusNext", $"code-{prev}");
+            }
+        }
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (module != null)
+        {
+            await module.DisposeAsync();
+        }
+    }
+}

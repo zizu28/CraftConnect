@@ -1,0 +1,18 @@
+﻿@using CraftConnect.WebUI.Enums
+
+<span class="status-badge @GetStatusClass()">
+    @Status.ToString()
+</span>
+
+@code {
+    [Parameter]
+    public UserStatus Status { get; set; }
+
+    private string GetStatusClass() => Status switch
+    {
+        UserStatus.Active => "status-active",
+        UserStatus.Suspended => "status-suspended",
+        UserStatus.Deactivated => "status-deactivated",
+        _ => ""
+    };
+}

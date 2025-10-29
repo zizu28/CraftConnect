@@ -1,0 +1,63 @@
+﻿/* PayoutPagination.razor.css */
+
+.pagination-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 4px;
+}
+
+.btn-page-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: 1px solid #E2E8F0; /* Slate-200 */
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #334155; /* Slate-700 */
+    cursor: pointer;
+}
+
+    .btn-page-nav:hover {
+        background-color: #F8FAFC; /* Slate-50 */
+    }
+
+    .btn-page-nav:disabled {
+        color: #CBD5E1; /* Slate-300 */
+        cursor: not-allowed;
+        background: none;
+    }
+
+    .btn-page-nav svg {
+        width: 16px;
+        height: 16px;
+    }
+
+.btn-page {
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #334155; /* Slate-700 */
+    cursor: pointer;
+}
+
+    .btn-page:hover {
+        background-color: #F8FAFC; /* Slate-50 */
+    }
+
+    .btn-page.active {
+        background-color: #F1F5F9; /* Slate-100 */
+        border-color: #E2E8F0; /* Slate-200 */
+        font-weight: 600;
+    }

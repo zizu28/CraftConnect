@@ -1,0 +1,163 @@
+﻿@page "/admin/payments/payouts"
+@layout AdminLayout
+@using CraftConnect.WebUI.Components.AdminPagesComponents.PayoutScheduledManagementPageComponents
+@using CraftConnect.WebUI.Components.Layout.AdminPageLayouts
+
+<div class="payouts-container">
+    <!-- Page Header -->
+    <header class="page-header">        
+        <div class="header-title">
+            <nav class="breadcrumbs">
+                <a href="/admin/dashboard">Dashboard</a>
+                <span>/</span>
+                <a href="/admin/payments">Payments</a>
+                <span>/</span>
+                <span class="current">Payouts</span>
+            </nav>
+        </div>
+        <h1>Payout Schedule Management</h1>
+    </header>
+
+    <!-- Default Payout Configuration Card -->
+    <div class="config-card">
+        <h4>Default Payout Configuration</h4>
+        <div class="config-form">
+            <div class="form-group">
+                <label for="payoutFrequency">Payout Frequency</label>
+                <select id="payoutFrequency" @bind="config.Frequency">
+                    <option value="Daily">Daily</option>
+                    <option value="Weekly">Weekly</option>
+                    <option value="BiWeekly">Bi-Weekly</option>
+                    <option value="Monthly">Monthly</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="minimumThreshold">Minimum Payout Threshold</label>
+                <div class="input-with-currency">
+                    <span>$</span>
+                    <input type="number" id="minimumThreshold" @bind="config.MinimumThreshold" />
+                </div>
+            </div>
+            <button class="btn btn-primary" @onclick="SaveChanges">Save Changes</button>
+        </div>
+    </div>
+
+    <!-- Payouts Table Section -->
+    <div class="payouts-list-section">
+        <!-- Tabs -->
+        <nav class="tab-nav">
+            <button class="@(activeTab == 1 ? "tab-link active" : "tab-link")" @onclick="() => SelectTab(1)">Pending Payouts</button>
+            <button class="@(activeTab == 2 ? "tab-link active" : "tab-link")" @onclick="() => SelectTab(2)">Payout History</button>
+        </nav>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <div class="search-input-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" /></svg>
+                <input type="text" placeholder="Search by artisan..." />
+            </div>
+            <div class="filter-actions">
+                <button class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 01.628.74v2.288a2.25 2.25 0 01-.659 1.59l-4.682 4.683a2.25 2.25 0 00-.659 1.59v3.037c0 .684-.31 1.312-.82 1.74l-1.5 1.25a.75.75 0 01-1.16-.625v-3.037a2.25 2.25 0 00-.659-1.59L3.287 6.22A2.25 2.25 0 012.628 4.63V2.34a.75.75 0 01.628-.74z" clip-rule="evenodd" /></svg>
+                    Filter
+                </button>
+                <button class="btn btn-primary" disabled="@(SelectedPayoutCount == 0)">
+                    Approve Selected (@SelectedPayoutCount)
+                </button>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+            <table class="payouts-table">
+                <thead>
+                    <tr>
+                        <th class="col-checkbox"><input type="checkbox" @onchange="ToggleSelectAll" /></th>
+                        <th>Artisan Name</th>
+                        <th>Amount</th>
+                        <th>Scheduled Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var payout in Payouts)
+                    {
+                        <tr>
+                            <td class="col-checkbox"><input type="checkbox" @bind="payout.IsSelected" /></td>
+                            <td class="cell-artisan-name">@payout.ArtisanName</td>
+                            <td>@payout.Amount.ToString("C")</td>
+                            <td>@payout.ScheduledDate.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                <PayoutStatusBadge Status="@payout.Status" />
+                            </td>
+                            <td class="cell-actions">
+                                @if (payout.Status == "Pending")
+                                {
+                                    <a href="#" class="action-link-approve">Approve</a>
+                                }
+                                @if (payout.Status == "In Progress")
+                                {
+                                    <a href="#" class="action-link-default">View Details</a>
+                                }
+                                @if (payout.Status == "Failed")
+                                {
+                                    <a href="#" class="action-link-danger">Retry</a>
+                                }
+                                @if (payout.Status == "Paid")
+                                {
+                                    <a href="#" class="action-link-default">View Receipt</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Table Footer -->
+        <div class="table-footer">
+            <span>Showing 1 to 5 of 100</span>
+            <PayoutPagination />
+        </div>
+    </div>
+</div>
+
+@code {
+    private PayoutScheduleConfig config = new();
+    private List<PendingPayout> Payouts = new();
+    private int activeTab = 1;
+
+    private int SelectedPayoutCount => Payouts.Count(p => p.IsSelected);
+
+    protected override void OnInitialized()
+    {
+        // Mock data from the image
+        Payouts = new List<PendingPayout>
+        {
+            new PendingPayout { Id = Guid.NewGuid(), ArtisanName = "Elena Rodriguez", Amount = 450.00m, ScheduledDate = new DateTime(2024, 7, 25), Status = "Pending", IsSelected = false },
+            new PendingPayout { Id = Guid.NewGuid(), ArtisanName = "Ben Carter", Amount = 1230.50m, ScheduledDate = new DateTime(2024, 7, 25), Status = "Pending", IsSelected = true },
+            new PendingPayout { Id = Guid.NewGuid(), ArtisanName = "Marcus Singh", Amount = 875.20m, ScheduledDate = new DateTime(2024, 7, 25), Status = "In Progress", IsSelected = false },
+            new PendingPayout { Id = Guid.NewGuid(), ArtisanName = "Aisha Khan", Amount = 2500.00m, ScheduledDate = new DateTime(2024, 7, 18), Status = "Failed", IsSelected = false },
+            new PendingPayout { Id = Guid.NewGuid(), ArtisanName = "Olivia Chen", Amount = 320.00m, ScheduledDate = new DateTime(2024, 7, 18), Status = "Paid", IsSelected = false }
+        };
+    }
+
+    private void ToggleSelectAll(ChangeEventArgs e)
+    {
+        bool isSelected = (bool)(e.Value ?? false);
+        Payouts.ForEach(p => p.IsSelected = isSelected);
+    }
+
+    private void SelectTab(int tabIndex)
+    {
+        activeTab = tabIndex;
+        // In a real app, you'd reload data here based on the tab
+    }
+    
+    private void SaveChanges()
+    {
+        // Logic to save config changes
+        Console.WriteLine("Saving config...");
+    }
+}

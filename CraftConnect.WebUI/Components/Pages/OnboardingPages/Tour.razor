@@ -1,0 +1,122 @@
+﻿@page "/onboarding/step-1"
+@using CraftConnect.WebUI.Components.Layout
+@layout OnboardingFlowLayout
+@inject NavigationManager Navigation
+
+@if (IsVisible)
+{
+    <div class="main-container">
+        <!-- Progress Bar -->
+        <div class="progress-bar-components">
+            <div class="progress-header">
+                <span>Onboarding Progress</span>
+                <span>1/3</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill"></div>
+            </div>
+        </div>
+        
+        <div class="modal-overlay" @onclick="SkipTour">
+
+            <div class="modal-content" @onclick:stopPropagation="true">
+                <div class="modal-image">
+                    <img src="@currentStep.ImageUrl"
+                         alt="@currentStep.Title"
+                         onerror="this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Onboarding+Image'" />
+                </div>
+
+                <div class="modal-body">
+                    <h2>@currentStep.Title</h2>
+                    <p>@currentStep.Description</p>
+
+                    <div class="dots-container">
+                        @for (int i = 0; i < model.Steps.Count; i++)
+                        {
+                            var stepIndex = i;
+                            <span class="@(i == model.CurrentStepIndex ? "dot active" : "dot")"
+                                  @onclick="() => GoToStep(stepIndex)"></span>
+                        }
+                    </div>
+
+                    <button class="btn btn-primary" @onclick="NextStep">
+                        @(model.CurrentStepIndex == model.Steps.Count - 1 ? "Finish" : "Get Started")
+                    </button>
+
+                    <button class="btn btn-skip" @onclick="SkipTour">
+                        Skip
+                    </button>
+                </div>
+                <div class="nav-footer">
+                    <button class="btn btn-secondary" @onclick='() => NavigateTo("/onboarding/step-2")'>Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; } = true;
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private OnboardingViewModel model = new();
+    private OnboardingStep currentStep => model.Steps[model.CurrentStepIndex];
+
+    protected override void OnInitialized()
+    {
+        // Populate with mock data based on the image
+        model.Steps = new List<OnboardingStep>
+        {
+            new OnboardingStep
+            {
+                // Using a placeholder as the image is decorative
+                ImageUrl = "https://placehold.co/600x400/e0e7ff/4f46e5?text=Craftsman+at+Work",
+                Title = "Welcome to CraftConnect!",
+                Description = "We connect talented craftsmen and women with customers who appreciate quality workmanship."
+            },
+            new OnboardingStep
+            {
+                ImageUrl = "https://placehold.co/600x400/e0e7ff/4f46e5?text=Find+Projects",
+                Title = "Find Your Next Project",
+                Description = "Browse projects posted by customers and send your proposals directly."
+            },
+            new OnboardingStep
+            {
+                ImageUrl = "https://placehold.co/600x400/e0e7ff/4f46e5?text=Build+Your+Profile",
+                Title = "Showcase Your Skills",
+                Description = "Build a portfolio that highlights your best work and attracts new clients."
+            }
+        };
+    }
+
+    private void NextStep()
+    {
+        if (model.CurrentStepIndex < model.Steps.Count - 1)
+        {
+            model.CurrentStepIndex++;
+        }
+        else
+        {
+            SkipTour(); // Finish
+        }
+    }
+
+    private void GoToStep(int stepIndex)
+    {
+        model.CurrentStepIndex = stepIndex;
+    }
+
+    private async Task SkipTour()
+    {
+        IsVisible = false;
+        await OnClose.InvokeAsync();
+    }
+
+    private void NavigateTo(string url)
+    {
+        Navigation.NavigateTo(url);
+    }
+}

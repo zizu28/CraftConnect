@@ -1,0 +1,57 @@
+﻿.pref-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0; /* Slate-200 */
+    border-radius: 8px;
+    padding: 16px 20px;
+}
+
+.pref-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.pref-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: #F1F5F9; /* Slate-100 */
+    border-radius: 6px;
+    color: #475569; /* Slate-600 */
+}
+
+    .pref-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+.pref-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #334155; /* Slate-700 */
+}
+
+.pref-toggles {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 640px) {
+    .pref-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .pref-toggles {
+        gap: 16px;
+        padding-left: 52px; /* Align with title */
+    }
+}

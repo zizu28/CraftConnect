@@ -1,0 +1,26 @@
+﻿<div class="chart-container">
+    <div class="chart-header">
+        <div>
+            <h4 class="chart-title">User Registrations Over Time</h4>
+            <span class="chart-subtitle">Last 30 Days <span class="positive">+5%</span></span>
+        </div>
+        <select class="filter-dropdown">
+            <option value="30">Last 30 days</option>
+            <option value="60">Last 60 days</option>
+            <option value="90">Last 90 days</option>
+        </select>
+    </div>
+    <div class="chart-placeholder line-chart">
+        <!-- A real implementation would use a JS charting library -->
+        <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#3B82F6" stroke-width="2"
+                      points="0,30 10,25 20,28 30,20 40,25 50,15 60,18 70,10 80,15 90,20 100,18" />
+        </svg>
+    </div>
+    <div class="chart-legend line-chart-legend">
+        <span>Week 1</span>
+        <span>Week 2</span>
+        <span>Week 3</span>
+        <span>Week 4</span>
+    </div>
+</div>

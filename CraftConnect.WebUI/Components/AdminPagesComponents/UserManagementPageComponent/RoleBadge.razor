@@ -1,0 +1,17 @@
+﻿@using CraftConnect.WebUI.Enums
+<span class="role-badge @GetRoleClass()">
+    @Role.ToString()
+</span>
+
+@code {
+    [Parameter]
+    public UserType Role { get; set; }
+
+    private string GetRoleClass() => Role switch
+    {
+        UserType.Craftperson => "role-craftsman",
+        UserType.Customer => "role-customer",
+        UserType.Admin => "role-admin",
+        _ => ""
+    };
+}
