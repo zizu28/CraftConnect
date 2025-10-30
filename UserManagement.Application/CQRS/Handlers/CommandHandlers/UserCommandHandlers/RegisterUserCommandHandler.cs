@@ -37,38 +37,38 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 					userResponse.Message = "User with this email already exists.";
 					return userResponse;
 				}
+				var newUser = mapper.Map<User>(request.User);
 				await unitOfWork.ExecuteInTransactionAsync(async () =>
 				{
 					logger.LogInformation("Creating new user with email {Email}.", request.User!.Email);
 					request.User!.Password = BCrypt.Net.BCrypt.HashPassword(
 						request.User.Password!,
-						salt: BCrypt.Net.BCrypt.GenerateSalt(12));
-
-					var newUser = mapper.Map<User>(request.User);
+						salt: BCrypt.Net.BCrypt.GenerateSalt(12)
+					);
+					
 					newUser.PasswordHash = request.User.Password;
 
 					await user.AddAsync(newUser, cancellationToken);
 					var userRegisteredEvent = new UserRegisteredIntegrationEvent(newUser.Id, newUser.Email, newUser.Role);
 					await eventBus.PublishAsync(userRegisteredEvent, cancellationToken);
 
-					backgroundJob.Enqueue<IGmailService>(
-						"default",
-						email => email.SendEmailAsync(
-							newUser.Email.Address,
-							$"Welcome {newUser.FirstName}",
-							$"A welcome message to {newUser.FirstName} using Asp.Nt Core.",
-							false,
-							CancellationToken.None
-						)
-					);
-
 					userResponse.UserId = newUser.Id;
 					userResponse.Email = newUser.Email.Address;
-					userResponse.PhoneNumber = newUser.Phone.Number;
 					userResponse.Role = newUser.Role.ToString();
 					userResponse.CreatedAt = DateTime.UtcNow;
 					userResponse.Message = "User registration successful.";
 				}, cancellationToken);
+
+				backgroundJob.Enqueue<IGmailService>(
+					"default",
+					email => email.SendEmailAsync(
+						newUser.Email.Address,
+						$"Welcome {newUser.FirstName}",
+						$"A welcome message to {newUser.FirstName} using Asp.Nt Core.",
+						false,
+						CancellationToken.None
+					)
+				);
 				return userResponse;
 			}
 			

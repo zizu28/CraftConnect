@@ -1,20 +1,15 @@
-﻿namespace UserManagement.Application.DTOs.CraftmanDTO
+﻿using UserManagement.Application.DTOs.UserDTOs;
+
+namespace UserManagement.Application.DTOs.CraftmanDTO
 {
-	public class CraftmanCreateDTO
+	public class CraftmanCreateDTO : UserCreateDTO
 	{
-		public required string UserName { get; set; }
-		public required string FirstName { get; set; }
-		public required string LastName { get; set; }
-		public required string Email { get; set; }
-		public required string Password { get; set; }
-		public required string Profession { get; set; }
-		public required string Bio { get; set; }
-		public required string Status { get; set; }
-		public int YearsOfExperience { get; set; }
-		public decimal HourlyRate { get; set; }
-		public required string Currency { get; set; }
-		public required string PhoneCountryCode { get; set; }
-		public required string PhoneNumber { get; set; }
+		public string Profession { get; set; } = string.Empty;
+		public string Bio { get; set; } = string.Empty;
+		public string Status { get; set; } = string.Empty;
+		public int YearsOfExperience { get; set; } 
+		public decimal HourlyRate { get; set; } 
+		public string Currency { get; set; } = string.Empty;
 		public List<string> Skills { get; set; } = [];
 	}
 }

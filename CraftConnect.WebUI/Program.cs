@@ -10,13 +10,9 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddHttpClient("Users", client =>
+builder.Services.AddHttpClient("Backend", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:UsersUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
-});
-builder.Services.AddHttpClient("Bookings", client =>
-{
-	client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BookingsUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
 });
 
 builder.Services.AddSingleton<ThemeService>();

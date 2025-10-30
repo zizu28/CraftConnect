@@ -85,12 +85,14 @@ namespace CraftConnect.Tests
 			var registerCommand = new UserCreateDTO() { 
 				Email = "example@gmail.com",
 				Password = "password123",
+				ConfirmPassword = "password123",
 				FirstName = "Test",
 				LastName = "User",
 				Username = "testuser",
 				PhoneNumber = "1234567890",
 				PhoneCountryCode = "+1",
-				Role = "User"
+				Role = "User",
+				AgreeToTerms = true,
 			};
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RegisterUserCommand>(), default))
 				.ReturnsAsync(new UserResponseDTO());
@@ -111,12 +113,14 @@ namespace CraftConnect.Tests
 			{
 				Email = "test@gmail.com",
 				Password = "password123",
+				ConfirmPassword = "password123",
 				FirstName = "Test",
 				LastName = "User",
 				Username = "testuser",
 				PhoneNumber = "1234567890",
 				PhoneCountryCode = "+1",
-				Role = "User"
+				Role = "User",
+				AgreeToTerms = true,
 			};
 			// Mock returns null to simulate registration failure
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RegisterUserCommand>(), default))
@@ -151,12 +155,14 @@ namespace CraftConnect.Tests
 			{
 				Email = "example@email.com",
 				Password = "password123",
+				ConfirmPassword = "password123",
 				FirstName = "Test",
 				LastName = "testname",
 				Username = null,
 				PhoneNumber = "1234567890",
 				PhoneCountryCode = "+1",
-				Role = "User"
+				Role = "User",
+				AgreeToTerms = true				
 			};
 
 			// Act

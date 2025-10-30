@@ -1,5 +1,8 @@
 ﻿@page "/signup"
 @layout AuthLayout
+@inject NavigationManager NavigationManager
+@inject IHttpClientFactory HttpClientFactory
+@inject ILogger<SignUp> logger
 @using Blazored.FluentValidation
 @using CraftConnect.WebUI.Components.Layout
 @using CraftConnect.WebUI.Components.SignUpPageComponents
@@ -12,9 +15,9 @@
     </header>
 
     <!-- User Type Toggle -->
-    <UserTypeToggle SelectedType="model.SelectedUserType" OnToggle="OnUserTypeChanged" />
+    <UserTypeToggle SelectedType="model.Role" OnToggle="OnUserTypeChanged" />
     <p class="toggle-description">
-        @if (model.SelectedUserType == UserType.Craftperson)
+        @if (model.Role == "Craftperson")
         {
             <span>Showcase your skills, connect with clients, and grow your business.</span>
         }
@@ -25,13 +28,13 @@
     </p>
 
     <!-- Sign-up Form -->
-    <EditForm Model="model" OnValidSubmit="HandleValidSubmit" class="signup-form">
+    <EditForm Model="model" OnValidSubmit="HandleValidSubmit" FormName="registration-form" class="signup-form">
         <FluentValidationValidator Validator="Validator" />
         
         <div class="form-group">
             <label for="email">Email Address</label>
-            <InputText id="email" @bind-Value="model.EmailAddress" class="form-control" placeholder="Enter your email" />
-            <ValidationMessage For="() => model.EmailAddress" />
+            <InputText id="email" @bind-Value="model.Email" class="form-control" placeholder="Enter your email" />
+            <ValidationMessage For="() => model.Email" />
         </div>
 
         <div class="form-group">
@@ -49,7 +52,10 @@
                     }
                 </button>
             </div>
-            <span class="field-hint">8+ characters, 1 uppercase, 1 number</span>
+            <span class="field-hint">
+                Password must have at least 8 characters, 1 uppercase, " +
+                "1 lowercase, 1 special character and 1 number
+            </span>
             <ValidationMessage For="() => model.Password" />
         </div>
         
@@ -63,7 +69,7 @@
             <InputCheckbox id="terms" @bind-Value="model.AgreeToTerms" />
             <label for="terms">
                 I agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.
-            </label>
+            </label>            
         </div>
         <ValidationMessage For="() => model.AgreeToTerms" />
 
@@ -80,8 +86,8 @@
             <span>Sign up with Google</span>
         </button>
         <button class="btn-social">
-            <img src="https://www.vectorlogo.zone/logos/facebook/facebook-icon.svg" alt="Facebook" />
-            <span>Sign up with Facebook</span>
+            <img src="https://www.vectorlogo.zone/logos/github/github-icon.svg" alt="Github" />
+            <span>Sign up with Github</span>
         </button>
     </div>
 
@@ -94,12 +100,12 @@
 
 @code {
     public SignupVMValidator Validator { get; set; } = new();
-    private SignupVM model = new();
+    private UserCreateDTO model = new();
     private bool showPassword = false;
 
-    private void OnUserTypeChanged(UserType newUserType)
+    private void OnUserTypeChanged(string newUserType)
     {
-        model.SelectedUserType = newUserType;
+        model.Role = newUserType;
     }
 
     private void TogglePasswordVisibility()
@@ -107,9 +113,25 @@
         showPassword = !showPassword;
     }
 
-    private void HandleValidSubmit()
+    private async Task HandleValidSubmit()
     {
-        // Handle successful form submission
-        Console.WriteLine($"Form Submitted. User Type: {model.SelectedUserType}, Email: {model.EmailAddress}");
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("Backend");
+            var content = JsonContent.Create(model);
+            var response = await httpClient.PostAsync("/users/register", content);
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/verify-account");
+            }
+            else
+            {
+                logger.LogInformation($"Error registering new user.");
+            }
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Error registering new user. Error: {ex.Message}");
+        }
     }
 }

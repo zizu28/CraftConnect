@@ -3,6 +3,7 @@
 @using CraftConnect.WebUI.Components.AccountVerificationPageComponents
 @using CraftConnect.WebUI.Components.Layout
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
 
 <div class="verification-card">
     <EditForm Model="model" OnValidSubmit="HandleVerification">

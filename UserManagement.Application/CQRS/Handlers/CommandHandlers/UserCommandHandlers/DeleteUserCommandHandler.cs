@@ -1,14 +1,15 @@
-﻿using MediatR;
+﻿using Infrastructure.Persistence.UnitOfWork;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
-using UserManagement.Domain.Entities;
 
 namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHandlers
 {
 	public class DeleteUserCommandHandler(
 		IUserRepository user,
-		ILogger<DeleteUserCommandHandler> logger) : IRequestHandler<DeleteUserCommand, Unit>
+		ILogger<DeleteUserCommandHandler> logger, 
+		IUnitOfWork unitOfWork) : IRequestHandler<DeleteUserCommand, Unit>
 	{
 		public async Task<Unit> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
 		{
@@ -20,6 +21,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				throw new KeyNotFoundException($"User with user id {request.UserId} not found.");
 			}
 			await user.DeleteAsync(userEntity.Id, cancellationToken);
+			await unitOfWork.SaveChangesAsync(cancellationToken);
 			logger.LogInformation("User {Username} deleted successfully.", request.UserId);
 			return Unit.Value;
 		}

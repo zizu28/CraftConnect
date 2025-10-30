@@ -26,6 +26,15 @@ builder.Services.AddFluentEmailService(builder.Configuration);
 //builder.Services.AddHybridCacheService(builder.Configuration);
 builder.Services.AddBackgroundJobs(builder.Configuration);
 builder.Services.RegisterSerilog();
+builder.Services.AddCors(opt =>
+{
+	opt.AddPolicy("frontend", policy =>
+	{
+		policy.AllowAnyMethod();
+		policy.AllowAnyOrigin();
+		policy.AllowAnyHeader();
+	});
+});
 
 //builder.Services.AddAuthentication(options =>
 //{
@@ -66,6 +75,7 @@ var app = builder.Build();
 await app.UseOcelot();
 
 app.UseHttpsRedirection();
+app.UseCors("frontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
