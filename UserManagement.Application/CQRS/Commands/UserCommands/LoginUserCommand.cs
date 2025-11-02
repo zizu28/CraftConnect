@@ -1,11 +1,12 @@
 ﻿using MediatR;
-using UserManagement.Application.DTOs.UserDTOs;
+using UserManagement.Application.Responses;
 
 namespace UserManagement.Application.CQRS.Commands.UserCommands
 {
-	public class LoginUserCommand : IRequest<(string AccesToken, string RefreshToken)>
+	public class LoginUserCommand : IRequest<LoginResponse>
 	{
-		public string Username { get; set; }
+		public string Email { get; set; }
 		public string Password { get; set; }
+		public bool RememberMe { get; set; }
 	}
 }

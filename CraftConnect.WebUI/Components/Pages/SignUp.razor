@@ -8,6 +8,7 @@
 @using CraftConnect.WebUI.Components.SignUpPageComponents
 @using CraftConnect.WebUI.Enums
 @using System.ComponentModel.DataAnnotations
+@using System.Text.Json
 
 <div class="signup-container">
     <header class="signup-header">
@@ -15,20 +16,20 @@
     </header>
 
     <!-- User Type Toggle -->
-    <UserTypeToggle SelectedType="model.Role" OnToggle="OnUserTypeChanged" />
+    <UserTypeToggle SelectedType="@model.Role" OnToggle="OnUserTypeChanged" />
     <p class="toggle-description">
-        @if (model.Role == "Craftperson")
+        @if (model.Role == "Craftman")
         {
             <span>Showcase your skills, connect with clients, and grow your business.</span>
         }
-        else
+        else if(model.Role == "Customer")
         {
             <span>Find talented craftspeople, manage projects, and bring your ideas to life.</span>
         }
     </p>
 
     <!-- Sign-up Form -->
-    <EditForm Model="model" OnValidSubmit="HandleValidSubmit" FormName="registration-form" class="signup-form">
+    <EditForm Model="model" OnValidSubmit="HandleValidSubmit" FormName="registration-form" class="signup-form" Enhance>
         <FluentValidationValidator Validator="Validator" />
         
         <div class="form-group">
@@ -118,11 +119,15 @@
         try
         {
             var httpClient = HttpClientFactory.CreateClient("Backend");
-            var content = JsonContent.Create(model);
-            var response = await httpClient.PostAsync("/users/register", content);
+            // var content = JsonContent.Create(model);
+            var response = await httpClient.PostAsJsonAsync("/users/register", model, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
             if (response.IsSuccessStatusCode)
             {
-                NavigationManager.NavigateTo("/verify-account");
+                logger.LogInformation($"User with email {model.Email} has successfully registered");
+                NavigationManager.NavigateTo($"/verify-email/{model.Email}");
             }
             else
             {

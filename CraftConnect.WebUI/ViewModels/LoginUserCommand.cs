@@ -1,8 +1,8 @@
 ﻿namespace CraftConnect.WebUI.ViewModels
 {
-	public class LoginVM
+	public class LoginUserCommand
 	{
-		public string EmailOrUsername { get; set; } = string.Empty;
+		public string Email { get; set; } = string.Empty;
 		public string Password { get; set; } = string.Empty;
 		public bool RememberMe { get; set; }
 	}

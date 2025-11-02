@@ -1,7 +1,12 @@
 ﻿@page "/login"
 @layout LoginLayout
+@inject IHttpClientFactory HttpClientFactory
+@inject ILogger<Login> logger
+@inject NavigationManager NavigationManager
 @using Blazored.FluentValidation
 @using CraftConnect.WebUI.Components.Layout
+@using System.Security.Claims
+@using System.Text.Json
 
 <div class="login-card">
     <header class="login-card-header">
@@ -10,13 +15,13 @@
     </header>
 
     <!-- Login Form -->
-    <EditForm Model="model" OnValidSubmit="HandleValidSubmit" class="login-form">
+    <EditForm Model="model" OnValidSubmit="HandleValidSubmit" class="login-form" Enhance>
         <FluentValidationValidator Validator="@Validator" />
 
         <div class="form-group">
             <label for="email">Email or Username</label>
-            <InputText id="email" @bind-Value="model.EmailOrUsername" class="form-control" placeholder="Enter your email or username" />
-            <ValidationMessage For="() => model.EmailOrUsername" />
+            <InputText id="email" @bind-Value="model.Email" class="form-control" placeholder="Enter your email or username" />
+            <ValidationMessage For="() => model.Email" />
         </div>
 
         <div class="form-group">
@@ -71,17 +76,66 @@
 
 @code {
     public LoginVMValidator Validator { get; set; } = new();
-    private LoginVM model = new();
+    private LoginUserCommand model = new();
     private bool showPassword = false;
+    private string userRole = "";
 
     private void TogglePasswordVisibility()
     {
         showPassword = !showPassword;
     }
 
-    private void HandleValidSubmit()
+    public class LoginResponse
     {
-        // Handle successful login
-        Console.WriteLine($"Form Submitted. Email/User: {model.EmailOrUsername}, Remember: {model.RememberMe}");
+        public string AccessToken { get; set; } = string.Empty;
+        public string RefreshToken { get; set; } = string.Empty;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("Backend");
+            HttpResponseMessage response = await httpClient.PostAsJsonAsync("/users/signin", model, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+            if (response.IsSuccessStatusCode)
+            {
+                logger.LogInformation($"User with email {model.Email} has successfully logged in");
+                var tokenResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                if (tokenResponse != null && !string.IsNullOrEmpty(tokenResponse.AccessToken) && !string.IsNullOrEmpty(tokenResponse.RefreshToken))
+                {
+                    var claims = JwtParser.ParseClaimsFromJwt(tokenResponse.AccessToken);
+                    var roleClaim = claims.FirstOrDefault(c => c.Type == "role" || c.Type == ClaimTypes.Role);
+                    if(roleClaim != null)
+                    {
+                        userRole = roleClaim.Value;
+                        logger.LogInformation("User with email {Email} has logged in with {Role} role", 
+                            model.Email, userRole);
+                    }
+                }
+            }
+            else
+            {
+                logger.LogInformation($"Error logging in.");
+            }
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Error logging in user. Error: {ex.Message}");
+        }
+        if(userRole == "Customer")
+        {
+            NavigationManager.NavigateTo("/customer/dashboard");
+        }
+        else if (userRole == "Craftman")
+        {
+            NavigationManager.NavigateTo("/dashboard");
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/admin/dashboard");
+        }
     }
 }

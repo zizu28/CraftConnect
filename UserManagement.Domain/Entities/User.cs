@@ -23,6 +23,7 @@ namespace UserManagement.Domain.Entities
 		[Timestamp]
 		public byte[] RowVersion { get; set; }
 		public List<RefreshToken> RefreshTokens { get; set; } = [];
+		public List<EmailVerificationToken> EmailVerificationTokens { get; set; } = [];
 
 		public User() {}
 		public User(Email email, UserRole role)

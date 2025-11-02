@@ -1,38 +1,51 @@
 ﻿using Core.Logging;
+using Infrastructure.Persistence.Data;
 using MediatR;
-using UserManagement.Application.Contracts;
+using Microsoft.EntityFrameworkCore;
 using UserManagement.Application.CQRS.Commands.UserCommands;
-using UserManagement.Domain.Entities;
 
 namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHandlers
 {
 	public class ConfirmEmailCommandHandler(
 		ILoggingService<ConfirmEmailCommandHandler> logger,
-		IUserRepository userRepository) : IRequestHandler<ConfirmEmailCommand, bool>
+		ApplicationDbContext dbContext) : IRequestHandler<ConfirmEmailCommand, bool>
 	{
 		public async Task<bool> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
 		{
-			logger.LogInformation("Processing email confirmation for user with email: {Email}", request.Email);
-			if (string.IsNullOrEmpty(request.Email))
+			try
 			{
-				logger.LogWarning("Email is null or empty.");
-				return false;
-			}
-			var user = await userRepository.GetByEmailAsync(request.Email, cancellationToken);
-			if (user == null)
-			{
-				logger.LogWarning("User with email {Email} not found.", request.Email);
-				return false;
-			}
-			if (user.IsEmailConfirmed)
-			{
-				logger.LogInformation("Email for user {Email} is already confirmed.", request.Email);
+				var verificationRecord = await dbContext.EmailVerificationTokens
+					.Include(vt => vt.User)
+					.FirstOrDefaultAsync(vt => vt.TokenValue == request.token, cancellationToken);
+				if(verificationRecord == null)
+				{
+					logger.LogWarning("Invalid or expired verification token used: {TokenHash}", request.token);
+					throw new Exception($"Invalid or expired verification token used: {request.token}");
+				}
+
+				if (verificationRecord.User.IsEmailConfirmed)
+				{
+					logger.LogWarning("Verification token already used: {TokenHash}", request.token);
+					throw new Exception("This verification link has already been used.");
+				}
+
+				if (verificationRecord.ExpiresOnUtc < DateTime.UtcNow)
+				{
+					logger.LogWarning("Expired verification token used: {TokenHash}", request.token);
+					throw new Exception("The verification link has expired.");
+				}
+
+				verificationRecord.User.IsEmailConfirmed = true;
+				dbContext.EmailVerificationTokens.Remove(verificationRecord);
+				await dbContext.SaveChangesAsync(cancellationToken);
+				logger.LogInformation("Email verified successfully for user ID: {UserId}", verificationRecord.UserId);
 				return true;
 			}
-			user.IsEmailConfirmed = true;
-			await userRepository.UpdateAsync(user, cancellationToken);
-			logger.LogInformation("Email for user {Email} confirmed successfully.", request.Email);
-			return true;
+			catch(Exception ex)
+			{
+				logger.LogError(ex, "Error occurred while confirming email for token: {Token}", request.token);
+				return false;
+			}
 		}
 	}
 }

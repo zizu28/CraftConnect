@@ -1,45 +1,30 @@
 ﻿.toggle-container {
-    display: inline-flex;
-    background-color: #E5E7EB; /* Gray-200 */
-    border-radius: 8px;
+    display: flex;
     padding: 4px;
+    background-color: #F1F5F9; /* Slate-100 */
+    border-radius: 8px;
+    width: 100%;
 }
 
-.toggle-btn {
+.btn-toggle {
+    flex: 1; /* Make buttons share space equally */
+    padding: 10px;
     border: none;
     border-radius: 6px;
-    padding: 8px 16px;
     font-size: 0.9rem;
     font-weight: 500;
+    color: #4B5563; /* Gray-600 */
+    background-color: transparent; /* Default is no background */
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
 
-/* Inactive state */
-.toggle-btn {
-    background-color: transparent;
-    color: #4B5563; /* Gray-600 */
-}
-
-    /* Active state */
-    .toggle-btn.active {
-        background-color: #FB923C; /* Orange-400 (matches image) */
-        color: #451A03; /* Orange-900 (matches image text) */
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    .btn-toggle.active {
+        background-color: #F97316; /* Orange-500 from image */
+        color: #FFFFFF;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
-    /* Specific logic for customer inactive vs active */
-    .toggle-btn:not(.active) {
-        background-color: transparent;
-        color: #4B5563;
-    }
-
-    .toggle-btn.active:not(:first-child) { /* Customer Active */
-        background-color: #FFFFFF;
-        color: #1F2937;
-    }
-
-    .toggle-btn:first-child.active { /* Craftsperson Active */
-        background-color: #FB923C;
-        color: #451A03;
+    .btn-toggle:not(.active):hover {
+        background-color: #E2E8F0; /* Slate-200 on hover */
     }

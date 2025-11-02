@@ -39,10 +39,6 @@ namespace UserManagement.Presentation.Controllers
 		[HttpPost("register")]
 		public async Task<IActionResult> RegisterNewUserAsync([FromBody] UserCreateDTO user)
 		{
-			if(!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
 			var command = new RegisterUserCommand { User = user };
 			var result = await mediator.Send(command);
 			if (result == null)
@@ -55,10 +51,6 @@ namespace UserManagement.Presentation.Controllers
 		[HttpPost("register/Craftman")]
 		public async Task<IActionResult> RegisterNewCraftmanAsync([FromBody] CraftmanCreateDTO craftman)
 		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
 			var command = new RegisterCraftmanCommand { Craftman = craftman };
 			var result = await mediator.Send(command);
 			if (result == null)
@@ -71,10 +63,6 @@ namespace UserManagement.Presentation.Controllers
 		[HttpPost("register/customer")]
 		public async Task<IActionResult> RegisterNewCustomerAsync([FromBody] CustomerCreateDTO customer)
 		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
 			var command = new RegisterCustomerCommand { Customer = customer };
 			var result = await mediator.Send(command);
 			if (result == null)
@@ -82,6 +70,17 @@ namespace UserManagement.Presentation.Controllers
 				return BadRequest("Customer registration failed.");
 			}
 			return Ok(result);
+		}
+
+		[HttpPost("resend-email")]
+		public async Task<IActionResult> ResendEmailAsync([FromBody] ResendEmailCommand command)
+		{
+			if(command == null)
+			{
+				return BadRequest("");
+			}
+			await mediator.Send(command);
+			return Ok();
 		}
 
 		[HttpGet("by-email")]
@@ -99,16 +98,12 @@ namespace UserManagement.Presentation.Controllers
 		[HttpPost("signin")]
 		public async Task<IActionResult> LoginUserAsync([FromBody] LoginUserCommand command)
 		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
-			var (AccessToken, RefreshToken) = await mediator.Send(command);
-			if (string.IsNullOrEmpty(AccessToken) || string.IsNullOrEmpty(RefreshToken))
+			var response = await mediator.Send(command);
+			if (string.IsNullOrEmpty(response.AccessToken) || string.IsNullOrEmpty(response.RefreshToken))
 			{
 				return Unauthorized("Invalid login attempt.");
 			}
-			return Ok(new Tuple<string, string>(AccessToken, RefreshToken));
+			return Ok(response);
 		}
 
 		[HttpPost("refresh-token")]
@@ -126,19 +121,21 @@ namespace UserManagement.Presentation.Controllers
 			return Ok(newTokens);
 		}
 
-		[HttpPost("confirm-email")]
-		public async Task<IActionResult> ConfirmEmailAsync([FromBody] ConfirmEmailCommand command)
+		[HttpGet("confirm-email")]
+		[ActionName("ConfirmEmailAsync")]
+		public async Task<IActionResult> ConfirmEmailAsync([FromQuery] string token)
 		{
-			if (!ModelState.IsValid)
+			if (string.IsNullOrEmpty(token))
 			{
-				return BadRequest("Invalid input data");
+				return BadRequest("Verification token is required");
 			}
+			var command = new ConfirmEmailCommand { token = token };
 			var result = await mediator.Send(command);
 			if (!result)
 			{
-				return BadRequest("Email confirmation failed.");
+				return BadRequest("Email verification/confirmation failed");
 			}
-			return Ok("Email confirmed successfully.");
+			return Redirect("https://localhost:7284/login");
 		}
 
 		[HttpPost("change-password")]
@@ -159,7 +156,7 @@ namespace UserManagement.Presentation.Controllers
 			catch (Exception ex)
 			{
 				// Log the exception
-				return BadRequest("Password change failed.");
+				return BadRequest($"Password change failed. {ex.Message}");
 			}
 			return BadRequest("Password change failed.");
 		}

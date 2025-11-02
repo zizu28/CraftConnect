@@ -14,6 +14,7 @@ builder.Services.AddHttpClient("Backend", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
 });
+builder.Services.AddLogging();
 
 builder.Services.AddSingleton<ThemeService>();
 

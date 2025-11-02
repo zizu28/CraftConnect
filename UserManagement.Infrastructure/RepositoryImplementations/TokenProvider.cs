@@ -43,6 +43,7 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			{
 				CraftmanId = craftman.Id,
 				Email = craftman.Email.Address,
+				craftman.Role,
 				ExpiresOn = DateTime.UtcNow.AddDays(1)
 			};
 			var payloadJson = JsonSerializer.Serialize(payload);

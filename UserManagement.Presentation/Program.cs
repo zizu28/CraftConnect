@@ -5,6 +5,7 @@ using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
+using UserManagement.Application;
 using UserManagement.Application.Extensions;
 using UserManagement.Infrastructure.Extensions;
 using UserManagement.Presentation;
@@ -28,6 +29,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 //builder.Services.AddSqlServer<ApplicationDbContext>("CraftConnectDb");
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

@@ -3,11 +3,11 @@ using FluentValidation;
 
 namespace CraftConnect.WebUI
 {
-	public class LoginVMValidator : AbstractValidator<LoginVM>
+	public class LoginVMValidator : AbstractValidator<LoginUserCommand>
 	{
 		public LoginVMValidator()
 		{
-			RuleFor(x => x.EmailOrUsername)
+			RuleFor(x => x.Email)
 				.NotNull().WithMessage("Please enter your email or username");
 			RuleFor(x => x.Password)
 				.NotNull().WithMessage("Please enter your password");

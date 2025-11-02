@@ -1,24 +1,26 @@
 ﻿.verification-card {
     width: 100%;
-    max-width: 420px;
+    max-width: 448px; /* 28rem */
     background-color: #FFFFFF;
-    border: 1px solid #E2E8F0; /* Slate-200 */
     border-radius: 12px;
-    padding: 32px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 32px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
 }
 
 .card-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background-color: #F1F5F9; /* Slate-100 */
-    color: #64748B; /* Slate-500 */
-    margin-bottom: 20px;
+    background-color: #E0E7FF; /* Indigo-100 */
+    color: #4F46E5; /* Indigo-600 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
 }
 
     .card-icon svg {
@@ -26,88 +28,103 @@
         height: 32px;
     }
 
-.card-header h2 {
-    font-size: 1.75rem; /* 28px */
-    font-weight: 700;
-    color: #1E293B; /* Slate-800 */
-    margin: 0 0 8px 0;
+.card-header {
+    margin-bottom: 32px;
 }
 
-.card-header p {
-    font-size: 0.9rem;
-    color: #64748B; /* Slate-500 */
-    margin: 0;
-    line-height: 1.5;
-    margin-bottom: 24px;
-}
-
-.btn-block {
-    width: 100%;
-}
-
-.btn-primary {
-    padding: 12px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    background-color: #334155; /* Slate-700 */
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-top: 24px;
-}
-
-    .btn-primary:hover {
-        background-color: #1E293B; /* Slate-800 */
+    .card-header h2 {
+        font-size: 1.75rem; /* 28px */
+        font-weight: 700;
+        color: #1F2937; /* Gray-800 */
+        margin: 0 0 12px 0;
     }
 
-/* Validation message styling */
-.validation-message {
-    display: block;
-    font-size: 0.8rem;
-    color: #EF4444; /* Red-500 */
-    margin-top: 8px;
-}
+    .card-header p {
+        font-size: 0.95rem;
+        color: #4B5563; /* Gray-600 */
+        line-height: 1.6;
+        margin: 0;
+        max-width: 340px;
+    }
+
+        .card-header p strong {
+            color: #1F2937; /* Gray-800 */
+            font-weight: 600;
+        }
 
 .card-footer {
     font-size: 0.9rem;
-    color: #475569; /* Slate-600 */
-    margin-top: 24px;
+    color: #4B5563; /* Gray-600 */
+    padding-top: 32px;
+    border-top: 1px solid #E5E7EB; /* Gray-200 */
+    width: 100%;
 }
 
-    .card-footer a {
-        font-weight: 600;
-        color: #F59E0B; /* Amber-500 */
-        text-decoration: none;
-        margin-left: 4px;
+.btn-resend {
+    font-weight: 600;
+    color: #F97316; /* Orange-500 */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0.9rem;
+    display: inline-flex; /* ADDED: To align spinner and text */
+    align-items: center; /* ADDED: To align spinner and text */
+    gap: 6px; /* ADDED: Space between spinner and text */
+}
+
+    .btn-resend:hover {
+        text-decoration: underline;
     }
 
-        .card-footer a:hover {
-            text-decoration: underline;
-        }
+    /* ADDED: Styles for the disabled state */
+    .btn-resend:disabled {
+        color: #9CA3AF; /* Gray-400 */
+        cursor: not-allowed;
+        text-decoration: none;
+    }
+
+/* ADDED: Simple CSS spinner */
+.spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-rotation 0.8s linear infinite;
+}
+
+@keyframes spinner-rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 
 .back-to-login {
     margin-top: 24px;
-    padding-top: 24px;
-    border-top: 1px solid #F1F5F9; /* Slate-100 */
 }
 
     .back-to-login a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #4B5563; /* Gray-600 */
+        text-decoration: none;
         font-size: 0.9rem;
         font-weight: 500;
-        color: #475569; /* Slate-600 */
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
+        transition: color 0.2s ease;
     }
 
         .back-to-login a:hover {
-            color: #1E293B; /* Slate-800 */
+            color: #1F2937; /* Gray-800 */
         }
 
-    .back-to-login svg {
-        width: 16px;
-        height: 16px;
-    }
+        .back-to-login a svg {
+            width: 16px;
+            height: 16px;
+        }

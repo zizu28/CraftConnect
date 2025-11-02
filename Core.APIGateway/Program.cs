@@ -3,9 +3,12 @@ using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
 using MassTransit;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,19 +42,20 @@ builder.Services.AddCors(opt =>
 //builder.Services.AddAuthentication(options =>
 //{
 //	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//	//options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 //})
 //	.AddJwtBearer(options =>
 //	{
-//		options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+//		options.TokenValidationParameters = new TokenValidationParameters
 //		{
 //			ValidateIssuer = true,
 //			ValidateAudience = true,
 //			ValidateLifetime = true,
 //			ValidateIssuerSigningKey = true,
+//			ClockSkew = TimeSpan.Zero,
 //			ValidIssuer = builder.Configuration["Jwt:Issuer"],
 //			ValidAudience = builder.Configuration["Jwt:Audience"],
-//			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+//			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
 //		};
 //	});
 

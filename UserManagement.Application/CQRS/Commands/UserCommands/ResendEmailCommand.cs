@@ -2,8 +2,8 @@
 
 namespace UserManagement.Application.CQRS.Commands.UserCommands
 {
-	public class ConfirmEmailCommand : IRequest<bool>
+	public class ResendEmailCommand : IRequest<Unit>
 	{
-		public string token { get; set; }
+		public string Email { get; set; }
 	}
 }

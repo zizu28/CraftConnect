@@ -86,11 +86,6 @@ namespace CraftConnect.Tests
 				Email = "example@gmail.com",
 				Password = "password123",
 				ConfirmPassword = "password123",
-				FirstName = "Test",
-				LastName = "User",
-				Username = "testuser",
-				PhoneNumber = "1234567890",
-				PhoneCountryCode = "+1",
 				Role = "User",
 				AgreeToTerms = true,
 			};
@@ -114,11 +109,6 @@ namespace CraftConnect.Tests
 				Email = "test@gmail.com",
 				Password = "password123",
 				ConfirmPassword = "password123",
-				FirstName = "Test",
-				LastName = "User",
-				Username = "testuser",
-				PhoneNumber = "1234567890",
-				PhoneCountryCode = "+1",
 				Role = "User",
 				AgreeToTerms = true,
 			};
@@ -156,11 +146,6 @@ namespace CraftConnect.Tests
 				Email = "example@email.com",
 				Password = "password123",
 				ConfirmPassword = "password123",
-				FirstName = "Test",
-				LastName = "testname",
-				Username = null,
-				PhoneNumber = "1234567890",
-				PhoneCountryCode = "+1",
 				Role = "User",
 				AgreeToTerms = true				
 			};
@@ -182,7 +167,7 @@ namespace CraftConnect.Tests
 				.ReturnsAsync(true);
 
 			// Act
-			var result = await _usersController.ConfirmEmailAsync(confirmCommand);
+			var result = await _usersController.ConfirmEmailAsync(confirmCommand.token);
 
 			// Assert
 			Assert.IsType<OkObjectResult>(result);
@@ -198,7 +183,7 @@ namespace CraftConnect.Tests
 				.ReturnsAsync(false);
 
 			// Act
-			var result = await _usersController.ConfirmEmailAsync(confirmCommand);
+			var result = await _usersController.ConfirmEmailAsync(confirmCommand.token);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result);
@@ -211,7 +196,7 @@ namespace CraftConnect.Tests
 			_usersController.ModelState.AddModelError("UserId", "UserId is required");
 
 			// Act
-			var result = await _usersController.ConfirmEmailAsync(new ConfirmEmailCommand());
+			var result = await _usersController.ConfirmEmailAsync(new ConfirmEmailCommand().token);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result);
