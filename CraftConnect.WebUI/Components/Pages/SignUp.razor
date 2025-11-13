@@ -74,7 +74,17 @@
         </div>
         <ValidationMessage For="() => model.AgreeToTerms" />
 
-        <button type="submit" class="btn-submit">Create Account</button>
+        <button type="submit" class="btn-submit" disabled="@isLoading">
+            @if (isLoading)
+            {
+                <span class="spinner"></span>
+                <span>Creating Account</span>
+            }
+            else
+            {
+                <span>Create Account</span>
+            }
+        </button>
     </EditForm>
 
     <!-- Separator -->
@@ -103,6 +113,7 @@
     public SignupVMValidator Validator { get; set; } = new();
     private UserCreateDTO model = new();
     private bool showPassword = false;
+    private bool isLoading = false;
 
     private void OnUserTypeChanged(string newUserType)
     {
@@ -116,6 +127,8 @@
 
     private async Task HandleValidSubmit()
     {
+        if(isLoading) return;
+        isLoading = true;
         try
         {
             var httpClient = HttpClientFactory.CreateClient("Backend");
@@ -137,6 +150,10 @@
         catch(Exception ex)
         {
             Console.WriteLine($"Error registering new user. Error: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 }

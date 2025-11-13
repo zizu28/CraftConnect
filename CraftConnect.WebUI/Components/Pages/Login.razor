@@ -115,6 +115,18 @@
                             model.Email, userRole);
                     }
                 }
+                if (userRole == "Customer")
+                {
+                    NavigationManager.NavigateTo("/customer/dashboard");
+                }
+                else if (userRole == "Craftman")
+                {
+                    NavigationManager.NavigateTo("/dashboard");
+                }
+                else
+                {
+                    NavigationManager.NavigateTo("/admin/dashboard");
+                }
             }
             else
             {
@@ -124,18 +136,6 @@
         catch(Exception ex)
         {
             Console.WriteLine($"Error logging in user. Error: {ex.Message}");
-        }
-        if(userRole == "Customer")
-        {
-            NavigationManager.NavigateTo("/customer/dashboard");
-        }
-        else if (userRole == "Craftman")
-        {
-            NavigationManager.NavigateTo("/dashboard");
-        }
-        else
-        {
-            NavigationManager.NavigateTo("/admin/dashboard");
-        }
+        }        
     }
 }

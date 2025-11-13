@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using UserManagement.Application.CQRS.Commands.UserCommands;
-using UserManagement.Application.CQRS.Queries.UserQueries;
+using UserManagement.Application.CQRS.Handlers.QueryHandlers.Queries.UserQueries;
 using UserManagement.Application.DTOs.UserDTOs;
 using UserManagement.Presentation.Controllers;
 

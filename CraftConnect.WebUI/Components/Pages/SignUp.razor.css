@@ -16,6 +16,14 @@
         font-weight: 700;
         color: #1F2937; /* Gray-800 */
     }
+.spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-rotation 0.8s linear infinite;
+}
 
 .toggle-description {
     font-size: 0.9rem;

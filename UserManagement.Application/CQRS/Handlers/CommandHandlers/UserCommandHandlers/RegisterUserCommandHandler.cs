@@ -87,7 +87,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 						"default",
 						email => email.SendEmailAsync(
 							newUser.Email.Address,
-							$"Emai Verification for CraftConnect",
+							$"Email Verification for CraftConnect",
 							$"A welcome message. " +
 							$"To verify your email address, <a href='{verificationLink}'>click here</a>.",
 							true,

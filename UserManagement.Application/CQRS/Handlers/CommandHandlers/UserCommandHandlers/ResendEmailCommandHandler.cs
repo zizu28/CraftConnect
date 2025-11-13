@@ -54,7 +54,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 
 			string? verificationLink = $"https://localhost:7272/users/confirm-email?token={hashedToken}";
 			backgroundJob.Enqueue<IGmailService>(
-				"email-resend",
+				"default",
 				resend => resend.SendEmailAsync(
 					request.Email,
 					"Email Verification from CraftConnect",

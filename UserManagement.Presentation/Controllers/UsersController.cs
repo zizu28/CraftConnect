@@ -37,6 +37,7 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("register")]
+		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RegisterNewUserAsync([FromBody] UserCreateDTO user)
 		{
 			var command = new RegisterUserCommand { User = user };
@@ -49,6 +50,7 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("register/Craftman")]
+		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RegisterNewCraftmanAsync([FromBody] CraftmanCreateDTO craftman)
 		{
 			var command = new RegisterCraftmanCommand { Craftman = craftman };
@@ -61,6 +63,7 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("register/customer")]
+		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RegisterNewCustomerAsync([FromBody] CustomerCreateDTO customer)
 		{
 			var command = new RegisterCustomerCommand { Customer = customer };
@@ -73,6 +76,7 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("resend-email")]
+		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ResendEmailAsync([FromBody] ResendEmailCommand command)
 		{
 			if(command == null)
@@ -96,6 +100,7 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("signin")]
+		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> LoginUserAsync([FromBody] LoginUserCommand command)
 		{
 			var response = await mediator.Send(command);
@@ -107,6 +112,7 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("refresh-token")]
+		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenCommand command)
 		{
 			if(!ModelState.IsValid)
@@ -139,6 +145,7 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("change-password")]
+		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordCommand command)
 		{
 			if (!ModelState.IsValid)
