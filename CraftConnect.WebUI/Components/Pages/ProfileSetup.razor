@@ -1,11 +1,14 @@
-﻿@page "/profile/edit"
+﻿@page "/profile/{CraftmanId:guid}/edit"
 @using Blazored.FluentValidation
 @using Core.SharedKernel.Domain
 @using Core.SharedKernel.Enums
 @using Core.SharedKernel.ValueObjects
 @using CraftConnect.WebUI.Components.ProfileSetupPageComponents
+@using System.Text.Json
 @using UserManagement.Domain.Entities
 @inject NavigationManager NavigationManager
+@inject IHttpClientFactory HttpClientFactory
+@inject ILogger<ProfileSetup> logger
 
 <EditForm FormName="profile-setup" Enhance Model="@ProfileData">
     <FluentValidationValidator Validator="@profileValidator" />
@@ -42,6 +45,7 @@
                     <option value="@profession">@profession</option>
                 }
             </InputSelect>
+            <ValidationMessage For="@(() => ProfileData.Profession)"/>
         </div>
         
         <div class="form-group">
@@ -78,7 +82,7 @@
 
         @* --- Actions --- *@
         <div class="form-actions mt-2">
-            <button type="button" class="btn btn-secondary" @onclick="@(() => NavigationManager.NavigateTo("/dashboard"))">Cancel</button>
+            <button type="button" class="btn btn-secondary" @onclick="@(() => NavigationManager.NavigateTo($"/dashboard/{CraftmanId}"))">Cancel</button>
             <button type="submit" class="btn btn-primary" @onclick="@HandleValidSubmit">Save Profile</button>
         </div>
 </EditForm>
@@ -86,16 +90,39 @@
 @code {
     private CraftsmanProfileUpdateDTO ProfileData = new();
     private ProfileSetupValidator profileValidator = new();
+    [Parameter]
+    public Guid CraftmanId { get; set; }
 
     protected override void OnInitialized()
     {
-        ProfileData.Skills.Add(new SkillsDTO("", 0));
-        ProfileData.WorkExperience.Add(new WorkEntry());
+        ProfileData.CraftmanId = CraftmanId;
+        // ProfileData.Skills.Add(new SkillsDTO("", 0));
+        // ProfileData.WorkExperience.Add(new WorkEntry());
     }
 
     public async Task HandleValidSubmit()
     {
-        // Handle the valid form submission logic here
-        // e.g., send ProfileData to the server via an API call
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("Backend");
+            HttpResponseMessage response = await httpClient.PostAsJsonAsync($"/craftmen/update-craftman/{CraftmanId}", ProfileData,
+             new JsonSerializerOptions
+             {
+                 WriteIndented = true
+             });
+            if (response.IsSuccessStatusCode)
+            {
+                logger.LogInformation($"User {ProfileData.FirstName} profile has been updated.");
+                NavigationManager.NavigateTo($"/dashboard/{CraftmanId}");
+            }
+            else
+            {
+                logger.LogError($"Error updating {ProfileData.FirstName} profile.");
+            }
+        }
+        catch(Exception ex)
+        {
+            logger.LogError("Invalid data: {error}", ex.Message);
+        }
     }
 }

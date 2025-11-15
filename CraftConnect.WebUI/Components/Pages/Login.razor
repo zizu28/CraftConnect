@@ -7,6 +7,7 @@
 @using CraftConnect.WebUI.Components.Layout
 @using System.Security.Claims
 @using System.Text.Json
+@using CraftConnect.WebUI.DTOs
 
 <div class="login-card">
     <header class="login-card-header">
@@ -52,7 +53,17 @@
             <label for="remember">Remember Me</label>
         </div>
 
-        <button type="submit" class="btn-submit">Log In</button>
+        <button type="submit" class="btn-submit" disabled="@IsLoading">
+            @if (IsLoading)
+            {
+                <span class="spinner"></span>
+                <span>Logging in...</span>
+            }
+            else
+            {
+                <span>Log in</span>
+            }
+        </button>
     </EditForm>
 
     <!-- Separator -->
@@ -79,6 +90,8 @@
     private LoginUserCommand model = new();
     private bool showPassword = false;
     private string userRole = "";
+    private UserResponseDTO? user { get; set; }
+    private bool IsLoading = false;
 
     private void TogglePasswordVisibility()
     {
@@ -93,6 +106,8 @@
 
     private async Task HandleValidSubmit()
     {
+        if (IsLoading) return;
+        IsLoading = true;
         try
         {
             var httpClient = HttpClientFactory.CreateClient("Backend");
@@ -102,7 +117,7 @@
             });
             if (response.IsSuccessStatusCode)
             {
-                logger.LogInformation($"User with email {model.Email} has successfully logged in");
+                user = await httpClient.GetFromJsonAsync<UserResponseDTO>($"/users/by-email/{model.Email}");
                 var tokenResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
                 if (tokenResponse != null && !string.IsNullOrEmpty(tokenResponse.AccessToken) && !string.IsNullOrEmpty(tokenResponse.RefreshToken))
                 {
@@ -115,18 +130,22 @@
                             model.Email, userRole);
                     }
                 }
-                if (userRole == "Customer")
+                if(user != null)
                 {
-                    NavigationManager.NavigateTo("/customer/dashboard");
+                    if (userRole == "Customer")
+                    {
+                        NavigationManager.NavigateTo($"/customer/dashboard/{user!.UserId}");
+                    }
+                    else if (userRole == "Craftman")
+                    {
+                        NavigationManager.NavigateTo($"/dashboard/{user!.UserId}");
+                    }
+                    else if(userRole == "Admin")
+                    {
+                        NavigationManager.NavigateTo("/admin/dashboard");
+                    }
                 }
-                else if (userRole == "Craftman")
-                {
-                    NavigationManager.NavigateTo("/dashboard");
-                }
-                else
-                {
-                    NavigationManager.NavigateTo("/admin/dashboard");
-                }
+                logger.LogInformation($"User with email {model.Email} has successfully logged in");
             }
             else
             {
@@ -136,6 +155,10 @@
         catch(Exception ex)
         {
             Console.WriteLine($"Error logging in user. Error: {ex.Message}");
-        }        
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿@page "/dashboard"
+﻿@page "/dashboard/{CraftmanId:guid}"
 @using CraftConnect.WebUI.Components.CraftsmanDashboardPageComponents
 @using CraftConnect.WebUI.Components.CustomerDashboardPageComponents
 @using CraftConnect.WebUI.Components.SharedComponents
@@ -25,13 +25,15 @@
         </div>
 
         <div class="right-panel">
-            <QuickLinks />
+            <QuickLinks CraftmanId="@CraftmanId" />
             <EarningsChart TotalEarnings="@DashboardData.TotalEarningsLast3Months" />
         </div>
     </div>
 </div>
 
 @code {
+    [Parameter]
+    public Guid CraftmanId { get; set; }
     private DashboardVM DashboardData { get; set; } = new();
     private List<ProjectItemVM> Projects { get; set; } = new();
     private List<ServiceRequestVM> ServiceRequests { get; set; } = new();

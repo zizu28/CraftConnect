@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using Infrastructure.BackgroundJobs;
-using Infrastructure.Cache;
 using Infrastructure.EmailService;
+using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.CraftmanCommands;
 using UserManagement.Application.DTOs.CraftmanDTO;
 using UserManagement.Application.Validators.CraftmanValidators;
-using UserManagement.Domain.Entities;
 
 namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.CraftmanCommandHandlers
 {
@@ -16,7 +15,8 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.CraftmanComma
 		ICraftsmanRepository craftmanRepository,
 		IMapper mapper,
 		ILogger<UpdateCraftmanCommandHandler> logger,
-		IBackgroundJobService backgroundJob) : IRequestHandler<UpdateCraftmanCommand, CraftmanResponseDTO>
+		IBackgroundJobService backgroundJob,
+		IUnitOfWork unitOfWork) : IRequestHandler<UpdateCraftmanCommand, CraftmanResponseDTO>
 	{
 		public async Task<CraftmanResponseDTO> Handle(UpdateCraftmanCommand request, CancellationToken cancellationToken)
 		{
@@ -34,20 +34,24 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.CraftmanComma
 			}
 			
 			craftman = mapper.Map(request.CraftmanDTO, craftman);
-			await craftmanRepository.UpdateAsync(craftman, cancellationToken);
-			response.IsSuccessful = true;
-			response.Message = "Craftman updated successfully.";
-			response = mapper.Map<CraftmanResponseDTO>(craftman);
+			await unitOfWork.ExecuteInTransactionAsync(
+				async () => await craftmanRepository.UpdateAsync(craftman, cancellationToken), 
+				cancellationToken
+			);
+
+			var mappedResponse = mapper.Map<CraftmanResponseDTO>(craftman);
+			mappedResponse.IsSuccessful = true;
+			mappedResponse.Message = "Craftman updated successfully.";
 			//await cacheService.RemoveSync($"Craftman:{craftman.Id}", cancellationToken);
 			//await cacheService.SetAsync($"Craftman:{request.CraftmanId}", response, cancellationToken);
 			logger.LogInformation("Craftman with ID {CraftmanId} updated successfully.", craftman.Id);
 			backgroundJob.Enqueue<IEmailService>("",
 				emailService => emailService.SendEmailAsync(
 					craftman.Email.Address,
-					$"Update {craftman.FirstName} {craftman.LastName}",
-					"",
+					$"{craftman.FirstName} {craftman.LastName} Updated",
+					"Your profile has been updated. If you did not issue this request, kindly contact us for immediate action.",
 					true, CancellationToken.None));
-			return response;
+			return mappedResponse;
 		}
 	}
 }

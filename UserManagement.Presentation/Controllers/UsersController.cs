@@ -49,7 +49,7 @@ namespace UserManagement.Presentation.Controllers
 			return Ok(result);
 		}
 
-		[HttpPost("register/Craftman")]
+		[HttpPost("register/craftman")]
 		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RegisterNewCraftmanAsync([FromBody] CraftmanCreateDTO craftman)
 		{
@@ -87,8 +87,8 @@ namespace UserManagement.Presentation.Controllers
 			return Ok();
 		}
 
-		[HttpGet("by-email")]
-		public async Task<IActionResult> GetUserByEmailAsync([FromQuery] string email)
+		[HttpGet("by-email/{email}")]
+		public async Task<IActionResult> GetUserByEmailAsync([FromRoute] string email)
 		{
 			var query = new GetUserByEmailQuery { Email = email };
 			var user = await mediator.Send(query);

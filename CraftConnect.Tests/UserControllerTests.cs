@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using UserManagement.Application.CQRS.Commands.UserCommands;
-using UserManagement.Application.CQRS.Handlers.QueryHandlers.Queries.UserQueries;
+using UserManagement.Application.CQRS.Queries.UserQueries;
 using UserManagement.Application.DTOs.UserDTOs;
+using UserManagement.Application.Responses;
 using UserManagement.Presentation.Controllers;
 
 namespace CraftConnect.Tests
@@ -26,13 +27,18 @@ namespace CraftConnect.Tests
 			_usersController.ModelState.Clear();
 			var loginCommand = new LoginUserCommand
 			{
-				Username = "testuser",
-				Password = "testpassword"
+				Email = "example@user.com",
+				Password = "testpassword",
+				RememberMe = true
 			};
 			var accessToken = "access_token_mock";
 			var refreshToken = "refresh_token_mock";
 			_mediatorMock.Setup(m => m.Send(It.IsAny<LoginUserCommand>(), default))
-				.ReturnsAsync((accessToken, refreshToken));
+				.ReturnsAsync(new LoginResponse()
+				{
+					AccessToken = accessToken,
+					RefreshToken = refreshToken
+				});
 
 			// Act
 			var result = await _usersController.LoginUserAsync(loginCommand);
@@ -51,11 +57,16 @@ namespace CraftConnect.Tests
 			_usersController.ModelState.Clear();
 			var loginCommand = new LoginUserCommand
 			{
-				Username = "wronguser",
-				Password = "wrongpassword"
+				Email = "example@user.com",
+				Password = "wrongpassword",
+				RememberMe = true
 			};
 			_mediatorMock.Setup(m => m.Send(It.IsAny<LoginUserCommand>(), default))
-				.ReturnsAsync((string.Empty, string.Empty));
+				.ReturnsAsync(new LoginResponse() 
+				{ 
+					AccessToken = string.Empty, 
+					RefreshToken = string.Empty 
+				});
 
 			// Act
 			var result = await _usersController.LoginUserAsync(loginCommand);

@@ -43,19 +43,22 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				response.Message = "Craftman with this email already exists.";
 				return response;
 			}
-			await unitOfWork.ExecuteInTransactionAsync(async () =>
-			{
-				logger.LogInformation("Creating new craftman with email {Email}.", request.Craftman.Email);
-				request.Craftman.Password = BCrypt.Net.BCrypt.HashPassword(
+
+			request.Craftman.Password = BCrypt.Net.BCrypt.HashPassword(
 					request.Craftman.Password!,
 					salt: BCrypt.Net.BCrypt.GenerateSalt(12));
 
-				var newUser = mapper.Map<Craftman>(request.Craftman);
-				newUser.PasswordHash = request.Craftman.Password;
-				foreach (var skillName in request.Craftman.Skills)
-				{
-					newUser.AddSkill(skillName, request.Craftman.YearsOfExperience);
-				}
+			var newUser = mapper.Map<Craftman>(request.Craftman);
+			newUser.PasswordHash = request.Craftman.Password;
+			//foreach (var skillName in request.Craftman.Skills)
+			//{
+			//	newUser.AddSkill(skillName, request.Craftman.YearsOfExperience);
+			//}
+
+			await unitOfWork.ExecuteInTransactionAsync(async () =>
+			{
+				logger.LogInformation("Creating new craftman with email {Email}.", request.Craftman.Email);
+				
 				await craftmanRepository.AddAsync(newUser, cancellationToken);
 
 				var userRegisteredEvent = new UserRegisteredIntegrationEvent
@@ -66,34 +69,35 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				);
 				await messageBroker.PublishAsync(userRegisteredEvent, cancellationToken);
 
-				backgroundJob.Enqueue<IGmailService>(
-					"default",
-					email => email.SendEmailAsync(
-						newUser.Email.Address,
-						$"Welcome {newUser.FirstName}",
-						$"Welcome email to {newUser.FirstName} sent from Asp.Net Core.",
-						true,
-						CancellationToken.None
-					)
-				);
-
-				response.Id = newUser.Id;
-				response.FirstName = newUser.FirstName;
-				response.LastName = newUser.LastName;
-				response.Email = newUser.Email.Address;
-				response.Phone = newUser.Phone.Number;
-				response.Profession = newUser.Profession.ToString();
-				response.Bio = newUser.Bio;
-				response.HourlyRate = newUser.HourlyRate.Amount;
-				response.Currency = newUser.HourlyRate.Currency;
-				response.Status = newUser.Status.ToString();
-				response.IsAvailable = newUser.IsAvailable;
-				response.Skills = [.. newUser.Skills.Select(s => s.Name)];
-				logger.LogInformation("Craftman with email {Email} registered successfully.", newUser.Email.Address);
-				response.Message = "Customer registration successful.";
-				response.IsSuccessful = true;
+				
 			}, cancellationToken);
-			
+
+			backgroundJob.Enqueue<IGmailService>(
+				"default",
+				email => email.SendEmailAsync(
+					newUser.Email.Address,
+					$"Welcome {newUser.FirstName}",
+					$"Welcome email to {newUser.FirstName} sent from Asp.Net Core.",
+					true,
+					CancellationToken.None
+				)
+			);
+
+			response.Id = newUser.Id;
+			response.Email = newUser.Email.Address;
+			//response.FirstName = newUser.FirstName;
+			//response.LastName = newUser.LastName;			
+			//response.Phone = newUser.Phone.Number;
+			//response.Profession = newUser.Profession.ToString();
+			//response.Bio = newUser.Bio;
+			//response.HourlyRate = newUser.HourlyRate.Amount;
+			//response.Currency = newUser.HourlyRate.Currency;
+			//response.Status = newUser.Status.ToString();
+			//response.IsAvailable = newUser.IsAvailable;
+			//response.Skills = [.. newUser.Skills.Select(s => s.Name)];
+			logger.LogInformation("Craftman with email {Email} registered successfully.", newUser.Email.Address);
+			response.Message = "Customer registration successful.";
+			response.IsSuccessful = true;
 			//await cacheService.SetAsync($"user:{userResponse.UserId}", userResponse, cancellationToken);
 			return response;
 		}

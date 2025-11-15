@@ -10,13 +10,13 @@ namespace UserManagement.Domain.Entities
 		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public Profession Profession { get; private set; }
 		public string Bio { get; private set; } = string.Empty;
-		public Money HourlyRate { get; private set; }
+		public Money? HourlyRate { get; private set; }
 		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public VerificationStatus Status { get; private set; } = VerificationStatus.Unverified;
 		public bool IsAvailable { get; private set; } = false;
 
 		private List<Skill> _skills = [];
-		public IReadOnlyCollection<Skill> Skills => _skills.AsReadOnly();
+		public IReadOnlyCollection<Skill>? Skills => _skills.AsReadOnly();
 
 		private Craftman() : base() { }
 
@@ -32,7 +32,7 @@ namespace UserManagement.Domain.Entities
 			AddIntegrationEvent(new CraftmanSkillIntegrationAddedEvent(Id, name));
 		}
 
-		public static void VerifyCraftman(Email email, Profession craftmanProfession, IdentityDocument document)
+		public void VerifyCraftman(Email email, Profession craftmanProfession, IdentityDocument document)
 		{
 			var craftman = new Craftman(email, craftmanProfession)
 			{

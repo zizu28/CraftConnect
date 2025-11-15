@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Core.SharedKernel.ValueObjects;
 using MediatR;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Queries.UserQueries;
@@ -14,7 +13,6 @@ namespace UserManagement.Application.CQRS.Handlers.QueryHandlers.UserQueryHandle
 	{
 		public async Task<UserResponseDTO> Handle(GetUserByEmailQuery request, CancellationToken cancellationToken)
 		{
-			var email = new Email(request.Email);
 			var user = await userRepository.GetByEmailAsync(request.Email, cancellationToken)
 				?? throw new NotFoundException($"User with email {request.Email} not found.");
 			return mapper.Map<UserResponseDTO>(user);

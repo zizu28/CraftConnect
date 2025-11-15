@@ -25,6 +25,16 @@
     animation: spinner-rotation 0.8s linear infinite;
 }
 
+@keyframes spinner-rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 .toggle-description {
     font-size: 0.9rem;
     color: #4B5563; /* Gray-600 */

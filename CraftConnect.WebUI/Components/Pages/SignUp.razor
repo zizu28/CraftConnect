@@ -114,6 +114,7 @@
     private UserCreateDTO model = new();
     private bool showPassword = false;
     private bool isLoading = false;
+    private HttpResponseMessage userResponse { get; set; }
 
     private void OnUserTypeChanged(string newUserType)
     {
@@ -132,12 +133,23 @@
         try
         {
             var httpClient = HttpClientFactory.CreateClient("Backend");
-            // var content = JsonContent.Create(model);
-            var response = await httpClient.PostAsJsonAsync("/users/register", model, new JsonSerializerOptions
+            userResponse = model.Role switch
             {
-                WriteIndented = true
-            });
-            if (response.IsSuccessStatusCode)
+                "Craftman" => await httpClient.PostAsJsonAsync("/users/register/craftman", model, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                }),
+                "Customer" => await httpClient.PostAsJsonAsync("/users/register/customer", model, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                }),
+                _ => await httpClient.PostAsJsonAsync("/users/register", model, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                })
+            };
+            
+            if (userResponse.IsSuccessStatusCode)
             {
                 logger.LogInformation($"User with email {model.Email} has successfully registered");
                 NavigationManager.NavigateTo($"/verify-email/{model.Email}");

@@ -71,17 +71,17 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 					)
 				);
 
-				var emailConfirmationToken = tokenProvider.GenerateCustomerEmailConfirmationToken(newUser);
-				backgroundJob.Enqueue<IGmailService>(
-					"default",
-					email => email.ConfirmEmailAsync(
-						newUser.Email.Address,
-						"Confirm Email",
-						$"Confirm your email for {newUser.FirstName}. " +
-						$"Please confirm your email by clicking the link: " +
-						$"<a href='https://example.com/confirm-email?token={emailConfirmationToken}'>Confirm Email</a>"
-						, cancellationToken)
-				);
+				//var emailConfirmationToken = tokenProvider.GenerateCustomerEmailConfirmationToken(newUser);
+				//backgroundJob.Enqueue<IGmailService>(
+				//	"default",
+				//	email => email.ConfirmEmailAsync(
+				//		newUser.Email.Address,
+				//		"Confirm Email",
+				//		$"Confirm your email for {newUser.FirstName}. " +
+				//		$"Please confirm your email by clicking the link: " +
+				//		$"<a href='https://example.com/confirm-email?token={emailConfirmationToken}'>Confirm Email</a>"
+				//		, cancellationToken)
+				//);
 
 				response.CustomerId = newUser.Id;
 				response.Email = newUser.Email.Address;
