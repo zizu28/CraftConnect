@@ -126,15 +126,13 @@
                     if(roleClaim != null)
                     {
                         userRole = roleClaim.Value;
-                        logger.LogInformation("User with email {Email} has logged in with {Role} role", 
-                            model.Email, userRole);
                     }
                 }
                 if(user != null)
                 {
                     if (userRole == "Customer")
                     {
-                        NavigationManager.NavigateTo($"/customer/dashboard/{user!.UserId}");
+                        NavigationManager.NavigateTo($"/customer/{user!.UserId}/dashboard");
                     }
                     else if (userRole == "Craftman")
                     {

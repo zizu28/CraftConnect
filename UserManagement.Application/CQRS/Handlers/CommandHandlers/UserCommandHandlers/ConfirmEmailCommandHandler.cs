@@ -26,13 +26,17 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				if (verificationRecord.User.IsEmailConfirmed)
 				{
 					logger.LogWarning("Verification token already used: {TokenHash}", request.token);
-					throw new Exception("This verification link has already been used.");
+					dbContext.EmailVerificationTokens.Remove(verificationRecord);
+					await dbContext.SaveChangesAsync(cancellationToken);
+					return true;
 				}
 
 				if (verificationRecord.ExpiresOnUtc < DateTime.UtcNow)
 				{
 					logger.LogWarning("Expired verification token used: {TokenHash}", request.token);
-					throw new Exception("The verification link has expired.");
+					dbContext.EmailVerificationTokens.Remove(verificationRecord);
+					await dbContext.SaveChangesAsync(cancellationToken);
+					return true;
 				}
 
 				verificationRecord.User.IsEmailConfirmed = true;

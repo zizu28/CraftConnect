@@ -42,7 +42,6 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 			response.RefreshToken = await _refreshToken.GenerateRefreshToken(user);
 			
 			_logger.LogInformation("User with email {Email} logged in successfully.", request.Email);
-			_logger.LogInformation("Invalid login attempt for user with email: {Email}", request.Email);
 			_logger.LogDebug("JWT Token: {Token}", response.AccessToken);
 			_logger.LogDebug("Refresh Token: {RefreshToken}", response.RefreshToken);
 

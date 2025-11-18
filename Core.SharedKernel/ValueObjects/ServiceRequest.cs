@@ -1,4 +1,5 @@
 ﻿using Core.SharedKernel.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Core.SharedKernel.ValueObjects
 {
@@ -13,6 +14,7 @@ namespace Core.SharedKernel.ValueObjects
 		public ServiceRequestStatus Status { get; private set; }
 		public string ProjectDescription { get; private set; }
 		public List<string> SkillsRequired { get; private set; } = [];
+		[Column(TypeName = "decimal(18, 2)")]
 		public decimal Budget { get; private set; }
 		public DateTime StartDate { get; private set; }
 		public DateTime EndDate { get; private set; }

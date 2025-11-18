@@ -4,6 +4,7 @@ using Core.Logging;
 using Core.SharedKernel.IntegrationEvents.AllUserActivitiesIntegrationEvents;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
+using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using UserManagement.Application.Contracts;
@@ -17,6 +18,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 	public class RegisterCraftmanCommandHandler(
 		IMapper mapper,
 		ICraftsmanRepository craftmanRepository,
+		ApplicationDbContext dbContext, 
 		ILoggingService<RegisterCraftmanCommandHandler> logger,
 		IBackgroundJobService backgroundJob,
 		IMessageBroker messageBroker,
@@ -50,11 +52,9 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 
 			var newUser = mapper.Map<Craftman>(request.Craftman);
 			newUser.PasswordHash = request.Craftman.Password;
-			//foreach (var skillName in request.Craftman.Skills)
-			//{
-			//	newUser.AddSkill(skillName, request.Craftman.YearsOfExperience);
-			//}
-
+			var verificationTokenValue = EmailVerificationToken.GenerateToken();
+			var hashedToken = BCrypt.Net.BCrypt.HashPassword(verificationTokenValue);
+			
 			await unitOfWork.ExecuteInTransactionAsync(async () =>
 			{
 				logger.LogInformation("Creating new craftman with email {Email}.", request.Craftman.Email);
@@ -69,32 +69,43 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				);
 				await messageBroker.PublishAsync(userRegisteredEvent, cancellationToken);
 
-				
+				var utcNow = DateTime.UtcNow;
+				var emailVerificationToken = new EmailVerificationToken
+				{
+					EmailVerificationTokenId = Guid.NewGuid(),
+					TokenValue = hashedToken,
+					User = newUser,
+					UserId = newUser.Id,
+					CreatedOnUtc = utcNow,
+					ExpiresOnUtc = utcNow.AddDays(1)
+				};
+				dbContext.EmailVerificationTokens.Add(emailVerificationToken);
 			}, cancellationToken);
 
-			backgroundJob.Enqueue<IGmailService>(
-				"default",
-				email => email.SendEmailAsync(
-					newUser.Email.Address,
-					$"Welcome {newUser.FirstName}",
-					$"Welcome email to {newUser.FirstName} sent from Asp.Net Core.",
-					true,
-					CancellationToken.None
-				)
-			);
+
+			string? verificationLink = $"https://localhost:7272/users/confirm-email?token={hashedToken}";
+
+			if (string.IsNullOrEmpty(verificationLink))
+			{
+				logger.LogError(new Exception(), "Failed to generate email confirmation link");
+			}
+			else
+			{
+				backgroundJob.Enqueue<IGmailService>(
+					"default",
+					email => email.SendEmailAsync(
+						newUser.Email.Address,
+						$"Email Verification for CraftConnect",
+						$"A welcome message. " +
+						$"To verify your email address, <a href='{verificationLink}'>click here</a>.",
+						true,
+						CancellationToken.None
+					)
+				);
+			}
 
 			response.Id = newUser.Id;
 			response.Email = newUser.Email.Address;
-			//response.FirstName = newUser.FirstName;
-			//response.LastName = newUser.LastName;			
-			//response.Phone = newUser.Phone.Number;
-			//response.Profession = newUser.Profession.ToString();
-			//response.Bio = newUser.Bio;
-			//response.HourlyRate = newUser.HourlyRate.Amount;
-			//response.Currency = newUser.HourlyRate.Currency;
-			//response.Status = newUser.Status.ToString();
-			//response.IsAvailable = newUser.IsAvailable;
-			//response.Skills = [.. newUser.Skills.Select(s => s.Name)];
 			logger.LogInformation("Craftman with email {Email} registered successfully.", newUser.Email.Address);
 			response.Message = "Customer registration successful.";
 			response.IsSuccessful = true;

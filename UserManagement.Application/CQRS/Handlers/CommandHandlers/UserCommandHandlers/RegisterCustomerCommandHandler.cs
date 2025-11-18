@@ -3,8 +3,10 @@ using Core.EventServices;
 using Core.Logging;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
+using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.DTOs.CustomerDTO;
@@ -19,7 +21,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 		ILoggingService<RegisterCustomerCommandHandler> logger,
 		IBackgroundJobService backgroundJob,
 		ICustomerRepository customerRepository, 
-		ITokenProvider tokenProvider,
+		ApplicationDbContext dbContext,
 		IMessageBroker publisher,
 		IUnitOfWork unitOfWork) : IRequestHandler<RegisterCustomerCommand, CustomerResponseDTO>
 	{
@@ -45,61 +47,62 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				return response;
 			}
 
+			logger.LogInformation("Creating new customer with email {Email}.", request.Customer!.Email);
+			request.Customer!.Password = BCrypt.Net.BCrypt.HashPassword(
+				request.Customer.Password!,
+				salt: BCrypt.Net.BCrypt.GenerateSalt(12));
+
+			var newUser = mapper.Map<Customer>(request.Customer);
+			newUser.PasswordHash = request.Customer.Password;
+			var verificationTokenValue = EmailVerificationToken.GenerateToken();
+			var hashedToken = BCrypt.Net.BCrypt.HashPassword(verificationTokenValue);
+
 			await unitOfWork.ExecuteInTransactionAsync(async () =>
 			{
-				logger.LogInformation("Creating new customer with email {Email}.", request.Customer!.Email);
-				request.Customer!.Password = BCrypt.Net.BCrypt.HashPassword(
-					request.Customer.Password!,
-					salt: BCrypt.Net.BCrypt.GenerateSalt(12));
-
-				var newUser = mapper.Map<Customer>(request.Customer);
-				newUser.PasswordHash = request.Customer.Password;
-
-
 				await customerRepository.AddAsync(newUser, cancellationToken);
 				var userRegisteredEvent = new UserCreatedIntegrationEvent(newUser);
 				await publisher.PublishAsync(userRegisteredEvent, cancellationToken);
 
+				var utcNow = DateTime.UtcNow;
+				var emailVerificationToken = new EmailVerificationToken
+				{
+					EmailVerificationTokenId = Guid.NewGuid(),
+					TokenValue = hashedToken,
+					User = newUser,
+					UserId = newUser.Id,
+					CreatedOnUtc = utcNow,
+					ExpiresOnUtc = utcNow.AddDays(1)
+				};
+				dbContext.EmailVerificationTokens.Add(emailVerificationToken);
+			}, cancellationToken);
+
+			string? verificationLink = $"https://localhost:7272/users/confirm-email?token={hashedToken}";
+
+			if (string.IsNullOrEmpty(verificationLink))
+			{
+				logger.LogError(new Exception(), "Failed to generate email confirmation link");
+			}
+			else
+			{
 				backgroundJob.Enqueue<IGmailService>(
 					"default",
 					email => email.SendEmailAsync(
 						newUser.Email.Address,
-						$"Welcome {newUser.FirstName}",
-						$"This is a welcome message for {newUser.FirstName}",
-						false,
+						$"Email Verification for CraftConnect",
+						$"A welcome message. " +
+						$"To verify your email address, <a href='{verificationLink}'>click here</a>.",
+						true,
 						CancellationToken.None
 					)
 				);
+			}
 
-				//var emailConfirmationToken = tokenProvider.GenerateCustomerEmailConfirmationToken(newUser);
-				//backgroundJob.Enqueue<IGmailService>(
-				//	"default",
-				//	email => email.ConfirmEmailAsync(
-				//		newUser.Email.Address,
-				//		"Confirm Email",
-				//		$"Confirm your email for {newUser.FirstName}. " +
-				//		$"Please confirm your email by clicking the link: " +
-				//		$"<a href='https://example.com/confirm-email?token={emailConfirmationToken}'>Confirm Email</a>"
-				//		, cancellationToken)
-				//);
-
-				response.CustomerId = newUser.Id;
-				response.Email = newUser.Email.Address;
-				response.Phone = newUser.Phone.Number;
-				response.Address = newUser.Address?.ToString() ?? string.Empty;
-				response.PreferredPaymentMethod = newUser.PreferredPaymentMethod.ToString();
-				response.Message = "Customer registration successful.";
-				response.IsSuccess = true;
-			}, cancellationToken);
-			
-
+			response.CustomerId = newUser.Id;
+			response.Email = newUser.Email.Address;
+			response.Message = "Customer registration successful.";
+			response.IsSuccess = true;
 			//var confirmationToken = await GenerateEmailConfirmationToken(newUser);
 			return response;
-		}
-
-		private static async Task<string> GenerateEmailConfirmationToken(Customer customer)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

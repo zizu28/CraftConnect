@@ -9,5 +9,7 @@
 		Draft,
 		Sent,
 		PartiallyPaid,
+		Failed, 
+		Refunded
 	}
 }

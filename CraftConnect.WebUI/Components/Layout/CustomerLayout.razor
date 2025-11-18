@@ -1,22 +1,31 @@
 ﻿@using CraftConnect.WebUI.Components.CustomerDashboardPageComponents
 @inherits LayoutComponentBase
 
-<div class="customer-layout">
-    <CustomerSidebar User="currentUser" />
+<CascadingValue Value="this">
+    <div class="customer-layout">
+        <CustomerSidebar User="currentUser" CustomerId="CustomerId" />
     
-    <div class="main-view">
-        <CustomerTopBar User="currentUser" />
-        <main class="content-body">
-            @Body
-        </main>
+        <div class="main-view">
+            <CustomerTopBar User="currentUser" />
+            <main class="content-body">
+                @Body
+            </main>
+        </div>
     </div>
-</div>
+</CascadingValue>
 
 @code {
+    public Guid CustomerId { get; set; }
+
     private UserProfileVM currentUser = new UserProfileVM
     {
-        Id = Guid.NewGuid(),
         Name = "Jane Doe",
         AvatarInitials = "JD"
     };
+
+    public void SetCurrentCustomerId(Guid id)
+    {
+        CustomerId = id;
+        StateHasChanged();
+    }
 }
