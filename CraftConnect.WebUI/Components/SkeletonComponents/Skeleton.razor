@@ -1,0 +1,26 @@
+﻿<div class="skeleton @TypeClass @Class" style="@StyleString"></div>
+
+@code {
+    [Parameter] public string Type { get; set; } = "text"; // text, rect, circle
+    [Parameter] public string Width { get; set; } = string.Empty;
+    [Parameter] public string Height { get; set; } = string.Empty;
+    [Parameter] public string Class { get; set; } = "";
+
+    private string TypeClass => Type switch
+    {
+        "circle" => "skeleton-circle",
+        "rect" => "skeleton-rect",
+        _ => "skeleton-text"
+    };
+
+    private string StyleString
+    {
+        get
+        {
+            var style = "";
+            if (!string.IsNullOrEmpty(Width)) style += $"width: {Width}; ";
+            if (!string.IsNullOrEmpty(Height)) style += $"height: {Height}; ";
+            return style;
+        }
+    }
+}

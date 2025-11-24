@@ -1,4 +1,5 @@
-﻿using BookingManagement.Domain.Entities;
+﻿using AuditManagement.Domain.Entities;
+using BookingManagement.Domain.Entities;
 using Core.SharedKernel.ValueObjects;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ namespace Infrastructure.Persistence.Data
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Payment> Payments { get; set; }
 		public DbSet<Invoice> Invoices { get; set; }
+		public DbSet<AuditLog> AuditLogs { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -52,7 +54,8 @@ namespace Infrastructure.Persistence.Data
 						a.FullName.StartsWith("UserManagement.Infrastructure.EntityTypeConfigurations") ||
 						a.FullName.StartsWith("BookingManagement.Infrastructure.EntityTypeConfigurations") || 
 						a.FullName.StartsWith("ProductInventoryManagement.Infrastructure.EntityTypeConfigurations") ||
-						a.FullName.StartsWith("PaymentManagement.Infrastructure.EntityTypeConfigurations")
+						a.FullName.StartsWith("PaymentManagement.Infrastructure.EntityTypeConfigurations") ||
+						a.FullName.StartsWith("AuditManagement.Infrastructure.EntityTypeConfigurations") 
 						)
 				);
 

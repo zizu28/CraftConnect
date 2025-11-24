@@ -1,6 +1,8 @@
 using CraftConnect.ServiceDefaults;
+using CraftConnect.WebUI.Auth;
 using CraftConnect.WebUI.Components;
 using CraftConnect.WebUI.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +15,17 @@ builder.Services.AddRazorComponents()
 builder.Services.AddHttpClient("Backend", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
+})
+.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    UseCookies = true,
+    UseDefaultCredentials = true,
 });
+
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Backend"));
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, BffAuthenticationStateProvider>();
+
 builder.Services.AddLogging();
 
 builder.Services.AddSingleton<ThemeService>();

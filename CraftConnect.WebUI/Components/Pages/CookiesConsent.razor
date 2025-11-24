@@ -1,5 +1,6 @@
 ﻿@page "/cookies"
 @using CraftConnect.WebUI.Components.CookiesConsentPageComponents
+@using System.Threading.Tasks
 @if (IsVisible)
 {
     <div class="cookie-modal-overlay" @onclick="HandleOverlayClick">
@@ -57,30 +58,30 @@
 
     private CookiePreferencesVM model = new();
 
-    private void AcceptAll()
+    private async Task AcceptAll()
     {
         model.AnalyticsCookies = true;
         model.MarketingCookies = true;
         Console.WriteLine("Accepted All");
         // Save preferences and close
-        CloseModal();
+        await CloseModal();
     }
 
-    private void SavePreferences()
+    private async Task SavePreferences()
     {
         // Preferences are already bound to 'model'
         Console.WriteLine($"Saved: Analytics={model.AnalyticsCookies}, Marketing={model.MarketingCookies}");
         // Save preferences and close
-        CloseModal();
+        await CloseModal();
     }
 
-    private void RejectAll()
+    private async Task RejectAll()
     {
         model.AnalyticsCookies = false;
         model.MarketingCookies = false;
         Console.WriteLine("Rejected All");
         // Save preferences and close
-        CloseModal();
+        await CloseModal();
     }
     
     private void HandleOverlayClick()

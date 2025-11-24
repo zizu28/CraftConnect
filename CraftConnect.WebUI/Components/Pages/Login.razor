@@ -3,11 +3,14 @@
 @inject IHttpClientFactory HttpClientFactory
 @inject ILogger<Login> logger
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
 @using Blazored.FluentValidation
+@using CraftConnect.WebUI.Auth
 @using CraftConnect.WebUI.Components.Layout
 @using System.Security.Claims
 @using System.Text.Json
 @using CraftConnect.WebUI.DTOs
+@using Microsoft.AspNetCore.Components.Authorization
 
 <div class="login-card">
     <header class="login-card-header">
@@ -111,34 +114,38 @@
         try
         {
             var httpClient = HttpClientFactory.CreateClient("Backend");
-            HttpResponseMessage response = await httpClient.PostAsJsonAsync("/users/signin", model, new JsonSerializerOptions
+            HttpResponseMessage response = await httpClient.PostAsJsonAsync("/api/users/signin", model, new JsonSerializerOptions
             {
                 WriteIndented = true
             });
             if (response.IsSuccessStatusCode)
             {
-                user = await httpClient.GetFromJsonAsync<UserResponseDTO>($"/users/by-email/{model.Email}");
-                var tokenResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
-                if (tokenResponse != null && !string.IsNullOrEmpty(tokenResponse.AccessToken) && !string.IsNullOrEmpty(tokenResponse.RefreshToken))
+                // user = await httpClient.GetFromJsonAsync<UserResponseDTO>($"/api/users/by-email/{model.Email}");
+                // var tokenResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                // if (tokenResponse != null && !string.IsNullOrEmpty(tokenResponse.AccessToken) && !string.IsNullOrEmpty(tokenResponse.RefreshToken))
+                // {
+                //     var claims = JwtParser.ParseClaimsFromJwt(tokenResponse.AccessToken);
+                //     var roleClaim = claims.FirstOrDefault(c => c.Type == "role" || c.Type == ClaimTypes.Role);
+                //     if(roleClaim != null)
+                //     {
+                //         userRole = roleClaim.Value;
+                //     }
+                // }
+                var userInfo = await response.Content.ReadFromJsonAsync<UserResponseDTO>();
+                var customAuthStateProvider = (BffAuthenticationStateProvider)AuthStateProvider;                
+                
+                if (userInfo != null)
                 {
-                    var claims = JwtParser.ParseClaimsFromJwt(tokenResponse.AccessToken);
-                    var roleClaim = claims.FirstOrDefault(c => c.Type == "role" || c.Type == ClaimTypes.Role);
-                    if(roleClaim != null)
+                    customAuthStateProvider.NotifyUserLoggedIn(userInfo);
+                    if (userInfo.Role == "Customer")
                     {
-                        userRole = roleClaim.Value;
+                        NavigationManager.NavigateTo($"/customer/{userInfo.UserId}/dashboard");
                     }
-                }
-                if(user != null)
-                {
-                    if (userRole == "Customer")
+                    else if (userInfo.Role == "Craftman")
                     {
-                        NavigationManager.NavigateTo($"/customer/{user!.UserId}/dashboard");
+                        NavigationManager.NavigateTo($"/dashboard/{userInfo.UserId}");
                     }
-                    else if (userRole == "Craftman")
-                    {
-                        NavigationManager.NavigateTo($"/dashboard/{user!.UserId}");
-                    }
-                    else if(userRole == "Admin")
+                    else if (userInfo.Role == "Admin")
                     {
                         NavigationManager.NavigateTo("/admin/dashboard");
                     }

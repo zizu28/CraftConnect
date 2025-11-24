@@ -1,62 +1,69 @@
 {
   "Routes": [
-    // --- User Management Service Routes ---
-    {
-      //"RouteName": "UserApi",
-      "UpstreamPathTemplate": "/users/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "DownstreamPathTemplate": "/api/users/{everything}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7235
-        }
-      ],
-      "RateLimitOptions": {
-        "EnableRateLimiting": true,
-        "Period": "30s",
-        "Limit": 15
-      }
-    },
-    // --- Craftman Management Service Routes ---
-    {
-      //"RouteName": "UserApi",
-      "UpstreamPathTemplate": "/craftmen/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "DownstreamPathTemplate": "/api/craftmen/{everything}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7235
-        }
-      ],
-      "RateLimitOptions": {
-        "EnableRateLimiting": true,
-        "Period": "30s",
-        "Limit": 15
-      }
-    },
-    // --- Customer Management Service Routes ---
-    {
-      //"RouteName": "UserApi",
-      "UpstreamPathTemplate": "/customers/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "DownstreamPathTemplate": "/api/customers/{everything}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7235
-        }
-      ],
-      "RateLimitOptions": {
-        "EnableRateLimiting": true,
-        "Period": "30s",
-        "Limit": 15
-      }
-    },
+    //// --- User Management Service Routes ---
+    //{
+    //  //"RouteName": "UserApi",
+    //  "UpstreamPathTemplate": "/users/{everything}",
+    //  "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+    //  "AuthenticationOptions": {
+    //    "AuthenticationProviderKey": "Bearer",
+    //    "AllowedScopes": []
+    //  },
+    //  "DownstreamPathTemplate": "/api/users/{everything}",
+    //  "DownstreamScheme": "https",
+    //  "DownstreamHostAndPorts": [
+    //    {
+    //      "Host": "localhost",
+    //      "Port": 7235
+    //    }
+    //  ],
+    //  //"RouteClaimsRequirement": {
+    //  //  "Role": "Admin"
+    //  //},
+    //  "RateLimitOptions": {
+    //    "EnableRateLimiting": true,
+    //    "Period": "30s",
+    //    "Limit": 15
+    //  }
+    //},
+    //// --- Craftman Management Service Routes ---
+    //{
+    //  //"RouteName": "UserApi",
+    //  "UpstreamPathTemplate": "/craftmen/{everything}",
+    //  "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+    //  "DownstreamPathTemplate": "/api/craftmen/{everything}",
+    //  "DownstreamScheme": "https",
+    //  "DownstreamHostAndPorts": [
+    //    {
+    //      "Host": "localhost",
+    //      "Port": 7235
+    //    }
+    //  ],
+    //  "RateLimitOptions": {
+    //    "EnableRateLimiting": true,
+    //    "Period": "30s",
+    //    "Limit": 15
+    //  }
+    //},
+    //// --- Customer Management Service Routes ---
+    //{
+    //  //"RouteName": "UserApi",
+    //  "UpstreamPathTemplate": "/customers/{everything}",
+    //  "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+    //  "DownstreamPathTemplate": "/api/customers/{everything}",
+    //  "DownstreamScheme": "https",
+    //  "DownstreamHostAndPorts": [
+    //    {
+    //      "Host": "localhost",
+    //      "Port": 7235
+    //    }
+    //  ],
+    //  "RateLimitOptions": {
+    //    "EnableRateLimiting": true,
+    //    "Period": "30s",
+    //    "Limit": 15
+    //  }
+    //},
     // --- Booking Management Service Routes ---
     {
       //"RouteName": "BookingApi",
@@ -70,6 +77,10 @@
           "Port": 7285
         }
       ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
       "RateLimitOptions": {
         "EnableRateLimiting": true,
         "Period": "30s",
@@ -88,6 +99,10 @@
           "Port": 7238
         }
       ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
       "RateLimitOptions": {
         "EnableRateLimiting": true,
         "Period": "30s",
@@ -106,6 +121,10 @@
           "Port": 7238
         }
       ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
       "RateLimitOptions": {
         "EnableRateLimiting": true,
         "Period": "30s",
@@ -124,6 +143,10 @@
           "Port": 7130
         }
       ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
       "RateLimitOptions": {
         "EnableRateLimiting": true,
         "Period": "30s",
@@ -142,6 +165,10 @@
           "Port": 7130
         }
       ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
       "RateLimitOptions": {
         "EnableRateLimiting": true,
         "Period": "30s",

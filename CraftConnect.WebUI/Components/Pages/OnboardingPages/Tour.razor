@@ -1,5 +1,6 @@
 ﻿@page "/onboarding/step-1"
 @using CraftConnect.WebUI.Components.Layout
+@using System.Threading.Tasks
 @layout OnboardingFlowLayout
 @inject NavigationManager Navigation
 
@@ -92,7 +93,7 @@
         };
     }
 
-    private void NextStep()
+    private async Task NextStep()
     {
         if (model.CurrentStepIndex < model.Steps.Count - 1)
         {
@@ -100,7 +101,7 @@
         }
         else
         {
-            SkipTour(); // Finish
+            await SkipTour(); // Finish
         }
     }
 

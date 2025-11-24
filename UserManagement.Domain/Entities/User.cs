@@ -18,7 +18,7 @@ namespace UserManagement.Domain.Entities
 		public string PasswordHash { get; set; } = string.Empty;
 		public PhoneNumber Phone { get; private set; } = new("", "");
 		[JsonConverter(typeof(JsonStringEnumConverter))]
-		public UserRole Role { get; set; } = UserRole.Customer;
+		public UserRole Role { get; private set; }
 		public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 		[Timestamp]
 		public byte[] RowVersion { get; set; }

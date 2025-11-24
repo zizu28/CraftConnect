@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,6 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>95a2b7ce-90b3-4be2-a427-3fbec0c0612e</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CraftConnect.ServiceDefaults\CraftConnect.ServiceDefaults.csproj" />

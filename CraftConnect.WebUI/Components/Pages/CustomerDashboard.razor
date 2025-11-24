@@ -2,11 +2,12 @@
 @layout CustomerLayout
 @using CraftConnect.WebUI.Components.CustomerDashboardPageComponents
 @using CraftConnect.WebUI.Components.Layout
+@using CraftConnect.WebUI.Components.SkeletonComponents
 @using CraftConnect.WebUI.Enums
 
 @if (dashboardData == null)
 {
-    <p>Loading dashboard...</p>
+    <DashboardSkeleton />
 }
 else
 {
@@ -66,7 +67,7 @@ else
 
 @code {
     [CascadingParameter]
-    public CustomerLayout Layout { get; set; }
+    public CustomerLayout? Layout { get; set; }
 
     [Parameter]
     public Guid CustomerId { get; set; }

@@ -19,8 +19,8 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 		{
 			var claims = new List<Claim>
 			{
-				new(JwtRegisteredClaimNames.Sub, userId.ToString()),
-				new(JwtRegisteredClaimNames.Email, emailAddress),
+				new(ClaimTypes.NameIdentifier, userId.ToString()),
+				new(ClaimTypes.Email, emailAddress),
 				new(ClaimTypes.Role, role)
 			};
 			var issuer = _configuration["Jwt:Issuer"];

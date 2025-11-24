@@ -1,5 +1,7 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.CQRS.Queries.UserQueries;
 using UserManagement.Application.DTOs.CraftmanDTO;
@@ -12,6 +14,20 @@ namespace UserManagement.Presentation.Controllers
 	[Route("api/[controller]")]
 	public class UsersController(IMediator mediator) : ControllerBase
 	{
+		[HttpGet("me")]
+		[Authorize] // This works because the Cookie -> Bearer transformation happens before this hits
+		public async Task<IActionResult> GetCurrentUser()
+		{
+			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("sub");
+
+			if (userIdClaim == null) return Unauthorized();
+
+			var query = new GetUserByIdQuery { UserId = Guid.Parse(userIdClaim.Value) };
+			var user = await mediator.Send(query);
+
+			return Ok(user);
+		}
+
 		[HttpGet]
 		public async Task<IActionResult> GetAllUsersAsync()
 		{
@@ -108,25 +124,47 @@ namespace UserManagement.Presentation.Controllers
 			{
 				return Unauthorized("Invalid login attempt.");
 			}
-			return Ok(response);
+			Response.Cookies.Append("X-Access-Token", response.AccessToken, new CookieOptions
+			{
+				HttpOnly = true,
+				SameSite = SameSiteMode.Strict,
+				Secure = true,
+				Expires = DateTime.UtcNow.AddMinutes(15)
+			});
+
+			var userQuery = new GetUserByEmailQuery { Email = command.Email };
+			var user = await mediator.Send(userQuery);			
+
+			return Ok(user);
 		}
+
+		[HttpPost("logout")]
+		public async Task<IActionResult> Logout()
+		{
+			DeleteTokenCookies();
+			return Ok();
+		}
+
 
 		[HttpPost("refresh-token")]
 		//[ValidateAntiForgeryToken]
-		public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenCommand command)
+		public async Task<IActionResult> RefreshTokenAsync()
 		{
-			if(!ModelState.IsValid)
+			if(!Request.Cookies.TryGetValue("X-Refresh-Token", out var refreshToken))
 			{
-				return BadRequest(ModelState);
+				return Unauthorized("No refresh token provided.");
 			}
+			var command = new RefreshTokenCommand { RefreshToken = refreshToken };
 			var newTokens = await mediator.Send(command);
-			if (string.IsNullOrEmpty(newTokens.AccessToken) || string.IsNullOrEmpty(newTokens.RefreshToken))
+			if (string.IsNullOrEmpty(newTokens.AccessToken))
 			{
+				DeleteTokenCookies();
 				return Unauthorized("Invalid refresh token.");
 			}
+			SetTokenCookies(newTokens.AccessToken, newTokens.RefreshToken);
 			return Ok(newTokens);
 		}
-
+				
 		[HttpGet("confirm-email")]
 		[ActionName("ConfirmEmailAsync")]
 		public async Task<IActionResult> ConfirmEmailAsync([FromQuery] string token)
@@ -174,6 +212,32 @@ namespace UserManagement.Presentation.Controllers
 			var command = new DeleteUserCommand { UserId = id };
 			await mediator.Send(command);
 			return NoContent();
+		}
+
+		private void SetTokenCookies(string accessToken, string refreshToken)
+		{
+			var cookieOptions = new CookieOptions
+			{
+				HttpOnly = true,
+				SameSite = SameSiteMode.Strict,
+				Secure = true,
+				Expires = DateTime.UtcNow.AddMinutes(15)
+			};
+			Response.Cookies.Append("X-Access-Token", accessToken, cookieOptions);
+			var refreshOptions = new CookieOptions
+			{
+				HttpOnly = true,
+				SameSite = SameSiteMode.Strict,
+				Secure = true,
+				Expires = DateTime.UtcNow.AddDays(7)
+			};
+			Response.Cookies.Append("X-Refresh-Token", refreshToken, refreshOptions);
+		}
+
+		private void DeleteTokenCookies()
+		{
+			Response.Cookies.Delete("X-Access-Token");
+			Response.Cookies.Delete("X-Refresh-Token");
 		}
 	}
 }
