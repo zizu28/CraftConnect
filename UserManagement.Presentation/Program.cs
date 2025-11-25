@@ -12,6 +12,7 @@ using UserManagement.Application;
 using UserManagement.Application.Extensions;
 using UserManagement.Infrastructure.Extensions;
 using UserManagement.Presentation;
+using UserManagement.Presentation.Controllers;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.Transforms;
 
@@ -20,7 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 // --- 1. SERVICE REGISTRATION ---
 
 builder.Host.ConfigureSerilog();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddApplicationPart(typeof(UsersController).Assembly);
 builder.Services.AddUserManagementConfiguration(builder.Configuration);
 builder.Services.AddFluentEmailService(builder.Configuration);
 builder.Services.AddBackgroundJobs(builder.Configuration);

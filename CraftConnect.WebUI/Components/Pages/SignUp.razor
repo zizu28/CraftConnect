@@ -74,6 +74,13 @@
         </div>
         <ValidationMessage For="() => model.AgreeToTerms" />
 
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger">
+                @errorMessage
+            </div>
+        }
+
         <button type="submit" class="btn-submit" disabled="@isLoading">
             @if (isLoading)
             {
@@ -115,10 +122,12 @@
     private bool showPassword = false;
     private bool isLoading = false;
     private HttpResponseMessage userResponse { get; set; }
+    private string? errorMessage;
 
     private void OnUserTypeChanged(string newUserType)
     {
         model.Role = newUserType;
+        errorMessage = null;
     }
 
     private void TogglePasswordVisibility()
@@ -130,20 +139,21 @@
     {
         if(isLoading) return;
         isLoading = true;
+        errorMessage = null;
         try
         {
             var httpClient = HttpClientFactory.CreateClient("Backend");
             userResponse = model.Role switch
             {
-                "Craftman" => await httpClient.PostAsJsonAsync("/users/register/craftman", model, new JsonSerializerOptions
+                "Craftman" => await httpClient.PostAsJsonAsync("/api/users/register/craftman", model, new JsonSerializerOptions
                 {
                     WriteIndented = true
                 }),
-                "Customer" => await httpClient.PostAsJsonAsync("/users/register/customer", model, new JsonSerializerOptions
+                "Customer" => await httpClient.PostAsJsonAsync("/api/users/register/customer", model, new JsonSerializerOptions
                 {
                     WriteIndented = true
                 }),
-                _ => await httpClient.PostAsJsonAsync("/users/register", model, new JsonSerializerOptions
+                _ => await httpClient.PostAsJsonAsync("/api/users/register", model, new JsonSerializerOptions
                 {
                     WriteIndented = true
                 })
@@ -156,12 +166,17 @@
             }
             else
             {
-                logger.LogInformation($"Error registering new user.");
+                var errorContent = await userResponse.Content.ReadAsStringAsync();
+                errorMessage = !string.IsNullOrWhiteSpace(errorContent)
+                    ? errorContent
+                    : "Registration failed. Please try again.";
+                logger.LogWarning($"Registration failed: {errorMessage}");
             }
         }
         catch(Exception ex)
         {
-            Console.WriteLine($"Error registering new user. Error: {ex.Message}");
+            logger.LogError($"Network error during registration: {ex.Message}");
+            errorMessage = "A network error occurred.";
         }
         finally
         {

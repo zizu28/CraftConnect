@@ -2,7 +2,7 @@
 
 namespace CraftConnect.WebUI.ViewModels
 {
-	public class ForgotPasswordViewModel
+	public class ForgotPasswordCommand
 	{
 		[Required(ErrorMessage = "Email address is required")]
         [EmailAddress(ErrorMessage = "Please enter a valid email address")]

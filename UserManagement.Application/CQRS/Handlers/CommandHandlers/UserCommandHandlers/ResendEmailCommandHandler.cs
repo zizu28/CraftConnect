@@ -52,7 +52,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 			await dbContext.EmailVerificationTokens.AddAsync(emailVerificationToken, cancellationToken);
 			await dbContext.SaveChangesAsync(cancellationToken);
 
-			string? verificationLink = $"https://localhost:7272/users/confirm-email?token={hashedToken}";
+			string? verificationLink = $"https://localhost:7235/api/users/confirm-email?token={hashedToken}";
 			backgroundJob.Enqueue<IGmailService>(
 				"default",
 				resend => resend.SendEmailAsync(

@@ -247,14 +247,14 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			_usersController.ModelState.Clear();
-			var refreshTokenDto = new RefreshTokenCommand();
+			//var refreshTokenDto = new RefreshTokenCommand();
 			var newAccessToken = "newAccessToken";
 			var newRefreshToken = "newRefreshToken";
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(), default))
 				.ReturnsAsync((newAccessToken, newRefreshToken));
 
 			// Act
-			var result = await _usersController.RefreshTokenAsync(refreshTokenDto);
+			var result = await _usersController.RefreshTokenAsync();
 
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result);
@@ -268,12 +268,12 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			_usersController.ModelState.Clear();
-			var refreshTokenDto = new RefreshTokenCommand();
+			//var refreshTokenDto = new RefreshTokenCommand();
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(), default))
 				.ReturnsAsync((string.Empty, string.Empty));
 
 			// Act
-			var result = await _usersController.RefreshTokenAsync(refreshTokenDto);
+			var result = await _usersController.RefreshTokenAsync();
 
 			// Assert
 			Assert.IsType<UnauthorizedObjectResult>(result);
@@ -286,7 +286,7 @@ namespace CraftConnect.Tests
 			_usersController.ModelState.AddModelError("AccessToken", "AccessToken is required");
 
 			// Act
-			var result = await _usersController.RefreshTokenAsync(new RefreshTokenCommand());
+			var result = await _usersController.RefreshTokenAsync();
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result);

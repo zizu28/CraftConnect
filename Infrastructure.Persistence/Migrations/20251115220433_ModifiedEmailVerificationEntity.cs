@@ -96,7 +96,7 @@ namespace Infrastructure.Persistence.Migrations
                         column: x => x.ServiceRequestId,
                         principalTable: "ServiceRequest",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -165,7 +165,7 @@ namespace Infrastructure.Persistence.Migrations
                 column: "CraftmanId",
                 principalTable: "Users",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_EmailVerificationTokens_Users_CustomerId",
@@ -173,7 +173,7 @@ namespace Infrastructure.Persistence.Migrations
                 column: "CustomerId",
                 principalTable: "Users",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
         }
 
         /// <inheritdoc />

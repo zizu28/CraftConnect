@@ -75,7 +75,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 					userResponse.Message = "User registration successful.";
 				}, cancellationToken);
 
-				string? verificationLink = $"https://localhost:7272/users/confirm-email?token={hashedToken}";
+				string? verificationLink = $"https://localhost:7235/api/users/confirm-email?token={hashedToken}";
 
 				if (string.IsNullOrEmpty(verificationLink))
 				{

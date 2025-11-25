@@ -62,7 +62,7 @@
         {
             var httpClient = HttpClientFactory.CreateClient("Backend");
             var command = new ResendEmailCommand { Email = this.Email };
-            var response = await httpClient.PostAsJsonAsync("/users/resend-email", command);
+            var response = await httpClient.PostAsJsonAsync("/api/users/resend-email", command);
             if (response.IsSuccessStatusCode)
             {
                 logger.LogInformation("Email resend to {email} successful.", Email);

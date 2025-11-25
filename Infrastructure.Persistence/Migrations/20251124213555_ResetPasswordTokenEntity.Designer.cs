@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251115220433_ModifiedEmailVerificationEntity")]
-    partial class ModifiedEmailVerificationEntity
+    [Migration("20251124213555_ResetPasswordTokenEntity")]
+    partial class ResetPasswordTokenEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,46 @@ namespace Infrastructure.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AuditManagement.Domain.Entities.AuditLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("EntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<string>("NewValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OldValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditLogs");
+                });
 
             modelBuilder.Entity("BookingManagement.Domain.Entities.Booking", b =>
                 {
@@ -151,7 +191,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("ProfileUrl")
                         .IsRequired()
@@ -180,7 +220,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Budget")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -646,14 +686,8 @@ namespace Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CraftmanId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ExpiresOnUtc")
                         .HasColumnType("datetime2");
@@ -666,10 +700,6 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("EmailVerificationTokenId");
-
-                    b.HasIndex("CraftmanId");
-
-                    b.HasIndex("CustomerId");
 
                     b.HasIndex("UserId");
 
@@ -697,6 +727,32 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
+                });
+
+            modelBuilder.Entity("UserManagement.Domain.Entities.ResetPasswordToken", b =>
+                {
+                    b.Property<Guid>("ResetPasswordTokenId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TokenValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ResetPasswordTokenId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ResetPasswordTokens");
                 });
 
             modelBuilder.Entity("UserManagement.Domain.Entities.User", b =>
@@ -964,7 +1020,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -984,7 +1040,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -1004,7 +1060,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -1024,7 +1080,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -1071,7 +1127,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -1091,7 +1147,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -1124,7 +1180,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -1201,7 +1257,7 @@ namespace Infrastructure.Persistence.Migrations
                                         .HasColumnType("uniqueidentifier");
 
                                     b2.Property<decimal>("Amount")
-                                        .HasColumnType("decimal(18,2)");
+                                        .HasColumnType("decimal(18, 2)");
 
                                     b2.Property<string>("Currency")
                                         .IsRequired()
@@ -1263,7 +1319,7 @@ namespace Infrastructure.Persistence.Migrations
                                         .HasColumnType("uniqueidentifier");
 
                                     b2.Property<decimal>("Amount")
-                                        .HasColumnType("decimal(18,2)");
+                                        .HasColumnType("decimal(18, 2)");
 
                                     b2.Property<string>("Currency")
                                         .IsRequired()
@@ -1351,27 +1407,11 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("UserManagement.Domain.Entities.EmailVerificationToken", b =>
                 {
-                    b.HasOne("UserManagement.Domain.Entities.Craftman", "Craftman")
-                        .WithMany()
-                        .HasForeignKey("CraftmanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("UserManagement.Domain.Entities.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("UserManagement.Domain.Entities.User", "User")
                         .WithMany("EmailVerificationTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Craftman");
-
-                    b.Navigation("Customer");
 
                     b.Navigation("User");
                 });
@@ -1380,6 +1420,17 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("UserManagement.Domain.Entities.User", "User")
                         .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UserManagement.Domain.Entities.ResetPasswordToken", b =>
+                {
+                    b.HasOne("UserManagement.Domain.Entities.User", "User")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1468,7 +1519,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()

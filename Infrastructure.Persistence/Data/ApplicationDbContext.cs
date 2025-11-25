@@ -14,6 +14,7 @@ namespace Infrastructure.Persistence.Data
 		public DbSet<RefreshToken> RefreshTokens { get; set; }
 		public DbSet<User> Users { get; set; }
 		public DbSet<EmailVerificationToken> EmailVerificationTokens { get; set; }
+		public DbSet<ResetPasswordToken> ResetPasswordTokens { get; set; }
 		public DbSet<Customer> Customers { get; set; }
 		public DbSet<Craftman> Craftmen { get; set; }
 		public DbSet<Booking> Bookings { get; set; }

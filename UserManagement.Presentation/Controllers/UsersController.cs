@@ -182,6 +182,14 @@ namespace UserManagement.Presentation.Controllers
 			return Redirect("https://localhost:7284/login");
 		}
 
+		[HttpPost("forgot-password")]
+		public async Task<IActionResult> ForgotPasswordAsync([FromBody] ForgotPasswordCommand command)
+		{
+			ArgumentNullException.ThrowIfNull(command, nameof(command));
+			await mediator.Send(command);
+			return Ok();
+		}
+
 		[HttpPost("change-password")]
 		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordCommand command)
