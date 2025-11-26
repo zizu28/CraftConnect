@@ -183,7 +183,7 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("forgot-password")]
-		public async Task<IActionResult> ForgotPasswordAsync([FromBody] ForgotPasswordCommand command)
+		public async Task<IActionResult> ForgotPasswordAsync(ForgotPasswordCommand command)
 		{
 			ArgumentNullException.ThrowIfNull(command, nameof(command));
 			await mediator.Send(command);
@@ -194,22 +194,11 @@ namespace UserManagement.Presentation.Controllers
 		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordCommand command)
 		{
-			if (!ModelState.IsValid)
+			ArgumentNullException.ThrowIfNull(command);
+			var result = await mediator.Send(command);
+			if (result == Unit.Value)
 			{
-				return BadRequest(ModelState);
-			}
-			try
-			{
-				var result = await mediator.Send(command);
-				if (result == Unit.Value)
-				{
-					return Ok("Password changed successfully.");
-				}
-			}
-			catch (Exception ex)
-			{
-				// Log the exception
-				return BadRequest($"Password change failed. {ex.Message}");
+				return Ok("Password changed successfully.");
 			}
 			return BadRequest("Password change failed.");
 		}

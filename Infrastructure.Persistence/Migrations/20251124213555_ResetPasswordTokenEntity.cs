@@ -49,8 +49,7 @@ namespace Infrastructure.Persistence.Migrations
 						column: x => x.UserId,
 						principalTable: "Users",
 						principalColumn: "Id",
-						// *** THE FIX IS HERE: Changed from Cascade to Restrict ***
-						onDelete: ReferentialAction.Restrict);
+						onDelete: ReferentialAction.Cascade);
 				});
 
 			migrationBuilder.CreateIndex(

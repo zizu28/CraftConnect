@@ -2,6 +2,7 @@
 using Infrastructure.Persistence.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 
 namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHandlers

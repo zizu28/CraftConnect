@@ -7,6 +7,7 @@ using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
+using System.Net;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.DTOs.CraftmanDTO;

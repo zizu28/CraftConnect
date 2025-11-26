@@ -7,6 +7,7 @@ using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.DTOs.CustomerDTO;
