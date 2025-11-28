@@ -19,9 +19,10 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 		{
 			var claims = new List<Claim>
 			{
-				new(ClaimTypes.NameIdentifier, userId.ToString()),
-				new(ClaimTypes.Email, emailAddress),
-				new(ClaimTypes.Role, role)
+				new(JwtRegisteredClaimNames.Sub, userId.ToString()),
+				new(JwtRegisteredClaimNames.Email, emailAddress),
+				new(ClaimTypes.Role, role),
+				new(ClaimTypes.Name, emailAddress)
 			};
 			var issuer = _configuration["Jwt:Issuer"];
 			var audience = _configuration["Jwt:Audience"];
@@ -29,8 +30,8 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
 			var securityToken = new JwtSecurityToken(issuer, audience, claims,
-				notBefore: DateTime.UtcNow,
-				expires: DateTime.UtcNow.AddMinutes(10),
+				//notBefore: DateTime.UtcNow,
+				expires: DateTime.UtcNow.AddMinutes(15),
 				signingCredentials: creds);
 			var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
 			return token;

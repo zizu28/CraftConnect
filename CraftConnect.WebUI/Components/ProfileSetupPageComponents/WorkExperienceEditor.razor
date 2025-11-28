@@ -40,7 +40,7 @@
 
     private async Task AddEntry()
     {
-        WorkEntries.Add(new WorkEntry());
+        // WorkEntries.Add(new WorkEntry());
         await WorkEntriesChanged.InvokeAsync(WorkEntries);
     }
 

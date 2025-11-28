@@ -1,4 +1,4 @@
-using Core.EventServices;
+﻿using Core.EventServices;
 using Core.Logging;
 using CraftConnect.ServiceDefaults;
 using Infrastructure.BackgroundJobs;
@@ -16,6 +16,9 @@ using UserManagement.Presentation.Controllers;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.Transforms;
 
+// To disable automatic claim renaming
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // --- 1. SERVICE REGISTRATION ---
@@ -29,7 +32,10 @@ builder.Services.RegisterSerilog();
 builder.Services.AddUserApplicationExtensions(builder.Configuration.GetSection("MediatR"));
 builder.Services.AddMessageBroker(builder.Configuration);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions =>
+	{
+		sqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+	}));
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpContextAccessor();
 
@@ -53,12 +59,10 @@ builder.Services.AddAuthentication(options =>
 		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
 	};
 
-	// LOCAL AUTH: This allows UserManagement Controllers to see "User.Identity"
 	opt.Events = new JwtBearerEvents
 	{
 		OnMessageReceived = context =>
 		{
-			// Look for token in Cookie first
 			if (context.Request.Cookies.TryGetValue("X-Access-Token", out var token))
 			{
 				context.Token = token;
@@ -73,28 +77,35 @@ builder.Services.AddAuthentication(options =>
 	};
 });
 
-// --- 3. YARP CONFIGURATION (THE BFF PROXY) ---
-// Removed the manual HttpClient/Handler - YARP does this better.
 builder.Services.AddReverseProxy()
 	.LoadFromMemory(GetRoutes(), GetClusters())
 	.AddTransforms(builderContext =>
 	{
 		builderContext.AddRequestTransform(transformContext =>
 		{
+			Console.WriteLine($"[YARP] Inspecting request: {transformContext.HttpContext.Request.Path}");
 			var cookieName = "X-Access-Token";
 
 			if (transformContext.HttpContext.Request.Cookies.TryGetValue(cookieName, out var token))
 			{
-				// Remove existing Auth header if any
+				Console.ForegroundColor = ConsoleColor.Green;
+				Console.WriteLine($"[YARP] ✅ Cookie Found! Token length: {token.Length}");
+				Console.ResetColor();
+
 				transformContext.ProxyRequest.Headers.Remove("Authorization");
-				// Attach the Cookie value as a Bearer Token for Ocelot
 				transformContext.ProxyRequest.Headers.Add("Authorization", $"Bearer {token}");
+			}
+			else
+			{
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine("[YARP] ❌ NO Cookie found in request!");
+				Console.WriteLine("       Available Cookies: " + string.Join(", ", transformContext.HttpContext.Request.Cookies.Keys));
+				Console.ResetColor();
 			}
 			return ValueTask.CompletedTask;
 		});
 	});
 
-// --- 4. CORS CONFIGURATION ---
 builder.Services.AddCors(opt =>
 {
 	opt.AddPolicy("AllowBlazorOrigin", policy =>
@@ -108,7 +119,6 @@ builder.Services.AddCors(opt =>
 
 var app = builder.Build();
 
-// --- 5. PIPELINE ---
 
 app.UseExceptionHandler(opt => { });
 app.MapDefaultEndpoints();
@@ -127,7 +137,6 @@ app.MapReverseProxy();
 app.Run();
 
 
-// --- 6. YARP ROUTING ---
 static ClusterConfig[] GetClusters()
 {
 	return
@@ -157,7 +166,6 @@ static RouteConfig[] GetRoutes()
 			ClusterId = "OcelotCluster",
 			Match = new RouteMatch
 			{
-				// Catch everything else that isn't a User Controller
 				Path = "{**catch-all}"
 			}
 		}

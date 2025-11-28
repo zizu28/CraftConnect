@@ -1,5 +1,9 @@
 ﻿@using CraftConnect.WebUI.Services
+@using Microsoft.AspNetCore.Components.Authorization
 @inject ThemeService ThemeService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IHttpClientFactory HttpClientFactory
+@inject NavigationManager NavigationManager
 @implements IDisposable
 
 <header class="navbar-container post-project-nav">
@@ -25,7 +29,21 @@
             <a href="/contact" class="nav-link">Contact</a>
 
             @* Right Side Buttons *@
-            <a href="/login" class="btn btn-secondary btn-login">Log in</a>
+            <AuthorizeView Context="User">
+                <Authorized>
+                    <span class="user-greeting">
+                        <!-- 'context' contains the ClaimsPrincipal -->
+                        Hi, @User.User.Identity?.Name
+                    </span>
+                    <button class="btn btn-outline-danger btn-logout" @onclick="HandleLogout">
+                        Log out
+                    </button>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/login" class="btn btn-secondary btn-login">Log in</a>
+                </NotAuthorized>
+            </AuthorizeView>
+            
         </nav>
     </div>
 </header>
@@ -51,5 +69,20 @@
     public void Dispose()
     {
         ThemeService.OnThemeChanged -= OnThemeChangedHandler;
+    }
+
+    private async Task HandleLogout()
+    {
+        try
+        {
+            var client = HttpClientFactory.CreateClient("Backend");
+            await client.PostAsync("/api/users/logout", null);
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Logout failed: {ex.Message}");
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+        }
     }
 }

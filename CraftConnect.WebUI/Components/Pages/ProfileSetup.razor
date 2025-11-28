@@ -5,16 +5,30 @@
 @using Core.SharedKernel.ValueObjects
 @using CraftConnect.WebUI.Components.ProfileSetupPageComponents
 @using System.Text.Json
+@using CraftConnect.WebUI.DTOs
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @using UserManagement.Domain.Entities
+@inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavigationManager
 @inject IHttpClientFactory HttpClientFactory
-@inject ILogger<ProfileSetup> logger
+@inject ILoggerFactory loggerFactory
 
-<EditForm FormName="profile-setup" Enhance Model="@ProfileData">
-    <FluentValidationValidator Validator="@profileValidator" />
-    <ValidationSummary />
+@if (isLoading)
+{
+    <p>Loading profile...</p>
+}
+else if (!hasAccess)
+{
+    <div class="alert alert-danger">You are not authorized to edit this profile.</div>
+}
+else
+{
+    <EditForm FormName="profile-setup" Enhance Model="@ProfileData" OnValidSubmit="@HandleValidSubmit">
+        <FluentValidationValidator Validator="@profileValidator" />
+        <ValidationSummary />
 
-    @* --- 1. Personal Information --- *@
+        @* --- 1. Personal Information --- *@
         <h3 class="section-title">Personal Information</h3>
         <p class="section-hint">This information will be publicly visible, so be careful what you share.</p>
 
@@ -27,15 +41,15 @@
         <div class="form-group">
             <label>First Name</label>
             <InputText @bind-Value="ProfileData.FirstName" class="form-control" />
-            <ValidationMessage For="@(() => ProfileData.FirstName)" />  
+            <ValidationMessage For="@(() => ProfileData.FirstName)" />
         </div>
 
-    <div class="form-group">
-        <label>Last Name</label>
-        <InputText @bind-Value="ProfileData.LastName" class="form-control" />
-        <ValidationMessage For="@(() => ProfileData.LastName)" />
-    </div>
-        
+        <div class="form-group">
+            <label>Last Name</label>
+            <InputText @bind-Value="ProfileData.LastName" class="form-control" />
+            <ValidationMessage For="@(() => ProfileData.LastName)" />
+        </div>
+
         <div class="form-group">
             <label>Profession</label>
             @* The Profession property is an enum on the Craftman entity *@
@@ -45,16 +59,16 @@
                     <option value="@profession">@profession</option>
                 }
             </InputSelect>
-            <ValidationMessage For="@(() => ProfileData.Profession)"/>
+            <ValidationMessage For="@(() => ProfileData.Profession)" />
         </div>
-        
+
         <div class="form-group">
             <label>Bio</label>
             @* Mapped to Craftman.Bio *@
             <InputTextArea @bind-Value="ProfileData.Bio" class="form-control" placeholder="Write a few sentences about yourself." />
         </div>
 
-    @* --- 2. Skills (Using the Domain Skill Entity) --- *@
+        @* --- 2. Skills (Using the Domain Skill Entity) --- *@
 
         @* --- 3. Portfolio & 4. Work Experience (Components remain the same, binding to DTO lists) --- *@
         @* <PortfolioEditor @bind-Projects="ProfileData.Portfolio" /> *@
@@ -67,62 +81,120 @@
         <div class="form-group">
             <label>Email address</label>
             <InputText @bind-Value="ProfileData.EmailAddress" class="form-control" />
-        <ValidationMessage For="@(() => ProfileData.EmailAddress)" />
+            <ValidationMessage For="@(() => ProfileData.EmailAddress)" />
         </div>
         <div class="form-group">
             <label>Phone Number</label>
             <InputText @bind-Value="ProfileData.PhoneNumber" class="form-control" />
-        <ValidationMessage For="@(() => ProfileData.PhoneNumber)" />
+            <ValidationMessage For="@(() => ProfileData.PhoneNumber)" />
         </div>
         <div class="form-group">
             <label>Location</label>
             <InputText @bind-Value="ProfileData.Location" class="form-control" />
-        <ValidationMessage For="@(() => ProfileData.Location)" />
+            <ValidationMessage For="@(() => ProfileData.Location)" />
         </div>
 
         @* --- Actions --- *@
-        <div class="form-actions mt-2">
-            <button type="button" class="btn btn-secondary" @onclick="@(() => NavigationManager.NavigateTo($"/dashboard/{CraftmanId}"))">Cancel</button>
-            <button type="submit" class="btn btn-primary" @onclick="@HandleValidSubmit">Save Profile</button>
+        <div class="form-actions d-flex gap-2">
+            <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+
+            <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                @(isSubmitting ? "Saving..." : "Save Changes")
+            </button>
         </div>
-</EditForm>
+    </EditForm>
+}
 
 @code {
-    private CraftsmanProfileUpdateDTO ProfileData = new();
-    private ProfileSetupValidator profileValidator = new();
     [Parameter]
     public Guid CraftmanId { get; set; }
+    private CraftsmanProfileUpdateDTO ProfileData { get; set; } = new();
+    private CraftsmanResponseDTO? Craftsman { get; set; } = new();
+    private ProfileSetupValidator profileValidator = new();
+    private ILogger logger = default!;
+    private bool isLoading = false;
+    private bool hasAccess = false;
+    private bool isSubmitting = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        ProfileData.CraftmanId = CraftmanId;
-        // ProfileData.Skills.Add(new SkillsDTO("", 0));
-        // ProfileData.WorkExperience.Add(new WorkEntry());
-    }
-
-    public async Task HandleValidSubmit()
-    {
+        logger = loggerFactory.CreateLogger<ProfileSetup>();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity == null || !user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null || Guid.Parse(userIdClaim) != CraftmanId)
+        {
+            hasAccess = false;
+            isLoading = false;
+            return;
+        }
+        hasAccess = true;
         try
         {
             var httpClient = HttpClientFactory.CreateClient("Backend");
-            HttpResponseMessage response = await httpClient.PostAsJsonAsync($"/craftmen/update-craftman/{CraftmanId}", ProfileData,
-             new JsonSerializerOptions
-             {
-                 WriteIndented = true
-             });
-            if (response.IsSuccessStatusCode)
+            Craftsman = await httpClient.GetFromJsonAsync<CraftsmanResponseDTO>($"/api/users/craftsman/{CraftmanId}");
+            if(Craftsman != null)
             {
-                logger.LogInformation($"User {ProfileData.FirstName} profile has been updated.");
-                NavigationManager.NavigateTo($"/dashboard/{CraftmanId}");
-            }
-            else
-            {
-                logger.LogError($"Error updating {ProfileData.FirstName} profile.");
+                ProfileData.Location = Craftsman.Location;
+                ProfileData.VerificationStatus = Craftsman.VerificationStatus;
+                ProfileData.PhoneNumber = Craftsman.PhoneNumber;
+                ProfileData.Profession = Craftsman.Profession;
+                ProfileData.Bio = Craftsman.Bio;
+                ProfileData.ProfileImageUrl = Craftsman.ProfileImageUrl;
+                ProfileData.WorkExperience = Craftsman.WorkExperience;
+                ProfileData.EmailAddress = Craftsman.EmailAddress;
+                ProfileData.FirstName = Craftsman.FirstName;
+                ProfileData.LastName = Craftsman.LastName;
+                ProfileData.Portfolio = Craftsman.Portfolio;
+                ProfileData.Skills = Craftsman.Skills;
             }
         }
         catch(Exception ex)
         {
-            logger.LogError("Invalid data: {error}", ex.Message);
+            logger.LogError(ex, "Failed to load profile");
         }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    public async Task HandleValidSubmit()
+    {
+        if (isSubmitting) return;
+        isSubmitting = true;
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("Backend");
+            HttpResponseMessage response = await httpClient.PutAsJsonAsync($"/craftmen/update-craftsman/{CraftmanId}", ProfileData);
+            if (response.IsSuccessStatusCode)
+            {
+                logger.LogInformation($"Profile updated for {CraftmanId}");
+                NavigationManager.NavigateTo($"/dashboard/{CraftmanId}");
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                logger.LogError($"Update failed: {error}");
+            }
+        }
+        catch(Exception ex)
+        {
+            logger.LogError($"Network error: {ex.Message}");
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo($"/dashboard/{CraftmanId}");
     }
 }

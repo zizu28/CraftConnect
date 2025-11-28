@@ -5,9 +5,11 @@ using System.Security.Claims;
 namespace CraftConnect.WebUI.Auth
 {
 	public class BffAuthenticationStateProvider(
-		IHttpClientFactory httpClientFactory) : AuthenticationStateProvider
+		IHttpClientFactory httpClientFactory,
+		ILoggerFactory loggerFactory) : AuthenticationStateProvider
 	{
 		private readonly HttpClient httpClient = httpClientFactory.CreateClient("Backend");
+		private readonly ILogger logger = loggerFactory.CreateLogger<BffAuthenticationStateProvider>();
 
 		public override async Task<AuthenticationState> GetAuthenticationStateAsync()
 		{
@@ -20,20 +22,22 @@ namespace CraftConnect.WebUI.Auth
 					{
 						new(ClaimTypes.NameIdentifier, userInfo.UserId.ToString()),
 						new(ClaimTypes.Email, userInfo.Email!),
-						new(ClaimTypes.Role, userInfo.Role)
+						new(ClaimTypes.Role, userInfo.Role),
+						new(ClaimTypes.Name, userInfo.Email!)
 					};
 
 					var identity = new ClaimsIdentity(claims, "BffAuth");
 					var user = new ClaimsPrincipal(identity);
-
+					logger.LogInformation("User restored from Cookie: {Email}", userInfo.Email);
 					return new AuthenticationState(user);
 				}
 			}
-			catch
+			catch(Exception ex)
 			{
-
+				logger.LogWarning(ex, "CheckAuthenticationState failed. Defaulting to Anonymous.");
 			}
-			return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+			var anonymous = new ClaimsPrincipal(new ClaimsIdentity());
+			return new AuthenticationState(anonymous);
 		}
 
 		public void NotifyUserLoggedIn(UserResponseDTO userInfo)
@@ -42,7 +46,8 @@ namespace CraftConnect.WebUI.Auth
 			{
 				new(ClaimTypes.NameIdentifier, userInfo.UserId.ToString()),
 				new(ClaimTypes.Email, userInfo.Email!),
-				new(ClaimTypes.Role, userInfo.Role)
+				new(ClaimTypes.Role, userInfo.Role),
+				new(ClaimTypes.Name, userInfo.Email!)
 			};
 			var identity = new ClaimsIdentity(claims, "BffAuth");
 			var user = new ClaimsPrincipal(identity);
@@ -50,7 +55,6 @@ namespace CraftConnect.WebUI.Auth
 			NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
 		}
 
-		// Call this from Logout button
 		public void NotifyUserLoggedOut()
 		{
 			var anonymous = new ClaimsPrincipal(new ClaimsIdentity());

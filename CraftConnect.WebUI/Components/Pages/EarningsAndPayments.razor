@@ -1,4 +1,4 @@
-﻿@page "/craftsman/earnings"
+﻿@page "/craftsman/{CraftsmanId:guid}/earnings"
 @layout EarningsLayout
 @using CraftConnect.WebUI.Components.EarningsAndPaymentsPageComponents
 @using CraftConnect.WebUI.Components.Layout
@@ -55,6 +55,8 @@
 </div>
 
 @code {
+    [Parameter]
+    public Guid CraftsmanId { get; set; }
     private CraftsmanEarningStats stats = new();
     private List<CraftsmanTransaction> allTransactions = new();
 

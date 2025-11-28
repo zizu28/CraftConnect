@@ -1,16 +1,24 @@
 ﻿@using System.Reflection
 @using Microsoft.AspNetCore.Components.Authorization
+
 <CascadingAuthenticationState>
-    <Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="@assemblies">
+    <Router AppAssembly="typeof(Program).Assembly">
         <Found Context="routeData">
-            <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
-            <FocusOnNavigate RouteData="routeData" Selector="h1" />
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)">
                 <NotAuthorized>
-                    <!-- If not logged in, redirect or show message -->
-                    <p>You are not authorized to view this page.</p>
+                    @if (context.User.Identity?.IsAuthenticated != true)
+                    {
+                        <RedirectToHome /> 
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger">
+                            You do not have permission to view this page.
+                        </div>
+                    }
                 </NotAuthorized>
             </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="routeData" Selector="h1" />
         </Found>
         <NotFound>
             <PageTitle>Not found</PageTitle>
@@ -21,10 +29,11 @@
     </Router>
 </CascadingAuthenticationState>
 
-
-@code {
+@* @code {
     Assembly[] assemblies = new Assembly[]
     {
+        // Ensure this assembly actually contains your RAZOR pages, not just DTOs
+        // Usually: typeof(CraftConnect.WebUI.Components.Pages.SomePage).Assembly
         typeof(UserManagement.Domain.Entities.CraftsmanProfileUpdateDTO).Assembly
-    };
+    }; *@
 }

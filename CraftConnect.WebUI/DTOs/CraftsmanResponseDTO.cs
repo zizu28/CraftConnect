@@ -1,9 +1,9 @@
 ﻿using Core.SharedKernel.Domain;
 using Core.SharedKernel.ValueObjects;
 
-namespace UserManagement.Application.DTOs.CraftmanDTO
+namespace CraftConnect.WebUI.DTOs
 {
-	public class CraftmanResponseDTO
+	public class CraftsmanResponseDTO
 	{
 		public Guid CraftmanId { get; set; }
 		public string FirstName { get; set; } = string.Empty;
@@ -12,12 +12,9 @@ namespace UserManagement.Application.DTOs.CraftmanDTO
 		public string Profession { get; set; } = string.Empty;
 		public string VerificationStatus { get; set; } = string.Empty;
 		public string ProfileImageUrl { get; set; } = string.Empty;
-
 		public List<SkillsDTO> Skills { get; set; } = [];
-
 		public List<Project> Portfolio { get; set; } = [];
 		public List<WorkEntry> WorkExperience { get; set; } = [];
-
 		public string EmailAddress { get; set; } = string.Empty;
 		public string PhoneNumber { get; set; } = string.Empty;
 		public string Location { get; set; } = string.Empty;
@@ -25,5 +22,4 @@ namespace UserManagement.Application.DTOs.CraftmanDTO
 		public List<string> Errors { get; set; } = [];
 		public bool IsSuccessful { get; set; }
 	}
-
 }

@@ -49,6 +49,8 @@ namespace Infrastructure.Persistence.Data
 			modelBuilder.Owned<Inventory>();
 			modelBuilder.Owned<InvoiceRecipient>();
 			modelBuilder.Owned<AttachedDocument>();
+			modelBuilder.Owned<Core.SharedKernel.ValueObjects.Project>();
+			modelBuilder.Owned<WorkEntry>();
 
 			var applicationsToScan = AppDomain.CurrentDomain.GetAssemblies()
 				.Where(a => a.FullName != null && (

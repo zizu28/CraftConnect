@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
+using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -40,17 +41,20 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.CraftmanComma
 			);
 
 			var mappedResponse = mapper.Map<CraftmanResponseDTO>(craftman);
+			mappedResponse.CraftmanId = request.CraftmanId;
 			mappedResponse.IsSuccessful = true;
 			mappedResponse.Message = "Craftman updated successfully.";
 			//await cacheService.RemoveSync($"Craftman:{craftman.Id}", cancellationToken);
 			//await cacheService.SetAsync($"Craftman:{request.CraftmanId}", response, cancellationToken);
 			logger.LogInformation("Craftman with ID {CraftmanId} updated successfully.", craftman.Id);
-			backgroundJob.Enqueue<IEmailService>("",
+			backgroundJob.Enqueue<IGmailService>(
+				"default",
 				emailService => emailService.SendEmailAsync(
 					craftman.Email.Address,
 					$"{craftman.FirstName} {craftman.LastName} Updated",
 					"Your profile has been updated. If you did not issue this request, kindly contact us for immediate action.",
-					true, CancellationToken.None));
+					true, 
+					CancellationToken.None));
 			return mappedResponse;
 		}
 	}

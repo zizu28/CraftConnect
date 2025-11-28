@@ -105,8 +105,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				);
 			}
 
-			response.Id = newUser.Id;
-			response.Email = newUser.Email.Address;
+			response.EmailAddress = newUser.Email.Address;
 			logger.LogInformation("Craftman with email {Email} registered successfully.", newUser.Email.Address);
 			response.Message = "Customer registration successful.";
 			response.IsSuccessful = true;

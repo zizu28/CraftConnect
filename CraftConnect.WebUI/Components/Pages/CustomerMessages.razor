@@ -1,4 +1,4 @@
-﻿@page "/customer/messages"
+﻿@page "/customer/{CustomerId:guid}/messages"
 @layout CraftsmanLayout
 @using CraftConnect.WebUI.Components.CustomerMessagesPageComponents
 @using CraftConnect.WebUI.Components.Layout
@@ -47,8 +47,10 @@
 </div>
 
 @code {
+    [Parameter]
+    public Guid CustomerId { get; set; }
     private MessagesViewModel viewModel = new();
-    private Guid? selectedConversationId = Guid.NewGuid(); // Default to first conversation selected
+    private Guid? selectedConversationId = Guid.NewGuid();
 
     protected override void OnInitialized()
     {

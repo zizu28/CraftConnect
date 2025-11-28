@@ -1,5 +1,7 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using UserManagement.Application.CQRS.Commands;
 using UserManagement.Application.CQRS.Commands.CraftmanCommands;
 using UserManagement.Domain.Entities;
@@ -8,6 +10,7 @@ namespace UserManagement.Presentation.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
+	[Authorize]
 	public class CraftmenController(IMediator mediator) : ControllerBase
 	{
 		[HttpPost("add-skill")]
@@ -25,11 +28,22 @@ namespace UserManagement.Presentation.Controllers
 			return StatusCode(500, "An error occurred while adding the skill.");
 		}
 
-		[HttpPost("update-craftman/{Id:guid}")]
-		public async Task<IActionResult> UpdateCraftsmanAsync([FromBody] CraftsmanProfileUpdateDTO craftman, 
-			[FromRoute] Guid id)
+		[HttpPut("update-craftsman/{id:guid}")]
+		[Consumes("application/json")]
+		public async Task<IActionResult> UpdateCraftsmanAsync([FromRoute] Guid id, [FromBody] CraftsmanProfileUpdateDTO craftman)
 		{
-			if(craftman == null)
+			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)
+								?? User.FindFirst("sub")
+								?? User.FindFirst("id");
+			if (userIdClaim == null) return Unauthorized();
+
+			var tokenUserId = Guid.Parse(userIdClaim.Value);
+			if (tokenUserId != id)
+			{
+				return Forbid();
+			}
+
+			if (craftman == null)
 			{
 				return BadRequest();
 			}
@@ -37,9 +51,9 @@ namespace UserManagement.Presentation.Controllers
 			var response = await mediator.Send(command);
 			if (!response.IsSuccessful)
 			{
-				return BadRequest("Invalid inputs");
+				return BadRequest($"Invalid inputs: Errors: {response.Errors}");
 			}
-			return Ok(response);
+			return Ok();
 		}
 
 		[HttpPost("/verify-craftman-status")]

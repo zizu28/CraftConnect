@@ -33,14 +33,15 @@ builder.Services.AddCors(opt =>
 {
 	opt.AddPolicy("frontend", policy =>
 	{
-		policy.AllowAnyMethod();
-		policy.AllowAnyOrigin();
-		policy.AllowAnyHeader();
+		policy.WithOrigins("https://localhost:7235")
+			.AllowAnyMethod()
+			.AllowAnyHeader()
+			.AllowCredentials();
 	});
 });
 
 builder.Services.AddAuthentication("Bearer")
-	.AddJwtBearer(options =>
+	.AddJwtBearer("Bearer", options =>
 	{
 		options.TokenValidationParameters = new TokenValidationParameters
 		{
@@ -75,14 +76,14 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-await app.UseOcelot();
-
 app.UseHttpsRedirection();
+
 app.UseCors("frontend");
 
 app.UseAuthentication();
+
 app.UseAuthorization();
 
-app.MapControllers();
+await app.UseOcelot();
 
 app.Run();

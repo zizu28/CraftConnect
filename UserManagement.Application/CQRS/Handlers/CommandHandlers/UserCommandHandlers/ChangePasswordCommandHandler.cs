@@ -1,14 +1,10 @@
 ﻿using Infrastructure.BackgroundJobs;
-using Infrastructure.EmailService;
 using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.Data;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
-using UserManagement.Domain.Entities;
 
 namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHandlers
 {

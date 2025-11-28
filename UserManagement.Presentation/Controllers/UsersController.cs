@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using UserManagement.Application.CQRS.Commands.UserCommands;
+using UserManagement.Application.CQRS.Handlers.QueryHandlers.Queries.CraftmanQueries;
+using UserManagement.Application.CQRS.Queries.CustomerQueries;
 using UserManagement.Application.CQRS.Queries.UserQueries;
 using UserManagement.Application.DTOs.CraftmanDTO;
 using UserManagement.Application.DTOs.CustomerDTO;
@@ -15,15 +17,28 @@ namespace UserManagement.Presentation.Controllers
 	public class UsersController(IMediator mediator) : ControllerBase
 	{
 		[HttpGet("me")]
-		[Authorize] // This works because the Cookie -> Bearer transformation happens before this hits
+		[Authorize]
 		public async Task<IActionResult> GetCurrentUser()
 		{
-			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("sub");
+			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)
+					  ?? User.FindFirst("sub")
+					  ?? User.FindFirst("id")
+					  ?? User.FindFirst("UserId");
 
-			if (userIdClaim == null) return Unauthorized();
+			if (userIdClaim == null || string.IsNullOrEmpty(userIdClaim.Value))
+			{
+				return Unauthorized("Token does not contain a User ID claim.");
+			}
 
-			var query = new GetUserByIdQuery { UserId = Guid.Parse(userIdClaim.Value) };
+			if (!Guid.TryParse(userIdClaim.Value, out var userId))
+			{
+				return Unauthorized("Token User ID is not a valid GUID.");
+			}
+
+			var query = new GetUserByIdQuery { UserId = userId };
 			var user = await mediator.Send(query);
+
+			if (user == null) return Unauthorized("User no longer exists.");
 
 			return Ok(user);
 		}
@@ -44,6 +59,30 @@ namespace UserManagement.Presentation.Controllers
 		public async Task<IActionResult> GetUserByIdAsync(Guid id)
 		{
 			var query = new GetUserByIdQuery { UserId = id };
+			var user = await mediator.Send(query);
+			if (user == null)
+			{
+				return NotFound($"User with ID {id} not found.");
+			}
+			return Ok(user);
+		}
+
+		[HttpGet("craftsman/{id:guid}")]
+		public async Task<IActionResult> GetCraftsmanByIdAsync(Guid id)
+		{
+			var query = new GetCraftmanByIdQuery { CraftmanId = id };
+			var user = await mediator.Send(query);
+			if (user == null)
+			{
+				return NotFound($"User with ID {id} not found.");
+			}
+			return Ok(user);
+		}
+
+		[HttpGet("customer/{id:guid}")]
+		public async Task<IActionResult> GetCustomerByIdAsync(Guid id)
+		{
+			var query = new GetCustomerByIdQuery { CustomerId = id };
 			var user = await mediator.Send(query);
 			if (user == null)
 			{
@@ -119,19 +158,16 @@ namespace UserManagement.Presentation.Controllers
 		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> LoginUserAsync([FromBody] LoginUserCommand command)
 		{
+			ArgumentNullException.ThrowIfNull(command, nameof(command));
 			var response = await mediator.Send(command);
+			Console.WriteLine($"Access Token Length: {response.AccessToken?.Length ?? 0}");
+			Console.WriteLine($"Refresh Token Length: {response.RefreshToken?.Length ?? 0}");
 			if (string.IsNullOrEmpty(response.AccessToken) || string.IsNullOrEmpty(response.RefreshToken))
 			{
 				return Unauthorized("Invalid login attempt.");
 			}
-			Response.Cookies.Append("X-Access-Token", response.AccessToken, new CookieOptions
-			{
-				HttpOnly = true,
-				SameSite = SameSiteMode.Strict,
-				Secure = true,
-				Expires = DateTime.UtcNow.AddMinutes(15)
-			});
-
+			SetTokenCookies(response.AccessToken, response.RefreshToken);
+			
 			var userQuery = new GetUserByEmailQuery { Email = command.Email };
 			var user = await mediator.Send(userQuery);			
 
@@ -183,7 +219,7 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("forgot-password")]
-		public async Task<IActionResult> ForgotPasswordAsync(ForgotPasswordCommand command)
+		public async Task<IActionResult> ForgotPasswordAsync([FromBody] ForgotPasswordCommand command)
 		{
 			ArgumentNullException.ThrowIfNull(command, nameof(command));
 			await mediator.Send(command);
@@ -213,28 +249,43 @@ namespace UserManagement.Presentation.Controllers
 
 		private void SetTokenCookies(string accessToken, string refreshToken)
 		{
+			Response.Cookies.Delete("X-Access-Token", new CookieOptions { Path = "/" });
+			Response.Cookies.Delete("X-Refresh-Token", new CookieOptions { Path = "/" });
+			Response.Cookies.Delete("X-Access-Token");
+			Response.Cookies.Delete("X-Refresh-Token");
 			var cookieOptions = new CookieOptions
 			{
 				HttpOnly = true,
-				SameSite = SameSiteMode.Strict,
+				SameSite = SameSiteMode.None,
 				Secure = true,
-				Expires = DateTime.UtcNow.AddMinutes(15)
+				Expires = DateTime.UtcNow.AddMinutes(15),
+				Path = "/"
 			};
-			Response.Cookies.Append("X-Access-Token", accessToken, cookieOptions);
+			
 			var refreshOptions = new CookieOptions
 			{
 				HttpOnly = true,
-				SameSite = SameSiteMode.Strict,
+				SameSite = SameSiteMode.None,
 				Secure = true,
-				Expires = DateTime.UtcNow.AddDays(7)
+				Expires = DateTime.UtcNow.AddDays(7),
+				Path = "/"
 			};
+
+			Response.Cookies.Append("X-Access-Token", accessToken, cookieOptions);
 			Response.Cookies.Append("X-Refresh-Token", refreshToken, refreshOptions);
 		}
 
 		private void DeleteTokenCookies()
 		{
-			Response.Cookies.Delete("X-Access-Token");
-			Response.Cookies.Delete("X-Refresh-Token");
+			var cookieOptions = new CookieOptions
+			{
+				Path = "/",
+				Secure = true,
+				SameSite = SameSiteMode.None
+			};
+
+			Response.Cookies.Delete("X-Access-Token", cookieOptions);
+			Response.Cookies.Delete("X-Refresh-Token", cookieOptions);
 		}
 	}
 }
