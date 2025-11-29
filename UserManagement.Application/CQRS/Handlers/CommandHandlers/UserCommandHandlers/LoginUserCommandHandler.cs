@@ -38,6 +38,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				_logger.LogWarning("Invalid login attempt for user with email: {Email}", request.Email);
 				return response;
 			}
+			response.UserId = user.Id;
 			response.AccessToken = _refreshToken.GenerateAccessToken(user.Id, user.Email.Address, user.Role.ToString());
 			response.RefreshToken = await _refreshToken.GenerateRefreshToken(user);
 			

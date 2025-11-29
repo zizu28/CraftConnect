@@ -137,7 +137,7 @@ else
         try
         {
             var httpClient = HttpClientFactory.CreateClient("Backend");
-            Craftsman = await httpClient.GetFromJsonAsync<CraftsmanResponseDTO>($"/api/users/craftsman/{CraftmanId}");
+            Craftsman = await httpClient.GetFromJsonAsync<CraftsmanResponseDTO>($"/users/craftsman/{CraftmanId}");
             if(Craftsman != null)
             {
                 ProfileData.Location = Craftsman.Location;

@@ -30,7 +30,7 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
 			var securityToken = new JwtSecurityToken(issuer, audience, claims,
-				//notBefore: DateTime.UtcNow,
+				notBefore: DateTime.UtcNow,
 				expires: DateTime.UtcNow.AddMinutes(15),
 				signingCredentials: creds);
 			var token = new JwtSecurityTokenHandler().WriteToken(securityToken);

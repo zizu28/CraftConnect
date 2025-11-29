@@ -13,9 +13,10 @@ namespace UserManagement.Application.CQRS.Handlers.QueryHandlers.UserQueryHandle
 	{
 		public async Task<UserResponseDTO> Handle(GetUserByEmailQuery request, CancellationToken cancellationToken)
 		{
-			var user = await userRepository.GetByEmailAsync(request.Email, cancellationToken)
+			var existingUser = await userRepository.GetByEmailAsync(request.Email, cancellationToken)
 				?? throw new NotFoundException($"User with email {request.Email} not found.");
-			return mapper.Map<UserResponseDTO>(user);
+			var User = mapper.Map<UserResponseDTO>(existingUser);
+			return User;
 		}
 	}
 }

@@ -35,4 +35,6 @@ builder.AddProject<Projects.CraftConnect_WebUI>("craftconnect-webui");
 
 builder.AddProject<Projects.AuditManagement_Presentation>("auditmanagement-presentation");
 
+builder.AddProject<Projects.Core_BFF>("core-bff");
+
 builder.Build().Run();

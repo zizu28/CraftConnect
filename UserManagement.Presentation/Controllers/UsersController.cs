@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -20,10 +22,7 @@ namespace UserManagement.Presentation.Controllers
 		[Authorize]
 		public async Task<IActionResult> GetCurrentUser()
 		{
-			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)
-					  ?? User.FindFirst("sub")
-					  ?? User.FindFirst("id")
-					  ?? User.FindFirst("UserId");
+			var userIdClaim =  User.FindFirst(ClaimTypes.NameIdentifier);
 
 			if (userIdClaim == null || string.IsNullOrEmpty(userIdClaim.Value))
 			{
@@ -155,29 +154,29 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("signin")]
-		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> LoginUserAsync([FromBody] LoginUserCommand command)
 		{
 			ArgumentNullException.ThrowIfNull(command, nameof(command));
-			var response = await mediator.Send(command);
-			Console.WriteLine($"Access Token Length: {response.AccessToken?.Length ?? 0}");
-			Console.WriteLine($"Refresh Token Length: {response.RefreshToken?.Length ?? 0}");
-			if (string.IsNullOrEmpty(response.AccessToken) || string.IsNullOrEmpty(response.RefreshToken))
+			var loginResponse = await mediator.Send(command);
+			if (loginResponse == null || string.IsNullOrEmpty(loginResponse.AccessToken))
 			{
-				return Unauthorized("Invalid login attempt.");
+				return Unauthorized();
 			}
-			SetTokenCookies(response.AccessToken, response.RefreshToken);
-			
 			var userQuery = new GetUserByEmailQuery { Email = command.Email };
-			var user = await mediator.Send(userQuery);			
+			var userResponseDto = await mediator.Send(userQuery);			
 
-			return Ok(user);
+			return Ok(new
+			{
+				loginResponse.AccessToken,
+				loginResponse.RefreshToken,
+				User = userResponseDto
+			});
 		}
 
 		[HttpPost("logout")]
 		public async Task<IActionResult> Logout()
 		{
-			DeleteTokenCookies();
+			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 			return Ok();
 		}
 
@@ -194,10 +193,8 @@ namespace UserManagement.Presentation.Controllers
 			var newTokens = await mediator.Send(command);
 			if (string.IsNullOrEmpty(newTokens.AccessToken))
 			{
-				DeleteTokenCookies();
 				return Unauthorized("Invalid refresh token.");
 			}
-			SetTokenCookies(newTokens.AccessToken, newTokens.RefreshToken);
 			return Ok(newTokens);
 		}
 				
@@ -245,47 +242,6 @@ namespace UserManagement.Presentation.Controllers
 			var command = new DeleteUserCommand { UserId = id };
 			await mediator.Send(command);
 			return NoContent();
-		}
-
-		private void SetTokenCookies(string accessToken, string refreshToken)
-		{
-			Response.Cookies.Delete("X-Access-Token", new CookieOptions { Path = "/" });
-			Response.Cookies.Delete("X-Refresh-Token", new CookieOptions { Path = "/" });
-			Response.Cookies.Delete("X-Access-Token");
-			Response.Cookies.Delete("X-Refresh-Token");
-			var cookieOptions = new CookieOptions
-			{
-				HttpOnly = true,
-				SameSite = SameSiteMode.None,
-				Secure = true,
-				Expires = DateTime.UtcNow.AddMinutes(15),
-				Path = "/"
-			};
-			
-			var refreshOptions = new CookieOptions
-			{
-				HttpOnly = true,
-				SameSite = SameSiteMode.None,
-				Secure = true,
-				Expires = DateTime.UtcNow.AddDays(7),
-				Path = "/"
-			};
-
-			Response.Cookies.Append("X-Access-Token", accessToken, cookieOptions);
-			Response.Cookies.Append("X-Refresh-Token", refreshToken, refreshOptions);
-		}
-
-		private void DeleteTokenCookies()
-		{
-			var cookieOptions = new CookieOptions
-			{
-				Path = "/",
-				Secure = true,
-				SameSite = SameSiteMode.None
-			};
-
-			Response.Cookies.Delete("X-Access-Token", cookieOptions);
-			Response.Cookies.Delete("X-Refresh-Token", cookieOptions);
 		}
 	}
 }

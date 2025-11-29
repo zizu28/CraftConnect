@@ -103,6 +103,7 @@
 
     public class LoginResponse
     {
+        public Guid UserId { get; set; }
         public string AccessToken { get; set; } = string.Empty;
         public string RefreshToken { get; set; } = string.Empty;
     }
@@ -114,23 +115,12 @@
         try
         {
             var httpClient = HttpClientFactory.CreateClient("Backend");
-            HttpResponseMessage response = await httpClient.PostAsJsonAsync("/api/users/signin", model, new JsonSerializerOptions
+            HttpResponseMessage response = await httpClient.PostAsJsonAsync("/api/auth/login", model, new JsonSerializerOptions
             {
                 WriteIndented = true
             });
             if (response.IsSuccessStatusCode)
             {
-                // user = await httpClient.GetFromJsonAsync<UserResponseDTO>($"/api/users/by-email/{model.Email}");
-                // var tokenResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
-                // if (tokenResponse != null && !string.IsNullOrEmpty(tokenResponse.AccessToken) && !string.IsNullOrEmpty(tokenResponse.RefreshToken))
-                // {
-                //     var claims = JwtParser.ParseClaimsFromJwt(tokenResponse.AccessToken);
-                //     var roleClaim = claims.FirstOrDefault(c => c.Type == "role" || c.Type == ClaimTypes.Role);
-                //     if(roleClaim != null)
-                //     {
-                //         userRole = roleClaim.Value;
-                //     }
-                // }
                 var userInfo = await response.Content.ReadFromJsonAsync<UserResponseDTO>();
                 var customAuthStateProvider = (BffAuthenticationStateProvider)AuthStateProvider;                
                 

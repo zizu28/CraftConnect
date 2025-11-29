@@ -1,4 +1,4 @@
-﻿namespace CraftConnect.WebUI.ViewModels
+﻿namespace Core.BFF.RequestsEntities
 {
 	public class LoginUserCommand
 	{

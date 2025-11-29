@@ -15,7 +15,7 @@ namespace CraftConnect.WebUI.Auth
 		{
 			try
 			{
-				var userInfo = await httpClient.GetFromJsonAsync<UserResponseDTO>("/api/users/me");
+				var userInfo = await httpClient.GetFromJsonAsync<UserResponseDTO>("/users/me");
 				if (userInfo != null)
 				{
 					var claims = new List<Claim>

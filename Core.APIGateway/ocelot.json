@@ -1,34 +1,31 @@
 {
   "Routes": [
     //// --- User Management Service Routes ---
-    //{
-    //  //"RouteName": "UserApi",
-    //  "UpstreamPathTemplate": "/users/{everything}",
-    //  "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-    //  "AuthenticationOptions": {
-    //    "AuthenticationProviderKey": "Bearer",
-    //    "AllowedScopes": []
-    //  },
-    //  "DownstreamPathTemplate": "/api/users/{everything}",
-    //  "DownstreamScheme": "https",
-    //  "DownstreamHostAndPorts": [
-    //    {
-    //      "Host": "localhost",
-    //      "Port": 7235
-    //    }
-    //  ],
-    //  //"RouteClaimsRequirement": {
-    //  //  "Role": "Admin"
-    //  //},
-    //  "RateLimitOptions": {
-    //    "EnableRateLimiting": true,
-    //    "Period": "30s",
-    //    "Limit": 15
-    //  }
-    //},
+    {
+      //"RouteName": "UserApi",
+      "UpstreamPathTemplate": "/users/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "DownstreamPathTemplate": "/api/users/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7235
+        }
+      ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "30s",
+        "Limit": 15
+      }
+    },
     // --- Craftman Management Service Routes ---
     {
-      "UpstreamPathTemplate": "/api/craftmen/{everything}",
+      "UpstreamPathTemplate": "/craftmen/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT" ],
       "DownstreamPathTemplate": "/api/craftmen/{everything}",
       "DownstreamScheme": "https",
