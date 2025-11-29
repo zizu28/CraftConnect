@@ -1,0 +1,28 @@
+﻿<li>
+    <a href="@Item.Href" class="nav-item @(IsActive(Item.Href) ? "active" : "")">
+        @Item.Title
+    </a>
+
+    @if (Item.Children.Any())
+    {
+        <ul class="nav-child-list">
+            @foreach (var child in Item.Children)
+            {
+                <RecursiveNavItem Item="child" ActiveSectionId="ActiveSectionId" />
+            }
+        </ul>
+    }
+</li>
+
+@code {
+    [Parameter]
+    public TermsNavItem Item { get; set; }
+
+    [Parameter]
+    public string ActiveSectionId { get; set; }
+
+    private bool IsActive(string href)
+    {
+        return href == "#" + ActiveSectionId;
+    }
+}

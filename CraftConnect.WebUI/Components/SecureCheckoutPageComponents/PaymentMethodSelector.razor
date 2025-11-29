@@ -1,0 +1,55 @@
+﻿<div class="checkout-card">
+    <h2 class="card-title">Choose a Payment Method</h2>
+    <div class="payment-options">
+        <label class="payment-option @(PaymentMethod == "CreditCard" ? "selected" : "")">
+            <input type="radio" name="payment-method" value="CreditCard"
+                   @onchange="@(() => OnPaymentMethodChanged(" CreditCard"))"
+                   checked="@(PaymentMethod == "CreditCard")" />
+            <span class="radio-display"></span>
+            <span class="option-name">Credit/Debit Card</span>
+            <svg class="option-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4.5 3.75a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V6.75a3 3 0 0 0-3-3h-15ZM22.5 9H1.5V6.75a1.5 1.5 0 0 1 1.5-1.5h15a1.5 1.5 0 0 1 1.5 1.5V9Z" />
+            </svg>
+        </label>
+
+        <label class="payment-option @(PaymentMethod == "PayPal" ? "selected" : "")">
+            <input type="radio" name="payment-method" value="PayPal"
+                   @onchange="@(() => OnPaymentMethodChanged(" PayPal"))"
+                   checked="@(PaymentMethod == "PayPal")" />
+            <span class="radio-display"></span>
+            <span class="option-name">PayPal</span>
+            <!-- Add PayPal icon SVG here -->
+        </label>
+
+        <label class="payment-option @(PaymentMethod == "Stripe" ? "selected" : "")">
+            <input type="radio" name="payment-method" value="Stripe"
+                   @onchange="@(() => OnPaymentMethodChanged(" Stripe"))"
+                   checked="@(PaymentMethod == "Stripe")" />
+            <span class="radio-display"></span>
+            <span class="option-name">Stripe</span>
+            <!-- Add Stripe icon SVG here -->
+        </label>
+        <label class="payment-option @(PaymentMethod == "MobileMoney" ? "selected" : "")">
+            <input type="radio" name="payment-method" value="MobileMoney"
+                   @onchange="@(() => OnPaymentMethodChanged(" MobileMoney"))"
+                   checked="@(PaymentMethod == "MobileMoney")" />
+            <span class="radio-display"></span>
+            <span class="option-name">Mobile Money</span>
+            <!-- Add Mobile Money icon SVG here -->
+        </label>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string PaymentMethod { get; set; }
+
+    [Parameter]
+    public EventCallback<string> PaymentMethodChanged { get; set; }
+
+    private async Task OnPaymentMethodChanged(string value)
+    {
+        PaymentMethod = value;
+        await PaymentMethodChanged.InvokeAsync(value);
+    }
+}

@@ -1,0 +1,45 @@
+﻿.code-input-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+    /* Use ::deep to apply styles to the child 'InputText' components, 
+  which fixes the width and flex-grow issues.
+*/
+    .code-input-container ::deep .code-input {
+        /* Explicitly set width and prevent flexbox from stretching it */
+        width: 48px;
+        min-width: 48px;
+        max-width: 48px;
+        flex-grow: 0;
+        flex-shrink: 0;
+        height: 56px;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 600;
+        border: 1px solid #CBD5E1; /* Slate-300 */
+        border-radius: 8px;
+        background-color: #F8FAFC; /* Slate-50 */
+        color: #1E293B; /* Slate-800 */
+        /* Ensure box-sizing is correct */
+        box-sizing: border-box;
+    }
+
+        .code-input-container ::deep .code-input:focus {
+            outline: none;
+            border-color: #334155; /* Slate-700 */
+            box-shadow: 0 0 0 2px rgba(51, 65, 85, 0.2);
+            background-color: #FFFFFF;
+        }
+
+        /* Remove arrows from number input */
+        .code-input-container ::deep .code-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .code-input-container ::deep .code-input::-webkit-outer-spin-button,
+        .code-input-container ::deep .code-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }

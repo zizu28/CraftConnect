@@ -14,7 +14,7 @@ namespace UserManagement.Infrastructure.EntityTypeConfigurations
 			builder.HasOne(rt => rt.User)
 				.WithMany()
 				.HasForeignKey(rt => rt.UserId)
-				.OnDelete(DeleteBehavior.Cascade);
+				.OnDelete(DeleteBehavior.Restrict);
 		}
 	}
 }

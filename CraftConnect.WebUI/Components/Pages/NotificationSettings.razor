@@ -1,0 +1,69 @@
+﻿@page "/settings/notifications"
+@layout NotificationSettingsLayout
+@using CraftConnect.WebUI.Components.Layout
+@using CraftConnect.WebUI.Components.NotificationSettingsPageComponents
+
+<EditForm Model="settings" OnValidSubmit="SaveChanges">
+    <DataAnnotationsValidator />
+
+    <div class="settings-header">
+        <h1>Notification Settings</h1>
+        <p>Choose how you want to be notified about activity on the platform.</p>
+    </div>
+
+    <!-- Main Toggle -->
+    <MainNotificationToggle @bind-Value="settings.ReceiveAllNotifications" Title="Receive All Notifications" />
+
+    <!-- Settings Groups -->
+    <div class_="@(settings.ReceiveAllNotifications ? "" : "group-disabled")">
+        
+        <NotificationSettingsGroup Title="Message Notifications">
+            <NotificationPreferenceRow Title="New Messages" Icon="message"
+                @bind-Email="settings.MsgNewMessagesEmail"
+                @bind-InApp="settings.MsgNewMessagesInApp"
+                @bind-Push="settings.MsgNewMessagesPush" />
+        </NotificationSettingsGroup>
+
+        <NotificationSettingsGroup Title="Project Notifications">
+            <NotificationPreferenceRow Title="Proposal Accepted" Icon="document"
+                @bind-Email="settings.ProjProposalAcceptedEmail"
+                @bind-InApp="settings.ProjProposalAcceptedInApp"
+                @bind-Push="settings.ProjProposalAcceptedPush" />
+            <NotificationPreferenceRow Title="Project Milestones" Icon="milestone"
+                @bind-Email="settings.ProjProjectMilestonesEmail"
+                @bind-InApp="settings.ProjProjectMilestonesInApp"
+                @bind-Push="settings.ProjProjectMilestonesPush" />
+        </NotificationSettingsGroup>
+
+        <NotificationSettingsGroup Title="Service Request Notifications">
+            <NotificationPreferenceRow Title="New Service Request Matching Skills" Icon="service"
+                @bind-Email="settings.SvcNewRequestMatchingSkillsEmail"
+                @bind-InApp="settings.SvcNewRequestMatchingSkillsInApp"
+                @bind-Push="settings.SvcNewRequestMatchingSkillsPush" />
+        </NotificationSettingsGroup>
+
+        <NotificationSettingsGroup Title="Payment Notifications">
+            <NotificationPreferenceRow Title="Payment Confirmation" Icon="payment"
+                @bind-Email="settings.PmtPaymentConfirmationEmail"
+                @bind-InApp="settings.PmtPaymentConfirmationInApp"
+                @bind-Push="settings.PmtPaymentConfirmationPush" />
+        </NotificationSettingsGroup>
+
+    </div>
+
+    <!-- Save Button -->
+    <div class="save-footer">
+        <button type="submit" class="btn btn-save">Save Changes</button>
+    </div>
+
+</EditForm>
+
+@code {
+    private NotificationSettingsViewModel settings = new();
+
+    private void SaveChanges()
+    {
+        // Handle save logic
+        Console.WriteLine("Settings saved!");
+    }
+}

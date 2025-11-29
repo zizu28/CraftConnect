@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using UserManagement.Application.DTOs.CraftmanDTO;
+using UserManagement.Domain.Entities;
 
 namespace UserManagement.Application.Validators.CraftmanValidators
 {
-	public class CraftmanUpdateDTOValidator : AbstractValidator<CraftmanUpdateDTO>
+	public class CraftmanUpdateDTOValidator : AbstractValidator<CraftsmanProfileUpdateDTO>
 	{
 		public CraftmanUpdateDTOValidator()
 		{
@@ -12,25 +12,44 @@ namespace UserManagement.Application.Validators.CraftmanValidators
 				RuleFor(dto => dto.CraftmanId)
 					.NotNull().WithMessage("Invalid Craftman ID");
 			});
+			When(dto => dto.FirstName != null, () =>
+			{
+				RuleFor(dto => dto.FirstName)
+					.NotNull().WithMessage("First name is required");
+			});
+			When(x => x.LastName != null, () =>
+			{
+				RuleFor(x => x.LastName)
+					.NotNull().WithMessage("Last name is required");
+			});
 			When(dto => dto.Bio != null, () =>
 			{
 				RuleFor(dto => dto.Bio)
 					.NotEmpty().WithMessage("Bio is required");
 			});
-			When(dto => dto.HourlyRate != 0, () =>
+			When(x => x.Profession.ToString() != null, () =>
 			{
-				RuleFor(dto => dto.HourlyRate)
-					.GreaterThanOrEqualTo(0).WithMessage("Hourly rate must be greater than or equal to 0");
+				RuleFor(x => x.Profession)
+					.IsInEnum()
+					.NotNull().WithMessage("Profession is required");
 			});
-			When(dto => dto.Currency != null, () =>
+			When(dto => dto.Portfolio != null, () =>
 			{
-				RuleFor(dto => dto.Currency)
-					.NotEmpty().WithMessage("Currency is required");
+				RuleForEach(x => x.Portfolio)
+					.Must(portfolio => !string.IsNullOrEmpty(portfolio.Title)).WithMessage("Portfolio title is required")
+					.Must(x => !string.IsNullOrEmpty(x.Description)).WithMessage("Portfolio description is required");
+			});
+			When(dto => dto.WorkExperience != null, () =>
+			{
+				RuleForEach(dto => dto.WorkExperience)
+					.Must(x => x.StartDate != null)
+					.Must(x => x.EndDate > x.StartDate).WithMessage("The end date should be later than the start date");
 			});
 			When(dto => dto.Skills != null, () =>
 			{
 				RuleForEach(dto => dto.Skills)
-					.Must(skill => !string.IsNullOrEmpty(skill)).WithMessage("Skill name is required");
+					.Must(skill => !string.IsNullOrEmpty(skill.Name)).WithMessage("Skill name is required")
+					.Must(skill => skill.YearsOfExperience >= 0).WithMessage("Years of experience cannot be less than 0");
 			});	
 		}
 	}

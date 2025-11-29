@@ -1,0 +1,12 @@
+﻿<label class="toggle-switch">
+    <input type="checkbox" checked="@IsEnabled" @onchange="OnToggle" />
+    <span class="slider"></span>
+</label>
+
+@code {
+    [Parameter]
+    public bool IsEnabled { get; set; }
+
+    [Parameter]
+    public EventCallback OnToggle { get; set; }
+}

@@ -4,6 +4,7 @@ using Moq;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.CQRS.Queries.UserQueries;
 using UserManagement.Application.DTOs.UserDTOs;
+using UserManagement.Application.Responses;
 using UserManagement.Presentation.Controllers;
 
 namespace CraftConnect.Tests
@@ -26,13 +27,18 @@ namespace CraftConnect.Tests
 			_usersController.ModelState.Clear();
 			var loginCommand = new LoginUserCommand
 			{
-				Username = "testuser",
-				Password = "testpassword"
+				Email = "example@user.com",
+				Password = "testpassword",
+				RememberMe = true
 			};
 			var accessToken = "access_token_mock";
 			var refreshToken = "refresh_token_mock";
 			_mediatorMock.Setup(m => m.Send(It.IsAny<LoginUserCommand>(), default))
-				.ReturnsAsync((accessToken, refreshToken));
+				.ReturnsAsync(new LoginResponse()
+				{
+					AccessToken = accessToken,
+					RefreshToken = refreshToken
+				});
 
 			// Act
 			var result = await _usersController.LoginUserAsync(loginCommand);
@@ -51,11 +57,16 @@ namespace CraftConnect.Tests
 			_usersController.ModelState.Clear();
 			var loginCommand = new LoginUserCommand
 			{
-				Username = "wronguser",
-				Password = "wrongpassword"
+				Email = "example@user.com",
+				Password = "wrongpassword",
+				RememberMe = true
 			};
 			_mediatorMock.Setup(m => m.Send(It.IsAny<LoginUserCommand>(), default))
-				.ReturnsAsync((string.Empty, string.Empty));
+				.ReturnsAsync(new LoginResponse() 
+				{ 
+					AccessToken = string.Empty, 
+					RefreshToken = string.Empty 
+				});
 
 			// Act
 			var result = await _usersController.LoginUserAsync(loginCommand);
@@ -85,12 +96,9 @@ namespace CraftConnect.Tests
 			var registerCommand = new UserCreateDTO() { 
 				Email = "example@gmail.com",
 				Password = "password123",
-				FirstName = "Test",
-				LastName = "User",
-				Username = "testuser",
-				PhoneNumber = "1234567890",
-				PhoneCountryCode = "+1",
-				Role = "User"
+				ConfirmPassword = "password123",
+				Role = "User",
+				AgreeToTerms = true,
 			};
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RegisterUserCommand>(), default))
 				.ReturnsAsync(new UserResponseDTO());
@@ -111,12 +119,9 @@ namespace CraftConnect.Tests
 			{
 				Email = "test@gmail.com",
 				Password = "password123",
-				FirstName = "Test",
-				LastName = "User",
-				Username = "testuser",
-				PhoneNumber = "1234567890",
-				PhoneCountryCode = "+1",
-				Role = "User"
+				ConfirmPassword = "password123",
+				Role = "User",
+				AgreeToTerms = true,
 			};
 			// Mock returns null to simulate registration failure
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RegisterUserCommand>(), default))
@@ -151,12 +156,9 @@ namespace CraftConnect.Tests
 			{
 				Email = "example@email.com",
 				Password = "password123",
-				FirstName = "Test",
-				LastName = "testname",
-				Username = null,
-				PhoneNumber = "1234567890",
-				PhoneCountryCode = "+1",
-				Role = "User"
+				ConfirmPassword = "password123",
+				Role = "User",
+				AgreeToTerms = true				
 			};
 
 			// Act
@@ -176,7 +178,7 @@ namespace CraftConnect.Tests
 				.ReturnsAsync(true);
 
 			// Act
-			var result = await _usersController.ConfirmEmailAsync(confirmCommand);
+			var result = await _usersController.ConfirmEmailAsync(confirmCommand.token);
 
 			// Assert
 			Assert.IsType<OkObjectResult>(result);
@@ -192,7 +194,7 @@ namespace CraftConnect.Tests
 				.ReturnsAsync(false);
 
 			// Act
-			var result = await _usersController.ConfirmEmailAsync(confirmCommand);
+			var result = await _usersController.ConfirmEmailAsync(confirmCommand.token);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result);
@@ -205,7 +207,7 @@ namespace CraftConnect.Tests
 			_usersController.ModelState.AddModelError("UserId", "UserId is required");
 
 			// Act
-			var result = await _usersController.ConfirmEmailAsync(new ConfirmEmailCommand());
+			var result = await _usersController.ConfirmEmailAsync(new ConfirmEmailCommand().token);
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result);
@@ -245,14 +247,14 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			_usersController.ModelState.Clear();
-			var refreshTokenDto = new RefreshTokenCommand();
+			//var refreshTokenDto = new RefreshTokenCommand();
 			var newAccessToken = "newAccessToken";
 			var newRefreshToken = "newRefreshToken";
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(), default))
 				.ReturnsAsync((newAccessToken, newRefreshToken));
 
 			// Act
-			var result = await _usersController.RefreshTokenAsync(refreshTokenDto);
+			var result = await _usersController.RefreshTokenAsync();
 
 			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result);
@@ -266,12 +268,12 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			_usersController.ModelState.Clear();
-			var refreshTokenDto = new RefreshTokenCommand();
+			//var refreshTokenDto = new RefreshTokenCommand();
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(), default))
 				.ReturnsAsync((string.Empty, string.Empty));
 
 			// Act
-			var result = await _usersController.RefreshTokenAsync(refreshTokenDto);
+			var result = await _usersController.RefreshTokenAsync();
 
 			// Assert
 			Assert.IsType<UnauthorizedObjectResult>(result);
@@ -284,7 +286,7 @@ namespace CraftConnect.Tests
 			_usersController.ModelState.AddModelError("AccessToken", "AccessToken is required");
 
 			// Act
-			var result = await _usersController.RefreshTokenAsync(new RefreshTokenCommand());
+			var result = await _usersController.RefreshTokenAsync();
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result);

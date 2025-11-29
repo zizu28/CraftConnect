@@ -21,7 +21,8 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			{
 				new(JwtRegisteredClaimNames.Sub, userId.ToString()),
 				new(JwtRegisteredClaimNames.Email, emailAddress),
-				new(ClaimTypes.Role, role)
+				new(ClaimTypes.Role, role),
+				new(ClaimTypes.Name, emailAddress)
 			};
 			var issuer = _configuration["Jwt:Issuer"];
 			var audience = _configuration["Jwt:Audience"];
@@ -30,7 +31,7 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 
 			var securityToken = new JwtSecurityToken(issuer, audience, claims,
 				notBefore: DateTime.UtcNow,
-				expires: DateTime.UtcNow.AddMinutes(10),
+				expires: DateTime.UtcNow.AddMinutes(15),
 				signingCredentials: creds);
 			var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
 			return token;
@@ -43,6 +44,7 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			{
 				CraftmanId = craftman.Id,
 				Email = craftman.Email.Address,
+				craftman.Role,
 				ExpiresOn = DateTime.UtcNow.AddDays(1)
 			};
 			var payloadJson = JsonSerializer.Serialize(payload);

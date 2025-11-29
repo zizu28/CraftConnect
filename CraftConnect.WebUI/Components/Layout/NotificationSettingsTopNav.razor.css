@@ -1,0 +1,91 @@
+﻿.settings-nav-header {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E5E7EB; /* Gray-200 */
+    padding: 16px 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #111827; /* Gray-900 */
+}
+
+    .logo svg {
+        width: 28px;
+        height: 28px;
+        color: #111827; /* Gray-900 */
+    }
+
+    .logo span {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.nav-link {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4B5563; /* Gray-600 */
+    text-decoration: none;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+}
+
+    .nav-link:hover {
+        color: #111827;
+    }
+
+    .nav-link.active {
+        color: #111827;
+        font-weight: 600;
+        border-bottom-color: #F97316; /* Orange-500 */
+    }
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #4B5563; /* Gray-600 */
+    padding: 4px;
+}
+
+    .icon-btn:hover {
+        color: #111827;
+    }
+
+    .icon-btn svg {
+        width: 24px;
+        height: 24px;
+    }
+
+.avatar-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #FDE68A; /* Yellow-200 */
+    border: none;
+    cursor: pointer;
+}
+
+/* Add responsive styles if needed */
+@media (max-width: 768px) {
+    .nav-actions .nav-link {
+        display: none;
+    }
+}

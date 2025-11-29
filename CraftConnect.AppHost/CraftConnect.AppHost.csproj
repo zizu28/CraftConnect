@@ -19,7 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AuditManagement.Presentation\AuditManagement.Presentation.csproj" />
     <ProjectReference Include="..\BookingManagement.Presentation\BookingManagement.Presentation.csproj" />
+    <ProjectReference Include="..\Core.BFF\Core.BFF.csproj" />
     <ProjectReference Include="..\CraftConnect.WebUI\CraftConnect.WebUI.csproj" />
     <ProjectReference Include="..\PaymentManagement.Presentation\PaymentManagement.Presentation.csproj" />
     <ProjectReference Include="..\ProductInventoryManagement.Presentation\ProductInventoryManagement.Presentation.csproj" />

@@ -1,6 +1,7 @@
 ﻿using Core.SharedKernel.Domain;
 using Core.SharedKernel.ValueObjects;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProductInventoryManagement.Domain.Entities
 {
@@ -8,6 +9,7 @@ namespace ProductInventoryManagement.Domain.Entities
 	{
 		public string Name { get; private set; }
 		public string Description { get; private set; }
+		[Column(TypeName = "decimal(18, 2)")]
 		public decimal Price { get; private set; }
 		public Guid CategoryId { get; private set; }
 		public Guid CraftmanId { get; private set; }

@@ -1,4 +1,5 @@
 ﻿using Core.SharedKernel.Domain;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookingManagement.Domain.Entities
 {
@@ -7,6 +8,7 @@ namespace BookingManagement.Domain.Entities
 		public Guid BookingId { get; private set; }
 		public Booking Booking { get; set; }
 		public string Description { get; private set; }
+		[Column(TypeName = "decimal(18, 2)")]
 		public decimal Price { get; private set; }
 		public int Quantity { get; private set; }
 

@@ -1,0 +1,110 @@
+﻿@page "/support"
+@layout SupportLayout
+@using CraftConnect.WebUI.Components.Layout
+@using CraftConnect.WebUI.Components.SupportPageComponents
+
+<div class="support-page-container">
+    
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1>Help Center</h1>
+        <p>We're here to help you with any questions you may have.</p>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content-area">
+        <!-- Left Column: Search, Tabs, FAQs -->
+        <div class="faq-column">
+            
+            <!-- Search Bar Card -->
+            <div class="search-card">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" />
+                </svg>
+                <input type="text" class="search-input" placeholder="How can we help you today?" @bind="searchTerm" @bind:event="oninput" />
+            </div>
+
+            <!-- FAQ Tabs -->
+            <div class="faq-tabs">
+                @foreach (var category in categories)
+                {
+                    <button class="tab-btn @(category == activeCategory ? "active" : "")"
+                            @onclick="() => activeCategory = category">
+                        @category
+                    </button>
+                }
+            </div>
+
+            <!-- FAQ Accordion List -->
+            <div class="faq-list">
+                @foreach (var item in FilteredFaqs)
+                {
+                    <FaqAccordion Item="item" />
+                }
+            </div>
+        </div>
+
+        <!-- Right Column: Sidebar -->
+        <aside class="sidebar-column">
+            <StillNeedHelp />
+            <SendEmailForm />
+        </aside>
+    </div>
+</div>
+
+@code {
+    private string searchTerm = "";
+    private string activeCategory = "Getting Started";
+    private List<string> categories = new() { "Getting Started", "Account & Profile", "Payments & Billing", "Project Management", "Trust & Safety" };
+    
+    private List<FaqItem> allFaqs = new();
+
+    private IEnumerable<FaqItem> FilteredFaqs => allFaqs
+        .Where(f => f.Category == activeCategory)
+        .Where(f => string.IsNullOrWhiteSpace(searchTerm) || 
+                    f.Question.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    f.Answer.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+
+    protected override void OnInitialized()
+    {
+        // Mock data based on the image
+        allFaqs = new List<FaqItem>
+        {
+            new FaqItem 
+            {
+                Id = Guid.NewGuid(),
+                Category = "Getting Started",
+                Question = "How do I create an account?",
+                Answer = "To create an account, click the 'Sign Up' button in the top right corner of the page and follow the on-screen instructions. You'll be asked to provide some basic information and create a password."
+            },
+            new FaqItem 
+            {
+                Id = Guid.NewGuid(),
+                Category = "Getting Started",
+                Question = "How do I find a craftsman for my project?",
+                Answer = "You can find a craftsman by browsing our categories, searching for specific skills, or posting a project request. When you post a project, craftsmen will send you proposals."
+            },
+            new FaqItem 
+            {
+                Id = Guid.NewGuid(),
+                Category = "Payments & Billing",
+                Question = "How are payments handled?",
+                Answer = "Payments are handled securely through our platform. You deposit the funds when you accept a proposal, and the funds are released to the craftsman only after you mark the project as complete."
+            },
+            new FaqItem 
+            {
+                Id = Guid.NewGuid(),
+                Category = "Project Management",
+                Question = "What if I have an issue with a craftsman?",
+                Answer = "If you have an issue, first try to resolve it directly with the craftsman via our messaging system. If that doesn't work, you can open a dispute through our Resolution Center, and our support team will step in to mediate."
+            },
+            new FaqItem 
+            {
+                Id = Guid.NewGuid(),
+                Category = "Account & Profile",
+                Question = "How do I update my profile?",
+                Answer = "You can update your profile by going to your 'Account Settings' page. From there, you can change your name, profile picture, password, and other personal information."
+            }
+        };
+    }
+}

@@ -1,0 +1,107 @@
+﻿@using CraftConnect.WebUI.Components.SkeletonComponents
+
+<div class="dashboard-container">
+    <!-- Title Skeleton -->
+    <div style="margin-bottom: 24px; width: 200px;">
+        <Skeleton Type="text" Height="32px" />
+    </div>
+
+    <!-- Stat Cards Skeleton -->
+    <div class="stat-grid">
+        @for (int i = 0; i < 3; i++)
+        {
+            <div class="skeleton-card">
+                <Skeleton Type="text" Width="60%" Height="14px" style="margin-bottom: 8px;" />
+                <Skeleton Type="text" Width="40%" Height="36px" />
+            </div>
+        }
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Left Column -->
+        <div class="dashboard-col">
+
+            <!-- Service Requests Section -->
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <Skeleton Type="text" Width="180px" Height="24px" />
+                    <Skeleton Type="text" Width="60px" Height="14px" />
+                </div>
+                <!-- Fake Table Rows -->
+                <div class="skeleton-table">
+                    <div class="skeleton-row-header">
+                        <Skeleton Type="text" Width="30%" />
+                        <Skeleton Type="text" Width="20%" />
+                        <Skeleton Type="text" Width="20%" />
+                        <Skeleton Type="text" Width="15%" />
+                    </div>
+                    @for (int i = 0; i < 3; i++)
+                    {
+                        <div class="skeleton-row">
+                            <Skeleton Type="text" Width="40%" />
+                            <Skeleton Type="text" Width="20%" />
+                            <Skeleton Type="text" Width="20%" />
+                            <Skeleton Type="rect" Width="80px" Height="24px" style="border-radius: 12px;" />
+                        </div>
+                    }
+                </div>
+            </section>
+
+            <!-- Incoming Proposals Section -->
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <Skeleton Type="text" Width="200px" Height="24px" />
+                    <Skeleton Type="text" Width="60px" Height="14px" />
+                </div>
+                <div class="card-list">
+                    @for (int i = 0; i < 2; i++)
+                    {
+                        <div class="skeleton-card">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <Skeleton Type="circle" Width="40px" Height="40px" />
+                                    <div>
+                                        <Skeleton Type="text" Width="120px" Height="16px" style="margin-bottom: 4px;" />
+                                        <Skeleton Type="text" Width="80px" Height="12px" />
+                                    </div>
+                                </div>
+                                <Skeleton Type="text" Width="60px" Height="20px" />
+                            </div>
+                            <Skeleton Type="text" Width="100%" Height="14px" />
+                            <Skeleton Type="text" Width="80%" Height="14px" />
+                            <div style="display: flex; gap: 12px; margin-top: 16px;">
+                                <Skeleton Type="rect" Width="50%" Height="36px" />
+                                <Skeleton Type="rect" Width="50%" Height="36px" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+        </div>
+
+        <!-- Right Column -->
+        <div class="dashboard-col">
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <Skeleton Type="text" Width="150px" Height="24px" />
+                    <Skeleton Type="text" Width="60px" Height="14px" />
+                </div>
+                <div class="inbox-list skeleton-card" style="padding: 8px;">
+                    @for (int i = 0; i < 3; i++)
+                    {
+                        <div style="display: flex; gap: 12px; padding: 12px; border-bottom: 1px solid #f1f5f9;">
+                            <Skeleton Type="circle" Width="36px" Height="36px" />
+                            <div style="flex-grow: 1;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                                    <Skeleton Type="text" Width="100px" Height="14px" />
+                                    <Skeleton Type="text" Width="40px" Height="12px" />
+                                </div>
+                                <Skeleton Type="text" Width="90%" Height="12px" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

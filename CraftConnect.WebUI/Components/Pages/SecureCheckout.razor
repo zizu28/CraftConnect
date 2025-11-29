@@ -1,0 +1,79 @@
+﻿@page "/checkout"
+@layout CheckoutLayout
+@using CraftConnect.WebUI.Components.Layout
+@using CraftConnect.WebUI.Components.SecureCheckoutPageComponents
+
+<EditForm Model="checkoutModel" OnValidSubmit="HandleCheckout">
+    <DataAnnotationsValidator />
+    
+    <div class="checkout-grid">
+        <!-- Left Column -->
+        <div class="checkout-column-left">
+            <YourOrder OrderItems="checkoutModel.OrderItems" Total="checkoutModel.Total" />
+            <PaymentMethodSelector @bind-PaymentMethod="checkoutModel.PaymentMethod" />
+        </div>
+
+        <!-- Right Column -->
+        <div class="checkout-column-right">
+            @if(checkoutModel.PaymentMethod == "CreditCard")
+            {
+                <PaymentDetails @bind-CardNumber="checkoutModel.CardNumber"
+                                @bind-ExpirationDate="checkoutModel.ExpirationDate"
+                                @bind-Cvc="checkoutModel.Cvc"
+                                @bind-NameOnCard="checkoutModel.NameOnCard" />
+            }
+            
+            <BillingInformation @bind-BillingSameAsRegistered="checkoutModel.BillingSameAsRegistered"
+                                @bind-StreetAddress="checkoutModel.StreetAddress"
+                                @bind-City="checkoutModel.City"
+                                @bind-State="checkoutModel.State"
+                                @bind-ZipCode="checkoutModel.ZipCode"
+                                @bind-Country="checkoutModel.Country" />
+            
+            <div class="submit-section">
+                <button type="submit" class="btn btn-submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" />
+                    </svg>
+                    Pay $@checkoutModel.Total.ToString("F2")
+                </button>
+                <div class="ssl-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 1a3.5 3.5 0 0 0-3.5 3.5v1.644a.75.75 0 0 1-1.5 0V4.5A5 5 0 0 1 13 4.5v1.644a.75.75 0 0 1-1.5 0V4.5A3.5 3.5 0 0 0 8 1Zm2 7.06V5.5a2 2 0 1 0-4 0v2.56A1.5 1.5 0 0 0 5 9.5v2.75A1.75 1.75 0 0 0 6.75 14h2.5A1.75 1.75 0 0 0 11 12.25V9.5A1.5 1.5 0 0 0 10 8.06Z" clip-rule="evenodd" />
+                    </svg>
+                    <span>SSL Secured Payment</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private CheckoutViewModel checkoutModel = new();
+
+    protected override void OnInitialized()
+    {
+        // Mock data from the image
+        checkoutModel.OrderItems = new List<OrderSummaryItem>
+        {
+            new OrderSummaryItem { Name = "Custom Oak Bookshelf", Price = 150.00m },
+            new OrderSummaryItem { Name = "Service Fee", Price = 120.00m },
+            new OrderSummaryItem { Name = "Platform Fee", Price = 15.00m },
+            new OrderSummaryItem { Name = "Taxes", Price = 15.00m }
+        };
+
+        // Pre-fill billing from image
+        checkoutModel.StreetAddress = "123 Main St";
+        checkoutModel.City = "Anytown";
+        checkoutModel.State = "CA";
+        checkoutModel.ZipCode = "12345";
+        checkoutModel.NameOnCard = "John Doe";
+    }
+
+    private void HandleCheckout()
+    {
+        // Handle payment logic
+        Console.WriteLine("Checkout submitted");
+        StateHasChanged();
+    }
+}

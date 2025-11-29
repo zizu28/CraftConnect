@@ -1,0 +1,86 @@
+﻿@page "/verify-email/{Email}"
+@layout VerificationLayout
+@using CraftConnect.WebUI.Components.Layout
+@inject ILoggerFactory loggerFactory
+@inject IHttpClientFactory HttpClientFactory
+@inject NavigationManager NavigationManager
+
+<div class="verification-card">
+
+    <div class="card-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
+            <path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z" />
+        </svg>
+    </div>
+
+    <div class="card-header">
+        <h2>Check Your Inbox!</h2>
+        <p>We've sent a confirmation link to your email address. Please click the link in the email to verify your account.</p>
+    </div>
+
+    <div class="card-footer">
+        <span>Didn't receive an email?</span>
+        <button type="button" class="btn-resend" @onclick="ResendEmail" disabled="@_isLoading">
+            @if (_isLoading)
+            {
+                <span class="spinner"></span>
+                <span>Resending...</span>
+            }
+            else
+            {
+                <span>Resend</span>
+            }
+        </button>
+    </div>
+
+    <div class="back-to-login">
+        <a href="/login">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M12 8a.75.75 0 0 1-.75.75H5.81l1.72 1.72a.75.75 0 1 1-1.06 1.06l-3-3a.75.75 0 0 1 0-1.06l3-3a.75.75 0 1 1 1.06 1.06L5.81 7.25H11.25A.75.75 0 0 1 12 8Z" clip-rule="evenodd" /></svg>
+            Back to Log In
+        </a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Email { get; set; }
+    private ILogger logger = default!;
+    private bool _isLoading = false; 
+
+    protected override Task OnInitializedAsync()
+    {
+        logger = loggerFactory.CreateLogger<AccountVerification>();
+        return base.OnInitializedAsync();
+    }
+
+    private async Task ResendEmail()
+    {
+        if (_isLoading) return;
+        _isLoading = true;
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("Backend");
+            var command = new ResendEmailCommand { Email = this.Email };
+            var response = await httpClient.PostAsJsonAsync("/api/users/resend-email", command);
+            if (response.IsSuccessStatusCode)
+            {
+                logger.LogInformation("Email resend to {email} successful.", Email);
+            }
+            else
+            {
+                logger.LogWarning("Failed to resend email to {Email}. Status: {StatusCode}", Email, response.StatusCode);
+                // TODO: Show an error toast
+            }
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Exception while resending email to {Email}", Email);
+            // TODO: Show a general error toast
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

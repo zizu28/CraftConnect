@@ -1,6 +1,12 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using UserManagement.Application.CQRS.Commands.UserCommands;
+using UserManagement.Application.CQRS.Handlers.QueryHandlers.Queries.CraftmanQueries;
+using UserManagement.Application.CQRS.Queries.CustomerQueries;
 using UserManagement.Application.CQRS.Queries.UserQueries;
 using UserManagement.Application.DTOs.CraftmanDTO;
 using UserManagement.Application.DTOs.CustomerDTO;
@@ -12,6 +18,30 @@ namespace UserManagement.Presentation.Controllers
 	[Route("api/[controller]")]
 	public class UsersController(IMediator mediator) : ControllerBase
 	{
+		[HttpGet("me")]
+		[Authorize]
+		public async Task<IActionResult> GetCurrentUser()
+		{
+			var userIdClaim =  User.FindFirst(ClaimTypes.NameIdentifier);
+
+			if (userIdClaim == null || string.IsNullOrEmpty(userIdClaim.Value))
+			{
+				return Unauthorized("Token does not contain a User ID claim.");
+			}
+
+			if (!Guid.TryParse(userIdClaim.Value, out var userId))
+			{
+				return Unauthorized("Token User ID is not a valid GUID.");
+			}
+
+			var query = new GetUserByIdQuery { UserId = userId };
+			var user = await mediator.Send(query);
+
+			if (user == null) return Unauthorized("User no longer exists.");
+
+			return Ok(user);
+		}
+
 		[HttpGet]
 		public async Task<IActionResult> GetAllUsersAsync()
 		{
@@ -36,13 +66,34 @@ namespace UserManagement.Presentation.Controllers
 			return Ok(user);
 		}
 
+		[HttpGet("craftsman/{id:guid}")]
+		public async Task<IActionResult> GetCraftsmanByIdAsync(Guid id)
+		{
+			var query = new GetCraftmanByIdQuery { CraftmanId = id };
+			var user = await mediator.Send(query);
+			if (user == null)
+			{
+				return NotFound($"User with ID {id} not found.");
+			}
+			return Ok(user);
+		}
+
+		[HttpGet("customer/{id:guid}")]
+		public async Task<IActionResult> GetCustomerByIdAsync(Guid id)
+		{
+			var query = new GetCustomerByIdQuery { CustomerId = id };
+			var user = await mediator.Send(query);
+			if (user == null)
+			{
+				return NotFound($"User with ID {id} not found.");
+			}
+			return Ok(user);
+		}
+
 		[HttpPost("register")]
+		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RegisterNewUserAsync([FromBody] UserCreateDTO user)
 		{
-			if(!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
 			var command = new RegisterUserCommand { User = user };
 			var result = await mediator.Send(command);
 			if (result == null)
@@ -52,13 +103,10 @@ namespace UserManagement.Presentation.Controllers
 			return Ok(result);
 		}
 
-		[HttpPost("register/Craftman")]
+		[HttpPost("register/craftman")]
+		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RegisterNewCraftmanAsync([FromBody] CraftmanCreateDTO craftman)
 		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
 			var command = new RegisterCraftmanCommand { Craftman = craftman };
 			var result = await mediator.Send(command);
 			if (result == null)
@@ -69,12 +117,9 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("register/customer")]
+		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RegisterNewCustomerAsync([FromBody] CustomerCreateDTO customer)
 		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
 			var command = new RegisterCustomerCommand { Customer = customer };
 			var result = await mediator.Send(command);
 			if (result == null)
@@ -84,8 +129,20 @@ namespace UserManagement.Presentation.Controllers
 			return Ok(result);
 		}
 
-		[HttpGet("by-email")]
-		public async Task<IActionResult> GetUserByEmailAsync([FromQuery] string email)
+		[HttpPost("resend-email")]
+		//[ValidateAntiForgeryToken]
+		public async Task<IActionResult> ResendEmailAsync([FromBody] ResendEmailCommand command)
+		{
+			if(command == null)
+			{
+				return BadRequest("");
+			}
+			await mediator.Send(command);
+			return Ok();
+		}
+
+		[HttpGet("by-email/{email}")]
+		public async Task<IActionResult> GetUserByEmailAsync([FromRoute] string email)
 		{
 			var query = new GetUserByEmailQuery { Email = email };
 			var user = await mediator.Send(query);
@@ -99,67 +156,82 @@ namespace UserManagement.Presentation.Controllers
 		[HttpPost("signin")]
 		public async Task<IActionResult> LoginUserAsync([FromBody] LoginUserCommand command)
 		{
-			if (!ModelState.IsValid)
+			ArgumentNullException.ThrowIfNull(command, nameof(command));
+			var loginResponse = await mediator.Send(command);
+			if (loginResponse == null || string.IsNullOrEmpty(loginResponse.AccessToken))
 			{
-				return BadRequest(ModelState);
+				return Unauthorized();
 			}
-			var (AccessToken, RefreshToken) = await mediator.Send(command);
-			if (string.IsNullOrEmpty(AccessToken) || string.IsNullOrEmpty(RefreshToken))
+			var userQuery = new GetUserByEmailQuery { Email = command.Email };
+			var userResponseDto = await mediator.Send(userQuery);			
+
+			return Ok(new
 			{
-				return Unauthorized("Invalid login attempt.");
-			}
-			return Ok(new Tuple<string, string>(AccessToken, RefreshToken));
+				loginResponse.AccessToken,
+				loginResponse.RefreshToken,
+				User = userResponseDto
+			});
 		}
 
-		[HttpPost("refresh-token")]
-		public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenCommand command)
+		[HttpPost("logout")]
+		public async Task<IActionResult> Logout()
 		{
-			if(!ModelState.IsValid)
+			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+			return Ok();
+		}
+
+
+		[HttpPost("refresh-token")]
+		//[ValidateAntiForgeryToken]
+		public async Task<IActionResult> RefreshTokenAsync()
+		{
+			if(!Request.Cookies.TryGetValue("X-Refresh-Token", out var refreshToken))
 			{
-				return BadRequest(ModelState);
+				return Unauthorized("No refresh token provided.");
 			}
+			var command = new RefreshTokenCommand { RefreshToken = refreshToken };
 			var newTokens = await mediator.Send(command);
-			if (string.IsNullOrEmpty(newTokens.AccessToken) || string.IsNullOrEmpty(newTokens.RefreshToken))
+			if (string.IsNullOrEmpty(newTokens.AccessToken))
 			{
 				return Unauthorized("Invalid refresh token.");
 			}
 			return Ok(newTokens);
 		}
-
-		[HttpPost("confirm-email")]
-		public async Task<IActionResult> ConfirmEmailAsync([FromBody] ConfirmEmailCommand command)
+				
+		[HttpGet("confirm-email")]
+		[ActionName("ConfirmEmailAsync")]
+		public async Task<IActionResult> ConfirmEmailAsync([FromQuery] string token)
 		{
-			if (!ModelState.IsValid)
+			if (string.IsNullOrEmpty(token))
 			{
-				return BadRequest("Invalid input data");
+				return BadRequest("Verification token is required");
 			}
+			var command = new ConfirmEmailCommand { token = token };
 			var result = await mediator.Send(command);
 			if (!result)
 			{
-				return BadRequest("Email confirmation failed.");
+				return BadRequest("Email verification/confirmation failed");
 			}
-			return Ok("Email confirmed successfully.");
+			return Redirect("https://localhost:7284/login");
+		}
+
+		[HttpPost("forgot-password")]
+		public async Task<IActionResult> ForgotPasswordAsync([FromBody] ForgotPasswordCommand command)
+		{
+			ArgumentNullException.ThrowIfNull(command, nameof(command));
+			await mediator.Send(command);
+			return Ok();
 		}
 
 		[HttpPost("change-password")]
+		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordCommand command)
 		{
-			if (!ModelState.IsValid)
+			ArgumentNullException.ThrowIfNull(command);
+			var result = await mediator.Send(command);
+			if (result == Unit.Value)
 			{
-				return BadRequest(ModelState);
-			}
-			try
-			{
-				var result = await mediator.Send(command);
-				if (result == Unit.Value)
-				{
-					return Ok("Password changed successfully.");
-				}
-			}
-			catch (Exception ex)
-			{
-				// Log the exception
-				return BadRequest("Password change failed.");
+				return Ok("Password changed successfully.");
 			}
 			return BadRequest("Password change failed.");
 		}

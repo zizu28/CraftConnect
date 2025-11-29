@@ -22,6 +22,46 @@ namespace Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AuditManagement.Domain.Entities.AuditLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("EntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<string>("NewValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OldValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditLogs");
+                });
+
             modelBuilder.Entity("BookingManagement.Domain.Entities.Booking", b =>
                 {
                     b.Property<Guid>("Id")
@@ -81,6 +121,148 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("BookingId");
 
                     b.ToTable("BookingLineItems");
+                });
+
+            modelBuilder.Entity("Core.SharedKernel.ValueObjects.InboxMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Excerpt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSupportTicket")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ReceivedTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderAvatarInitials")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("InboxMessage");
+                });
+
+            modelBuilder.Entity("Core.SharedKernel.ValueObjects.Proposal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CraftsmanAvatarUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CraftsmanName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("CraftsmanRating")
+                        .HasColumnType("float");
+
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Excerpt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("ProfileUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProposalUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ServiceRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("ServiceRequestId");
+
+                    b.ToTable("Proposal");
+                });
+
+            modelBuilder.Entity("Core.SharedKernel.ValueObjects.ServiceRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Budget")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DateSubmitted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProjectDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProjectTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.PrimitiveCollection<string>("SkillsRequired")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("ServiceRequest");
                 });
 
             modelBuilder.Entity("MassTransit.EntityFrameworkCoreIntegration.InboxState", b =>
@@ -495,6 +677,32 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("UserManagement.Domain.Entities.EmailVerificationToken", b =>
+                {
+                    b.Property<Guid>("EmailVerificationTokenId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TokenValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("EmailVerificationTokenId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("EmailVerificationTokens");
+                });
+
             modelBuilder.Entity("UserManagement.Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -518,11 +726,40 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("UserManagement.Domain.Entities.ResetPasswordToken", b =>
+                {
+                    b.Property<Guid>("ResetPasswordTokenId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TokenValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ResetPasswordTokenId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ResetPasswordTokens");
+                });
+
             modelBuilder.Entity("UserManagement.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AgreeToTerms")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -573,15 +810,16 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.HasBaseType("UserManagement.Domain.Entities.User");
 
-                    b.Property<string>("Bio")
+                    b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
-
                     b.Property<int>("Profession")
                         .HasColumnType("int");
+
+                    b.Property<string>("ProfileImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -664,6 +902,64 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Booking");
                 });
 
+            modelBuilder.Entity("Core.SharedKernel.ValueObjects.InboxMessage", b =>
+                {
+                    b.HasOne("UserManagement.Domain.Entities.Customer", null)
+                        .WithMany("Messages")
+                        .HasForeignKey("CustomerId");
+                });
+
+            modelBuilder.Entity("Core.SharedKernel.ValueObjects.Proposal", b =>
+                {
+                    b.HasOne("UserManagement.Domain.Entities.Customer", null)
+                        .WithMany("Proposals")
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("Core.SharedKernel.ValueObjects.ServiceRequest", null)
+                        .WithMany("Proposals")
+                        .HasForeignKey("ServiceRequestId");
+                });
+
+            modelBuilder.Entity("Core.SharedKernel.ValueObjects.ServiceRequest", b =>
+                {
+                    b.HasOne("UserManagement.Domain.Entities.Customer", null)
+                        .WithMany("ServiceRequests")
+                        .HasForeignKey("CustomerId");
+
+                    b.OwnsMany("Core.SharedKernel.ValueObjects.AttachedDocument", "Attachments", b1 =>
+                        {
+                            b1.Property<Guid>("ServiceRequestId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("DownloadUrl")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("FileName")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("FileSize")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("ServiceRequestId", "Id");
+
+                            b1.ToTable("AttachedDocument");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ServiceRequestId");
+                        });
+
+                    b.Navigation("Attachments");
+                });
+
             modelBuilder.Entity("MassTransit.EntityFrameworkCoreIntegration.OutboxMessage", b =>
                 {
                     b.HasOne("MassTransit.EntityFrameworkCoreIntegration.OutboxState", null)
@@ -722,7 +1018,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -742,7 +1038,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -762,7 +1058,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -782,7 +1078,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -829,7 +1125,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -849,7 +1145,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -882,7 +1178,7 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                                .HasColumnType("decimal(18, 2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -959,7 +1255,7 @@ namespace Infrastructure.Persistence.Migrations
                                         .HasColumnType("uniqueidentifier");
 
                                     b2.Property<decimal>("Amount")
-                                        .HasColumnType("decimal(18,2)");
+                                        .HasColumnType("decimal(18, 2)");
 
                                     b2.Property<string>("Currency")
                                         .IsRequired()
@@ -1021,7 +1317,7 @@ namespace Infrastructure.Persistence.Migrations
                                         .HasColumnType("uniqueidentifier");
 
                                     b2.Property<decimal>("Amount")
-                                        .HasColumnType("decimal(18,2)");
+                                        .HasColumnType("decimal(18, 2)");
 
                                     b2.Property<string>("Currency")
                                         .IsRequired()
@@ -1107,10 +1403,32 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("UserManagement.Domain.Entities.EmailVerificationToken", b =>
+                {
+                    b.HasOne("UserManagement.Domain.Entities.User", "User")
+                        .WithMany("EmailVerificationTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("UserManagement.Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("UserManagement.Domain.Entities.User", "User")
                         .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UserManagement.Domain.Entities.ResetPasswordToken", b =>
+                {
+                    b.HasOne("UserManagement.Domain.Entities.User", "User")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1167,6 +1485,37 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("UserManagement.Domain.Entities.Craftman", b =>
                 {
+                    b.OwnsMany("Core.SharedKernel.ValueObjects.Project", "Portfolio", b1 =>
+                        {
+                            b1.Property<Guid>("CraftmanId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("Description")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("ImageUrl")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CraftmanId", "Id");
+
+                            b1.ToTable("Project");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CraftmanId");
+                        });
+
                     b.OwnsMany("Core.SharedKernel.ValueObjects.Skill", "Skills", b1 =>
                         {
                             b1.Property<Guid>("CraftmanId")
@@ -1193,37 +1542,48 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasForeignKey("CraftmanId");
                         });
 
-                    b.OwnsOne("Core.SharedKernel.ValueObjects.Money", "HourlyRate", b1 =>
+                    b.OwnsMany("Core.SharedKernel.ValueObjects.WorkEntry", "WorkExperience", b1 =>
                         {
                             b1.Property<Guid>("CraftmanId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
 
-                            b1.Property<string>("Currency")
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("Company")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<byte[]>("_TableSharingConcurrencyTokenConvention_RowVersion")
-                                .IsConcurrencyToken()
+                            b1.Property<DateTime?>("EndDate")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<string>("Position")
                                 .IsRequired()
-                                .ValueGeneratedOnAddOrUpdate()
-                                .HasColumnType("rowversion")
-                                .HasColumnName("RowVersion");
+                                .HasColumnType("nvarchar(max)");
 
-                            b1.HasKey("CraftmanId");
+                            b1.Property<string>("Responsibilities")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
 
-                            b1.ToTable("Users");
+                            b1.Property<DateTime?>("StartDate")
+                                .HasColumnType("datetime2");
+
+                            b1.HasKey("CraftmanId", "Id");
+
+                            b1.ToTable("WorkEntry");
 
                             b1.WithOwner()
                                 .HasForeignKey("CraftmanId");
                         });
 
-                    b.Navigation("HourlyRate")
-                        .IsRequired();
+                    b.Navigation("Portfolio");
 
                     b.Navigation("Skills");
+
+                    b.Navigation("WorkExperience");
                 });
 
             modelBuilder.Entity("UserManagement.Domain.Entities.Customer", b =>
@@ -1296,6 +1656,11 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("LineItems");
                 });
 
+            modelBuilder.Entity("Core.SharedKernel.ValueObjects.ServiceRequest", b =>
+                {
+                    b.Navigation("Proposals");
+                });
+
             modelBuilder.Entity("PaymentManagement.Domain.Entities.Invoice", b =>
                 {
                     b.Navigation("LineItems");
@@ -1305,7 +1670,18 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("UserManagement.Domain.Entities.User", b =>
                 {
+                    b.Navigation("EmailVerificationTokens");
+
                     b.Navigation("RefreshTokens");
+                });
+
+            modelBuilder.Entity("UserManagement.Domain.Entities.Customer", b =>
+                {
+                    b.Navigation("Messages");
+
+                    b.Navigation("Proposals");
+
+                    b.Navigation("ServiceRequests");
                 });
 #pragma warning restore 612, 618
         }

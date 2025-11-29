@@ -1,0 +1,38 @@
+﻿<aside class="terms-sidebar">
+    <nav class="sticky-nav">
+        <h5>Table of Contents</h5>
+        <ul>
+            @foreach (var item in NavItems)
+            {
+                <RecursiveNavItem Item="item" ActiveSectionId="ActiveSectionId" />
+            }
+        </ul>
+    </nav>
+</aside>
+
+@code {
+    [Parameter]
+    public string ActiveSectionId { get; set; } = "introduction";
+
+    private List<TermsNavItem> NavItems = new();
+
+    protected override void OnInitialized()
+    {
+        NavItems = new List<TermsNavItem>
+        {
+            new TermsNavItem { Title = "Introduction", Href = "#introduction", Children = new List<TermsNavItem>
+                {
+                    new TermsNavItem { Title = "User Accounts", Href = "#user-accounts" },
+                    new TermsNavItem { Title = "Craftsman Responsibilities", Href = "#craftsman-responsibilities" },
+                    new TermsNavItem { Title = "Customer Responsibilities", Href = "#customer-responsibilities" }
+                }
+            },
+            new TermsNavItem { Title = "Payment Terms", Href = "#payment-terms" },
+            new TermsNavItem { Title = "Intellectual Property", Href = "#intellectual-property" },
+            new TermsNavItem { Title = "Dispute Resolution", Href = "#dispute-resolution" },
+            new TermsNavItem { Title = "Limitation of Liability", Href = "#limitation-of-liability" },
+            new TermsNavItem { Title = "Termination", Href = "#termination" },
+            new TermsNavItem { Title = "Governing Law", Href = "#governing-law" }
+        };
+    }
+}

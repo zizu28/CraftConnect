@@ -1,4 +1,4 @@
-﻿@page "/customer/proposals"
+﻿@page "/customer/{CustomerId:guid}/proposals"
 @layout CustomerLayout
 @using CraftConnect.WebUI.Components.CustomerProposalsPageComponents
 @using CraftConnect.WebUI.Components.Layout
@@ -29,6 +29,8 @@
 </div>
 
 @code {
+    [Parameter]
+    public Guid CustomerId { get; set; }
     private List<CustomerProjectSummaryVM> projectSummaries = new();
     private int selectedProjectId = 0; // 0 means "All Projects"
 

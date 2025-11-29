@@ -1,22 +1,29 @@
-﻿namespace UserManagement.Application.DTOs.CraftmanDTO
+﻿using Core.SharedKernel.Domain;
+using Core.SharedKernel.ValueObjects;
+
+namespace UserManagement.Application.DTOs.CraftmanDTO
 {
 	public class CraftmanResponseDTO
 	{
-		public string FirstName { get; set; }
-		public string LastName { get; set; } 
+		public Guid CraftmanId { get; set; }
+		public string FirstName { get; set; } = string.Empty;
+		public string LastName { get; set; } = string.Empty;
+		public string Bio { get; set; } = string.Empty;
+		public string Profession { get; set; } = string.Empty;
+		public string VerificationStatus { get; set; } = string.Empty;
+		public string ProfileImageUrl { get; set; } = string.Empty;
+
+		public List<SkillsDTO> Skills { get; set; } = [];
+
+		public List<Project> Portfolio { get; set; } = [];
+		public List<WorkEntry> WorkExperience { get; set; } = [];
+
+		public string EmailAddress { get; set; } = string.Empty;
+		public string PhoneNumber { get; set; } = string.Empty;
+		public string Location { get; set; } = string.Empty;
 		public string Message { get; set; } = string.Empty;
-		public bool IsSuccessful { get; set; } = false;
 		public List<string> Errors { get; set; } = [];
-		public Guid Id { get; set; }
-		public string? Email { get; set; }
-		public string? Phone { get; set; }
-		public string? Profession { get; set; }
-		public string? Bio { get; set; }
-		public decimal HourlyRate { get; set; }
-		public string? Currency { get; set; }
-		public string? Status { get; set; }
-		public bool IsAvailable { get; set; }
-		public List<string> Skills { get; set; } = [];
+		public bool IsSuccessful { get; set; }
 	}
 
 }

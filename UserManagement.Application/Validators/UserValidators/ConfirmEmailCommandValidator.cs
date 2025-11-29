@@ -7,7 +7,7 @@ namespace UserManagement.Application.Validators.UserValidators
 	{
 		public ConfirmEmailCommandValidator()
 		{
-			RuleFor(x => x.Email).NotEmpty().WithMessage("Email is required.")
+			RuleFor(x => x.token).NotEmpty().WithMessage("Email is required.")
 				.EmailAddress().WithMessage("Invalid email format.");
 		}
 	}

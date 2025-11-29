@@ -1,0 +1,44 @@
+﻿<div class="table-container">
+    <table class="payment-table">
+        <thead>
+            <tr>
+                <th>Project</th>
+                <th>Craftsman/Woman</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Payment Method</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Items.Any())
+            {
+                @foreach (var item in Items)
+                {
+                    <tr>
+                        <td class="cell-project">@item.Project</td>
+                        <td>@item.CraftsmanName</td>
+                        <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                        <td>$@item.Amount.ToString("F2")</td>
+                        <td>@item.PaymentMethod</td>
+                        <td class="cell-actions">
+                            <a href="/receipt/@item.Id">View Receipt</a>
+                            <a href="/project/@item.Id">Details</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="cell-empty">No payment history found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter]
+    public List<PaymentHistoryItem> Items { get; set; } = new();
+}

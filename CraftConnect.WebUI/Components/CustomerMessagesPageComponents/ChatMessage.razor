@@ -1,0 +1,37 @@
+﻿<div class="chat-message-row @(Message.IsSentByUser ? "sent" : "received")">
+    @if (!Message.IsSentByUser)
+    {
+        <img class="avatar" src="@Message.SenderAvatarUrl" alt="@Message.SenderName" />
+    }
+
+    <div class="message-content">
+        <div class="message-bubble">
+            <p>@Message.MessageText</p>
+
+            @if (Message.Attachment != null)
+            {
+                <a href="@Message.Attachment.DownloadUrl" class="attachment-link" target="_blank" rel="noopener noreferrer">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243l7-7a.75.75 0 0 1 1.06 1.06l-7 7a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.364 6.364l-1.06 1.06a.75.75 0 1 1-1.06-1.06l1.06-1.06a3 3 0 0 0-4.242-4.243l-7 7a3 3 0 0 0 0 4.242.75.75 0 0 1 0 1.06 4.5 4.5 0 0 1-6.364 0l7-7a4.5 4.5 0 0 1 6.364 0l-1.06 1.06a.75.75 0 1 1-1.06-1.06l1.06-1.06a3 3 0 0 0 0-4.243Z" clip-rule="evenodd" /></svg>
+                    <span>@Message.Attachment.FileName</span>
+                </a>
+            }
+        </div>
+        <div class="message-footer">
+            <span class="timestamp">@Message.Timestamp</span>
+            @if (Message.IsSentByUser && Message.IsSeen)
+            {
+                <span class="seen-status"> • Seen</span>
+            }
+        </div>
+    </div>
+
+    @if (Message.IsSentByUser)
+    {
+        <img class="avatar" src="@Message.SenderAvatarUrl" alt="@Message.SenderName" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public ChatMessageDataVM Message { get; set; } = new();
+}

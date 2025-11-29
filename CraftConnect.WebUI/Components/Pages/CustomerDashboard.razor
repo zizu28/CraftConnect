@@ -1,12 +1,13 @@
-﻿@page "/customer/dashboard"
+﻿@page "/customer/{CustomerId:guid}/dashboard"
 @layout CustomerLayout
 @using CraftConnect.WebUI.Components.CustomerDashboardPageComponents
 @using CraftConnect.WebUI.Components.Layout
+@using CraftConnect.WebUI.Components.SkeletonComponents
 @using CraftConnect.WebUI.Enums
 
 @if (dashboardData == null)
 {
-    <p>Loading dashboard...</p>
+    <DashboardSkeleton />
 }
 else
 {
@@ -26,7 +27,7 @@ else
                 <section class="dashboard-section">
                     <div class="section-header">
                         <h2>Service Requests</h2>
-                        <a href="/customer/service-requests" class="view-all-link">View All</a>
+                        <a href=@($"/customer/{CustomerId}/service-requests") class="view-all-link">View All</a>
                     </div>
                     <ServiceRequestsTable Requests="dashboardData.RecentServiceRequests" IsMini="true" />
                 </section>
@@ -34,7 +35,7 @@ else
                 <section class="dashboard-section">
                     <div class="section-header">
                         <h2>Incoming Proposals</h2>
-                        <a href="/customer/proposals" class="view-all-link">View All</a>
+                        <a href=@($"/customer/{CustomerId}/proposals") class="view-all-link">View All</a>
                     </div>
                     <div class="card-list">
                         @foreach (var proposal in dashboardData.IncomingProposals)
@@ -50,7 +51,7 @@ else
                 <section class="dashboard-section">
                     <div class="section-header">
                         <h2>Inbox Preview</h2>
-                        <a href="/customer/messages" class="view-all-link">View All</a>
+                        <a href=@($"/customer/{CustomerId}/messages") class="view-all-link">View All</a>
                     </div>
                     <div class="inbox-list">
                         @foreach (var message in dashboardData.InboxPreview)
@@ -65,7 +66,29 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    public CustomerLayout? Layout { get; set; }
+
+    [Parameter]
+    public Guid CustomerId { get; set; }
+
     private CustomerDashboardVM? dashboardData;
+    private bool hasSetLayoutId = false;
+
+    protected override void OnParametersSet()
+    {
+        hasSetLayoutId = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(!hasSetLayoutId && Layout != null)
+        {
+            hasSetLayoutId = true;
+            Layout.SetCurrentCustomerId(CustomerId);
+            await InvokeAsync(StateHasChanged);
+        }
+    }
 
     protected override void OnInitialized()
     {

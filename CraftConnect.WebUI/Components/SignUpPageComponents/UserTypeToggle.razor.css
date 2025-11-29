@@ -1,0 +1,30 @@
+﻿.toggle-container {
+    display: flex;
+    padding: 4px;
+    background-color: #F1F5F9; /* Slate-100 */
+    border-radius: 8px;
+    width: 100%;
+}
+
+.btn-toggle {
+    flex: 1; /* Make buttons share space equally */
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4B5563; /* Gray-600 */
+    background-color: transparent; /* Default is no background */
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+    .btn-toggle.active {
+        background-color: #F97316; /* Orange-500 from image */
+        color: #FFFFFF;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-toggle:not(.active):hover {
+        background-color: #E2E8F0; /* Slate-200 on hover */
+    }

@@ -1,0 +1,178 @@
+﻿.admin-sidebar {
+    width: 256px; /* 16rem */
+    flex-shrink: 0;
+    background-color: #FFFFFF;
+    border-right: 1px solid #E5E7EB; /* Gray-200 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #111827;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+}
+
+.sidebar-top {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #DBEAFE; /* Blue-100 */
+    color: #1E40AF; /* Blue-800 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.user-title {
+    font-size: 0.875rem; /* 14px */
+    color: #6B7280; /* Gray-500 */
+}
+
+/* Navigation Links */
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 6px; /* Slightly rounded corners */
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #374151; /* Gray-700 */
+    transition: all 0.1s ease-in-out;
+}
+
+    .nav-item:hover {
+        background-color: #F3F4F6; /* Light gray on hover */
+        color: #111827;
+    }
+
+    .nav-item svg {
+        width: 20px;
+        height: 20px;
+        color: #6B7280; /* Default icon color */
+        flex-shrink: 0;
+    }
+
+    /* Active Nav Item State */
+    .nav-item.active {
+        background-color: #E0F2FE; /* Light Sky-100 from images */
+        color: #0369A1; /* Sky-700 from images */
+        font-weight: 600;
+    }
+
+        .nav-item.active svg {
+            color: #0369A1; /* Active icon color matches text */
+        }
+
+/* Bottom Links */
+.sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid #F3F4F6; /* Slate-100 */
+    padding-top: 16px;
+}
+
+.btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #374151; /* Gray-700 */
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.1s ease-in-out;
+}
+
+    .btn-logout:hover {
+        background-color: #F3F4F6;
+        color: #111827;
+    }
+
+    .btn-logout svg {
+        width: 20px;
+        height: 20px;
+        color: #6B7280;
+        flex-shrink: 0;
+    }
+
+    .btn-logout:hover svg {
+        color: #111827;
+    }
+
+/* Some images show a red logout, some blue. Using a neutral default. */
+/* For a specific color, add a class like .btn-logout-red */
+.btn-logout-red {
+    background-color: #FEF2F2; /* Red-50 */
+    color: #DC2626; /* Red-600 */
+}
+
+    .btn-logout-red:hover {
+        background-color: #FEE2E2; /* Red-100 */
+    }
+
+    .btn-logout-red svg {
+        color: #DC2626;
+    }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+        padding: 16px;
+        position: static;
+    }
+
+    .sidebar-top {
+        gap: 16px;
+    }
+
+    .sidebar-bottom {
+        padding-top: 16px;
+        margin-top: 16px;
+    }
+}

@@ -1,0 +1,58 @@
+﻿.chart-container {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0; /* Slate-200 */
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-title {
+    font-size: 1.125rem; /* 18px */
+    font-weight: 600;
+    color: #1E293B; /* Slate-800 */
+    margin: 0 0 24px 0;
+}
+
+.chart-placeholder {
+    flex-grow: 1;
+    width: 100%;
+    min-height: 250px; /* Base height */
+    position: relative;
+}
+
+.donut-chart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px; /* Override base height */
+}
+
+    .donut-chart svg {
+        width: 150px;
+        height: 150px;
+        transform: rotate(-90deg); /* Start from the top */
+    }
+
+.donut-chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    font-size: 0.9rem;
+    color: #334155; /* Slate-700 */
+    padding-top: 16px;
+}
+
+    .donut-chart-legend > div {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}

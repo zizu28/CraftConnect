@@ -1,0 +1,22 @@
+﻿@using System.Collections.Generic
+
+<span class="log-badge @GetBadgeClass()">
+    @EventType
+</span>
+
+@code {
+    [Parameter]
+    public string EventType { get; set; }
+
+    private string GetBadgeClass()
+    {
+        return EventType.ToLower() switch
+        {
+            "user login" => "badge-blue",
+            "profile update" => "badge-indigo",
+            "project deletion" => "badge-red",
+            "password reset" => "badge-yellow",
+            _ => "badge-gray"
+        };
+    }
+}

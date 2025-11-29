@@ -1,0 +1,17 @@
+﻿@inherits LayoutComponentBase
+
+<div class="craftsman-layout">
+    <CraftsmanSidebar User="currentUser" />
+    <main class="main-content-area">
+        @Body
+    </main>
+</div>
+
+@code {
+    private UserProfileVM currentUser = new UserProfileVM
+    {
+        Name = "John Smith",
+        Email = "john.smith@email.com"
+        // Avatar URL would be set here if needed by sidebar
+    };
+}

@@ -1,6 +1,8 @@
 using CraftConnect.ServiceDefaults;
+using CraftConnect.WebUI.Auth;
 using CraftConnect.WebUI.Components;
 using CraftConnect.WebUI.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,14 +12,21 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddHttpClient("Users", client =>
+builder.Services.AddHttpClient("Backend", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:UsersUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
-});
-builder.Services.AddHttpClient("Bookings", client =>
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
+})
+.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
 {
-	client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BookingsUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
+    UseCookies = true,
+    UseDefaultCredentials = true,
 });
+
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Backend"));
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, BffAuthenticationStateProvider>();
+
+builder.Services.AddLogging();
 
 builder.Services.AddSingleton<ThemeService>();
 

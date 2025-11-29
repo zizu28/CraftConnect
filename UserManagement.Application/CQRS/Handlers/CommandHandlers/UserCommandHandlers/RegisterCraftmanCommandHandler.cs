@@ -4,8 +4,10 @@ using Core.Logging;
 using Core.SharedKernel.IntegrationEvents.AllUserActivitiesIntegrationEvents;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
+using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
+using System.Net;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.DTOs.CraftmanDTO;
@@ -17,6 +19,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 	public class RegisterCraftmanCommandHandler(
 		IMapper mapper,
 		ICraftsmanRepository craftmanRepository,
+		ApplicationDbContext dbContext, 
 		ILoggingService<RegisterCraftmanCommandHandler> logger,
 		IBackgroundJobService backgroundJob,
 		IMessageBroker messageBroker,
@@ -43,19 +46,20 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				response.Message = "Craftman with this email already exists.";
 				return response;
 			}
-			await unitOfWork.ExecuteInTransactionAsync(async () =>
-			{
-				logger.LogInformation("Creating new craftman with email {Email}.", request.Craftman.Email);
-				request.Craftman.Password = BCrypt.Net.BCrypt.HashPassword(
+
+			request.Craftman.Password = BCrypt.Net.BCrypt.HashPassword(
 					request.Craftman.Password!,
 					salt: BCrypt.Net.BCrypt.GenerateSalt(12));
 
-				var newUser = mapper.Map<Craftman>(request.Craftman);
-				newUser.PasswordHash = request.Craftman.Password;
-				foreach (var skillName in request.Craftman.Skills)
-				{
-					newUser.AddSkill(skillName, request.Craftman.YearsOfExperience);
-				}
+			var newUser = mapper.Map<Craftman>(request.Craftman);
+			newUser.PasswordHash = request.Craftman.Password;
+			var verificationTokenValue = EmailVerificationToken.GenerateToken();
+			var hashedToken = BCrypt.Net.BCrypt.HashPassword(verificationTokenValue);
+			
+			await unitOfWork.ExecuteInTransactionAsync(async () =>
+			{
+				logger.LogInformation("Creating new craftman with email {Email}.", request.Craftman.Email);
+				
 				await craftmanRepository.AddAsync(newUser, cancellationToken);
 
 				var userRegisteredEvent = new UserRegisteredIntegrationEvent
@@ -66,34 +70,45 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				);
 				await messageBroker.PublishAsync(userRegisteredEvent, cancellationToken);
 
+				var utcNow = DateTime.UtcNow;
+				var emailVerificationToken = new EmailVerificationToken
+				{
+					EmailVerificationTokenId = Guid.NewGuid(),
+					TokenValue = hashedToken,
+					User = newUser,
+					UserId = newUser.Id,
+					CreatedOnUtc = utcNow,
+					ExpiresOnUtc = utcNow.AddDays(1)
+				};
+				dbContext.EmailVerificationTokens.Add(emailVerificationToken);
+			}, cancellationToken);
+
+
+			string? verificationLink = $"https://localhost:7235/api/users/confirm-email?token={hashedToken}";
+
+			if (string.IsNullOrEmpty(verificationLink))
+			{
+				logger.LogError(new Exception(), "Failed to generate email confirmation link");
+			}
+			else
+			{
 				backgroundJob.Enqueue<IGmailService>(
 					"default",
 					email => email.SendEmailAsync(
 						newUser.Email.Address,
-						$"Welcome {newUser.FirstName}",
-						$"Welcome email to {newUser.FirstName} sent from Asp.Net Core.",
+						$"Email Verification for CraftConnect",
+						$"A welcome message. " +
+						$"To verify your email address, <a href='{verificationLink}'>click here</a>.",
 						true,
 						CancellationToken.None
 					)
 				);
+			}
 
-				response.Id = newUser.Id;
-				response.FirstName = newUser.FirstName;
-				response.LastName = newUser.LastName;
-				response.Email = newUser.Email.Address;
-				response.Phone = newUser.Phone.Number;
-				response.Profession = newUser.Profession.ToString();
-				response.Bio = newUser.Bio;
-				response.HourlyRate = newUser.HourlyRate.Amount;
-				response.Currency = newUser.HourlyRate.Currency;
-				response.Status = newUser.Status.ToString();
-				response.IsAvailable = newUser.IsAvailable;
-				response.Skills = [.. newUser.Skills.Select(s => s.Name)];
-				logger.LogInformation("Craftman with email {Email} registered successfully.", newUser.Email.Address);
-				response.Message = "Customer registration successful.";
-				response.IsSuccessful = true;
-			}, cancellationToken);
-			
+			response.EmailAddress = newUser.Email.Address;
+			logger.LogInformation("Craftman with email {Email} registered successfully.", newUser.Email.Address);
+			response.Message = "Customer registration successful.";
+			response.IsSuccessful = true;
 			//await cacheService.SetAsync($"user:{userResponse.UserId}", userResponse, cancellationToken);
 			return response;
 		}

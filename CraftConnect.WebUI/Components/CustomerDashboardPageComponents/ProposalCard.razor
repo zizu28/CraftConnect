@@ -25,6 +25,11 @@
     [Parameter]
     public CustomerProposalSummaryVM Proposal { get; set; }
 
+
+
+    [Parameter]
+    public Guid CustomerId { get; set; }
+
     protected override Task OnInitializedAsync()
     {
         Proposal.ProfileUrl = $"https://localhost:7284/craftsman/{Proposal.Id}";

@@ -1,4 +1,4 @@
-﻿@page "/customer/service-requests"
+﻿@page "/customer/{CustomerId:guid}/service-requests"
 @using CraftConnect.WebUI.Components.CustomerDashboardPageComponents
 @using CraftConnect.WebUI.Components.Layout
 @using CraftConnect.WebUI.Enums
@@ -24,6 +24,8 @@
 </div>
 
 @code {
+    [Parameter]
+    public Guid CustomerId { get; set; }
     private List<ServiceRequestVM> serviceRequests = new();
 
     protected override void OnInitialized()

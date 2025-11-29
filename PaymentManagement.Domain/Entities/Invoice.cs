@@ -3,6 +3,7 @@ using Core.SharedKernel.Enums;
 using Core.SharedKernel.IntegrationEvents.InvoiceIntegrationEvents;
 using Core.SharedKernel.ValueObjects;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace PaymentManagement.Domain.Entities
@@ -26,6 +27,7 @@ namespace PaymentManagement.Domain.Entities
 		public Money DiscountAmount { get; private set; }
 		public Money TotalAmount { get; private set; }
 		public string Currency { get; private set; }
+		[Column(TypeName = "decimal(18, 2)")]
 		public decimal TaxRate { get; private set; }
 		public string? Notes { get; private set; }
 		public string? Terms { get; private set; }

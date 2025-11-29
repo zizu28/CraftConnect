@@ -1,0 +1,86 @@
+﻿/* Reuse the layout logic from the actual dashboard css */
+.dashboard-container {
+    width: 100%;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* 66% 33% split */
+    gap: 32px;
+}
+
+.dashboard-col {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+/* Skeleton Specific Containers */
+.skeleton-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+.card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Skeleton Table */
+.skeleton-table {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.skeleton-row-header {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    background-color: #F9FAFB;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.skeleton-row {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    border-bottom: 1px solid #E5E7EB;
+    align-items: center;
+}
+
+    .skeleton-row:last-child {
+        border-bottom: none;
+    }
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .stat-grid {
+        grid-template-columns: 1fr;
+    }
+}

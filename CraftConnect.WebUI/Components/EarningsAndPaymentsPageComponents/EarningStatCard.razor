@@ -1,0 +1,15 @@
+﻿<div class="stat-card">
+    <span class="stat-title">@Title</span>
+    <span class="stat-value @(IsPending ? "pending" : "")">@Value</span>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Value { get; set; }
+
+    [Parameter]
+    public bool IsPending { get; set; } = false;
+}

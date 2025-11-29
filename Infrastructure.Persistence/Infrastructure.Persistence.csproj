@@ -22,10 +22,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AuditManagement.Domain\AuditManagement.Domain.csproj" />
     <ProjectReference Include="..\BookingManagement.Domain\BookingManagement.Domain.csproj" />
     <ProjectReference Include="..\Core.Logging\Core.Logging.csproj" />
     <ProjectReference Include="..\PaymentManagement.Domain\PaymentManagement.Domain.csproj" />
     <ProjectReference Include="..\ProductInventoryManagement.Domain\ProductInventoryManagement.Domain.csproj" />
+    <ProjectReference Include="..\PromotionManagement.Domain\PromotionManagement.Domain.csproj" />
     <ProjectReference Include="..\UserManagement.Domain\UserManagement.Domain.csproj" />
   </ItemGroup>
 

@@ -1,0 +1,11 @@
+﻿.support-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #F9FAFB; /* Gray-50 */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.support-main-content {
+    flex-grow: 1;
+}

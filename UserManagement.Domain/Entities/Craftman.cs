@@ -1,7 +1,8 @@
-﻿using System.Text.Json.Serialization;
+﻿using Core.SharedKernel.Domain;
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.IntegrationEvents.AllUserActivitiesIntegrationEvents;
 using Core.SharedKernel.ValueObjects;
+using System.Text.Json.Serialization;
 
 namespace UserManagement.Domain.Entities
 {
@@ -9,15 +10,15 @@ namespace UserManagement.Domain.Entities
 	{
 		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public Profession Profession { get; private set; }
-		public string Bio { get; private set; } = string.Empty;
-		public Money HourlyRate { get; private set; }
 		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public VerificationStatus Status { get; private set; } = VerificationStatus.Unverified;
-		public bool IsAvailable { get; private set; } = false;
 
 		private List<Skill> _skills = [];
-		public IReadOnlyCollection<Skill> Skills => _skills.AsReadOnly();
-
+		public IReadOnlyCollection<Skill>? Skills => _skills.AsReadOnly();
+		public string ProfileImageUrl { get; set; } = string.Empty;
+		public List<Project> Portfolio { get; set; } = [];
+		public List<WorkEntry> WorkExperience { get; set; } = [];
+		public string Location { get; set; } = string.Empty;
 		private Craftman() : base() { }
 
 		public Craftman(Email email, Profession profession) 
@@ -32,7 +33,7 @@ namespace UserManagement.Domain.Entities
 			AddIntegrationEvent(new CraftmanSkillIntegrationAddedEvent(Id, name));
 		}
 
-		public static void VerifyCraftman(Email email, Profession craftmanProfession, IdentityDocument document)
+		public void VerifyCraftman(Email email, Profession craftmanProfession, IdentityDocument document)
 		{
 			var craftman = new Craftman(email, craftmanProfession)
 			{

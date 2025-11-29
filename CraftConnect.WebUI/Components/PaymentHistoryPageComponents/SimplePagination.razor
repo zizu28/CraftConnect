@@ -1,0 +1,36 @@
+﻿<div class="pagination-container">
+    <span class="pagination-info">
+        Showing <strong>@StartItem</strong> to <strong>@EndItem</strong> of <strong>@TotalItems</strong> results
+    </span>
+    <div class="pagination-buttons">
+        <button class="btn-page @(CurrentPage == 1 ? "disabled" : "")"
+                @onclick="() => OnPageChange(CurrentPage - 1)"
+                disabled="@(CurrentPage == 1)">
+            Previous
+        </button>
+        <button class="btn-page @(CurrentPage == TotalPages ? "disabled" : "")"
+                @onclick="() => OnPageChange(CurrentPage + 1)"
+                disabled="@(CurrentPage == TotalPages)">
+            Next
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int CurrentPage { get; set; } = 1;
+    [Parameter] public int TotalItems { get; set; }
+    [Parameter] public int PageSize { get; set; } = 5;
+    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+
+    private int TotalPages => (int)Math.Ceiling(TotalItems / (double)PageSize);
+    private int StartItem => TotalItems == 0 ? 0 : (CurrentPage - 1) * PageSize + 1;
+    private int EndItem => Math.Min(CurrentPage * PageSize, TotalItems);
+
+    private async Task OnPageChange(int newPage)
+    {
+        if (newPage >= 1 && newPage <= TotalPages)
+        {
+            await OnPageChanged.InvokeAsync(newPage);
+        }
+    }
+}

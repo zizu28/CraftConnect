@@ -1,7 +1,10 @@
-﻿namespace Core.SharedKernel.ValueObjects
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Core.SharedKernel.ValueObjects
 {
 	public record Money
 	{
+		[Column(TypeName = "decimal(18, 2)")]
 		public decimal Amount { get; private set; }
 		public string Currency { get; private set; }
 

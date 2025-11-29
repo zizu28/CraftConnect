@@ -1,0 +1,112 @@
+﻿.page-header {
+    margin-bottom: 24px;
+}
+
+    .page-header h1 {
+        font-size: 2.25rem; /* 36px */
+        font-weight: 800;
+        color: #1E293B; /* Slate-800 */
+        margin: 0 0 4px 0;
+    }
+
+    .page-header p {
+        font-size: 1rem;
+        color: #64748B; /* Slate-500 */
+        margin: 0;
+    }
+
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.management-card {
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    border: 1px solid #E2E8F0; /* Slate-200 */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    padding: 24px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+    .card-header h2 {
+        font-size: 1.5rem; /* 24px */
+        font-weight: 700;
+        color: #1E293B; /* Slate-800 */
+        margin: 0;
+    }
+
+.btn-primary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background-color: #2563EB; /* Blue-600 from image */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .btn-primary:hover {
+        background-color: #1D4ED8; /* Blue-700 */
+    }
+
+    .btn-primary svg {
+        width: 20px;
+        height: 20px;
+    }
+
+.card-search {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+    .card-search .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        color: #9CA3AF; /* Gray-400 */
+    }
+
+    .card-search input {
+        width: 100%;
+        padding: 10px 10px 10px 40px;
+        border: 1px solid #E2E8F0; /* Slate-200 */
+        border-radius: 6px;
+        font-size: 0.9rem;
+        background-color: #F8FAFC; /* Slate-50 */
+    }
+
+        .card-search input:focus {
+            outline: none;
+            background-color: #FFFFFF;
+            border-color: #2563EB; /* Blue-600 */
+            box-shadow: 0 0 0 1px #2563EB;
+        }
+
+.item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .content-grid {
+        grid-template-columns: 1fr; /* Stack columns on smaller screens */
+    }
+}

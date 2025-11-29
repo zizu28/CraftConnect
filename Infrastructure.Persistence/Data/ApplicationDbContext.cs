@@ -1,4 +1,5 @@
-﻿using BookingManagement.Domain.Entities;
+﻿using AuditManagement.Domain.Entities;
+using BookingManagement.Domain.Entities;
 using Core.SharedKernel.ValueObjects;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,8 @@ namespace Infrastructure.Persistence.Data
 	{
 		public DbSet<RefreshToken> RefreshTokens { get; set; }
 		public DbSet<User> Users { get; set; }
+		public DbSet<EmailVerificationToken> EmailVerificationTokens { get; set; }
+		public DbSet<ResetPasswordToken> ResetPasswordTokens { get; set; }
 		public DbSet<Customer> Customers { get; set; }
 		public DbSet<Craftman> Craftmen { get; set; }
 		public DbSet<Booking> Bookings { get; set; }
@@ -20,6 +23,7 @@ namespace Infrastructure.Persistence.Data
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Payment> Payments { get; set; }
 		public DbSet<Invoice> Invoices { get; set; }
+		public DbSet<AuditLog> AuditLogs { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -44,13 +48,17 @@ namespace Infrastructure.Persistence.Data
 			modelBuilder.Owned<Image>();
 			modelBuilder.Owned<Inventory>();
 			modelBuilder.Owned<InvoiceRecipient>();
+			modelBuilder.Owned<AttachedDocument>();
+			modelBuilder.Owned<Core.SharedKernel.ValueObjects.Project>();
+			modelBuilder.Owned<WorkEntry>();
 
 			var applicationsToScan = AppDomain.CurrentDomain.GetAssemblies()
 				.Where(a => a.FullName != null && (
 						a.FullName.StartsWith("UserManagement.Infrastructure.EntityTypeConfigurations") ||
 						a.FullName.StartsWith("BookingManagement.Infrastructure.EntityTypeConfigurations") || 
 						a.FullName.StartsWith("ProductInventoryManagement.Infrastructure.EntityTypeConfigurations") ||
-						a.FullName.StartsWith("PaymentManagement.Infrastructure.EntityTypeConfigurations")
+						a.FullName.StartsWith("PaymentManagement.Infrastructure.EntityTypeConfigurations") ||
+						a.FullName.StartsWith("AuditManagement.Infrastructure.EntityTypeConfigurations") 
 						)
 				);
 

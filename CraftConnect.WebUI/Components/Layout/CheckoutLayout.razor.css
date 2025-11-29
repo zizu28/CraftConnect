@@ -1,0 +1,56 @@
+﻿.checkout-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #F9FAFB; /* Gray-50 */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #111827; /* Gray-900 */
+}
+
+.checkout-header {
+    width: 100%;
+    max-width: 1024px;
+    padding: 32px 24px 24px 24px;
+}
+
+    .checkout-header h1 {
+        font-size: 2.25rem; /* 36px */
+        font-weight: 700;
+    }
+
+.checkout-content {
+    width: 100%;
+    max-width: 1024px;
+    padding: 0 24px;
+}
+
+.checkout-footer {
+    width: 100%;
+    max-width: 1024px;
+    padding: 32px 24px;
+    text-align: center;
+}
+
+    .checkout-footer nav {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+
+        .checkout-footer nav a, .checkout-footer nav span {
+            font-size: 0.875rem;
+            color: #6B7280; /* Gray-500 */
+            text-decoration: none;
+        }
+
+            .checkout-footer nav a:hover {
+                text-decoration: underline;
+            }
+
+    .checkout-footer p {
+        font-size: 0.875rem;
+        color: #9CA3AF; /* Gray-400 */
+        margin: 0;
+    }

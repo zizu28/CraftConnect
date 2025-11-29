@@ -1,0 +1,65 @@
+﻿@page "/admin/dashboard"
+@layout AdminLayout
+@using CraftConnect.WebUI.Components.AdminPagesComponents.AdminDashboardPageComponents
+@using CraftConnect.WebUI.Components.Layout.AdminPageLayouts
+
+<div class="admin-dashboard-container">
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="header-title">
+            <h1>Admin Dashboard</h1>
+            <span class="last-updated">Last updated: @DateTime.Now.ToShortTimeString()</span>
+        </div>
+        <div class="admin-search-bar">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" /></svg>
+            <input type="text" placeholder="Search for users or projects by name or ID" />
+        </div>
+    </header>
+
+    <!-- Stat Cards -->
+    <div class="stat-cards-grid">
+        <DashboardStatCard Title="Total Users" Value="@stats.TotalUsers.ToString("N0")" PercentageChange="@stats.TotalUsersChange" IsPositive="true" />
+        <DashboardStatCard Title="Active Projects" Value="@stats.ActiveProjects.ToString("N0")" PercentageChange="@stats.ActiveProjectsChange" IsPositive="true" />
+        <DashboardStatCard Title="Total Revenue" Value="@stats.TotalRevenue.ToString("C0")" PercentageChange="@stats.TotalRevenueChange" IsPositive="true" />
+        <DashboardStatCard Title="New Registrations" Value="@stats.NewRegistrations.ToString("N0")" PercentageChange="@stats.NewRegistrationsChange" IsPositive="true" />
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="dashboard-grid">
+        <div class="chart-card-large">
+            <UserRegistrationsChart />
+        </div>
+        <div class="sidebar-cards">
+            <QuickAccess />
+            <RecentActivity ActivityItems="recentActivity" />
+        </div>
+    </div>
+</div>
+
+@code {
+    private AdminDashboardStats stats = new();
+    private List<RecentActivityItem> recentActivity = new();
+
+    protected override void OnInitialized()
+    {
+        // Mock data from the image
+        stats = new AdminDashboardStats
+        {
+            TotalUsers = 12456,
+            TotalUsersChange = "5%",
+            ActiveProjects = 3456,
+            ActiveProjectsChange = "10%",
+            TotalRevenue = 1234567,
+            TotalRevenueChange = "2%",
+            NewRegistrations = 123,
+            NewRegistrationsChange = "15%"
+        };
+
+        recentActivity = new List<RecentActivityItem>
+        {
+            new RecentActivityItem { Id = "1", IconType = "user", Title = "New craftsman registered", Description = "John Doe - 2 minutes ago", TimeAgo = "" },
+            new RecentActivityItem { Id = "2", IconType = "project", Title = "New project posted", Description = "Kitchen Remodel - 1 hour ago", TimeAgo = "" },
+            new RecentActivityItem { Id = "3", IconType = "milestone", Title = "Project completed", Description = "Custom Bookshelf - 3 hours ago", TimeAgo = "" }
+        };
+    }
+}

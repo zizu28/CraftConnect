@@ -1,0 +1,248 @@
+﻿h1 {
+    font-size: 2.25rem; /* 36px */
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 32px;
+}
+
+h2 {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+}
+
+.settings-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    overflow: hidden; /* To contain borders */
+}
+
+    /* Add padding to all sections except lists/tables */
+    .settings-card > h2,
+    .settings-card > .card-header,
+    .settings-card > .tfa-row,
+    .settings-card > EditForm {
+        padding: 24px;
+    }
+
+/* --- Card Headers/Footers --- */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 16px;
+}
+
+.header-link {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #DC2626; /* Red-600 */
+    text-decoration: none;
+}
+
+    .header-link:hover {
+        text-decoration: underline;
+    }
+
+.card-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 16px;
+    border-top: 1px solid #F3F4F6;
+}
+
+/* --- Forms --- */
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+    .form-row.split-2 {
+        flex-direction: row;
+    }
+
+    .form-row .form-group {
+        flex-grow: 1;
+    }
+
+@media (max-width: 640px) {
+    .form-row.split-2 {
+        flex-direction: column;
+    }
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151; /* Gray-700 */
+    margin-bottom: 4px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #D1D5DB; /* Gray-300 */
+    border-radius: 6px;
+    background-color: #FFFFFF;
+    font-size: 0.9rem;
+    color: #111827;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+    .form-control:focus {
+        outline: none;
+        border-color: #3B82F6; /* Blue-500 */
+        box-shadow: 0 0 0 1px #3B82F6;
+    }
+
+/* --- Buttons --- */
+.btn {
+    padding: 8px 14px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.1s;
+}
+
+.btn-primary {
+    background-color: #4B5563; /* Gray-600 */
+    color: white;
+}
+
+    .btn-primary:hover {
+        background-color: #374151; /* Gray-700 */
+    }
+
+.btn-secondary {
+    background-color: #FFFFFF;
+    color: #374151; /* Gray-700 */
+    border-color: #D1D5DB; /* Gray-300 */
+}
+
+    .btn-secondary:hover {
+        background-color: #F9FAFB; /* Gray-50 */
+    }
+
+/* --- Two-Factor Auth --- */
+.tfa-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 16px;
+}
+
+.tfa-desc {
+    font-size: 0.9rem;
+    color: #6B7280;
+    margin: 0 0 4px 0;
+}
+
+.status-text {
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+.tfa-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* --- Activity Table --- */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.activity-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .activity-table th, .activity-table td {
+        padding: 16px 24px;
+        text-align: left;
+        font-size: 0.9rem;
+        color: #374151;
+        border-top: 1px solid #E5E7EB;
+    }
+
+    .activity-table th {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #6B7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background-color: #F9FAFB;
+    }
+
+    .activity-table td svg {
+        width: 16px;
+        height: 16px;
+        color: #6B7280;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+
+/* --- Linked Devices List --- */
+.list-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+}
+
+    .list-item:not(:last-child) {
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+.device-icon {
+    width: 24px;
+    height: 24px;
+    color: #374151;
+    flex-shrink: 0;
+}
+
+.device-info {
+    flex-grow: 1;
+}
+
+.device-name {
+    display: block;
+    font-weight: 500;
+    color: #111827;
+}
+
+.device-status {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+    .device-status.active {
+        color: #16A34A; /* Green-600 */
+    }
+
+.btn-remove {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #DC2626; /* Red-600 */
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+}
+
+    .btn-remove:hover {
+        text-decoration: underline;
+    }

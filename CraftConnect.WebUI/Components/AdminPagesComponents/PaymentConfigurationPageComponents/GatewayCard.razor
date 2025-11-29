@@ -1,0 +1,22 @@
+﻿<div class="gateway-card">
+    <div class="gateway-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M1.5 4A2.5 2.5 0 014 1.5h12A2.5 2.5 0 0118.5 4v12A2.5 2.5 0 0116 18.5H4A2.5 2.5 0 011.5 16V4zM4 3a1 1 0 00-1 1v1h14V4a1 1 0 00-1-1H4zM3 7v9a1 1 0 001 1h12a1 1 0 001-1V7H3z" clip-rule="evenodd" /></svg>
+    </div>
+    <div class="gateway-details">
+        <h5>@Gateway.Name</h5>
+        <p class="@(Gateway.IsConfigured ? "configured" : "not-configured")">
+            API Key: @Gateway.ApiKey
+        </p>
+    </div>
+    <div class="gateway-action">
+        <AdminToggleSwitch IsEnabled="Gateway.IsEnabled" OnToggle="OnToggle" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public AdminPaymentGateway Gateway { get; set; } = new();
+
+    [Parameter]
+    public EventCallback OnToggle { get; set; }
+}

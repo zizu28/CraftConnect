@@ -1,0 +1,62 @@
+﻿.health-stat-card {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    border: 1px solid #F1F5F9; /* Slate-100 */
+    padding: 15px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #64748B; /* Slate-500 */
+    display: block;
+    margin-bottom: 12px;
+}
+
+.card-value {
+    font-size: 1.875rem; /* 30px */
+    font-weight: 700;
+    color: #1E293B; /* Slate-800 */
+    display: block;
+    margin-bottom: 12px;
+}
+
+.card-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+/* Status Colors */
+.status-healthy {
+    color: #16A34A; /* Green-600 */
+}
+
+    .status-healthy .status-dot {
+        background-color: #22C55E; /* Green-500 */
+    }
+
+.status-warning {
+    color: #D97706; /* Amber-600 */
+}
+
+    .status-warning .status-dot {
+        background-color: #F59E0B; /* Amber-500 */
+    }
+
+.status-default {
+    color: #64748B; /* Slate-500 */
+}
+
+    .status-default .status-dot {
+        background-color: #94A3B8; /* Slate-400 */
+    }

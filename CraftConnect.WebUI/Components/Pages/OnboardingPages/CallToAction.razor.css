@@ -1,0 +1,143 @@
+﻿.onboarding-cta-container {
+    width: 100%;
+    max-width: 640px; /* Max width from image */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0; /* Slate-200 */
+    border-radius: 12px;
+    padding: 32px 48px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Progress Bar */
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #475569; /* Slate-600 */
+    margin-bottom: 8px;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: #E2E8F0; /* Slate-200 */
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 32px;
+}
+
+.progress-bar-fill {
+    width: 100%; /* 3/3 steps */
+    height: 100%;
+    background-color: #0EA5E9; /* Sky-500 */
+    border-radius: 4px;
+}
+
+/* Main Content */
+.cta-content {
+    text-align: center;
+    width: 100%;
+}
+
+.cta-image {
+    width: 100%;
+    height: 250px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 32px;
+}
+
+    .cta-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 100%);
+    display: flex;
+    align-items: flex-start;
+    padding: 24px;
+}
+
+    .image-overlay h2 {
+        font-size: 2.25rem; /* 36px */
+        font-weight: 700;
+        color: #FFFFFF;
+    }
+
+.cta-content p {
+    font-size: 1rem; /* 16px */
+    color: #475569; /* Slate-600 */
+    line-height: 1.6;
+    margin: 0 auto 32px auto;
+    max-width: 500px;
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: #0EA5E9; /* Sky-500 */
+    color: white;
+}
+
+    .btn-primary:hover {
+        background-color: #0284C7; /* Sky-600 */
+    }
+
+.btn-secondary {
+    background-color: #F1F5F9; /* Slate-100 */
+    color: #334155; /* Slate-700 */
+}
+
+    .btn-secondary:hover {
+        background-color: #E2E8F0; /* Slate-200 */
+    }
+
+/* Footer Nav */
+.nav-footer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding-top: 24px;
+    border-top: 1px solid #F1F5F9; /* Slate-100 */
+}
+
+.nav-link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #475569; /* Slate-600 */
+    text-decoration: none;
+}
+
+    .nav-link:hover {
+        color: #0EA5E9; /* Sky-500 */
+    }
