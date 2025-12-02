@@ -1,0 +1,20 @@
+﻿@using CraftConnect.WASM.ViewModels
+<div class="message-card-container">
+    <div class="message-header">
+        <div class="sender-info">
+            <img src="@Message.AvatarUrl" alt="@Message.SenderName" class="sender-avatar" />
+            <p class="sender-name">@Message.SenderName</p>
+            @if (Message.IsOnline)
+            {
+                <i class="bi bi-circle-fill online-indicator"></i>
+            }
+        </div>
+        <span class="time-ago">@Message.TimeAgo</span>
+    </div>
+    <p class="snippet">@Message.Snippet</p>
+</div>
+
+@code {
+    [Parameter]
+    public MessagePreviewVM Message { get; set; } = new();
+}

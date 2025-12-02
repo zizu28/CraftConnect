@@ -1,0 +1,168 @@
+﻿/* CustomerProposalCard.razor.css */
+.customer-proposal-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB; /* Gray-200 */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 280px; /* Ensure it doesn't get too small */
+}
+
+/* --- Card Header (Craftsman Info + Price) --- */
+.card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 4px; /* Space between header and quote */
+}
+
+.craftsman-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.craftsman-details {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allows it to take available space */
+}
+
+    .craftsman-details .name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #111827; /* Gray-900 */
+    }
+
+    .craftsman-details .rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.85rem;
+        color: #374151; /* Gray-700 */
+    }
+
+        .craftsman-details .rating svg {
+            width: 14px; /* Slightly smaller star */
+            height: 14px;
+            color: #F59E0B; /* Amber-500 */
+        }
+
+        .craftsman-details .rating .reviews {
+            color: #6B7280; /* Gray-500 */
+            font-size: 0.8rem;
+        }
+
+.price {
+    font-size: 1.125rem; /* 18px */
+    font-weight: 600;
+    color: #166534; /* Green-800 */
+    flex-shrink: 0;
+    margin-left: auto; /* Pushes price to the right */
+}
+
+/* --- Quote Summary --- */
+.quote-summary {
+    font-size: 0.9rem;
+    color: #374151; /* Gray-700 */
+    line-height: 1.5;
+    margin-bottom: 16px;
+    min-height: 60px; /* Give some consistent height */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+}
+
+/* --- Actions Buttons --- */
+.card-actions {
+    display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap */
+    gap: 8px; /* Space between buttons */
+    margin-top: auto; /* Push buttons to the bottom */
+    padding-top: 16px;
+    border-top: 1px solid #F3F4F6; /* Gray-100 */
+}
+
+.btn {
+    padding: 8px 12px;
+    font-size: 0.8rem; /* Smaller text for buttons */
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid #D1D5DB; /* Gray-300 default border */
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+    flex-grow: 1; /* Allow buttons to grow */
+    min-width: 80px; /* Minimum width for buttons */
+    text-align: center;
+    text-decoration: none; /* For the anchor tag button */
+    display: inline-flex; /* For text-align and vertical alignment */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Specific button styles matching image */
+.btn-view-portfolio {
+    background-color: #FFFFFF;
+    color: #4F46E5; /* Indigo-600 */
+    border-color: #E0E7FF; /* Indigo-200 */
+    order: -1; /* Place first, regardless of flex order */
+    flex-basis: 100%; /* Make it full width on its own row */
+}
+
+    .btn-view-portfolio:hover {
+        background-color: #EEF2FF; /* Indigo-50 */
+        border-color: #C7D2FE; /* Indigo-300 */
+    }
+
+.btn-reject {
+    background-color: #FFFFFF;
+    color: #DC2626; /* Red-600 */
+    border-color: #FECACA; /* Red-300 */
+}
+
+    .btn-reject:hover {
+        background-color: #FEF2F2; /* Red-50 */
+        border-color: #FCA5A5; /* Red-400 */
+    }
+
+.btn-accept {
+    background-color: #22C55E; /* Green-500 */
+    color: #FFFFFF;
+    border-color: #22C55E;
+}
+
+    .btn-accept:hover {
+        background-color: #16A34A; /* Green-600 */
+        border-color: #16A34A;
+    }
+
+.btn-more-info {
+    background-color: #FFFFFF;
+    color: #374151; /* Gray-700 */
+    border-color: #D1D5DB; /* Gray-300 */
+}
+
+    .btn-more-info:hover {
+        background-color: #F9FAFB; /* Gray-50 */
+        border-color: #9CA3AF; /* Gray-400 */
+    }
+
+/* Responsive button stacking */
+@media (max-width: 480px) {
+    .card-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .btn {
+        flex-grow: 1; /* Ensure they stack vertically */
+        width: 100%; /* Take full width */
+    }
+}

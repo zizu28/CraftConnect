@@ -1,0 +1,88 @@
+﻿@using CraftConnect.WASM.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject ThemeService ThemeService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IHttpClientFactory HttpClientFactory
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+<header class="navbar-container post-project-nav">
+    <div class="navbar-content">
+        <a href="/" class="brand-logo">
+            <img src="/images/craftconnect-logo.png" alt="CraftConnect Logo" />
+            CraftConnect
+        </a>
+
+        @* Hamburger Button - visible only on mobile *@
+        <button class="hamburger-btn" @onclick="ToggleMenu">
+            <i class="bi bi-list"></i>
+        </button>
+
+        @* Navigation Links and Buttons *@
+        <nav class="nav-links @(isMenuOpen ? "open" : "")">
+            <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+                <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon" : "bi-sun")"></i>
+            </button>
+            @* Central Links *@
+            <a href="/explore" class="nav-link">Explore</a>
+            <a href="/how-it-works" class="nav-link">How it works</a>
+            <a href="/contact" class="nav-link">Contact</a>
+
+            @* Right Side Buttons *@
+            <AuthorizeView Context="User">
+                <Authorized>
+                    <span class="user-greeting">
+                        <!-- 'context' contains the ClaimsPrincipal -->
+                        Hi, @User.User.Identity?.Name
+                    </span>
+                    <button class="btn btn-outline-danger btn-logout" @onclick="HandleLogout">
+                        Log out
+                    </button>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/login" class="btn btn-secondary btn-login">Log in</a>
+                </NotAuthorized>
+            </AuthorizeView>
+            
+        </nav>
+    </div>
+</header>
+
+@code {
+    private bool isMenuOpen = false;
+
+    private void ToggleMenu()
+    {
+        isMenuOpen = !isMenuOpen;
+    }
+
+    protected override void OnInitialized()
+    {
+        ThemeService.OnThemeChanged += OnThemeChangedHandler;
+    }
+
+    private void OnThemeChangedHandler()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= OnThemeChangedHandler;
+    }
+
+    private async Task HandleLogout()
+    {
+        try
+        {
+            var client = HttpClientFactory.CreateClient("Backend");
+            await client.PostAsync("/api/users/logout", null);
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Logout failed: {ex.Message}");
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+        }
+    }
+}

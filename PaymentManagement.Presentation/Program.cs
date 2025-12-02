@@ -9,7 +9,7 @@ using PaymentManagement.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
+//builder.AddServiceDefaults();
 
 builder.Services.AddControllers();
 builder.Services.AddPaymentManagementApplicationConfigurations(builder.Configuration);

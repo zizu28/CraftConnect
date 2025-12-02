@@ -1,0 +1,25 @@
+﻿<div class="chart-container">
+    <h4 class="chart-title">User Breakdown</h4>
+    <div class="chart-placeholder donut-chart">
+        <!-- Simple SVG Donut Chart Mockup -->
+        <svg viewBox="0 0 32 32">
+            <!-- Background ring -->
+            <circle r="12" cx="16" cy="16" fill="transparent"
+                    stroke="#E2E8F0"
+                    stroke-width="8"></circle>
+            <!-- Foreground ring (65%) -->
+            <circle r="12" cx="16" cy="16" fill="transparent"
+                    stroke="#4F46E5"
+                    stroke-width="8"
+                    stroke-dasharray="47.12 75.39"
+                    stroke-dashoffset="0"></circle> <!-- 65% of circumference -->
+            <!-- Text in middle -->
+            <text x="16" y="18" text-anchor="middle" font-size="8px" fill="#1E293B" font-weight="700">65%</text>
+            <text x="16" y="24" text-anchor="middle" font-size="3px" fill="#64748B">Craftsmen</text>
+        </svg>
+    </div>
+    <div class="chart-legend donut-chart-legend">
+        <div><span class="legend-dot" style="background-color: #4F46E5;"></span> Craftsmen</div>
+        <div><span class="legend-dot" style="background-color: #E2E8F0;"></span> Customers</div>
+    </div>
+</div>

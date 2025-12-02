@@ -1,0 +1,132 @@
+﻿@page "/proposal/create/{projectId:guid}"
+@* @page "/proposal/create" *@
+@using Blazored.FluentValidation
+@using CraftConnect.WASM.Enums
+@using CraftConnect.WASM.Validators
+@using CraftConnect.WASM.ViewModels
+@inject NavigationManager NavManager
+@inject IHttpClientFactory HttpClientFactory
+
+<div class="proposal-page-container">
+    <div class="header-actions-bar">
+        <div class="header-info">
+            <h1>Create Proposal for Custom Bookshelf</h1>
+            <p class="project-by-line">Project by: Jane Doe</p>
+        </div>
+        <div class="top-buttons-group">
+            <button class="btn btn-save-draft" @onclick="HandleSaveDraft">Save as Draft</button>
+            <button class="btn btn-submit-top" @onclick="HandleSubmitProposal">Submit Proposal</button>
+        </div>
+    </div>
+
+    <EditForm Model="@ProposalData" OnValidSubmit="HandleValidSubmit" class="proposal-form">
+        <FluentValidationValidator Validator="@Validator" />
+        <ValidationSummary />
+
+        @* --- Project Overview --- *@
+        <div class="overview-box card-section">
+            <h4 class="section-title">Project Overview</h4>
+            <p class="section-subtitle">A brief summary of the project to build a custom floor-to-ceiling bookshelf in a home office. Materials and finish to be discussed.</p>
+        </div>
+
+        @* --- Proposed Solution --- *@
+        <div class="solution-section card-section">
+            <h4 class="section-title">Your Proposed Solution</h4>
+            <label>Proposal Description</label>
+            <InputTextArea @bind-Value="ProposalData.Description" class="form-control" placeholder="Describe how you will approach this project, the materials you'll use, and your process..." />
+            <ValidationMessage For="@(() => ProposalData.Description)" />
+        </div>
+
+        @* --- Pricing Section --- *@
+        <div class="pricing-section card-section">
+            <h4 class="section-title">Pricing</h4>
+            
+            @* Rate Type Radio Group *@
+            <div class="rate-type-group">
+                <label>Rate Type</label>
+                <InputRadioGroup class="rate-options" @bind-Value="ProposalData.RateType">
+                    @* Fixed Price Option *@
+                    <label class="radio-card @(ProposalData.RateType == RateType.FixedPrice ? "active" : "")">
+                        <InputRadio Value="@RateType.FixedPrice" />
+                        Fixed Price
+                    </label>
+
+                    @* Hourly Rate Option *@
+                    <label class="radio-card @(ProposalData.RateType == RateType.HourlyRate ? "active" : "")">
+                        <InputRadio Value="@RateType.HourlyRate" />
+                        Hourly Rate
+                    </label>
+                </InputRadioGroup>
+            </div>
+
+            @* Proposed Cost Input (Renders for both, label changes if needed) *@
+            <div class="proposed-cost-input">
+                <label>Proposed Cost ($)</label>
+                <InputNumber @bind-Value="ProposalData.ProposedCost" class="form-control" placeholder="Enter amount" />
+                <ValidationMessage For="@(() => ProposalData.ProposedCost)" />
+            </div>
+        </div>
+
+        @* --- Timeline Section --- *@
+        <div class="timeline-section card-section">
+            <h4 class="section-title">Timeline</h4>
+            <div class="form-row-2col">
+                <div>
+                    <label>Start Date</label>
+                    <InputDate @bind-Value="ProposalData.StartDate" class="form-control" placeholder="mm/dd/yyyy" />
+                    <ValidationMessage For="@(() => ProposalData.StartDate)" />
+                </div>
+                <div>
+                    <label>End Date</label>
+                    <InputDate @bind-Value="ProposalData.EndDate" class="form-control" placeholder="mm/dd/yyyy" />
+                    <ValidationMessage For="@(() => ProposalData.EndDate)" />
+                </div>
+            </div>
+        </div>
+
+        @* --- Documents Upload --- *@
+        <div class="documents-section card-section">
+            <h4 class="section-title">Supporting Documents</h4>
+            <div class="file-upload-box">
+                <i class="bi bi-cloud-upload upload-icon"></i>
+                <p class="drag-drop-text">Drag and drop or <a href="#">browse</a> to add your portfolio, sketches, or other relevant documents.</p>
+                @* Actual file input hidden behind a custom button/link *@
+                <input type="file" multiple class="hidden-file-input" />
+            </div>
+        </div>
+        
+        @* --- Final Bottom Actions --- *@
+        <div class="bottom-actions-bar">
+            <button type="button" class="btn btn-save-draft" @onclick="HandleSaveDraft">Save as Draft</button>
+            <button type="submit" class="btn btn-submit-bottom">Submit Proposal</button>
+        </div>
+
+    </EditForm>
+</div>
+
+@code {
+    [Parameter]
+    public Guid ProjectId { get; set; }
+
+    public ProposalCreationValidator Validator { get; set; } = new();
+
+    private ProposalCreationVM ProposalData { get; set; } = new();
+
+    private void HandleValidSubmit()
+    {
+        // Logic to send the ProposalData to the backend
+        Console.WriteLine("Proposal submitted successfully!");
+    }
+
+    private void HandleSubmitProposal()
+    {
+        // This button calls the valid submit handler
+        // Submit button is inside the form, setting type="submit" handles this.
+    }
+
+    private void HandleSaveDraft()
+    {
+        // Logic to save the current form data locally or via API
+        Console.WriteLine("Draft saved.");
+    }
+}

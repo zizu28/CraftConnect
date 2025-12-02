@@ -6,6 +6,7 @@
 		Plumber, 
 		Carpenter, 
 		Tailor,
-		Trader
+		Trader,
+		None
 	}
 }

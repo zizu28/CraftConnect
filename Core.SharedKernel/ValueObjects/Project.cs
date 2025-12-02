@@ -2,12 +2,14 @@
 {
 	public record Project
 	{
+		public Guid ProjectId { get; private set; }
 		public string Title { get; set; }
 		public string Description { get; set; }
 		public string ImageUrl { get; set; }
 
-		private Project()
+		public Project()
 		{
+			ProjectId = Guid.Empty;
 			Title = string.Empty;
 			Description = string.Empty;
 			ImageUrl = string.Empty;
@@ -15,9 +17,7 @@
 
 		public Project(string title, string description, string imageUrl)
 		{
-			ArgumentException.ThrowIfNullOrEmpty(title);
-			ArgumentException.ThrowIfNullOrEmpty(description);
-			ArgumentException.ThrowIfNullOrEmpty(imageUrl);
+			ProjectId = Guid.NewGuid();
 			Title = title;
 			Description = description;
 			ImageUrl = imageUrl;

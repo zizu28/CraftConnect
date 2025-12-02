@@ -1,0 +1,180 @@
+﻿/* --- Hero Section --- */
+.hero-section {
+    position: relative;
+    height: 60vh;
+    min-height: 400px;
+    background-image: url('https://placehold.co/1920x1080/334155/e2e8f0?text=Craftsman+Working'); /* Placeholder image */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 24px;
+}
+
+    .hero-content h1 {
+        font-size: 3rem; /* 48px */
+        font-weight: 700;
+        margin: 0 0 16px 0;
+    }
+
+    .hero-content p {
+        font-size: 1.125rem; /* 18px */
+        max-width: 600px;
+        margin: 0 auto 24px auto;
+        opacity: 0.9;
+    }
+
+.hero-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-primary-light {
+    background-color: #f0ad4e; /* Orange-ish from image */
+    color: #FFFFFF;
+    border-color: #f0ad4e;
+}
+
+    .btn-primary-light:hover {
+        background-color: #ec971f;
+        border-color: #ec971f;
+    }
+
+.btn-secondary-light {
+    background-color: #0275d8; /* Blue from image */
+    color: #FFFFFF;
+    border-color: #0275d8;
+}
+
+    .btn-secondary-light:hover {
+        background-color: #025aa5;
+        border-color: #025aa5;
+    }
+
+
+/* --- Page Content & Sections --- */
+.page-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 24px;
+}
+
+.features-section {
+    text-align: center;
+    margin-bottom: 64px;
+}
+
+    .features-section.customer-section {
+        background-color: #F9FAFB; /* Light gray bg for separation */
+        padding: 48px 0;
+        margin-left: -24px;
+        margin-right: -24px;
+        max-width: calc(100% + 48px);
+    }
+
+    .features-section h2 {
+        font-size: 2rem; /* 32px */
+        font-weight: 600;
+        color: #111827; /* Gray-900 */
+        margin: 0 0 12px 0;
+    }
+
+.section-subtitle {
+    font-size: 1rem;
+    color: #4B5563; /* Gray-600 */
+    margin: 0 auto 32px auto;
+    max-width: 600px;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+}
+
+/* --- CTA Section --- */
+.cta-section {
+    text-align: center;
+    background-color: #374151; /* Gray-700 */
+    color: white;
+    padding: 48px 24px;
+    border-radius: 8px;
+    margin: 64px 0;
+}
+
+    .cta-section h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin: 0 0 12px 0;
+    }
+
+    .cta-section p {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin: 0 auto 24px auto;
+        max-width: 600px;
+    }
+
+.btn-primary-cta {
+    background-color: #0275d8; /* Blue */
+    color: white;
+    padding: 12px 24px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+    .btn-primary-cta:hover {
+        background-color: #025aa5;
+    }
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr; /* Stack on mobile */
+    }
+
+    .features-section.customer-section {
+        margin: 0;
+        max-width: 100%;
+    }
+}

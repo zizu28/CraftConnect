@@ -1,0 +1,27 @@
+﻿@using CraftConnect.WASM.ViewModels
+<div class="convo-item @(IsActive ? "active" : "") @(!Conversation.IsRead ? "unread" : "")" @onclick="OnSelectConversation">
+    <img class="avatar" src="@Conversation.OtherUserAvatarUrl" alt="@Conversation.OtherUserName" />
+    <div class="convo-details">
+        <div class="convo-header">
+            <span class="user-name">@Conversation.OtherUserName</span>
+            <span class="timestamp">@Conversation.LatestMessageTimestamp</span>
+        </div>
+        <span class="project-title">@Conversation.ProjectTitle</span>
+        <p class="message-preview">@Conversation.LatestMessagePreview</p>
+    </div>
+    @if (!Conversation.IsRead)
+    {
+        <div class="unread-dot"></div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public ConversationSummaryVM Conversation { get; set; } = new();
+
+    [Parameter]
+    public bool IsActive { get; set; }
+
+    [Parameter]
+    public EventCallback OnSelectConversation { get; set; }
+}

@@ -1,0 +1,147 @@
+﻿@page "/admin/payments/transaction-fees"
+@layout AdminLayout
+@using CraftConnect.WASM.Layout.AdminPageLayouts
+@using CraftConnect.WASM.Components.AdminPagesComponents.UserManagementPageComponent
+@using CraftConnect.WASM.Enums
+@using CraftConnect.WASM.ViewModels
+
+<div class="fees-container">
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="header-title">
+            <nav class="breadcrumbs">
+                <a href="/admin/dashboard">Dashboard</a>
+                <span>/</span>
+                <a href="/admin/payments">Payments</a>
+                <span>/</span>
+                <span class="current">Transaction Fees</span>
+            </nav>
+            <h1>Transaction Fee Management</h1>
+            <p class="page-description">
+                Define, edit, and apply fee structures for platform transactions.
+            </p>
+        </div>
+        <button class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
+            Add New Fee Rule
+        </button>
+    </header>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="search-input-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" /></svg>
+            <input type="text" placeholder="Search by rule name..." />
+        </div>
+        <div class="filter-group">
+            <select id="feeType" @bind="feeTypeFilter">
+                <option value="all">Fee Type: All</option>
+                <option value="percentage">Percentage</option>
+                <option value="fixed">Fixed Amount</option>
+            </select>
+            <select id="status" @bind="statusFilter">
+                <option value="all">Status: All</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+            <button class="btn-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" /></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container">
+        <table class="fees-table">
+            <thead>
+                <tr>
+                    <th class="col-checkbox"><input type="checkbox" /></th>
+                    <th>Rule Name</th>
+                    <th>Fee Type</th>
+                    <th>Fee Value</th>
+                    <th>Applies To</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var fee in filteredFeeRules)
+                {
+                    <tr>
+                        <td class="col-checkbox"><input type="checkbox" /></td>
+                        <td class="cell-rule-name">@fee.RuleName</td>
+                        <td>@fee.FeeType</td>
+                        <td>@GetFormattedValue(fee)</td>
+                        <td>@fee.AppliesTo</td>
+                        <td>
+                            <AdminStatusBadge Status="@fee.Status" />
+                        </td>
+                        <td class="cell-actions">
+                            <button class="btn-icon-action" title="Edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
+                            </button>
+                            <button class="btn-icon-action btn-danger" title="Delete">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z" clip-rule="evenodd" /></svg>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+@code {
+    private List<AdminTransactionFee> feeRules = new();
+    private List<AdminTransactionFee> filteredFeeRules
+    {
+        get
+        {
+            var fees = feeRules.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(feeTypeFilter))
+            {
+                fees = feeTypeFilter.ToLower() switch
+                {
+                    "all" => fees,
+                    "percentage" => fees.Where(f => f.FeeType.ToString().Contains("Percentage", StringComparison.OrdinalIgnoreCase)),
+                    "fixed" => fees.Where(f => f.FeeType.ToString().Contains("FixedAmount", StringComparison.OrdinalIgnoreCase)),
+                    _ => fees
+                };
+            }
+
+            if (!string.IsNullOrWhiteSpace(statusFilter))
+            {
+                fees = statusFilter.ToLower() switch
+                {
+                    "all" => fees,
+                    "active" => fees.Where(f => f.Status.ToString().Equals("Active", StringComparison.OrdinalIgnoreCase)),
+                    "inactive" => fees.Where(f => f.Status.ToString().Contains("Inactive", StringComparison.OrdinalIgnoreCase)),
+                    _ => fees
+                };
+            }
+
+            return fees.ToList();
+        }
+    }
+    private string feeTypeFilter = "";
+    private string statusFilter = "";
+
+    protected override void OnInitialized()
+    {
+        // Mock data from the image
+        feeRules = new List<AdminTransactionFee>
+        {
+            new AdminTransactionFee { Id = Guid.NewGuid(), RuleName = "Standard Platform Commission", FeeType = DiscountType.Percentage, FeeValue = 5, AppliesTo = "All Transactions", Status = UserStatus.Active },
+            new AdminTransactionFee { Id = Guid.NewGuid(), RuleName = "Fixed Payment Processing Fee", FeeType = DiscountType.FixedAmount, FeeValue = 2.50m, AppliesTo = "All Transactions", Status = UserStatus.Active },
+            new AdminTransactionFee { Id = Guid.NewGuid(), RuleName = "Featured Project Fee", FeeType = DiscountType.FixedAmount, FeeValue = 15.00m, AppliesTo = "Specific Service", Status = UserStatus.Active },
+            new AdminTransactionFee { Id = Guid.NewGuid(), RuleName = "High-Value Project Commission", FeeType = DiscountType.Percentage, FeeValue = 3, AppliesTo = "Projects > $5000", Status = UserStatus.Active },
+            new AdminTransactionFee { Id = Guid.NewGuid(), RuleName = "Legacy Artisan Rate", FeeType = DiscountType.Percentage, FeeValue = 2.5m, AppliesTo = "Specific User Role", Status = UserStatus.Inactive }
+        };
+    }
+
+    private string GetFormattedValue(AdminTransactionFee fee)
+    {
+        return fee.FeeType == DiscountType.Percentage ? $"{fee.FeeValue}%" : fee.FeeValue.ToString("C");
+    }
+}

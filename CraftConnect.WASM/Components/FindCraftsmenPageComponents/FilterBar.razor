@@ -1,0 +1,26 @@
+﻿@using CraftConnect.WASM.ViewModels
+
+<div class="filter-bar-container">
+    <FilterDropDown Label="Skill" @bind-SelectedValue="SearchParameters.Skill" Options="@(new List<string>{"All Skills", "Woodworking", "Jewelry", "Pottery"})" OnChange="OnChange" />
+    <FilterDropDown Label="Location" @bind-SelectedValue="SearchParameters.Location" Options="@(new List<string>{"All Locations", "Chiang Mai", "Bangkok", "Phuket"})" OnChange="OnChange" />
+    <FilterDropDown Label="Rating" @bind-SelectedValue="SearchParameters.Rating" Options="@(new List<string>{"Any Rating", "5.0", "4.5+", "4.0+"})" OnChange="OnChange" />
+    <FilterDropDown Label="Availability" @bind-SelectedValue="SearchParameters.Availability" Options="@(new List<string>{"Any Time", "Today", "This Week", "Next Month"})" OnChange="OnChange" />
+</div>
+
+@code {
+    [Parameter]
+    public CraftsmanSearchParametersViewModel SearchParameters { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<CraftsmanSearchParametersViewModel> SearchParametersChanged { get; set; }
+
+    [Parameter]
+    public EventCallback OnFilterChange { get; set; }
+
+    private async Task OnChange()
+    {
+        // Notify parent of change in parameters
+        await SearchParametersChanged.InvokeAsync(SearchParameters);
+        await OnFilterChange.InvokeAsync();
+    }
+}

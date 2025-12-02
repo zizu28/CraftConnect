@@ -1,0 +1,64 @@
+﻿.btn-view-details {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+}
+
+.btn-decline {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+}
+
+/* Components/ServiceRequests.razor.css */
+
+.dashboard-section {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    /* No bottom margin needed here as it's the last element in the left panel */
+}
+
+    .dashboard-section h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 25px;
+        color: #333333;
+    }
+
+.request-card {
+    background-color: #fafafa; /* Lighter background than the container */
+    padding: 18px;
+    border-radius: 8px;
+    margin-bottom: 15px; /* Clear vertical spacing between cards */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border: 1px solid #f0f0f0;
+}
+
+    .request-card:last-child {
+        margin-bottom: 0;
+    }
+
+.request-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #007bff;
+}
+
+.request-description {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.request-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}

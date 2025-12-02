@@ -1,0 +1,52 @@
+﻿.gateway-card {
+    display: flex;
+    align-items: center;
+    padding: 24px;
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0; /* Slate-200 */
+    border-radius: 8px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.gateway-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #F1F5F9; /* Slate-100 */
+    color: #64748B; /* Slate-500 */
+    margin-right: 16px;
+}
+
+    .gateway-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+.gateway-details {
+    flex-grow: 1;
+}
+
+    .gateway-details h5 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1E293B; /* Slate-800 */
+        margin: 0 0 4px 0;
+    }
+
+    .gateway-details p {
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+.configured {
+    color: #475569; /* Slate-600 */
+    font-family: monospace;
+}
+
+.not-configured {
+    color: #94A3B8; /* Slate-400 */
+    font-style: italic;
+}

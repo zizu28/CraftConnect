@@ -1,0 +1,80 @@
+﻿@using CraftConnect.WASM.ViewModels
+<div class="active-chat-wrapper">
+    <!-- Chat Header -->
+    <header class="chat-header">
+        <button class="back-btn" @onclick="OnBack">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 0 1-.02 1.06L8.832 10l3.938 3.71a.75.75 0 1 1-1.04 1.08l-4.5-4.25a.75.75 0 0 1 0-1.08l4.5-4.25a.75.75 0 0 1 1.06.02Z" clip-rule="evenodd" /></svg>
+        </button>
+        <div class="header-info">
+            <span class="header-title">@ProjectTitle</span>
+            <span class="header-subtitle">with @ConversationWith</span>
+        </div>
+        <div class="header-actions">
+            <a href="/proposals/@ProposalId" class="action-link">Project Details</a>
+            <button class="icon-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3.75a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM10 8.75a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM10 13.75a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" /></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Message Area -->
+    <div class="message-area" id="message-area-id">
+        @foreach (var message in Messages)
+        {
+            <ChatMessage Message="message" />
+        }
+    </div>
+
+    <!-- Chat Input -->
+    <ChatInput OnSendMessage="HandleSendMessage" />
+</div>
+
+@code {
+    public Guid ProposalId = Guid.NewGuid();
+
+    [Parameter]
+    public string ProjectTitle { get; set; } = "";
+    
+    [Parameter]
+    public string ConversationWith { get; set; } = "";
+    
+    [Parameter]
+    public List<ChatMessageDataVM> Messages { get; set; } = new();
+
+    [Parameter]
+    public EventCallback OnBack { get; set; } // For mobile back button
+
+    [Parameter]
+    public EventCallback<string> OnSendMessage { get; set; }
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Scroll to bottom when messages update
+        await JSRuntime.InvokeVoidAsync("scrollToBottom", "message-area-id");
+    }
+
+    private async Task HandleSendMessage(string messageText)
+    {
+        if (string.IsNullOrWhiteSpace(messageText)) return;
+
+        // In a real app, you'd send this to the server and get back the new message
+        var newMessage = new ChatMessageDataVM
+        {
+            Id = Guid.NewGuid(),
+            SenderName = "John Smith", // Current user
+            SenderAvatarUrl = "https://placehold.co/40x40/FDBA74/7C2D12?text=JS",
+            IsSentByUser = true,
+            Timestamp = DateTime.Now.ToString("h:mm tt"),
+            MessageText = messageText,
+            IsSeen = false
+        };
+        
+        Messages.Add(newMessage);
+        
+        // We need to call StateHasChanged to re-render and trigger OnAfterRenderAsync
+        StateHasChanged();
+    }
+}

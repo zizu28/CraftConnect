@@ -1,0 +1,49 @@
+﻿/* Components/QuickLinks.razor.css */
+
+.dashboard-section {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    /* KEY: Margin to separate from the Earnings chart below */
+    margin-bottom: 30px;
+}
+
+    .dashboard-section h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 25px;
+        color: #333333;
+    }
+
+.quick-links-list {
+    list-style: none;
+    padding: 0;
+}
+
+    .quick-links-list li {
+        margin-bottom: 15px; /* Clear spacing between links */
+    }
+
+        .quick-links-list li:last-child {
+            margin-bottom: 0;
+        }
+
+    .quick-links-list a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #333333;
+        text-decoration: none;
+        transition: color 0.2s;
+        font-weight: 500;
+    }
+
+        .quick-links-list a:hover {
+            color: #007bff;
+        }
+
+    .quick-links-list i {
+        font-size: 1.2rem;
+        color: #007bff;
+    }

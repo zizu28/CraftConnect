@@ -1,0 +1,45 @@
+﻿@page "/onboarding/step-2"
+@using CraftConnect.WASM.Layout
+@layout OnboardingFlowLayout
+
+<div class="onboarding-step-container">
+
+    <!-- Progress Bar -->
+    <div class="progress-bar-components">
+        <div class="progress-header">
+            <span>Onboarding Progress</span>
+            <span>2/3</span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill"></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="step-content">
+        <div class="step-image">
+            <!-- Using a placeholder for the illustration -->
+            <img src="https://placehold.co/600x450/F3EFEA/7C2D12?text=Craftsman+Illustration" alt="Showcase Your Skills" />
+        </div>
+
+        <h2>Showcase Your Skills</h2>
+        <p>Create a beautiful portfolio to attract your ideal clients.</p>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-footer">
+        <button class="btn btn-secondary" @onclick='() => NavigateTo("/onboarding/step-1")'>Back</button>
+        <button class="btn btn-primary" @onclick='() => NavigateTo("/onboarding/step-3")'>Next</button>
+    </div>
+
+</div>
+
+@code {
+    [Inject]
+    private NavigationManager Navigation { get; set; }
+
+    private void NavigateTo(string url)
+    {
+        Navigation.NavigateTo(url);
+    }
+}

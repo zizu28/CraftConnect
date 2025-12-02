@@ -1,0 +1,63 @@
+﻿@page "/customer/{CustomerId:guid}/service-requests"
+@using CraftConnect.WASM.Components.CustomerDashboardPageComponents
+@using CraftConnect.WASM.Enums
+@using CraftConnect.WASM.ViewModels
+@layout CustomerLayout
+
+<div class="service-request-page">
+    
+    <!-- Tab Navigation -->
+    <nav class="tab-nav">
+        <a href="/customer/service-requests" class="tab-item active">Service Requests (3)</a>
+        <a href="/customer/proposals" class="tab-item">Proposals (5)</a>
+        <a href="/customer/project-history" class="tab-item">Project History (1)</a>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="page-body">
+        <h1 class="page-title">Service Requests</h1>
+
+        <!-- Reusable Table Component -->
+        <ServiceRequestsTable Requests="serviceRequests" />
+    </div>
+
+</div>
+
+@code {
+    [Parameter]
+    public Guid CustomerId { get; set; }
+    private List<ServiceRequestVM> serviceRequests = new();
+
+    protected override void OnInitialized()
+    {
+        // Mock data from the image
+        serviceRequests = new List<ServiceRequestVM>
+        {
+            new ServiceRequestVM
+            {
+                Id = Guid.NewGuid(),
+                ProjectTitle = "Custom Bookshelf",
+                Category = "Carpentry",
+                DateSubmitted = new DateTime(2023, 10, 26),
+                Status = ServiceRequestStatus.InProgress
+            },
+            new ServiceRequestVM
+            {
+                Id = Guid.NewGuid(),
+                ProjectTitle = "Kitchen Sink Repair",
+                Category = "Plumbing",
+                DateSubmitted = new DateTime(2023, 10, 24),
+                Status = ServiceRequestStatus.AwaitingProposals
+            },
+            new ServiceRequestVM
+            {
+                Id = Guid.NewGuid(),
+                ProjectTitle = "Apartment Painting",
+                Category = "Painting",
+                DateSubmitted = new DateTime(2023, 10, 20),
+                Status = ServiceRequestStatus.AwaitingProposals
+            }
+        };
+    }
+}
+

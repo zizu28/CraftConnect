@@ -23,7 +23,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.CraftmanComma
 			{
 				if (craftman.Status == VerificationStatus.Unverified)
 				{
-					craftman.VerifyCraftman(request.Email, request.Profession, request.IdentityDocument);
+					craftman.VerifyCraftman(request.IdentityDocument);
 				}
 				await craftsmanRepository.UpdateAsync(craftman, cancellationToken);
 				logger.LogInformation("Craftman with Id {CraftmanId} verified successfully", craftman.Id);

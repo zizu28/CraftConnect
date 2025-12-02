@@ -9,7 +9,7 @@ using ProductInventoryManagement.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
+//builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddControllers();

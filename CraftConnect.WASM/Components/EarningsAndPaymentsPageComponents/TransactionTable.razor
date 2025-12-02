@@ -1,0 +1,42 @@
+﻿@using CraftConnect.WASM.ViewModels
+<div class="table-container">
+    <table class="transaction-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Project</th>
+                <th>Client</th>
+                <th>Amount</th>
+                <th>Payment Method</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Transactions.Any())
+            {
+                @foreach (var item in Transactions)
+                {
+                    <tr>
+                        <td>@item.Date.ToString("MMM dd, yyyy")</td>
+                        <td class="cell-project">@item.Project</td>
+                        <td>@item.Client</td>
+                        <td>$@item.Amount.ToString("F2")</td>
+                        <td>@item.PaymentMethod</td>
+                        <td><TransactionStatusBadge Status="item.Status" /></td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="cell-empty">No transactions found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter]
+    public List<CraftsmanTransaction> Transactions { get; set; } = new();
+}

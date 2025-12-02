@@ -1,0 +1,78 @@
+﻿@page "/dashboard/{CraftmanId:guid}"
+@using CraftConnect.WASM.Components
+@using CraftConnect.WASM.Components.CraftsmanDashboardPageComponents
+@using CraftConnect.WASM.Components.CustomerDashboardPageComponents
+@using CraftConnect.WASM.Components.SharedComponents
+@using CraftConnect.WASM.Components.SkeletonComponents
+@using CraftConnect.WASM.ViewModels
+@inject NavigationManager NavManager
+
+@if (DashboardData == null && Projects == null && ServiceRequests == null)
+{
+    <DashboardSkeleton />
+}
+else
+{
+    <CraftsmanDashboardNavbar />
+
+    <div class="dashboard-page-container">
+        <h2>Welcome, Olivia!</h2>
+
+        @* --- 1. Metrics Cards --- *@
+        <div class="metrics-grid">
+            <MetricCard Title="Active Projects" Value="@DashboardData!.ActiveProjects.ToString()" AccentColor="#007bff" />
+            <MetricCard Title="New Service Requests" Value="@DashboardData.NewServiceRequests.ToString()" AccentColor="#ffc107" HasIndicator="true" />
+            <MetricCard Title="Unread Messages" Value="@DashboardData.UnreadMessages.ToString()" AccentColor="#28a745" />
+            <MetricCard Title="Monthly Earnings" Value="@DashboardData.MonthlyEarnings" AccentColor="#6f42c1" />
+        </div>
+
+        @* --- 2. Main Two-Column Layout --- *@
+        <div class="main-content-grid">
+            <div class="left-panel">
+                <ProjectTable Projects="@Projects" />
+                <ServiceRequests Requests="@ServiceRequests" />
+            </div>
+
+            <div class="right-panel">
+                <QuickLinks CraftmanId="@CraftmanId" />
+                <EarningsChart TotalEarnings="@DashboardData.TotalEarningsLast3Months" />
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public Guid CraftmanId { get; set; }
+    private DashboardVM DashboardData { get; set; } = new();
+    private List<ProjectItemVM> Projects { get; set; } = new();
+    private List<ServiceRequestVM> ServiceRequests { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        // Mock Data Initialization
+        DashboardData = GetMockMetrics();
+        Projects = GetMockProjects();
+        ServiceRequests = GetMockRequests();
+    }
+
+    private DashboardVM GetMockMetrics() => new()
+    {
+        ActiveProjects = 5, NewServiceRequests = 3, UnreadMessages = 8,
+        MonthlyEarnings = "$2,500", TotalEarningsLast3Months = 7200M
+    };
+
+    private List<ProjectItemVM> GetMockProjects() => new()
+    {
+        new() { Project = "Custom Bookshelf", Client = "John Doe", Status = "In Progress", DueDate = "2023-12-15" },
+        new() { Project = "Kitchen Remodel", Client = "Jane Smith", Status = "Completed", DueDate = "2023-11-20" },
+        new() { Project = "Handcrafted Dining Table", Client = "Peter Jones", Status = "Pending Approval", DueDate = "2024-01-10" }
+    };
+
+    private List<ServiceRequestVM> GetMockRequests() => new()
+    {
+        new() { Title = "Alex Johnson - Custom Cabinetry", Description = "Looking for a set of custom kitchen cabinets. My kitchen is an unusual shape..." },
+        new() { Title = "Maria Garcia - Bookshelf Installation", Description = "I have a pre-built bookshelf that needs to be securely mounted to my living room wall." }
+    };
+}

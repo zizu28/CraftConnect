@@ -5,17 +5,21 @@ using System.Security.Claims;
 namespace CraftConnect.WebUI.Auth
 {
 	public class BffAuthenticationStateProvider(
-		IHttpClientFactory httpClientFactory,
+		//IHttpClientFactory httpClientFactory,
 		ILoggerFactory loggerFactory) : AuthenticationStateProvider
 	{
-		private readonly HttpClient httpClient = httpClientFactory.CreateClient("Backend");
+		//private readonly HttpClient httpClient = httpClientFactory.CreateClient("Backend");
 		private readonly ILogger logger = loggerFactory.CreateLogger<BffAuthenticationStateProvider>();
 
 		public override async Task<AuthenticationState> GetAuthenticationStateAsync()
 		{
 			try
 			{
-				var userInfo = await httpClient.GetFromJsonAsync<UserResponseDTO>("/users/me");
+				var httpClient = new HttpClient
+				{
+					BaseAddress = new Uri("https://localhost:7235")
+				};
+				var userInfo = await httpClient.GetFromJsonAsync<UserResponseDTO>("/api/users/me");
 				if (userInfo != null)
 				{
 					var claims = new List<Claim>

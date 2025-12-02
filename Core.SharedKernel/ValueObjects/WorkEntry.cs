@@ -2,14 +2,16 @@
 {
 	public record WorkEntry
 	{
+		public Guid WorkEntryId { get; private set; }
 		public string Company { get; set; }
 		public string Position { get; set; }
 		public string Responsibilities { get; set; }
-		public DateTime? StartDate { get; set; }
-		public DateTime? EndDate { get; set; }
+		public DateTime StartDate { get; set; }
+		public DateTime EndDate { get; set; }
 
-		private WorkEntry()
+		public WorkEntry()
 		{
+			WorkEntryId = Guid.Empty;
 			Company = string.Empty;
 			Position = string.Empty;
 			Responsibilities = string.Empty;
@@ -20,10 +22,7 @@
 		public WorkEntry(string company, string position, string responsibilities,
 			DateTime startDate, DateTime endDate)
 		{
-			ArgumentException.ThrowIfNullOrEmpty(company);
-			ArgumentException.ThrowIfNullOrEmpty(position);
-			ArgumentException.ThrowIfNullOrEmpty(responsibilities);
-			if (startDate > endDate) throw new Exception("End date must be greater than start date");
+			WorkEntryId = Guid.NewGuid();
 			Company = company;
 			Position = position;
 			Responsibilities = responsibilities;

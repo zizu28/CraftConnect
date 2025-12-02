@@ -1,0 +1,105 @@
+﻿.landing-nav-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent */
+    backdrop-filter: blur(5px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.nav-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    height: 72px;
+    padding: 0 24px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: white;
+}
+
+.logo-icon {
+    width: 28px;
+    height: 28px;
+}
+
+.logo span {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.main-nav {
+    display: flex;
+    gap: 24px;
+    margin-left: 32px;
+}
+
+    .main-nav a {
+        text-decoration: none;
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 500;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+    }
+
+        .main-nav a:hover {
+            opacity: 1;
+        }
+
+.nav-spacer {
+    flex-grow: 1;
+}
+
+.auth-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-nav-secondary, .btn-nav-primary {
+    padding: 8px 14px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-nav-secondary {
+    background-color: transparent;
+    color: white;
+    border-color: white;
+}
+
+    .btn-nav-secondary:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+.btn-nav-primary {
+    background-color: #0275d8; /* Blue */
+    color: white;
+    border-color: #0275d8;
+}
+
+    .btn-nav-primary:hover {
+        background-color: #025aa5;
+        border-color: #025aa5;
+    }
+
+@media (max-width: 768px) {
+    .main-nav, .auth-links {
+        display: none; /* Hide nav links on mobile for simplicity */
+    }
+}

@@ -1,0 +1,21 @@
+﻿<div class="stat-card">
+    <span class="card-title">@Title</span>
+    <h3 class="card-value">@Value</h3>
+    <span class="card-change @(IsPositive ? "positive" : "negative")">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.27a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-3.658V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+        </svg>
+        @PercentageChange
+    </span>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public string Value { get; set; }
+    [Parameter]
+    public string PercentageChange { get; set; }
+    [Parameter]
+    public bool IsPositive { get; set; }
+}

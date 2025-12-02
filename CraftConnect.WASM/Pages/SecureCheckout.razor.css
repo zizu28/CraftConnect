@@ -1,0 +1,76 @@
+﻿.checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr; /* Columns as seen in image */
+    gap: 24px;
+}
+
+.checkout-column-left,
+.checkout-column-right {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.submit-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #0295D8; /* Blue from image */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+    .btn-submit:hover {
+        background-color: #0275B0; /* Darker blue */
+    }
+
+    .btn-submit svg {
+        width: 20px;
+        height: 20px;
+    }
+
+.ssl-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    color: #6B7280; /* Gray-500 */
+}
+
+    .ssl-badge svg {
+        width: 16px;
+        height: 16px;
+        color: #9CA3AF; /* Gray-400 */
+    }
+
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+    .checkout-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .checkout-column-left {
+        /* Re-order for mobile: Show payment details first */
+        order: 2;
+    }
+
+    .checkout-column-right {
+        order: 1;
+    }
+}

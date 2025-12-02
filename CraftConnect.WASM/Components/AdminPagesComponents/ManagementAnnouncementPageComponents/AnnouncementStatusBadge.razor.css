@@ -1,0 +1,46 @@
+﻿.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem; /* 12px */
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+    /* Dot before text */
+    .status-badge::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+    }
+
+/* Colors from AdminAnnouncementManagement.png */
+.status-published {
+    background-color: #DCFCE7; /* Green-100 */
+    color: #166534; /* Green-800 */
+}
+
+    .status-published::before {
+        background-color: #22C55E; /* Green-500 */
+    }
+
+.status-scheduled {
+    background-color: #FFEDD5; /* Orange-100 */
+    color: #9A3412; /* Orange-800 */
+}
+
+    .status-scheduled::before {
+        background-color: #F97316; /* Orange-500 */
+    }
+
+.status-draft {
+    background-color: #F1F5F9; /* Slate-100 */
+    color: #475569; /* Slate-600 */
+}
+
+    .status-draft::before {
+        background-color: #64748B; /* Slate-500 */
+    }

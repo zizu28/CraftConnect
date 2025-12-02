@@ -1,0 +1,49 @@
+﻿@using CraftConnect.WASM.ViewModels
+<div class="message-history-container">
+    <div class="message-list">
+        @foreach (var message in Messages)
+        {
+            <div class="message-item @(message.IsYou ? "you" : "other")">
+                <div class="message-avatar">@message.AuthorInitials</div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="author-name">@message.AuthorName</span>
+                        <span class="timestamp">@FormatTimestamp(message.Timestamp)</span>
+                    </div>
+                    <div class="message-bubble">
+                        @message.Content
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="message-input-area">
+        <textarea class="message-input" placeholder="Type your message..."></textarea>
+        <div class="message-actions">
+            <button class="attach-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M15.621 4.379a3 3 0 00-4.242 0l-7 7a3 3 0 004.241 4.243l7-7a.5.5 0 01.708.708l-7 7a4 4 0 11-5.657-5.657l7-7a2 2 0 012.828 2.828l-7 7a.5.5 0 01-.708-.708l7-7a1 1 0 10-1.414-1.414l-7 7a2 2 0 102.828 2.828l7-7a.5.5 0 01.708.708l-7 7a3 3 0 11-4.243-4.242l7-7a1 1 0 00-1.414-1.414l-7 7a4 4 0 005.657 5.657l7-7a.5.5 0 01.707-.707l-7-7A3 3 0 004.379 4.38z" clip-rule="evenodd" />
+                </svg>
+                Attach
+            </button>
+            <button class="send-btn">
+                Send Message
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M3.105 3.105a.75.75 0 011.06 0L16.25 14.19v-3.44a.75.75 0 011.5 0v6a.75.75 0 01-.75.75h-6a.75.75 0 010-1.5h3.44L3.105 4.165a.75.75 0 010-1.06z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<MessageVM> Messages { get; set; } = new();
+
+    private string FormatTimestamp(DateTime timestamp)
+    {
+        // Simple formatter. You could make this more complex (e.g., "Today at 10:15 AM")
+        return timestamp.ToString("MMM dd, yyyy, hh:mm tt");
+    }
+}

@@ -1,0 +1,49 @@
+﻿.table-container {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0; /* Slate-200 */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+    .transaction-table th,
+    .transaction-table td {
+        padding: 16px;
+        text-align: left;
+        border-bottom: 1px solid #F1F5F9; /* Slate-100 */
+        white-space: nowrap;
+    }
+
+    .transaction-table th {
+        background-color: #F8FAFC; /* Slate-50 */
+        color: #64748B; /* Slate-500 */
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .transaction-table td {
+        color: #334155; /* Slate-700 */
+    }
+
+    .transaction-table .cell-project {
+        font-weight: 500;
+        color: #1E293B; /* Slate-800 */
+    }
+
+    .transaction-table tr:last-child td {
+        border-bottom: none;
+    }
+
+.cell-empty {
+    text-align: center;
+    color: #64748B;
+    padding: 32px;
+}

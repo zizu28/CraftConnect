@@ -1,0 +1,51 @@
+﻿@using Core.SharedKernel.ValueObjects
+<h3 class="section-title">Portfolio</h3>
+<p class="section-hint">Showcase your best work</p>
+
+@foreach (var entry in Projects)
+{
+    <div class="work-entry-card">
+        <div class="form-group">
+            <label>Project Title</label>
+            <InputText @bind-Value="entry.Title" class="form-control" placeholder="e.g. Modern Oak Table" />
+            <ValidationMessage For="@(() => entry.Title)" />
+        </div>
+        <div class="form-group">
+            <label>Project Description</label>
+            <InputText @bind-Value="entry.Description" class="form-control" placeholder="Describe the materials used and the outcome." />
+            <ValidationMessage For="@(() => entry.Description)" />
+        </div>
+        @* Optional: Image URL Input *@
+        
+        <div class="form-group">
+            <label>Image URL</label>
+            <InputText @bind-Value="entry.ImageUrl" class="form-control" />
+        </div> 
+       
+        <button type="button" class="btn btn-remove-section" @onclick="() => RemoveEntry(entry)">
+            Remove Experience
+        </button>
+    </div>
+}
+
+<button type="button" class="btn btn-primary btn-add mb-5" @onclick="AddEntry">Add Your Past Project</button>
+
+@code {
+    [Parameter]
+    public List<Project> Projects { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<List<Project>> ProjectsChanged { get; set; }
+
+    public void AddEntry()
+    {
+        Projects.Add(new Project());
+        ProjectsChanged.InvokeAsync(Projects);
+    }
+
+    public void RemoveEntry(Project project)
+    {
+        Projects.Remove(project);
+        ProjectsChanged.InvokeAsync(Projects);
+    }
+}

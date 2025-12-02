@@ -1,0 +1,8 @@
+﻿.filter-bar-container {
+    max-width: 1200px;
+    margin: 20px auto 40px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+}

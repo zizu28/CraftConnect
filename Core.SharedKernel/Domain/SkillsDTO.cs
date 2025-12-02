@@ -1,14 +1,8 @@
 ﻿namespace Core.SharedKernel.Domain
 {
-	public class SkillsDTO
+	public class SkillsDTO(string name, int yearsOfExperience)
 	{
-		public string Name { get; set; } = string.Empty;
-		public int YearsOfExperience { get; set; }
-
-		public SkillsDTO(string name, int yearsOfExperience)
-		{
-			Name = name;
-			YearsOfExperience = yearsOfExperience;
-		}
+		public string Name { get; set; } = name;
+		public int YearsOfExperience { get; set; } = yearsOfExperience;
 	}
 }

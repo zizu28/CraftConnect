@@ -1,0 +1,137 @@
+﻿@page "/admin/logs"
+@layout AdminLayout
+@using CraftConnect.WASM.Layout.AdminPageLayouts
+@using CraftConnect.WASM.Components.AdminPagesComponents.SystemLogsPageComponents
+@using CraftConnect.WASM.ViewModels
+
+<div class="logs-container">
+    <!-- Page Header -->
+    <header class="page-header">
+        <h1>System Logs & Audit Trail</h1>
+        <button class="btn btn-secondary">
+            <svg xmlns="http://www.w.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 2.75a.75.75 0 00-1.5 0v8.614L6.295 8.235a.75.75 0 10-1.09 1.03l4.25 4.5a.75.75 0 001.09 0l4.25-4.5a.75.75 0 10-1.09-1.03l-2.955 3.129V2.75z" /><path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" /></svg>
+            Export Logs
+        </button>
+    </header>
+    <p class="page-description">
+        Monitor system events, user actions, and administrative activities.
+    </p>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-group">
+            <label for="startDate">Start Date</label>
+            <div class="date-input-wrapper">
+                <input type="text" id="startDate" placeholder="mm/dd/yyyy" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.75 3a.75.75 0 01.75.75v.25H11v-.25a.75.75 0 011.5 0v.25H13.5a.75.75 0 010 1.5H12.5v.25a.75.75 0 01-1.5 0v-.25H9v.25a.75.75 0 01-1.5 0v-.25H6.5a.75.75 0 010-1.5h.75v-.25A.75.75 0 015.75 3zM3 8.75A.75.75 0 013.75 8h12.5a.75.75 0 010 1.5H3.75A.75.75 0 013 8.75zM3 12.75a.75.75 0 01.75-1h12.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-1z" clip-rule="evenodd" /><path d="M2 5.5A2.5 2.5 0 014.5 3h11A2.5 2.5 0 0118 5.5v9A2.5 2.5 0 0115.5 17h-11A2.5 2.5 0 012 14.5v-9zM4.5 4.5c-.276 0-.5.224-.5.5v9c0 .276.224.5.5.5h11c.276 0 .5-.224.5-.5v-9c0-.276-.224-.5-.5-.5h-11z" /></svg>
+            </div>
+        </div>
+        <div class="filter-group">
+            <label for="endDate">End Date</label>
+            <div class="date-input-wrapper">
+                <input type="text" id="endDate" placeholder="mm/dd/yyyy" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.75 3a.75.75 0 01.75.75v.25H11v-.25a.75.75 0 011.5 0v.25H13.5a.75.75 0 010 1.5H12.5v.25a.75.75 0 01-1.5 0v-.25H9v.25a.75.75 0 01-1.5 0v-.25H6.5a.75.75 0 010-1.5h.75v-.25A.75.75 0 015.75 3zM3 8.75A.75.75 0 013.75 8h12.5a.75.75 0 010 1.5H3.75A.75.75 0 013 8.75zM3 12.75a.75.75 0 01.75-1h12.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-1z" clip-rule="evenodd" /><path d="M2 5.5A2.5 2.5 0 014.5 3h11A2.5 2.5 0 0118 5.5v9A2.5 2.5 0 0115.5 17h-11A2.5 2.5 0 012 14.5v-9zM4.5 4.5c-.276 0-.5.224-.5.5v9c0 .276.224.5.5.5h11c.276 0 .5-.224.5-.5v-9c0-.276-.224-.5-.5-.5h-11z" /></svg>
+            </div>
+        </div>
+        <div class="filter-group">
+            <label for="eventType">Event Type</label>
+            <select id="eventType" @bind="eventFilter">
+                <option value="">All Events</option>
+                <option value="user-login">User Login</option>
+                <option value="profile-update">Profile Update</option>
+                <option value="project-deletion">Project Deletion</option>
+                <option value="password-reset">Password Reset</option>
+            </select>
+        </div>
+        <div class="filter-group filter-search">
+            <label for="userSearch">User ID or Username</label>
+            <div class="search-input-wrapper">
+                <input type="text" id="userSearch" placeholder="Search by user" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" /></svg>
+            </div>
+        </div>
+        <div class="filter-buttons">
+            <button class="btn btn-primary">Apply Filters</button>
+            <button class="btn btn-tertiary">Clear Filters</button>
+        </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container">
+        <table class="logs-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Event Type</th>
+                    <th>User</th>
+                    <th>Details</th>
+                    <th>IP Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var log in filteredLogs)
+                {
+                    <tr>
+                        <td class="cell-timestamp">@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td><LogTypeBadge EventType="@log.EventType" /></td>
+                        <td class="cell-user">@log.User</td>
+                        <td class="cell-details">@log.Details</td>
+                        <td class="cell-ip">@log.IpAddress</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="table-footer">
+        <span class="pagination-summary">Showing <strong>1-5</strong> of <strong>@filteredLogs.Count</strong></span>
+        <AdminLogsPagination CurrentPage="currentPage" TotalPages="@TotalPages" OnPageChanged="OnPageSelected" />
+    </div>
+</div>
+
+@code {
+    private string eventFilter = "";
+    private List<AdminSystemLog> logs = new();
+    private List<AdminSystemLog> filteredLogs
+    {
+        get
+        {
+            var logObj = logs.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(eventFilter))
+            {
+                logObj = eventFilter.ToLower() switch
+                {
+                    "user-login" => logObj.Where(l => l.EventType.Equals("User Login", StringComparison.OrdinalIgnoreCase)),
+                    "profile-update" => logObj.Where(l => l.EventType.Equals("Profile Update", StringComparison.OrdinalIgnoreCase)),
+                    "project-deletion" => logObj.Where(l => l.EventType.Equals("Project Deletion", StringComparison.OrdinalIgnoreCase)),
+                    "password-reset" => logObj.Where(l => l.EventType.Equals("Password Reset", StringComparison.OrdinalIgnoreCase)),
+                    _ => logObj
+                };
+            }
+            TotalPages = logObj.Count() / 5;
+            return logObj.ToList();
+        }
+    }
+    private int TotalPages;
+    private int currentPage = 1;
+
+    protected override void OnInitialized()
+    {
+        // Mock data from the image
+        logs = new List<AdminSystemLog>
+        {
+            new AdminSystemLog { Id = 1, Timestamp = new DateTime(2023, 10, 27, 14, 30, 15), EventType = "User Login", User = "craftsman_jane", Details = "Logged in successfully", IpAddress = "192.168.1.1" },
+            new AdminSystemLog { Id = 2, Timestamp = new DateTime(2023, 10, 27, 14, 25, 02), EventType = "Profile Update", User = "admin_user", Details = "Updated user 'craftsman_jane' profile", IpAddress = "127.0.0.1" },
+            new AdminSystemLog { Id = 3, Timestamp = new DateTime(2023, 10, 26, 18, 00, 45), EventType = "Project Deletion", User = "craftsman_john", Details = "Deleted project 'Custom Bookshelf'", IpAddress = "203.0.113.5" },
+            new AdminSystemLog { Id = 4, Timestamp = new DateTime(2023, 10, 26, 09, 30, 05), EventType = "Password Reset", User = "customer_mike", Details = "Password reset request initiated", IpAddress = "198.51.100.2" },
+            new AdminSystemLog { Id = 5, Timestamp = new DateTime(2023, 10, 25, 11, 20, 10), EventType = "Profile Update", User = "craftsman_jane", Details = "Updated profile: 'Skills'", IpAddress = "192.168.1.1" }
+        };
+    }
+
+    private void OnPageSelected(int page)
+    {
+        currentPage = page;
+        // Add logic here to fetch data for the new page
+    }
+}

@@ -15,6 +15,19 @@ namespace UserManagement.Infrastructure.Extensions
 			services.AddScoped<ICustomerRepository, CustomerRepository>();
 			services.AddScoped<ICraftsmanRepository, CraftmanRepository>();
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
+			services.AddKeyedScoped<IFileStorageService, LocalFileStorageService>("localStorage");
+			services.AddKeyedScoped<IFileStorageService, S3FileStorageService>("S3Storage");
+			services.AddKeyedScoped<IFileStorageService, CloudinaryStorageService>("Cloudinary");
+			var useCloudinary = configuration.GetValue<bool>("Storage:UseCloudinary");
+
+			if (useCloudinary)
+			{
+				services.AddScoped<IFileStorageService, CloudinaryStorageService>();
+			}
+			else
+			{
+				services.AddScoped<IFileStorageService, LocalFileStorageService>();
+			}
 			return services;
 		}
 	}

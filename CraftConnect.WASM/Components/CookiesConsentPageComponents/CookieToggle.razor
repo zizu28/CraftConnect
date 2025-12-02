@@ -1,0 +1,33 @@
+﻿<label class="toggle-switch @(IsDisabled ? "disabled" : "")">
+    <input type="checkbox" @bind="CurrentValue" disabled="@IsDisabled" />
+    <span class="slider"></span>
+</label>
+
+@code {
+    private bool _currentValue;
+
+    [Parameter]
+    public bool Value
+    {
+        get => _currentValue;
+        set
+        {
+            if (_currentValue == value) return;
+            _currentValue = value;
+            ValueChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<bool> ValueChanged { get; set; }
+
+    [Parameter]
+    public bool IsDisabled { get; set; } = false;
+
+    // This allows @bind-Value to work
+    private bool CurrentValue
+    {
+        get => _currentValue;
+        set => Value = value;
+    }
+}

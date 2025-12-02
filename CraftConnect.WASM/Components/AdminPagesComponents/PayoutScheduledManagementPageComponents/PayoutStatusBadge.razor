@@ -1,0 +1,20 @@
+﻿<span class="payout-status-badge @GetStatusClass(Status)">
+    @Status
+</span>
+
+@code {
+    [Parameter]
+    public string Status { get; set; } = "Pending";
+
+    private string GetStatusClass(string status)
+    {
+        return status.ToLower() switch
+        {
+            "pending" => "status-pending",
+            "in progress" => "status-in-progress",
+            "failed" => "status-failed",
+            "paid" => "status-paid",
+            _ => "status-default"
+        };
+    }
+}

@@ -1,0 +1,15 @@
+﻿@using CraftConnect.WASM.ViewModels
+<div class="feature-card">
+    <div class="icon-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="@Feature.IconSvgPath" />
+        </svg>
+    </div>
+    <h3>@Feature.Title</h3>
+    <p>@Feature.Description</p>
+</div>
+
+@code {
+    [Parameter]
+    public FeatureItem Feature { get; set; }
+}

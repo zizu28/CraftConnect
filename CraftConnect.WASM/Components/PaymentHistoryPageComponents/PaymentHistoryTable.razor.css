@@ -1,0 +1,64 @@
+﻿.table-container {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.payment-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+    .payment-table th,
+    .payment-table td {
+        padding: 16px;
+        text-align: left;
+        border-bottom: 1px solid #E5E7EB; /* Gray-200 */
+        white-space: nowrap;
+    }
+
+    .payment-table th {
+        background-color: #F9FAFB; /* Gray-50 */
+        color: #6B7280; /* Gray-500 */
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .payment-table td {
+        color: #374151; /* Gray-700 */
+    }
+
+    .payment-table .cell-project {
+        font-weight: 500;
+        color: #111827;
+    }
+
+.cell-actions {
+    display: flex;
+    gap: 16px;
+}
+
+    .cell-actions a {
+        color: #3B82F6; /* Blue-500 */
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+        .cell-actions a:hover {
+            text-decoration: underline;
+        }
+
+.payment-table tr:last-child td {
+    border-bottom: none;
+}
+
+.cell-empty {
+    text-align: center;
+    color: #6B7280;
+    padding: 32px;
+}

@@ -1,0 +1,46 @@
+﻿<div class="chat-input-container">
+    <textarea @bind="messageText"
+              @oninput="AutoGrow"
+              @onkeydown="HandleKeyDown"
+              rows="1"
+              placeholder="Type your message here..."></textarea>
+    <button class="icon-btn attach-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243l7-7a.75.75 0 0 1 1.06 1.06l-7 7a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.364 6.364l-1.06 1.06a.75.75 0 1 1-1.06-1.06l1.06-1.06a3 3 0 0 0-4.242-4.243l-7 7a3 3 0 0 0 0 4.242.75.75 0 0 1 0 1.06 4.5 4.5 0 0 1-6.364 0l7-7a4.5 4.5 0 0 1 6.364 0l-1.06 1.06a.75.75 0 1 1-1.06-1.06l1.06-1.06a3 3 0 0 0 0-4.243Z" clip-rule="evenodd" /></svg>
+    </button>
+    <button class="send-btn" @onclick="SendMessage">
+        <span>Send</span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M3.105 3.105a.75.75 0 0 1 .813-.182l1.962.612a.75.75 0 0 1 .453.795l-1.077 6.463a.75.75 0 0 1-1.48-.246L3.3 3.84a.75.75 0 0 1-.195-.735Z" /><path d="M16.295 2.923a.75.75 0 0 1 .182.813l-.612 1.962a.75.75 0 0 1-.795.453L8.608 5.076a.75.75 0 0 1 .246-1.48l6.463-1.077a.75.75 0 0 1 .735-.195Z" /><path d="M17.25 7.5a.75.75 0 0 1 .75.75v3.66l-3.242-1.93a.75.75 0 0 1-.363-1.118l1.93-3.242a.75.75 0 0 1 1.118.363L18 7.34V7.5ZM8.608 8.608a.75.75 0 0 1 1.118.363l1.93 3.242a.75.75 0 0 1-.363 1.118L8.05 15.26a.75.75 0 0 1-1.118-.363L5.002 11.65a.75.75 0 0 1 .363-1.118l3.242-1.93Z" /><path d="M7.5 17.25a.75.75 0 0 1-.75-.75v-3.66l3.242 1.93a.75.75 0 0 1 .363 1.118l-1.93 3.242a.75.75 0 0 1-1.118-.363L7.5 17.66V17.25Z" /></svg>
+    </button>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<string> OnSendMessage { get; set; }
+
+    private string messageText = "";
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
+
+    private async Task SendMessage()
+    {
+        await OnSendMessage.InvokeAsync(messageText);
+        messageText = "";
+        // Reset textarea height after sending
+        await JSRuntime.InvokeVoidAsync("resetTextareaHeight");
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !e.ShiftKey)
+        {
+            // e.preventDefault(); // Prevent new line
+            await SendMessage();
+        }
+    }
+
+    private async void AutoGrow(ChangeEventArgs e)
+    {
+        await JSRuntime.InvokeVoidAsync("autoGrowTextarea", e.Value);
+    }
+}

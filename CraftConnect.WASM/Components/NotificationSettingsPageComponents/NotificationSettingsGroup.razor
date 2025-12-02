@@ -1,0 +1,14 @@
+﻿<div class="settings-group">
+    <h3 class="group-title">@Title</h3>
+    <div class="group-items">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

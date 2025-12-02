@@ -1,0 +1,95 @@
+﻿<nav class="pagination-nav" aria-label="Pagination">
+    <button class="page-item @(CurrentPage == 1 ? "disabled" : "")" @onclick="() => OnChangePage(CurrentPage - 1)" disabled="@(CurrentPage == 1)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" /></svg>
+    </button>
+
+    @foreach (var Page in PageNumbers)
+    {
+        @if (Page == -1)
+        {
+            <span class="page-item dots">...</span>
+        }
+        else
+        {
+            <button class="page-item @(CurrentPage == Page ? "active" : "")" @onclick="() => OnChangePage(Page)">
+                @Page
+            </button>
+        }
+    }
+
+    <button class="page-item @(CurrentPage == TotalPages ? "disabled" : "")" @onclick="() => OnChangePage(CurrentPage + 1)" disabled="@(CurrentPage == TotalPages)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" /></svg>
+    </button>
+</nav>
+
+@code {
+    [Parameter]
+    public int CurrentPage { get; set; } = 1;
+
+    [Parameter]
+    public int TotalPages { get; set; } = 1;
+
+    [Parameter]
+    public EventCallback<int> OnPageChanged { get; set; }
+
+    private List<int> PageNumbers
+    {
+        get
+        {
+            var numbers = new List<int>();
+            if (TotalPages <= 7) // Show all pages
+            {
+                for (int i = 1; i <= TotalPages; i++)
+                {
+                    numbers.Add(i);
+                }
+            }
+            else
+            {
+                numbers.Add(1); // Always show first page
+                
+                if (CurrentPage > 3)
+                {
+                    numbers.Add(-1); // Dots
+                }
+
+                int start = Math.Max(2, CurrentPage - 1);
+                int end = Math.Min(TotalPages - 1, CurrentPage + 1);
+
+                if (CurrentPage <= 3)
+                {
+                    start = 2;
+                    end = 4;
+                }
+                
+                if (CurrentPage >= TotalPages - 2)
+                {
+                    start = TotalPages - 3;
+                    end = TotalPages - 1;
+                }
+
+                for (int i = start; i <= end; i++)
+                {
+                    numbers.Add(i);
+                }
+
+                if (CurrentPage < TotalPages - 2)
+                {
+                    numbers.Add(-1); // Dots
+                }
+
+                numbers.Add(TotalPages); // Always show last page
+            }
+            return numbers;
+        }
+    }
+
+    private async Task OnChangePage(int page)
+    {
+        if (page < 1 || page > TotalPages || page == CurrentPage)
+        {
+            return;
+        }
+        await OnPageChanged.InvokeAsync(page);
+    }
+}

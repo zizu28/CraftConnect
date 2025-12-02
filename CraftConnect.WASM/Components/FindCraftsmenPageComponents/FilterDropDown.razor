@@ -1,0 +1,33 @@
+﻿<div class="dropdown-container">
+    <select @onchange="HandleChange" class="filter-select">
+        @foreach (var option in Options)
+        {
+            <option value="@option" selected="@(option == SelectedValue)">@option</option>
+        }
+    </select>
+    <label class="dropdown-label">@Label</label>
+</div>
+
+@code {
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string SelectedValue { get; set; } = string.Empty;
+
+    [Parameter]
+    public List<string> Options { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<string> SelectedValueChanged { get; set; }
+
+    [Parameter]
+    public EventCallback OnChange { get; set; }
+
+    private async Task HandleChange(ChangeEventArgs e)
+    {
+        SelectedValue = e.Value?.ToString() ?? Options.First();
+        await SelectedValueChanged.InvokeAsync(SelectedValue);
+        await OnChange.InvokeAsync();
+    }
+}

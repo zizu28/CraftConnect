@@ -1,0 +1,143 @@
+﻿/* CraftedTopNav.razor.css */
+.top-nav-header {
+    width: 100%;
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E5E7EB; /* Gray-200 */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    padding: 0 24px;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.nav-content {
+    width: 100%;
+    max-width: 1280px; /* lg breakpoint */
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-left, .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #111827; /* Gray-900 */
+}
+
+.logo-icon {
+    width: 28px;
+    height: 28px;
+    color: #4F46E5; /* Indigo-600 */
+}
+
+.logo-text {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 700;
+}
+
+.main-navigation {
+    display: flex;
+    gap: 16px;
+}
+
+.nav-link {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #374151; /* Gray-700 */
+    text-decoration: none;
+    padding: 8px 0;
+    border-bottom: 2px solid transparent;
+    transition: all 0.1s ease-in-out;
+}
+
+    .nav-link:hover {
+        color: #111827;
+    }
+
+    .nav-link.active {
+        color: #4F46E5; /* Indigo-600 */
+        border-bottom-color: #4F46E5;
+    }
+
+.icon-btn {
+    background-color: transparent;
+    border: none;
+    padding: 6px;
+    border-radius: 50%;
+    color: #6B7280; /* Gray-500 */
+    cursor: pointer;
+    transition: background-color 0.1s, color 0.1s;
+}
+
+    .icon-btn:hover {
+        background-color: #F3F4F6; /* Gray-100 */
+        color: #111827;
+    }
+
+    .icon-btn svg {
+        width: 24px;
+        height: 24px;
+    }
+
+.profile-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #FDBA74; /* Amber-300 */
+    color: #7C2D12; /* Amber-900 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: 2px solid #F3F4F6;
+    transition: border-color 0.1s;
+}
+
+.profile-btn:hover .avatar {
+    border-color: #E5E7EB; /* Gray-200 */
+}
+
+.mobile-menu-btn {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-navigation {
+        display: none; /* Hide main nav links */
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .nav-left {
+        flex-grow: 1; /* Allow logo to take space */
+    }
+
+    .nav-right {
+        gap: 12px;
+    }
+
+    .top-nav-header {
+        padding: 0 16px;
+    }
+}

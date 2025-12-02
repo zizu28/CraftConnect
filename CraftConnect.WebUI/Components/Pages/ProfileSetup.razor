@@ -109,7 +109,7 @@ else
     [Parameter]
     public Guid CraftmanId { get; set; }
     private CraftsmanProfileUpdateDTO ProfileData { get; set; } = new();
-    private CraftsmanResponseDTO? Craftsman { get; set; } = new();
+    private CraftmanResponseDTO? Craftsman { get; set; } = new();
     private ProfileSetupValidator profileValidator = new();
     private ILogger logger = default!;
     private bool isLoading = false;
@@ -136,8 +136,8 @@ else
         hasAccess = true;
         try
         {
-            var httpClient = HttpClientFactory.CreateClient("Backend");
-            Craftsman = await httpClient.GetFromJsonAsync<CraftsmanResponseDTO>($"/users/craftsman/{CraftmanId}");
+            var httpClient = HttpClientFactory.CreateClient("BFF");
+            Craftsman = await httpClient.GetFromJsonAsync<CraftmanResponseDTO>($"/users/craftsman/{CraftmanId}");
             if(Craftsman != null)
             {
                 ProfileData.Location = Craftsman.Location;
@@ -170,7 +170,7 @@ else
         isSubmitting = true;
         try
         {
-            var httpClient = HttpClientFactory.CreateClient("Backend");
+            var httpClient = HttpClientFactory.CreateClient("BFF");
             HttpResponseMessage response = await httpClient.PutAsJsonAsync($"/craftmen/update-craftsman/{CraftmanId}", ProfileData);
             if (response.IsSuccessStatusCode)
             {

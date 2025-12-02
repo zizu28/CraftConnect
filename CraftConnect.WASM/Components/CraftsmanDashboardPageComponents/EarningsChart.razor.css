@@ -1,0 +1,75 @@
+﻿/* --- Earnings Chart Styling (EarningsChart.razor) --- */
+.earnings-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--subtle-text);
+    margin-bottom: 15px;
+}
+
+.total-value {
+    font-weight: 600;
+}
+
+.chart-placeholder {
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.bar-chart-mock {
+    display: flex;
+    align-items: flex-end;
+    height: 80%;
+    gap: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+    .bar-chart-mock div {
+        width: 30%;
+        background-color: var(--primary-color);
+        border-radius: 4px 4px 0 0;
+    }
+
+.month-labels {
+    display: flex;
+    justify-content: space-around;
+    font-size: 0.8rem;
+    color: var(--subtle-text);
+    margin-top: 5px;
+}
+
+.dashboard-section {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    /* No bottom margin needed, as this is the last element in the right panel */
+    margin-bottom: 0;
+}
+
+    .dashboard-section h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 25px;
+        color: #333333;
+    }
+
+.earnings-header {
+    display: flex;
+    justify-content: flex-end; /* Align total earnings to the right */
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 15px;
+}
+
+.total-label {
+    margin-right: 5px;
+}
+
+.total-value {
+    font-weight: 600;
+    color: #333;
+}
+

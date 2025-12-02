@@ -1,0 +1,52 @@
+﻿@page "/onboarding/step-3"
+@using CraftConnect.WASM.Layout
+@layout OnboardingFlowLayout
+
+<div class="onboarding-cta-container">
+
+    <!-- Progress Bar -->
+    <div class="progress-header">
+        <span>Onboarding Progress</span>
+        <span>3/3</span>
+    </div>
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="cta-content">
+        <div class="cta-image">
+            <img src="https://placehold.co/600x400/e0e7ff/4f46e5?text=Craftsman+at+Work" alt="You're All Set" />
+            <div class="image-overlay">
+                <h2>You're All Set!</h2>
+            </div>
+        </div>
+
+        <p>
+            Your journey into the world of craftsmanship begins now. Complete your profile to connect with clients or start
+            exploring the amazing work of our talented artisans.
+        </p>
+
+        <div class="button-group">
+            <button class="btn btn-primary" @onclick='() => NavigateTo("/profile/edit")'>Complete Your Profile</button>
+            <button class="btn btn-secondary" @onclick='() => NavigateTo("/explore")'>Start Exploring</button>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-footer">
+        <a href="javascript:void(0)" class="nav-link" @onclick='() => NavigateTo("/onboarding/step-2")'>Back</a>
+        <a href="javascript:void(0)" class="nav-link" @onclick='() => NavigateTo("/dashboard")'>Go to Dashboard</a>
+    </div>
+
+</div>
+
+@code {
+    [Inject]
+    private NavigationManager Navigation { get; set; }
+
+    private void NavigateTo(string url)
+    {
+        Navigation.NavigateTo(url);
+    }
+}

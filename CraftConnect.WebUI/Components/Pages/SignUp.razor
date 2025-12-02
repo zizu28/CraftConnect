@@ -1,8 +1,8 @@
 ﻿@page "/signup"
 @layout AuthLayout
 @inject NavigationManager NavigationManager
-@inject IHttpClientFactory HttpClientFactory
 @inject ILogger<SignUp> logger
+@inject IHttpClientFactory HttpClientFactory
 @using Blazored.FluentValidation
 @using CraftConnect.WebUI.Components.Layout
 @using CraftConnect.WebUI.Components.SignUpPageComponents
@@ -142,7 +142,9 @@
         errorMessage = null;
         try
         {
-            var httpClient = HttpClientFactory.CreateClient("Backend");
+            // var httpClient = HttpClientFactory.CreateClient("Backend");
+            var httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("https://localhost:7235");
             userResponse = model.Role switch
             {
                 "Craftman" => await httpClient.PostAsJsonAsync("/api/users/register/craftman", model, new JsonSerializerOptions

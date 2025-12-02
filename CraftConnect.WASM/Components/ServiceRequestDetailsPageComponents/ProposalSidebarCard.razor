@@ -1,0 +1,20 @@
+﻿@using CraftConnect.WASM.ViewModels
+<div class="proposal-sidebar-card">
+    <div class="card-header">
+        <div class="craftsman-info">
+            <img class="avatar" src="@Proposal.CraftsmanAvatarUrl" alt="@Proposal.CraftsmanName" />
+            <span class="name">@Proposal.CraftsmanName</span>
+        </div>
+        <span class="price">@Proposal.Price.ToString("C0")</span>
+    </div>
+    <p class="quote">@Proposal.QuoteSummary</p>
+    <div class="card-actions">
+        <button class="btn btn-accept">Accept</button>
+        <button class="btn btn-message">Message</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public CustomerProposalVM Proposal { get; set; } = new();
+}

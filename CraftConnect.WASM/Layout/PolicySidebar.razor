@@ -1,0 +1,58 @@
+﻿@using CraftConnect.WASM.ViewModels
+<aside class="policy-sidebar">
+    <nav class="sticky-nav">
+        <ul>
+            @foreach (var item in NavItems)
+            {
+                <li>
+                    <!-- 
+                      STEP 2: Use the new IsActive logic
+                    -->
+                    <a href="@item.Href" class="nav-item @(IsActive(item.Href) ? "active" : "")">
+                        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="@item.IconPath" clip-rule="evenodd" />
+                        </svg>
+                        <span>@item.Title</span>
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav
+</aside>
+
+@code {
+    <!-- 
+      STEP 1: Add a parameter to receive the active ID from the layout
+    -->
+    [Parameter]
+    public string ActiveSectionId { get; set; } = "introduction";
+
+    private List<PolicyNavItem> NavItems = new();
+    
+    // All the NavigationManager and OnLocationChanged code can be removed.
+
+    protected override void OnInitialized()
+    {
+        // This list of nav items remains the same
+        NavItems = new List<PolicyNavItem>
+        {
+            new PolicyNavItem { Title = "Introduction", Href = "#introduction", IconPath = "M10 1.75a.75.75 0 0 0-1.136-.643L3.6 5.18l-1.42-1.42a.75.75 0 0 0-1.06 1.06l2.12 2.12a.75.75 0 0 0 1.06 0l6-6a.75.75 0 0 0-.364-1.118ZM10 5a.75.75 0 0 0-1.136-.643L3.6 8.43l-1.42-1.42a.75.75 0 1 0-1.06 1.06l2.12 2.12a.75.75 0 0 0 1.06 0l6-6A.75.75 0 0 0 10 5Zm0 3.25a.75.75 0 0 0-1.136-.643L3.6 11.68l-1.42-1.42a.75.75 0 1 0-1.06 1.06l2.12 2.12a.75.75 0 0 0 1.06 0l6-6a.75.75 0 0 0-.364-1.118ZM10 11.5a.75.75 0 0 0-1.136-.643L3.6 14.93l-1.42-1.42a.75.75 0 1 0-1.06 1.06l2.12 2.12a.75.75 0 0 0 1.06 0l6-6a.75.75 0 0 0-.364-1.118Z" },
+            new PolicyNavItem { Title = "Information We Collect", Href = "#information-we-collect", IconPath = "M2 3.75A.75.75 0 0 1 2.75 3h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 3.75ZM2 7.75A.75.75 0 0 1 2.75 7h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 7.75ZM2 11.75A.75.75 0 0 1 2.75 11h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 11.75ZM2 15.75A.75.75 0 0 1 2.75 15h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 15.75Z" },
+            new PolicyNavItem { Title = "How We Use Your Info", Href = "#how-we-use-your-information", IconPath = "M9.501 3.245a.75.75 0 0 1 .71 1.213l-6 3.5a.75.75 0 0 1-.71-1.213l6-3.5ZM11.168 3.86a.75.75 0 0 1 .374 1.28L6.04 8.64a.75.75 0 0 1-1.28-.374l-2.5-4.5a.75.75 0 0 1 1.28-.373l2.25 4.05 4.378-2.543ZM15 5.25a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-1.5 0V6a.75.75 0 0 1 .75-.75Z" },
+            new PolicyNavItem { Title = "Data Sharing and...", Href = "#data-sharing-and-disclosure", IconPath = "M3 4.25A2.25 2.25 0 0 1 5.25 2h9.5A2.25 2.25 0 0 1 17 4.25v11.5A2.25 2.25 0 0 1 14.75 18h-9.5A2.25 2.25 0 0 1 3 15.75V4.25ZM5.25 3.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h9.5a.75.75 0 0 0 .75-.75V4.25a.75.75 0 0 0-.75-.75h-9.5ZM9 6a.75.75 0 0 1 .75.75v2h2a.75.75 0 0 1 0 1.5h-2v2a.75.75 0 0 1-1.5 0v-2h-2a.75.75 0 0 1 0-1.5h2v-2A.75.75 0 0 1 9 6Z" },
+            new PolicyNavItem { Title = "Data Security", Href = "#data-security", IconPath = "M10 1.75a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V2.5a.75.75 0 0 1 .75-.75Z M13 4a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 13 4ZM6 4a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V4.75A.75.75 0 0 1 6 4ZM10 7a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V7.75A.75.75 0 0 1 10 7ZM7 10a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 7 10Z" },
+            new PolicyNavItem { Title = "User Rights and Choices", Href = "#user-rights-and-choices", IconPath = "M10 9a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z M10 9a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0ZM10 12.25a.75.75 0 0 0-1.5 0v.25a.75.75 0 0 0 1.5 0v-.25ZM10 15.25a.75.75 0 0 0-1.5 0v.25a.75.75 0 0 0 1.5 0v-.25Z" },
+            new PolicyNavItem { Title = "Cookies and Tracking", Href = "#cookies-and-tracking", IconPath = "M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM5.5 8a.5.5 0 0 0 0 1h.5a.5.5 0 0 0 0-1h-.5ZM8 9.5a.5.5 0 0 1 .5-.5h.5a.5.5 0 0 1 0 1H8.5a.5.5 0 0 1-.5-.5Zm2.5.5a.5.5 0 0 0 0-1h-.5a.5.5 0 0 0 0 1h.5ZM8 12.5a.5.5 0 0 1 .5-.5h.5a.5.5 0 0 1 0 1H8.5a.5.5 0 0 1-.5-.5Zm3-2a.5.5 0 0 0-1 0v.5a.5.5 0 0 0 1 0v-.5Zm1.5 2.5a.5.5 0 0 1 .5-.5h.5a.5.5 0 0 1 0 1h-.5a.5.5 0 0 1-.5-.5Z" },
+            new PolicyNavItem { Title = "Changes to This Policy", Href = "#changes-to-this-policy", IconPath = "M10 2.5a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-1.5 0v-.5a.75.75 0 0 1 .75-.75ZM13.03 4.97a.75.75 0 0 1 0 1.06l-.353.354a.75.75 0 0 1-1.06-1.06l.353-.354a.75.75 0 0 1 1.06 0ZM16.25 10a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-1.5 0v-.5a.75.75 0 0 1 .75-.75ZM11.97 13.03a.75.75 0 0 1 1.06 0l.354.353a.75.75 0 0 1-1.06 1.06l-.354-.353a.75.75 0 0 1 0-1.06ZM7 11.25a.75.75 0 0 1 1.5 0v.5a.75.75 0 0 1-1.5 0v-.5ZM4.97 8.03a.75.75 0 0 1 0-1.06l.354-.353a.75.75 0 0 1 1.06 1.06l-.354.353a.75.75 0 0 1-1.06 0ZM2.75 4a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-1.5 0v-.5A.75.75 0 0 1 2.75 4Z" },
+            new PolicyNavItem { Title = "Contact Information", Href = "#contact-information", IconPath = "M3 4.25A2.25 2.25 0 0 1 5.25 2h9.5A2.25 2.25 0 0 1 17 4.25v11.5A2.25 2.25 0 0 1 14.75 18h-9.5A2.25 2.25 0 0 1 3 15.75V4.25ZM5.25 3.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h9.5a.75.75 0 0 0 .75-.75V4.25a.75.75 0 0 0-.75-.75h-9.5ZM9 6a.75.75 0 0 1 .75.75v2h2a.75.75 0 0 1 0 1.5h-2v2a.75.75 0 0 1-1.5 0v-2h-2a.75.75 0 0 1 0-1.5h2v-2A.75.75 0 0 1 9 6Z" }
+        };
+    }
+
+    // STEP 3: Update the IsActive method
+    private bool IsActive(string href)
+    {
+        // Compare the item's href (e.g., "#introduction") 
+        // with the ActiveSectionId (e.g., "introduction")
+        return href == "#" + ActiveSectionId;
+    }
+}

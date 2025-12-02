@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Components\AdminPagesComponents\DisputesCategoryManagementPageComponents\**" />
+    <Compile Remove="Components\ProposalCreationPageComponents\**" />
+    <Content Remove="Components\AdminPagesComponents\DisputesCategoryManagementPageComponents\**" />
+    <Content Remove="Components\ProposalCreationPageComponents\**" />
+    <EmbeddedResource Remove="Components\AdminPagesComponents\DisputesCategoryManagementPageComponents\**" />
+    <EmbeddedResource Remove="Components\ProposalCreationPageComponents\**" />
+    <None Remove="Components\AdminPagesComponents\DisputesCategoryManagementPageComponents\**" />
+    <None Remove="Components\ProposalCreationPageComponents\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.11" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UserManagement.Domain\UserManagement.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

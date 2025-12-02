@@ -1,0 +1,156 @@
+﻿@page "/admin/discounts"
+@layout AdminLayout
+@using CraftConnect.WASM.Layout.AdminPageLayouts
+@using CraftConnect.WASM.Components.AdminPagesComponents.DiscountsAndPromotionsPageComponents
+@using CraftConnect.WASM.Components.AdminPagesComponents.UserManagementPageComponent
+@using CraftConnect.WASM.Enums
+@using CraftConnect.WASM.ViewModels
+
+<div class="discounts-container">
+    <!-- Page Header -->
+    <header class="page-header">
+        <h1>Manage Discounts & Promotions</h1>
+        <button class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
+            Create New Discount
+        </button>
+    </header>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="search-container">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" /></svg>
+            <input type="text" class="search-input" placeholder="Search by discount code..." />
+        </div>
+        <div class="dropdown-filters">
+            <select class="filter-dropdown" @bind="dropdownFilters">
+                <option value="">Status: All</option>
+                <option value="Active">Active</option>
+                <option value="Expired">Expired</option>
+            </select>
+            <select class="filter-dropdown" @bind="filterDropdown">
+                <option value="">Discount Type</option>
+                <option value="Percentage">Percentage</option>
+                <option value="FixedAmount">Fixed Amount</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container">
+        <table class="discounts-table">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" @onchange="SelectAll" /></th>
+                    <th>Code</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Redemption Rate</th>
+                    <th>Expiry Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var discount in filteredDiscounts)
+                {
+                    <tr>
+                        <td><input type="checkbox" @bind="discount.IsSelected" /></td>
+                        <td class="cell-code">@discount.Code</td>
+                        <td>@discount.Type.ToString()</td>
+                        <td>
+                            @if (discount.Type == DiscountType.Percentage)
+                            {
+                                @discount.Value.ToString("0")<span>%</span>
+                            }
+                            else
+                            {
+                                @(discount.Value.ToString("C"))
+                            }
+                        </td>
+                        <td>
+                            <ProgressBarBadge Current="discount.RedemptionCount" Max="discount.RedemptionLimit" />
+                        </td>
+                        <td>@discount.ExpiryDate?.ToString("yyyy-MM-dd")</td>
+                        <td><DiscountStatusBadge Status="discount.Status" /></td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="#" class="action-link-edit">Edit</a>
+                                <a href="#" class="action-link-deactivate">Deactivate</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer Actions & Pagination -->
+    <div class="table-footer">
+        <button class="btn btn-deactivate-selected" disabled="@(!allDiscounts.Any(d => d.IsSelected))">
+            Deactivate Selected
+        </button>
+        <AdminPagination CurrentPage="currentPage" TotalPages="@TotalPages" OnPageChanged="OnPageSelected" />
+    </div>
+</div>
+
+@code {
+    private int currentPage = 1;
+    private string dropdownFilters = "";
+    private string filterDropdown = "";
+    private int TotalPages;
+    private List<AdminDiscount> allDiscounts = new();
+    private List<AdminDiscount> filteredDiscounts
+    {
+        get
+        {
+            var items = allDiscounts.AsEnumerable();
+            TotalPages = (int)Math.Ceiling(items.Count() / (decimal)5);
+            if (!string.IsNullOrWhiteSpace(dropdownFilters))
+            {
+                items = dropdownFilters.ToLower() switch
+                {
+                    "active" => items.Where(i => i.Status.ToString().Contains("Active", StringComparison.OrdinalIgnoreCase)).ToList(),
+                    "expired" => items.Where(i => i.Status.ToString().Contains("Expired", StringComparison.OrdinalIgnoreCase)).ToList(),
+                    _ => items
+                };
+            }
+
+            if (!string.IsNullOrWhiteSpace(filterDropdown))
+            {
+                items = filterDropdown.ToLower() switch
+                {
+                    "percentage" => items.Where(i => i.Type.ToString().Contains("Percentage", StringComparison.OrdinalIgnoreCase)).ToList(),
+                    "fixedamount" => items.Where(i => i.Type.ToString().Contains("FixedAmount", StringComparison.OrdinalIgnoreCase)).ToList(),
+                    _ => items
+                };
+            }
+            return items.ToList();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        // Mock data from the image
+        allDiscounts = new List<AdminDiscount>
+        {
+            new AdminDiscount { Id = Guid.NewGuid(), IsSelected = false, Code = "SUMMER20", Type = DiscountType.Percentage, Value = 20, RedemptionCount = 570, RedemptionLimit = 1000, ExpiryDate = new DateTime(2025, 8, 31), Status = DiscountStatus.Active },
+            new AdminDiscount { Id = Guid.NewGuid(), IsSelected = false, Code = "WELCOME10", Type = DiscountType.FixedAmount, Value = 10, RedemptionCount = 200, RedemptionLimit = 500, ExpiryDate = new DateTime(2024, 12, 31), Status = DiscountStatus.Active },
+            new AdminDiscount { Id = Guid.NewGuid(), IsSelected = false, Code = "SPRINGCLEAN", Type = DiscountType.Percentage, Value = 15, RedemptionCount = 100, RedemptionLimit = 100, ExpiryDate = new DateTime(2024, 5, 30), Status = DiscountStatus.Expired },
+            new AdminDiscount { Id = Guid.NewGuid(), IsSelected = false, Code = "FIRSTJOB5", Type = DiscountType.FixedAmount, Value = 5, RedemptionCount = 950, RedemptionLimit = 1000, ExpiryDate = new DateTime(2025, 12, 30), Status = DiscountStatus.Active },
+            new AdminDiscount { Id = Guid.NewGuid(), IsSelected = false, Code = "HALLOWEEN11", Type = DiscountType.Percentage, Value = 20, RedemptionCount = 1000, RedemptionLimit = 1500, ExpiryDate = null, Status = DiscountStatus.Active }
+        };
+    }
+
+    private void OnPageSelected(int page)
+    {
+        currentPage = page;
+        // Add logic here to fetch data for the new page
+    }
+    
+    private void SelectAll(ChangeEventArgs e)
+    {
+        bool isChecked = (bool)(e.Value ?? false);
+        allDiscounts.ForEach(d => d.IsSelected = isChecked);
+    }
+}

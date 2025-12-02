@@ -1,0 +1,195 @@
+﻿/* Pages/CraftsmanDashboard.razor.css - EXPLICIT STYLES */
+
+.dashboard-page-container {
+    max-width: 1400px;
+    /* Pushes content down below the 80px Navbar height */
+    margin: 90px auto 40px;
+    padding: 0 40px; /* Generous side padding */
+    /* Light, neutral background for the entire page */
+    background-color: #f0f2f5;
+    color: #333333;
+    min-height: 100vh;
+}
+
+h2 {
+    font-size: 2.5rem;
+    margin-bottom: 30px; /* Generous space below the welcome message */
+    font-weight: 600;
+}
+
+/* --- Metrics Grid --- */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.metric-card {
+    /* Lifted card appearance */
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f0f0f0; /* Subtle border for definition */
+}
+
+.metric-title {
+    font-weight: 500;
+    color: #555555;
+    margin-bottom: 10px;
+}
+
+.metric-value-row {
+    /* ... (rest of styles) ... */
+}
+
+.metric-value {
+    font-size: 2.2rem; /* Larger font for emphasis */
+    font-weight: 700;
+}
+/* ... (Indicator styling is fine) ... */
+
+
+/* --- Main Content Grid (Two-Column Layout) --- */
+.main-content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.dashboard-section {
+    /* All sections should look like distinct cards */
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px; /* Space between sections within the left panel */
+}
+
+    .dashboard-section h3 {
+        font-size: 1.5rem;
+        margin-bottom: 25px;
+        font-weight: 600;
+        color: #333333;
+    }
+
+/* --- Project Table Styling (ProjectTable.razor) --- */
+.project-table th {
+    color: #6c757d;
+    font-weight: 500;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.project-table td {
+    padding: 15px 0;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #e9ecef; /* Very light row divider */
+}
+
+.status-tag {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+}
+
+.in-progress {
+    background-color: #007bff;
+}
+
+.completed {
+    background-color: #28a54c;
+}
+
+.pending-approval {
+    background-color: #ffc107;
+    color: #333;
+}
+
+/* --- Service Requests Styling (ServiceRequests.razor) --- */
+.request-card {
+    /* KEY CHANGE: No border, just generous padding and separation */
+    background-color: #ffffff;
+    padding: 15px 0; /* Padding inside the card */
+    margin-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0; /* Use bottom border for separation */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Align content to the top */
+}
+
+    .request-card:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+.request-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #007bff; /* Blue title for link/emphasis */
+}
+
+.request-description {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.request-actions button {
+    padding: 6px 15px; /* Smaller buttons matching image */
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 4px;
+}
+
+/* --- Quick Links Styling (Right Panel) --- */
+.quick-links-list a {
+    color: #333333;
+}
+
+.quick-links-list i {
+    color: #007bff; /* Blue icons */
+}
+
+/* --- Earnings Chart Styling --- */
+.earnings-chart-section h3 {
+    /* ... */
+}
+
+.earnings-header {
+    /* ... */
+}
+
+.bar-chart-mock div {
+    /* Match colors: the bars appear to be a neutral grey/blue */
+    background-color: #007bff;
+}
+
+
+/* --- Responsive Breakpoints --- */
+@media (max-width: 1024px) {
+    .main-content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .dashboard-page-container {
+        padding: 0 15px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .request-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .request-actions {
+        margin-top: 15px;
+    }
+}

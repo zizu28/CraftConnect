@@ -1,0 +1,42 @@
+﻿.checkout-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB; /* Gray-200 */
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 16px 0;
+}
+
+.order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #E5E7EB;
+    font-size: 0.9rem;
+    color: #374151; /* Gray-700 */
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.order-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.125rem; /* 18px */
+    font-weight: 600;
+    color: #111827;
+    margin-top: 16px;
+}
+
+.total-price {
+    color: #0295D8; /* Blue from image */
+}

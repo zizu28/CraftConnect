@@ -1,0 +1,38 @@
+﻿<div class="sidebar-card">
+    <h3>Send us an email</h3>
+
+    <form @onsubmit="HandleSubmit">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input id="name" type="text" class="form-control" @bind="name" />
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" type="email" class="form-control" @bind="email" />
+        </div>
+        <div class="form-group">
+            <label for="subject">Subject</label>
+            <input id="subject" type="text" class="form-control" @bind="subject" />
+        </div>
+        <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" rows="5" class="form-control" @bind="message"></textarea>
+        </div>
+        <button type="submit" class="btn-submit">Submit Inquiry</button>
+    </form>
+</div>
+
+@code {
+    private string name = "";
+    private string email = "";
+    private string subject = "";
+    private string message = "";
+
+    private void HandleSubmit()
+    {
+        // Handle form submission logic here
+        Console.WriteLine($"Form submitted: {name}, {email}, {subject}");
+        // Clear form
+        name = email = subject = message = "";
+    }
+}

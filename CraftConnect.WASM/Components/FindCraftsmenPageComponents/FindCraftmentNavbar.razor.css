@@ -1,0 +1,182 @@
+﻿.navbar-container {
+    background-color: white;
+    box-shadow: var(--navbar-shadow);
+    box-sizing: border-box;
+    padding: 1rem 2rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    opacity: 1;
+}
+
+.navbar-content {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+    .brand-logo img {
+        height: 40px;
+        margin-right: 10px;
+    }
+
+/* --- Navigation Links and Main Layout Flow --- */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-grow: 1; /* Allows the nav to take up available space */
+    justify-content: flex-end; /* Pushes content to the right edge */
+}
+
+    /* --- Left Links Group --- */
+    .nav-links .nav-link {
+        text-decoration: none;
+        color: #555;
+        font-weight: 500;
+        padding: 5px 0;
+        margin-right: 15px; /* Separate links from the center search bar */
+    }
+
+        .nav-links .nav-link.active {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+        }
+
+/* --- Integrated Search Bar (The unique part) --- */
+.integrated-search {
+    position: relative;
+    margin-right: auto; /* Pushes the search bar to the left edge of the right-aligned group */
+    margin-left: 20px;
+    width: 250px;
+    max-width: 30%; /* Limits size on large screens */
+}
+
+    .integrated-search input {
+        width: 100%;
+        padding: 8px 10px 8px 35px;
+        border: 1px solid #eee;
+        border-radius: 20px;
+        background-color: #f7f7f7;
+    }
+
+.search-icon-sm {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 1rem;
+}
+
+/* --- Right Side Icons & Avatar --- */
+.nav-icon-link {
+    font-size: 1.4rem;
+    color: #555;
+    text-decoration: none;
+}
+
+.profile-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+    cursor: pointer;
+}
+
+.btn-primary {
+    /* Styles for Post a Project button */
+    padding: 8px;
+    text-decoration: none;
+}
+
+/* --- Mobile Breakpoint (Max Width 1024px) --- */
+@media (max-width: 1024px) {
+    .integrated-search {
+        display: none; /* Hide integrated search to make space */
+    }
+
+    .nav-links {
+        justify-content: flex-end; /* All remaining content shifts right */
+        gap: 10px;
+    }
+
+        .nav-links .nav-link {
+            margin-right: 0;
+        }
+}
+
+/* --- Mobile Breakpoint (Max Width 768px for Hamburger Menu) --- */
+@media (max-width: 768px) {
+    .hamburger-btn {
+        display: block;
+    }
+
+    .nav-links {
+        display: none; /* Hide menu entirely */
+    }
+
+        .nav-links.open {
+            /* Mobile menu display logic */
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            height: auto;
+            padding: 10px 0;
+            align-items: flex-start; /* Align mobile items left */
+        }
+
+        .nav-links a,
+        .nav-links .btn-primary {
+            width: 90%;
+            margin: 8px auto;
+            text-align: left;
+        }
+}
+
+@media (min-width: 769px) {
+    .hamburger-btn {
+        display: none;
+    }
+}
+
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: var(--text-color); /* Use theme variable */
+    cursor: pointer;
+    padding: 5px;
+    margin-right: 10px;
+    transition: color 0.2s;
+}
+
+    .theme-toggle-btn:hover {
+        color: var(--primary-color);
+    }
+
+/* Ensure the navbar background uses the theme variable */
+.navbar-container.dashboard-nav {
+    background-color: var(--navbar-bg);
+    box-shadow: var(--navbar-shadow);
+}

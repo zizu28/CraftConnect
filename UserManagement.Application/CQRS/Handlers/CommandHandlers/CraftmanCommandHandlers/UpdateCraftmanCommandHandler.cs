@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using Core.SharedKernel.Enums;
 using Infrastructure.BackgroundJobs;
-using Infrastructure.EmailService;
 using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
@@ -9,6 +9,7 @@ using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.CraftmanCommands;
 using UserManagement.Application.DTOs.CraftmanDTO;
 using UserManagement.Application.Validators.CraftmanValidators;
+using UserManagement.Domain.Entities;
 
 namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.CraftmanCommandHandlers
 {
@@ -34,13 +35,13 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.CraftmanComma
 				return response;
 			}
 			
-			craftman = mapper.Map(request.CraftmanDTO, craftman);
+			var updatedCraftman = mapper.Map(request.CraftmanDTO, craftman);
 			await unitOfWork.ExecuteInTransactionAsync(
-				async () => await craftmanRepository.UpdateAsync(craftman, cancellationToken), 
+				async () => await craftmanRepository.UpdateAsync(updatedCraftman, cancellationToken), 
 				cancellationToken
 			);
 
-			var mappedResponse = mapper.Map<CraftmanResponseDTO>(craftman);
+			var mappedResponse = mapper.Map<CraftmanResponseDTO>(updatedCraftman);
 			mappedResponse.CraftmanId = request.CraftmanId;
 			mappedResponse.IsSuccessful = true;
 			mappedResponse.Message = "Craftman updated successfully.";

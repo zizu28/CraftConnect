@@ -11,6 +11,7 @@ using UserManagement.Application.CQRS.Queries.UserQueries;
 using UserManagement.Application.DTOs.CraftmanDTO;
 using UserManagement.Application.DTOs.CustomerDTO;
 using UserManagement.Application.DTOs.UserDTOs;
+using UserManagement.Application.Responses;
 
 namespace UserManagement.Presentation.Controllers
 {
@@ -67,7 +68,7 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpGet("craftsman/{id:guid}")]
-		public async Task<IActionResult> GetCraftsmanByIdAsync(Guid id)
+		public async Task<IActionResult> GetCraftsmanByIdAsync([FromRoute] Guid id)
 		{
 			var query = new GetCraftmanByIdQuery { CraftmanId = id };
 			var user = await mediator.Send(query);
@@ -165,10 +166,10 @@ namespace UserManagement.Presentation.Controllers
 			var userQuery = new GetUserByEmailQuery { Email = command.Email };
 			var userResponseDto = await mediator.Send(userQuery);			
 
-			return Ok(new
+			return Ok(new UpstreamLoginResponse
 			{
-				loginResponse.AccessToken,
-				loginResponse.RefreshToken,
+				AccessToken = loginResponse.AccessToken,
+				RefreshToken = loginResponse.RefreshToken,
 				User = userResponseDto
 			});
 		}

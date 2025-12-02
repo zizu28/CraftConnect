@@ -1,0 +1,18 @@
+﻿@using CraftConnect.WASM.Enums
+
+<span class="status-badge @GetStatusClass()">
+    @Status.ToString()
+</span>
+
+@code {
+    [Parameter]
+    public AnnouncementStatus Status { get; set; }
+
+    private string GetStatusClass() => Status switch
+    {
+        AnnouncementStatus.Published => "status-published",
+        AnnouncementStatus.Scheduled => "status-scheduled",
+        AnnouncementStatus.Draft => "status-draft",
+        _ => ""
+    };
+}

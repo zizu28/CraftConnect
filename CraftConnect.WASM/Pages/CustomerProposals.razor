@@ -1,0 +1,101 @@
+﻿@page "/customer/{CustomerId:guid}/proposals"
+@layout CustomerLayout
+@using CraftConnect.WASM.Components.CustomerProposalsPageComponents
+@using CraftConnect.WASM.ViewModels
+
+<div class="customer-proposals-page">
+    <div class="header-with-filter">
+        <h1 class="page-title">Proposals</h1>
+        <div class="filter-dropdown">
+            <label for="projectFilter" class="sr-only">Filter by project</label>
+            <span class="filter-label">Filter by project:</span>
+            <select id="projectFilter" @bind="selectedProjectId">
+                <option value="0">All Projects</option>
+                @foreach (var project in projectSummaries)
+                {
+                    <option value="@project.Id">@project.ProjectTitle (@project.ProposalCount proposals)</option>
+                }
+            </select>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="dropdown-arrow-icon">
+                <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 011.06 0L10 11.94l3.72-3.72a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.22 9.28a.75.75 0 010-1.06z" clip-rule="evenodd" />
+            </svg>
+        </div>
+    </div>
+
+    @foreach (var projectGroup in FilteredProjectSummaries)
+    {
+        <CustomerProposalGroup ProjectSummary="projectGroup" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid CustomerId { get; set; }
+    private List<CustomerProjectSummaryVM> projectSummaries = new();
+    private int selectedProjectId = 0; // 0 means "All Projects"
+
+    private IEnumerable<CustomerProjectSummaryVM> FilteredProjectSummaries =>
+        selectedProjectId == 0
+        ? projectSummaries
+        : projectSummaries.Where(p => p.Id == selectedProjectId);
+
+    protected override void OnInitialized()
+    {
+        // Mock Data based on the image
+        var customBookshelfProposals = new List<CustomerProposalVM>
+        {
+            new CustomerProposalVM
+            {
+                Id = Guid.NewGuid(), ServiceRequestId = Guid.NewGuid(), CraftsmanName = "John Smith", CraftsmanAvatarUrl = "https://placehold.co/40x40/B6A49A/4F46E5?text=JS",
+                Rating = 4.8, ReviewCount = 48, Price = 450.00m,
+                QuoteSummary = "\"I can build your custom bookshelf with high-quality oak and have it done within a week. My quote includes all materials and labor.\""
+            },
+            new CustomerProposalVM
+            {
+                Id = Guid.NewGuid(), ServiceRequestId = Guid.NewGuid(), CraftsmanName = "Emily White", CraftsmanAvatarUrl = "https://placehold.co/40x40/FDBA74/7C2D12?text=EW",
+                Rating = 5.0, ReviewCount = 50, Price = 500.00m,
+                QuoteSummary = "\"Specializing in bespoke furniture. I'll use maple wood and provide a detailed 3D model before starting to ensure it meets your vision.\""
+            },
+            new CustomerProposalVM
+            {
+                Id = Guid.NewGuid(), ServiceRequestId = Guid.NewGuid(), CraftsmanName = "Michael Brown", CraftsmanAvatarUrl = "https://placehold.co/40x40/94A3B8/FFFFFF?text=MB",
+                Rating = 4.2, ReviewCount = 20, Price = 420.00m,
+                QuoteSummary = "\"Experienced carpenter offering competitive pricing. I propose using pine for a more rustic look. Can start next Monday.\""
+            }
+        };
+
+        var kitchenSinkProposals = new List<CustomerProposalVM>
+        {
+            new CustomerProposalVM
+            {
+                Id = Guid.NewGuid(), ServiceRequestId = Guid.NewGuid(), CraftsmanName = "Maria Garcia", CraftsmanAvatarUrl = "https://placehold.co/40x40/FDBA74/7C2D12?text=MG",
+                Rating = 5.0, ReviewCount = 50, Price = 120.00m,
+                QuoteSummary = "\"Expert in all types of sink repairs. I can come by this afternoon to take a look and fix it on the spot. My price is for the complete job.\""
+            },
+            new CustomerProposalVM
+            {
+                Id = Guid.NewGuid(), ServiceRequestId = Guid.NewGuid(), CraftsmanName = "David Chen", CraftsmanAvatarUrl = "https://placehold.co/40x40/A3E635/4D7C0F?text=DC",
+                Rating = 4.7, ReviewCount = 30, Price = 100.00m,
+                QuoteSummary = "\"Quick and reliable plumbing services. I'll diagnose the issue for a flat fee of $30, and the total cost will not exceed $100.\""
+            }
+        };
+
+        projectSummaries = new List<CustomerProjectSummaryVM>
+        {
+            new CustomerProjectSummaryVM
+            {
+                Id = 101,
+                ProjectTitle = "Custom Bookshelf",
+                ProposalCount = customBookshelfProposals.Count,
+                Proposals = customBookshelfProposals
+            },
+            new CustomerProjectSummaryVM
+            {
+                Id = 102,
+                ProjectTitle = "Kitchen Sink Repair",
+                ProposalCount = kitchenSinkProposals.Count,
+                Proposals = kitchenSinkProposals
+            }
+        };
+    }
+}

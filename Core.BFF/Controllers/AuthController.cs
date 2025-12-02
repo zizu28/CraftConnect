@@ -8,16 +8,15 @@ using System.Security.Claims;
 namespace Core.BFF.Controllers
 {
 	[ApiController]
-	[Route("api/auth")]
+	[Route("api/[controller]")]
 	public class AuthController(IHttpClientFactory httpClientFactory) : ControllerBase
 	{
-		private readonly HttpClient httpClient = httpClientFactory.CreateClient();
+		private readonly HttpClient httpClient = httpClientFactory.CreateClient("UserManagement");
 
 		[HttpPost("login")]
 		public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
 		{
 			ArgumentNullException.ThrowIfNull(command, nameof(command));
-			httpClient.BaseAddress = new Uri("https://localhost:7235");
 			var response = await httpClient.PostAsJsonAsync("/api/users/signin", command);
 			if (!response.IsSuccessStatusCode)
 			{
@@ -25,7 +24,7 @@ namespace Core.BFF.Controllers
 			}
 			var loginResponse = await response.Content.ReadFromJsonAsync<UpstreamLoginResponse>();
 			
-			if(string.IsNullOrEmpty(loginResponse!.AccessToken) || string.IsNullOrEmpty(loginResponse.RefreshToken))
+			if(string.IsNullOrEmpty(loginResponse!.AccessToken))
 			{
 				return Unauthorized();
 			}
@@ -33,19 +32,22 @@ namespace Core.BFF.Controllers
 			var claims = new List<Claim>
 			{
 				new(ClaimTypes.Name, command.Email),
-				new(ClaimTypes.NameIdentifier, loginResponse.User.UserId.ToString())
+				new(ClaimTypes.NameIdentifier, loginResponse.User.UserId.ToString()),
+				new(ClaimTypes.Role, loginResponse.User.Role.ToString()),
 			};
 			var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
 			var authProperties = new AuthenticationProperties
 			{
 				IsPersistent = command.RememberMe,
-				ExpiresUtc = DateTime.UtcNow.AddMinutes(15)
+				ExpiresUtc = DateTime.UtcNow.AddMinutes(15),
+				IssuedUtc = DateTime.UtcNow,
+				RedirectUri = command.RedirectUri,
 			};
 			authProperties.StoreTokens(
 			[
-				new AuthenticationToken { Name = "access_token", Value = loginResponse.AccessToken },
-				new AuthenticationToken { Name = "refresh_token", Value = loginResponse.RefreshToken }
+				new AuthenticationToken { Name = "access-token", Value = loginResponse.AccessToken },
+				new AuthenticationToken { Name = "refresh-token", Value = loginResponse.RefreshToken }
 			]);
 
 			await HttpContext.SignInAsync(

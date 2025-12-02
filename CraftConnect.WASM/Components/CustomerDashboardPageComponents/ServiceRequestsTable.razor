@@ -1,0 +1,40 @@
+﻿@using CraftConnect.WASM.ViewModels
+<div class="table-card-wrapper">
+    <table class="service-table">
+        <thead>
+            <tr>
+                <th>Project Title</th>
+                <th>Category</th>
+                <th>Date Submitted</th>
+                <th>Status</th>
+                @if (!IsMini)
+                {
+                    <th>Actions</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in Requests)
+            {
+                <tr>
+                    <td class="cell-title">@request.ProjectTitle</td>
+                    <td>@request.Category</td>
+                    <td>@request.DateSubmitted.ToString("yyyy-MM-dd")</td>
+                    <td><StatusLabel Status="request.Status" /></td>
+                    @if (!IsMini)
+                    {
+                        <td><a href="/customer/service-requests/@request.Id" class="action-link">View Details</a></td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter]
+    public List<ServiceRequestVM> Requests { get; set; } = new();
+
+    [Parameter]
+    public bool IsMini { get; set; } = false; // Hides 'Actions' for dashboard
+}

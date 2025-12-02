@@ -1,0 +1,18 @@
+﻿@using CraftConnect.WASM.ViewModels
+<div class="proposal-group">
+    <h2 class="group-title">
+        For: @ProjectSummary.ProjectTitle 
+        <span class="proposal-count">(@ProjectSummary.ProposalCount proposals)</span>
+    </h2>
+    <div class="proposal-cards-grid">
+        @foreach (var proposal in ProjectSummary.Proposals)
+        {
+            <CustomerProposalCard Proposal="proposal" />
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public CustomerProjectSummaryVM ProjectSummary { get; set; } = new();
+}

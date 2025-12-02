@@ -1,0 +1,91 @@
+﻿@page "/find-craftmen"
+@using Core.SharedKernel.Domain
+@using CraftConnect.WASM.ViewModels
+@using CraftConnect.WASM.Components.FindCraftsmenPageComponents
+@using CraftConnect.WASM.Components.SharedComponents
+@inject IHttpClientFactory HttpClientFactory
+
+<div class="search-page-container">
+    <FindCraftmentNavbar />
+    <div class="intro-section">
+        <h1>Find Skilled Craftsmen</h1>
+        <p>Browse our community of talented artisans and find the perfect match for your project.</p>
+    </div>
+
+    <SearchInput @bind-SearchParameters="SearchParameters"
+                 OnSearch="HandleSearch" />
+
+    <FilterBar @bind-SearchParameters="SearchParameters"
+               OnFilterChange="HandleSearch" />
+
+    @if (IsLoading)
+    {
+        <p class="loading-message">Loading craftsmen...</p>
+    }
+    else if (Craftsmen.Any())
+    {
+        <div class="results-grid">
+            @foreach (var craftsman in Craftsmen)
+            {
+                <CraftmanCard Craftsman="@craftsman" />
+            }
+        </div>
+        <Pagination CurrentPage="@SearchParameters.PageNumber"
+                    TotalPages="@TotalPages"
+                    OnPageChange="HandlePageChange" />
+    }
+    else
+    {
+        <p class="no-results">No craftsmen match your search criteria.</p>
+    }
+</div>
+
+@code {
+    private List<CraftmanViewModel> Craftsmen { get; set; } = new();
+    private CraftsmanSearchParametersViewModel SearchParameters { get; set; } = new();
+    private bool IsLoading { get; set; } = true;
+    private int TotalItems = 28; 
+    private int TotalPages => (int)Math.Ceiling((double)TotalItems / SearchParameters.PageSize);
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Initial load
+        await LoadCraftsmenAsync();
+    }
+
+    private async Task HandleSearch()
+    {
+        SearchParameters.PageNumber = 1;
+        await LoadCraftsmenAsync();
+    }
+
+    private async Task HandlePageChange(int page)
+    {
+        SearchParameters.PageNumber = page;
+        await LoadCraftsmenAsync();
+    }
+
+    private async Task LoadCraftsmenAsync()
+    {
+        IsLoading = true;
+        // In a real app, this would be an API call using SearchParameters
+        await Task.Delay(500); // Simulate network latency
+
+        // Mock Data based on the image
+        Craftsmen = GetMockData().ToList();
+
+        IsLoading = false;
+    }
+
+    private IEnumerable<CraftmanViewModel> GetMockData()
+    {
+        // This simulates a paged API response
+        return new List<CraftmanViewModel>
+        {
+            new(Guid.NewGuid(), "Elena Rodriguez", "Expert in custom furniture design and restoration.", "/images/p1.jpg", "5 years of experience.", "Highly Rated", 4.9M, 12),
+            new(Guid.NewGuid(), "David Chen", "Specializes in handcrafted jewelry and metalwork.", "/images/p2.jpg", "8 years of experience.", "Local Artisan", 5.0M, 8),
+            new(Guid.NewGuid(), "Sophia Green", "Creates unique pottery and ceramic art.", "/images/p3.jpg", "3 years of experience.", "Rising Star", 4.5M, 5)
+        }.Skip((SearchParameters.PageNumber - 1) * SearchParameters.PageSize)
+        .Take(SearchParameters.PageSize).ToList();
+    }
+}

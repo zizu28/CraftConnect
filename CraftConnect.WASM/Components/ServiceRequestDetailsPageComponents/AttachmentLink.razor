@@ -1,0 +1,12 @@
+﻿@using CraftConnect.WASM.ViewModels
+<a href="@Attachment.DownloadUrl" class="attachment-link" target="_blank" rel="noopener noreferrer">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94a3 3 0 1 1 4.243 4.242l-9.88 9.88a1.5 1.5 0 0 1-2.12-2.121l9.88-9.88 1.06-1.06a3 3 0 0 0-4.243-4.243l-10.94 10.94a4.5 4.5 0 1 0 6.364 6.364l7.693-7.693a.75.75 0 0 1 1.06 1.06Z" />
+    </svg>
+    <span>@Attachment.FileName</span>
+</a>
+
+@code {
+    [Parameter]
+    public AttachedDocument Attachment { get; set; } = new();
+}

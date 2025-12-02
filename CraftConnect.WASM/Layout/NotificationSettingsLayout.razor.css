@@ -1,0 +1,17 @@
+﻿.settings-layout {
+    min-height: 100vh;
+    background-color: #F8FAFC; /* Slate-50 from image */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.main-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 24px;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 24px 16px;
+    }
+}

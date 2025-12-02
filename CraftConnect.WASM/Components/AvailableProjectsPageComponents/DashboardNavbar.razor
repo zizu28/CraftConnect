@@ -1,0 +1,58 @@
+﻿@using CraftConnect.WASM.Services
+@inject ThemeService ThemeService
+@implements IDisposable
+
+<header class="navbar-container dashboard-nav">
+    <div class="navbar-content">
+        <a href="/" class="brand-logo">
+            <img src="/images/craftconnect-logo.png" alt="CraftConnect Logo" />
+            CraftConnect
+        </a>
+
+        @* Hamburger Button - visible only on mobile *@
+        <button class="hamburger-btn" @onclick="ToggleMenu">
+            <i class="bi bi-list"></i>
+        </button>
+
+        @* Navigation Links and User Actions *@
+        <nav class="nav-links @(isMenuOpen ? "open" : "")">
+            <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+                <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon" : "bi-sun")"></i>
+            </button>
+            @* Central Links *@
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+            <a href="/profile" class="nav-link">Profile</a>
+            <a href="/customer/messages" class="nav-link">Messages</a>
+
+            @* Right Side Button & Avatar *@
+            <a href="/post-project" class="btn btn-primary btn-post-project">Post a Project</a>
+            <a href="/profile" class="profile-avatar-link">
+                <img src="/images/user-avatar.jpg" alt="User Avatar" class="profile-avatar" />
+            </a>
+        </nav>
+    </div>
+</header>
+
+@code {
+    private bool isMenuOpen = false;
+
+    private void ToggleMenu()
+    {
+        isMenuOpen = !isMenuOpen;
+    }
+
+    protected override void OnInitialized()
+    {
+        ThemeService.OnThemeChanged += OnThemeChangedHandler;
+    }
+
+    private void OnThemeChangedHandler()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= OnThemeChangedHandler;
+    }
+}

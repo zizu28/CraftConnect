@@ -1,0 +1,32 @@
+﻿@using CraftConnect.WASM.Components.CustomerDashboardPageComponents
+@using CraftConnect.WASM.ViewModels
+@inherits LayoutComponentBase
+
+<CascadingValue Value="this">
+    <div class="customer-layout">
+        <CustomerSidebar User="currentUser" CustomerId="CustomerId" />
+    
+        <div class="main-view">
+            <CustomerTopBar User="currentUser" />
+            <main class="content-body">
+                @Body
+            </main>
+        </div>
+    </div>
+</CascadingValue>
+
+@code {
+    public Guid CustomerId { get; set; }
+
+    private UserProfileVM currentUser = new UserProfileVM
+    {
+        Name = "Jane Doe",
+        AvatarInitials = "JD"
+    };
+
+    public void SetCurrentCustomerId(Guid id)
+    {
+        CustomerId = id;
+        StateHasChanged();
+    }
+}

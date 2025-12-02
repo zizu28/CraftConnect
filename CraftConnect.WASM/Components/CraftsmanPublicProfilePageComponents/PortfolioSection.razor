@@ -1,0 +1,33 @@
+﻿@using CraftConnect.WASM.ViewModels
+<div class="section-container">
+    <h3>Portfolio</h3>
+    <div class="portfolio-filters">
+        <button class="filter-tag @(ActiveFilter == "All" ? "active" : "")" @onclick="@(() => ActiveFilter = "All")">All</button>
+        @foreach (var category in UniqueCategories)
+        {
+            <button class="filter-tag @(ActiveFilter == category ? "active" : "")" @onclick="() => ActiveFilter = category">@category</button>
+        }
+    </div>
+
+    <div class="portfolio-grid">
+        @foreach (var item in FilteredPortfolio)
+        {
+            <img src="@item.ImageUrl" alt="@item.Category" class="portfolio-image" />
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<PortfolioItemVM> PortfolioItems { get; set; } = new();
+
+    private string ActiveFilter { get; set; } = "All";
+
+    private IEnumerable<string> UniqueCategories =>
+        PortfolioItems.Select(p => p.Category).Distinct().OrderBy(c => c);
+
+    private IEnumerable<PortfolioItemVM> FilteredPortfolio =>
+        ActiveFilter == "All" ? PortfolioItems : PortfolioItems.Where(p => p.Category == ActiveFilter);
+
+    // No need for StateHasChanged here, as changing ActiveFilter will trigger re-render and re-evaluate FilteredPortfolio
+}

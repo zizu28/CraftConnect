@@ -1,0 +1,115 @@
+﻿@using static CraftConnect.WASM.Pages.AvailableProjects
+<div class="filter-sidebar">
+    <h3>Filter Projects</h3>
+
+    @* --- Keyword Search --- *@
+    <div class="filter-group keyword-search">
+        <div class="search-input-box">
+            <input type="text" placeholder="Search by keyword" @bind-value="SearchParameters.Keyword" @bind-value:event="oninput" />
+            <i class="bi bi-search"></i>
+        </div>
+    </div>
+
+    @* --- Skill Tags --- *@
+    <div class="filter-group">
+        <label>Skill Tags</label>
+        @foreach (var skill in AllSkills)
+        {
+            <div class="checkbox-item">
+                <input type="checkbox" id="@skill" checked="@IsSkillSelected(skill)" @onchange="() => ToggleSkill(skill)" />
+                <label for="@skill">@skill</label>
+            </div>
+        }
+    </div>
+
+    @* --- Budget Range (Simplified Slider) --- *@
+    <div class="filter-group">
+        <label>Budget Range</label>
+        <div class="slider-range">
+            <input type="range" min="0" max="5000" step="100" @bind="SearchParameters.MinBudget" />
+            <div class="range-labels">
+                <span>$@SearchParameters.MinBudget</span>
+                <span>$5000+</span>
+            </div>
+        </div>
+    </div>
+
+    @* --- Deadline Date --- *@
+    <div class="filter-group">
+        <label>Deadline</label>
+        <InputDate @bind-Value="SearchParameters.Deadline" class="date-input" placeholder="mm/dd/yyyy" />
+    </div>
+
+    @* --- Location --- *@
+    <div class="filter-group">
+        <label>Location</label>
+        <input type="text" placeholder="City or region" @bind-value="SearchParameters.Location" class="form-control" />
+    </div>
+
+    <div class="filter-actions">
+        <button class="btn btn-apply" @onclick="ApplyFiltersAndNotify">Apply Filters</button>
+        <button class="btn btn-reset" @onclick="ResetFilters">Reset Filters</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ProjectSearchParameters SearchParameters { get; set; } = new()
+    {
+        Keyword = string.Empty,
+        SortBy = "Newest",
+        PageNumber = 1,
+        Skills = new List<string>(),
+        MinBudget = 0,
+        MaxBudget = 5000,
+        Deadline = null,
+        Location = string.Empty
+    };
+
+    [Parameter]
+    public EventCallback<ProjectSearchParameters> SearchParametersChanged { get; set; }
+
+    [Parameter]
+    public EventCallback OnApplyFilters { get; set; }
+
+    private readonly List<string> AllSkills = new() { "Woodworking", "Pottery", "Metalwork", "Textiles", "Carpentry", "Blacksmithing" };
+
+    private bool IsSkillSelected(string skill) => SearchParameters.Skills.Contains(skill);
+
+    private void ToggleSkill(string skill)
+    {
+        if (SearchParameters.Skills.Contains(skill))
+        {
+            SearchParameters.Skills.Remove(skill);
+        }
+        else
+        {
+            SearchParameters.Skills.Add(skill);
+        }
+        // No StateHasChanged needed here; it will happen when ApplyFilters is called.
+    }
+
+    private async Task ApplyFiltersAndNotify()
+    {
+        // Notify parent to run search with the new parameters
+        await SearchParametersChanged.InvokeAsync(SearchParameters);
+        await OnApplyFilters.InvokeAsync();
+    }
+
+    private async Task ResetFilters()
+    {
+        SearchParameters = new ProjectSearchParameters()
+        {
+            Keyword = string.Empty,
+            SortBy = "Newest",
+            PageNumber = 1,
+            Skills = new List<string>(),
+            MinBudget = 0,
+            MaxBudget = 5000,
+            Deadline = null,
+            Location = string.Empty
+        };
+        await SearchParametersChanged.InvokeAsync(SearchParameters);
+        await OnApplyFilters.InvokeAsync();
+    }
+}

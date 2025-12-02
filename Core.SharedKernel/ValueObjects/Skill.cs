@@ -2,10 +2,12 @@
 {
 	public record Skill
 	{
-		public string Name { get; private set; }
-		public int YearsOfExperience { get; private set; }
+		public Guid SkillId { get; private set; }
+		public string Name { get; set; }
+		public int YearsOfExperience { get; set; }
 		private Skill()
 		{
+			SkillId = Guid.Empty;
 			Name = string.Empty;
 			YearsOfExperience = 0;
 		}
@@ -19,6 +21,7 @@
 			{
 				throw new ArgumentOutOfRangeException(nameof(yearsOfExperience), "Years of experience cannot be negative.");
 			}
+			SkillId = Guid.NewGuid();
 			Name = name;
 			YearsOfExperience = yearsOfExperience;
 		}

@@ -1,0 +1,145 @@
+﻿.top-nav-header-history {
+    width: 100%;
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E5E7EB; /* Gray-200 */
+    padding: 0 24px;
+    height: 72px; /* Slightly taller nav */
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.nav-content-history {
+    width: 100%;
+    max-width: 1100px; /* Wider content for nav */
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-left-history, .nav-right-history {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.logo-history {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #111827; /* Gray-900 */
+}
+
+.logo-icon-history {
+    width: 28px;
+    height: 28px;
+    color: #0EA5E9; /* Sky-500 from image */
+}
+
+.logo-text-history {
+    font-size: 1.125rem; /* 18px */
+    font-weight: 600;
+}
+
+.main-navigation-history {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-link-history {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #374151; /* Gray-700 */
+    text-decoration: none;
+    padding: 4px 0;
+    transition: all 0.1s ease-in-out;
+}
+
+    .nav-link-history:hover {
+        color: #0EA5E9; /* Sky-500 */
+    }
+
+    .nav-link-history.active {
+        color: #0EA5E9; /* Sky-500 */
+        font-weight: 600;
+    }
+
+.btn-post-project {
+    padding: 10px 16px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+    background-color: #0EA5E9; /* Sky-500 */
+    color: #FFFFFF;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+    .btn-post-project:hover {
+        background-color: #0284C7; /* Sky-600 */
+    }
+
+.profile-btn-history {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.avatar-history {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #FDBA74; /* Amber-300 */
+    color: #7C2D12; /* Amber-900 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.icon-btn-history {
+    background: transparent;
+    border: none;
+    color: #6B7280;
+    cursor: pointer;
+}
+
+.mobile-menu-btn-history {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-navigation-history {
+        display: none; /* Hide main nav links */
+    }
+
+    .btn-post-project {
+        display: none; /* Hide post project button */
+    }
+
+    .mobile-menu-btn-history {
+        display: block;
+    }
+
+    .nav-left-history {
+        flex-grow: 1;
+    }
+
+    .nav-right-history {
+        gap: 16px;
+    }
+
+    .top-nav-header-history {
+        padding: 0 16px;
+        height: 64px;
+    }
+}

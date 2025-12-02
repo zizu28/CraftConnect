@@ -1,0 +1,265 @@
+﻿@page "/profile/{CraftmanId:guid}/edit"
+@using System.Security.Claims
+@using System.Text.Json
+@using Blazored.FluentValidation
+@using Core.SharedKernel.Domain
+@using Core.SharedKernel.Enums
+@using Core.SharedKernel.ValueObjects
+@using CraftConnect.WASM.Auth
+@using CraftConnect.WASM.Components.ProfileSetupPageComponents
+@using CraftConnect.WASM.DTOs
+@using CraftConnect.WASM.Validators
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Net.Http.Headers
+@using UserManagement.Domain.Entities
+@inject NavigationManager NavigationManager
+@inject IHttpClientFactory HttpClientFactory
+@inject ILoggerFactory loggerFactory
+
+@if (isLoading)
+{
+    <p>Loading profile...</p>
+}
+else if (!hasAccess)
+{
+    <div class="alert alert-danger">You are not authorized to edit this profile.</div>
+}
+else
+{
+    <EditForm FormName="profile-setup" Enhance Model="@ProfileData" OnValidSubmit="@HandleValidSubmit">
+        <FluentValidationValidator Validator="@profileValidator" />
+
+        @* --- 1. Personal Information --- *@
+        <h3 class="section-title">Personal Information</h3>
+        <p class="section-hint">This information will be publicly visible, so be careful what you share.</p>
+
+        <div class="profile-picture-row">
+            <div class="profile-label">Profile Picture</div>
+            @* --- OPTIMIZED IMAGE SOURCE --- *@
+            <img src="@GetOptimizedAvatarUrl(ProfileData.ProfileImageUrl)"
+                 alt="Profile"
+                 class="profile-img" />
+            @* --- FILE UPLOAD INPUT --- *@
+            <div class="file-upload-wrapper">
+                <label class="btn btn-link" style="cursor: pointer;">
+                    Change
+                    <InputFile OnChange="@HandleImageUpload" style="display: none;" accept=".jpg,.jpeg,.png" />
+                </label>
+                @if (isUploadingImage)
+                {
+                    <span class="spinner-border spinner-border-sm text-primary"></span>
+                }
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>First Name</label>
+            <InputText @bind-Value="ProfileData.FirstName" class="form-control" />
+            <ValidationMessage For="@(() => ProfileData.FirstName)" />
+        </div>
+
+        <div class="form-group">
+            <label>Last Name</label>
+            <InputText @bind-Value="ProfileData.LastName" class="form-control" />
+            <ValidationMessage For="@(() => ProfileData.LastName)" />
+        </div>
+
+        <div class="form-group">
+            <label>Profession</label>
+            <InputSelect @bind-Value="ProfileData.Profession" class="form-control">
+                @foreach (var profession in Enum.GetValues<Profession>())
+                {
+                    <option value="@profession">@profession</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => ProfileData.Profession)" />
+        </div>
+
+        <div class="form-group">
+            <label>Bio</label>
+            <InputTextArea @bind-Value="ProfileData.Bio" class="form-control" placeholder="Write a few sentences about yourself." />
+        </div>
+
+        @* --- 2. Skills (Using the Domain Skill Entity) --- *@
+
+        @* --- 3. Portfolio & 4. Work Experience (Components remain the same, binding to DTO lists) --- *@
+        <PortfolioEditor @bind-Projects="ProfileData.Portfolio" />
+        <WorkExperienceEditor @bind-WorkEntries="ProfileData.WorkExperience" />
+
+        <h3 class="section-title">Contact Information</h3>
+        <p class="section-hint">How can potential clients reach you?</p>
+
+        <div class="form-group">
+            <label>Email address</label>
+            <InputText @bind-Value="ProfileData.EmailAddress" class="form-control" />
+            <ValidationMessage For="@(() => ProfileData.EmailAddress)" />
+        </div>
+        <div class="form-group">
+            <label>Phone Number</label>
+            <InputText @bind-Value="ProfileData.PhoneNumber" class="form-control" />
+            <ValidationMessage For="@(() => ProfileData.PhoneNumber)" />
+        </div>
+        <div class="form-group">
+            <label>Location</label>
+            <InputText @bind-Value="ProfileData.Location" class="form-control" />
+            <ValidationMessage For="@(() => ProfileData.Location)" />
+        </div>
+
+        @* --- Actions --- *@
+        <div class="form-actions d-flex gap-2">
+            <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+
+            <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                @(isSubmitting ? "Saving..." : "Save Changes")
+            </button>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+    [Parameter]
+    public Guid CraftmanId { get; set; }
+    private CraftsmanProfileUpdateDTO ProfileData { get; set; } = new();
+    private CraftmanResponseDTO? Craftsman { get; set; }
+    private CraftsmanProfileUpdateValidator profileValidator { get; set; }
+    private ILogger logger = default!;
+    private bool isLoading = false;
+    private bool hasAccess = false;
+    private bool isSubmitting = false;
+    private bool isUploadingImage = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        logger = loggerFactory.CreateLogger<ProfileSetup>();
+        var authState = await AuthenticationState;
+        var user = authState.User;
+        if (user.Identity == null || !user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null || Guid.Parse(userIdClaim) != CraftmanId)
+        {
+            hasAccess = false;
+            isLoading = false;
+            return;
+        }
+        hasAccess = true;
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("BFF");
+            Craftsman = await httpClient.GetFromJsonAsync<CraftmanResponseDTO>($"/users/craftsman/{CraftmanId}");
+            if(Craftsman != null)
+            {
+                ProfileData.CraftmanId = CraftmanId;
+                ProfileData.Location = Craftsman.Location;
+                ProfileData.VerificationStatus = Craftsman.VerificationStatus;
+                ProfileData.PhoneNumber = Craftsman.PhoneNumber;
+                ProfileData.Profession = Craftsman.Profession;
+                ProfileData.Bio = Craftsman.Bio;
+                ProfileData.ProfileImageUrl = Craftsman.ProfileImageUrl;
+                ProfileData.WorkExperience = Craftsman.WorkExperience;
+                ProfileData.EmailAddress = Craftsman.EmailAddress;
+                ProfileData.FirstName = Craftsman.FirstName;
+                ProfileData.LastName = Craftsman.LastName;
+                ProfileData.Portfolio = Craftsman.Portfolio;
+                ProfileData.Skills = Craftsman.Skills;
+            }
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            logger.LogInformation("No existing profile found. Initializing new profile creation.");
+            ProfileData.EmailAddress = user.FindFirst(ClaimTypes.Name)?.Value ?? "";
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Failed to load profile");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    public async Task HandleValidSubmit()
+    {
+        if (isSubmitting) return;
+        isSubmitting = true;
+        try
+        {
+            ProfileData.CraftmanId = CraftmanId;
+            var httpClient = HttpClientFactory.CreateClient("BFF");            
+            HttpResponseMessage response = await httpClient.PutAsJsonAsync($"/craftmen/update-craftsman/{CraftmanId}", ProfileData);
+            if (response.IsSuccessStatusCode)
+            {
+                logger.LogInformation($"Profile updated for {CraftmanId}");
+                NavigationManager.NavigateTo($"/dashboard/{CraftmanId}");
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                logger.LogError($"Update failed: {error}");
+            }
+        }
+        catch(Exception ex)
+        {
+            logger.LogError($"Network error: {ex.Message}");
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private string GetOptimizedAvatarUrl(string originalUrl)
+    {
+        if (string.IsNullOrEmpty(originalUrl)) return "/images/default-avatar.png";
+        return originalUrl.Replace("/upload/", "/upload/w_150,h_150,c_fill,g_face,q_auto,f_auto/");
+    }
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        if (isUploadingImage) return;
+        isUploadingImage = true;
+        try
+        {
+            var file = e.File;
+            long maxFileSize = 1024 * 1024 * 5;
+            using var content = new MultipartFormDataContent();
+            var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+            content.Add(fileContent, "file", file.Name);
+            var httpClient = HttpClientFactory.CreateClient("BFF");
+            var response = await httpClient.PostAsync("/craftmen/upload-avatar", content);
+            if (response.IsSuccessStatusCode)
+            {
+                // The server returns the Cloudinary URL
+                var url = await response.Content.ReadAsStringAsync();
+
+                // Update the DTO immediately to show the new image
+                ProfileData.ProfileImageUrl = url;
+                StateHasChanged();
+            }
+            else
+            {
+                logger.LogError("Image upload failed");
+            }
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Error uploading image");
+        }
+        finally
+        {
+            isUploadingImage = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo($"/dashboard/{CraftmanId}");
+    }
+}

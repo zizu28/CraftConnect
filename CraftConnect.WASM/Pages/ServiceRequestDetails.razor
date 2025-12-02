@@ -1,0 +1,129 @@
+﻿@page "/customer/{Customerid:guid}/service-requests/{RequestId:guid}"
+@layout CraftedMainLayout
+@using CraftConnect.WASM.Layout
+@using CraftConnect.WASM.Components.ServiceRequestDetailsPageComponents
+@using CraftConnect.WASM.Enums
+@using CraftConnect.WASM.ViewModels
+@inject NavigationManager NavigationManager
+
+<div class="page-container">
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+            <li><a href="/">Home</a></li>
+            <li><a href="/customer/service-requests">My Requests</a></li>
+            <li><a href="#" aria-current="page">@request.ProjectTitle</a></li>
+        </ol>
+    </nav>
+
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+        <!-- Left Column: Request Details -->
+        <div class="details-column">
+            <header class="details-header">
+                <h1 class="project-title">@request.ProjectTitle</h1>
+                <span class="status-badge @(request.Status == ServiceRequestStatus.Open ? "status-open" : "status-closed")">
+                    @request.Status.ToString()
+                </span>
+            </header>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary">Edit Request</button>
+                <button class="btn btn-secondary">Close Request</button>
+            </div>
+            
+            <div class="details-card">
+                <div class="detail-item">
+                    <label>Project Description</label>
+                    <p>@request.ProjectDescription</p>
+                </div>
+                <div class="detail-item">
+                    <label>Skills Required</label>
+                    <div class="skills-container">
+                        @foreach (var skill in request.SkillsRequired)
+                        {
+                            <SkillTag SkillName="@skill" />
+                        }
+                    </div>
+                </div>
+                <div class="detail-item-inline">
+                    <div class="detail-item">
+                        <label>Budget</label>
+                        <span>@request.Budget.ToString("C0")</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Timeline</label>
+                        <span>@request.StartDate.ToString("MMM d, yyyy") - @request.EndDate.ToString("MMM d, yyyy")</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <label>Attachments</label>
+                    <div class="attachments-container">
+                        @foreach (var attachment in request.Attachments)
+                        {
+                            <AttachmentLink Attachment="attachment" />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Sidebar -->
+        <aside class="sidebar-column">
+            <div class="sidebar-tabs">
+                <button class="tab-item active">Proposals (@request.Proposals.Count)</button>
+                <button class="tab-item">Messages</button>
+                <button class="tab-item">Activity</button>
+            </div>
+            
+            <div class="proposals-list">
+                @foreach (var proposal in request.Proposals)
+                {
+                    <ProposalSidebarCard Proposal="proposal" />
+                }
+            </div>
+
+            <div class="sidebar-cta">
+                <p>Waiting for more proposals? You can also invite craftsmen to your project.</p>
+                <button class="btn btn-secondary-cta" 
+                    @onclick="@(() => NavigationManager.NavigateTo("/find-craftmen"))">Find Craftsmen</button>
+            </div>
+        </aside>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid CustomerId { get; set; }
+    [Parameter]
+    public Guid RequestId { get; set; }
+
+    private ServiceRequestVM request = new();
+
+    protected override void OnInitialized()
+    {
+        // Mock data for this specific page (ID 101)
+        request = new ServiceRequestVM
+        {
+            Id = Guid.NewGuid(),
+            ProjectTitle = "Custom Bookshelf for Living Room",
+            Status = ServiceRequestStatus.Open,
+            ProjectDescription = "I'm looking for a custom-built bookshelf to fit a specific nook in my living room. I have a design in mind and can provide sketches and measurements. The material should be solid oak with a light, natural finish.",
+            SkillsRequired = new List<string> { "Woodworking", "Carpentry", "Finishing" },
+            Budget = 1200,
+            StartDate = new DateTime(2024, 8, 1),
+            EndDate = new DateTime(2024, 9, 1),
+            Attachments = new List<AttachedDocument>
+            {
+                new AttachedDocument { FileName = "bookshelf_sketch.jpg", DownloadUrl = "#" },
+                new AttachedDocument { FileName = "measurements.pdf", DownloadUrl = "#" }
+            },
+            Proposals = new List<CustomerProposalVM>
+            {
+                new CustomerProposalVM { Id = Guid.NewGuid(), CraftsmanName = "John Doe", CraftsmanAvatarUrl = "https://placehold.co/40x40/FDBA74/7C2D12?text=JD", Price = 1150, QuoteSummary = "I have extensive experience with oak furniture. I can start next week and guarantee a high-quality finish." },
+                new CustomerProposalVM { Id = Guid.NewGuid(), CraftsmanName = "Jane Smith", CraftsmanAvatarUrl = "https://placehold.co/40x40/94A3B8/FFFFFF?text=JS", Price = 1300, QuoteSummary = "Passionate woodworker specializing in custom pieces. My quote includes premium materials and detailed finishing." },
+                new CustomerProposalVM { Id = Guid.NewGuid(), CraftsmanName = "Sam Brown", CraftsmanAvatarUrl = "https://placehold.co/40x40/B6A49A/4F46E5?text=SB", Price = 1200, QuoteSummary = "I can match your budget and timeline. Let's discuss the design details." }
+            }
+        };
+    }
+}

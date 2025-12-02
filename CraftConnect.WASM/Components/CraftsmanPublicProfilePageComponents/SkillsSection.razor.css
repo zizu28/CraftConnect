@@ -1,0 +1,25 @@
+﻿.skills-section h3 {
+    margin-bottom: 20px;
+}
+
+.skill-tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-service-tag {
+    display: inline-block;
+    background-color: #f0f8ff; /* Very light blue background */
+    color: #007bff; /* Primary blue text */
+    border: 1px solid #cce5ff;
+    padding: 6px 12px;
+    border-radius: 20px; /* Pill shape */
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+    .skill-service-tag:hover {
+        background-color: #e6f2ff;
+    }

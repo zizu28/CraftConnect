@@ -1,0 +1,93 @@
+﻿@page "/rate-experience/{CraftsmanId:guid}"
+@layout ReviewLayout
+@using CraftConnect.WASM.Layout
+@using CraftConnect.WASM.Components.RateExperiencePageComponents
+@using CraftConnect.WASM.ViewModels
+
+<h1>Rate Your Experience with @craftsman.Name</h1>
+
+<!-- Craftsman Info Card -->
+<div class="craftsman-card">
+    <img src="@craftsman.ImageUrl" alt="@craftsman.Name" class="avatar"
+         onerror="this.onerror=null; this.src='https://placehold.co/100x100/F3F4F6/9CA3AF?text=@(craftsman.Name.Substring(0, 1))';" />
+    <div class="craftsman-info">
+        <span class="name">@craftsman.Name</span>
+        <span class="role">@craftsman.Role</span>
+    </div>
+</div>
+
+<!-- Review Form -->
+<EditForm Model="review" OnValidSubmit="HandleReviewSubmit">
+    <DataAnnotationsValidator />
+    
+    <!-- Star Rating -->
+    <div class="form-section">
+        <label>How would you rate your overall experience?</label>
+        <StarRating @bind-Rating="review.Rating" />
+    </div>
+
+    <!-- Comments Textarea -->
+    <div class="form-section">
+        <label for="comments">Share more details about your experience.</label>
+        <div class="textarea-wrapper">
+            <InputTextArea id="comments" class="form-control" rows="5"
+                           placeholder="What did you like or dislike? What should other customers know?" 
+                           @bind-Value="review.Comments" />
+            <span class="char-counter">@review.Comments.Length / 2000</span>
+        </div>
+    </div>
+
+    <!-- Appreciation Tags -->
+    <div class="form-section">
+        <label>What did you appreciate most?</label>
+        <TagSelector AvailableTags="appreciationTags" @bind-SelectedTags="review.AppreciatedTags" />
+    </div>
+
+    <!-- File Uploader -->
+    <div class="form-section">
+        <label>Add photos of the completed work (optional).</label>
+        <FileUploader OnFilesChanged="HandleFilesChanged" />
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-footer">
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+    </div>
+
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public Guid CraftsmanId { get; set; }
+
+    private CraftsmanProfile craftsman = new();
+    private ReviewViewModel review = new();
+    private List<string> appreciationTags = new() { "Professionalism", "Quality of Work", "Timeliness", "Communication", "Value for Money" };
+
+    protected override void OnInitialized()
+    {
+        // Mock data - In a real app, you'd fetch this by CraftsmanId
+        craftsman = new CraftsmanProfile
+        {
+            Name = "Alex Doe",
+            Role = "Carpenter",
+            ImageUrl = "https://placehold.co/100x100/E0E7FF/4338CA?text=AD" // Placeholder
+        };
+    }
+
+    private void HandleFilesChanged(IReadOnlyList<IBrowserFile> files)
+    {
+        // Handle file upload logic here
+        Console.WriteLine($"{files.Count} files selected");
+    }
+
+    private void HandleReviewSubmit()
+    {
+        // Handle form submission logic
+        Console.WriteLine($"Review submitted for {craftsman.Name}:");
+        Console.WriteLine($"Rating: {review.Rating}");
+        Console.WriteLine($"Comments: {review.Comments}");
+        Console.WriteLine($"Tags: {string.Join(", ", review.AppreciatedTags)}");
+    }
+}

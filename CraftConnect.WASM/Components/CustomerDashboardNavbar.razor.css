@@ -1,0 +1,103 @@
+﻿/* Components/CustomerDashboardNavbar.razor.css */
+
+.navbar-container.customer-dashboard-nav {
+    /* KEY: Must be fixed and span the width of the content area */
+    position: fixed;
+    /* Margin-left pushes the Navbar content to align with the sidebar margin */
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    top: 0;
+    z-index: 1000;
+    background-color: #ffffff;
+    padding: 1rem 30px; /* Generous padding */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.navbar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    color: #333333;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-right: 30px; /* Space between logo and actions */
+}
+
+    .brand-logo img {
+        height: 35px;
+        margin-right: 8px;
+    }
+
+.navbar-spacer {
+    /* Use this spacer to push elements to the right */
+    flex-grow: 1;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* --- Post a Project Button --- */
+.btn-primary.btn-post-project {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .btn-primary.btn-post-project:hover {
+        background-color: #0056b3;
+    }
+
+/* --- Icon and Avatar --- */
+.nav-icon-link i {
+    font-size: 1.3rem;
+    color: #555;
+    cursor: pointer;
+}
+
+.profile-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 900px) {
+    .navbar-container.customer-dashboard-nav {
+        /* Remove fixed positioning and margin on mobile */
+        position: relative;
+        margin-left: 0;
+        width: 100%;
+        box-shadow: none; /* Keep it clean */
+    }
+
+    .navbar-content {
+        justify-content: flex-start;
+    }
+
+    .navbar-spacer {
+        display: none; /* Hide spacer */
+    }
+
+    .user-actions {
+        margin-left: auto; /* Push actions to the right */
+    }
+
+    .btn-post-project {
+        display: none; /* Hide full button on tiny screens */
+    }
+}

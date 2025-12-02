@@ -1,0 +1,25 @@
+﻿@using CraftConnect.WASM.ViewModels
+<div class="checkout-card">
+    <h2 class="card-title">Your Order</h2>
+    <div class="order-items">
+        @foreach(var item in OrderItems)
+        {
+            <div class="order-item">
+                <span>@item.Name</span>
+                <span>$@item.Price.ToString("F2")</span>
+            </div>
+        }
+    </div>
+    <div class="order-total">
+        <span>Total</span>
+        <span class="total-price">$@Total.ToString("F2")</span>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<OrderSummaryItem> OrderItems { get; set; } = new();
+
+    [Parameter]
+    public decimal Total { get; set; }
+}

@@ -1,0 +1,30 @@
+﻿<div class="health-stat-card">
+    <span class="card-title">@Title</span>
+    <span class="card-value">@Value</span>
+    <span class="card-status @GetStatusClass(Status)">
+        <span class="status-dot"></span>
+        @StatusMessage
+    </span>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "";
+    [Parameter]
+    public string Value { get; set; } = "";
+    [Parameter]
+    public string Status { get; set; } = "";
+    [Parameter]
+    public string StatusMessage { get; set; } = "";
+
+    private string GetStatusClass(string status)
+    {
+        return status.ToLower() switch
+        {
+            "healthy" => "status-healthy",
+            "fast" => "status-healthy",
+            "warning" => "status-warning",
+            _ => "status-default"
+        };
+    }
+}

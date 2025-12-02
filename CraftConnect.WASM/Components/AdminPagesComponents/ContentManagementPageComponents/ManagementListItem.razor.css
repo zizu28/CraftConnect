@@ -1,0 +1,71 @@
+﻿.list-item-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background-color: #F8FAFC; /* Slate-50 */
+    border-radius: 6px;
+    border: 1px solid #F1F5F9; /* Slate-100 */
+}
+
+.item-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.item-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background-color: #E0F2FE; /* Light Sky-100 */
+}
+
+.item-icon {
+    width: 20px;
+    height: 20px;
+    color: #0369A1; /* Sky-700 */
+}
+
+.item-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #334155; /* Slate-700 */
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    color: #64748B; /* Slate-500 */
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+    .btn-icon:hover {
+        background-color: #E2E8F0; /* Slate-200 */
+        color: #1E293B; /* Slate-800 */
+    }
+
+    .btn-icon.btn-delete:hover {
+        background-color: #FEE2E2; /* Red-100 */
+        color: #DC2626; /* Red-600 */
+    }
+
+    .btn-icon svg {
+        width: 18px;
+        height: 18px;
+    }

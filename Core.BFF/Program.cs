@@ -12,11 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
 builder.Services.AddControllers(); // For the local AuthController
-builder.Services.AddHttpClient();  // To talk to UserManagement for Login
+builder.Services.AddHttpClient("UserManagement", client =>
+{
+	client.BaseAddress = new Uri("https://localhost:7235");
+});
 builder.Services.AddAuthentication(options =>
 {
 	options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 	options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+	options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
 .AddCookie(options =>
 {
@@ -50,31 +54,23 @@ builder.Services.AddReverseProxy()
 	{
 		builderContext.AddRequestTransform(async transformContext =>
 		{
-			var user = transformContext.HttpContext.User;
-			if (user == null || user.Identity == null || !user.Identity.IsAuthenticated)
+			if (!transformContext.HttpContext.User.Identity!.IsAuthenticated)
 			{
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine("[YARP] ❌ User is ANONYMOUS. The Browser did not send the 'CraftConnect.Auth' cookie.");
-				Console.ResetColor();
+				Console.WriteLine($"[BFF YARP] ❌ Incoming request unauthenticated: {transformContext.HttpContext.Request.Path}");
+				return;
 			}
-			else
-			{
-				Console.ForegroundColor = ConsoleColor.Green;
-				Console.WriteLine($"[YARP] ✅ User is Authenticated: {user!.Identity!.Name}");
-				Console.ResetColor();
-			}				
 
-			var accessToken = await transformContext.HttpContext
-				.GetTokenAsync(CookieAuthenticationDefaults.AuthenticationScheme, "access-token");
+			var accessToken = await transformContext.HttpContext.GetTokenAsync("access-token");
+
 			if (!string.IsNullOrEmpty(accessToken))
 			{
 				transformContext.ProxyRequest.Headers.Remove("Authorization");
 				transformContext.ProxyRequest.Headers.Add("Authorization", $"Bearer {accessToken}");
-				Console.WriteLine("[YARP] Token successfully attached.");
+				Console.WriteLine($"[BFF YARP] ✅ Token attached for: {transformContext.HttpContext.Request.Path}");
 			}
 			else
 			{
-				Console.WriteLine("[YARP] Warning: No access-token found in Cookie Ticket.");
+				Console.WriteLine($"[BFF YARP] ⚠️ User is logged in, but 'access-token' is NULL.");
 			}
 		});
 	});
@@ -83,7 +79,7 @@ builder.Services.AddCors(opt =>
 {
 	opt.AddPolicy("AllowBlazor", policy =>
 	{
-		policy.WithOrigins("https://localhost:7284") // Blazor URL
+		policy.WithOrigins("https://localhost:7222") // Blazor URL
 			  .AllowAnyMethod()
 			  .AllowAnyHeader()
 			  .AllowCredentials();

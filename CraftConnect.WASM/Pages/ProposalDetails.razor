@@ -1,0 +1,143 @@
+﻿@page "/proposals/{ProposalId:guid}"
+@using CraftConnect.WASM.Components.ProjectDetailsPageComponents
+@using CraftConnect.WASM.Components.SubmittedProposalsListPageComponents
+@using CraftConnect.WASM.Enums
+@using CraftConnect.WASM.ViewModels
+@inject NavigationManager NavigationManager
+
+<SubmittedPropsalsListNavbar />
+@if (proposal == null)
+{
+    <p>Loading proposal...</p>
+}
+else
+{
+    <div class="details-page-container">
+        <header class="details-page-header">
+            <button class="back-button" @onclick="GoBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clip-rule="evenodd" />
+                </svg>
+            </button>
+            <h1>Proposal Details</h1>
+        </header>
+
+        <div class="details-layout">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Proposed Solution Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Proposed Solution</h2>
+                        <StatusBadge Status="proposal.Status" />
+                    </div>
+                    <p class="solution-text">@proposal.ProposedSolution</p>
+                    
+                    <div class="info-grid">
+                        <div>
+                            <span class="info-label">Pricing</span>
+                            <span class="info-value">@proposal.Pricing.ToString("C", new System.Globalization.CultureInfo("en-US"))</span>
+                            <span class="info-tag">@proposal.PricingType</span>
+                        </div>
+                        <div>
+                            <span class="info-label">Estimated Timeline</span>
+                            <span class="info-value">@proposal.EstimatedTimeline</span>
+                        </div>
+                    </div>
+                    
+                    <h3 class="attached-title">Attached Documents</h3>
+                    <DocumentRow Document="proposal.Document" />
+                </div>
+
+                <!-- Message History Card -->
+                <div class="card">
+                    <h2 class="card-header">Message History</h2>
+                    <MessageHistory Messages="proposal.MessageHistory" />
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <ProjectDetailsCard Project="proposal.ProjectDetails" />
+                <ActionsCard />
+            </aside>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid ProposalId { get; set; }
+
+    private ProposalVM? proposal;
+
+    protected override void OnInitialized()
+    {
+        // In a real app, you would fetch this from a service based on ProposalId
+        LoadMockData();
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/proposals");
+    }
+
+    private void LoadMockData()
+    {
+        // This data matches the image
+        var client = new ClientVM
+        {
+            Id = 1,
+            Name = "Jane Doe",
+            AvatarInitials = "JD",
+            MemberSince = new DateTime(2022, 1, 1)
+        };
+
+        proposal = new ProposalVM
+        {
+            Id = ProposalId,
+            ProjectTitle = "Custom Oak Bookshelf for Living Room",
+            Status = ProposalStatus.Pending,
+            ProposedSolution = "I will construct a custom oak bookshelf designed to fit the specific dimensions of your living room wall. The bookshelf will be made from high-quality solid oak, with a natural oil finish to enhance the wood grain. It will feature adjustable shelves to accommodate various book sizes and decorative items. The design will be a modern minimalist style, complementing your existing decor.",
+            Pricing = 1250.00m,
+            PricingType = RateType.FixedPrice,
+            EstimatedTimeline = "3-4 Weeks",
+            Document = new AttachedDocument
+            {
+                FileName = "Bookshelf_Design_Mockup.pdf",
+                FileSize = "2.5 MB",
+                DownloadUrl = "#"
+            },
+            ProjectDetails = new ProjectVM
+            {
+                Id = 101,
+                Title = "Custom Oak Bookshelf for Living Room",
+                Category = "Custom Furniture",
+                PostedDate = new DateTime(2023, 10, 25),
+                OriginalListingUrl = "#",
+                Client = client
+            },
+            MessageHistory = new List<MessageVM>
+            {
+                new MessageVM
+                {
+                    Id = Guid.NewGuid(),
+                    AuthorName = "You",
+                    AuthorInitials = "Y",
+                    Content = "Here is my proposal for the custom bookshelf. Let me know if you have any questions about the design or pricing.",
+                    Timestamp = new DateTime(2023, 10, 26, 10, 15, 0),
+                    IsYou = true
+                },
+                new MessageVM
+                {
+                    Id = Guid.NewGuid(),
+                    AuthorName = "Jane Doe",
+                    AuthorInitials = "JD",
+                    Content = "Thank you for the detailed proposal! It looks great. I will review it and get back to you shortly.",
+                    Timestamp = new DateTime(2023, 10, 26, 11, 30, 0),
+                    IsYou = false
+                }
+            }
+        };
+    }
+}

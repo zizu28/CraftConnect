@@ -1,0 +1,30 @@
+﻿.skill-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.skill-name-input {
+    flex-grow: 2;
+}
+
+.skill-years-input {
+    flex-grow: 1;
+    max-width: 100px;
+}
+
+@media (max-width: 600px) {
+    .skill-row {
+        flex-wrap: wrap;
+    }
+
+    .skill-name-input, .skill-years-input {
+        flex-basis: 100%;
+        margin-bottom: 5px;
+    }
+
+    .skill-years-input {
+        max-width: none;
+    }
+}

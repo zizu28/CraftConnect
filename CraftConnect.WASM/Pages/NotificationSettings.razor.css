@@ -1,0 +1,45 @@
+﻿.settings-header {
+    margin-bottom: 24px;
+}
+
+    .settings-header h1 {
+        font-size: 2.25rem; /* 36px */
+        font-weight: 700;
+        color: #1E293B; /* Slate-800 */
+        margin: 0;
+    }
+
+    .settings-header p {
+        font-size: 1rem;
+        color: #64748B; /* Slate-500 */
+        margin: 8px 0 0 0;
+    }
+
+.group-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.save-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #E2E8F0; /* Slate-200 */
+}
+
+.btn-save {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    background-color: #334155; /* Slate-700 */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+    .btn-save:hover {
+        background-color: #1E293B; /* Slate-800 */
+    }

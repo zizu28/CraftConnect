@@ -1,0 +1,40 @@
+﻿@using System.Reflection
+@using CraftConnect.WASM.Components
+@using Microsoft.AspNetCore.Components.Authorization
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="typeof(Program).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)">
+                <NotAuthorized>
+                    @if (context.User.Identity?.IsAuthenticated != true)
+                    {
+                        <RedirectToHome /> 
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger">
+                            You do not have permission to view this page.
+                        </div>
+                    }
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(Layout.MainLayout)">
+                <p role="alert">Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+@* @code {
+    Assembly[] assemblies = new Assembly[]
+    {
+        // Ensure this assembly actually contains your RAZOR pages, not just DTOs
+        // Usually: typeof(CraftConnect.WebUI.Components.Pages.SomePage).Assembly
+        typeof(UserManagement.Domain.Entities.CraftsmanProfileUpdateDTO).Assembly
+    }; *@
+}

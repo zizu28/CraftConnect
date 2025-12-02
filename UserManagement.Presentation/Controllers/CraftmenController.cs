@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands;
 using UserManagement.Application.CQRS.Commands.CraftmanCommands;
 using UserManagement.Domain.Entities;
@@ -11,7 +12,9 @@ namespace UserManagement.Presentation.Controllers
 	[ApiController]
 	[Route("api/[controller]")]
 	[Authorize]
-	public class CraftmenController(IMediator mediator) : ControllerBase
+	public class CraftmenController(
+		IMediator mediator,
+		IFileStorageService fileStorageService) : ControllerBase
 	{
 		[HttpPost("add-skill")]
 		public async Task<IActionResult> AddSkill([FromBody] AddSkillCommand command)
@@ -30,7 +33,7 @@ namespace UserManagement.Presentation.Controllers
 
 		[HttpPut("update-craftsman/{id:guid}")]
 		[Consumes("application/json")]
-		public async Task<IActionResult> UpdateCraftsmanAsync([FromRoute] Guid id, [FromBody] CraftsmanProfileUpdateDTO craftman)
+		public async Task<IActionResult> UpdateCraftsmanAsync([FromRoute] Guid id, CraftsmanProfileUpdateDTO craftman)
 		{
 			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)
 								?? User.FindFirst("sub")
@@ -65,6 +68,17 @@ namespace UserManagement.Presentation.Controllers
 			}
 			await mediator.Send(command);
 			return Ok("Craftman status verified successfully.");
+		}
+
+		[HttpPost("upload-avatar")]
+		[Consumes("multipart/form-data")]
+		public async Task<IActionResult> UploadAvatar(IFormFile file)
+		{
+			if (file == null || file.Length == 0) return BadRequest("No file uploaded.");
+			if (!file.ContentType.StartsWith("image/")) return BadRequest("Invalid file type.");
+			using var stream = file.OpenReadStream();
+			var url = await fileStorageService.UploadFileAsync(stream, file.FileName, file.ContentType);
+			return Ok(url);
 		}
 	}
 }

@@ -1,0 +1,134 @@
+﻿.support-page-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 48px;
+}
+
+/* --- Hero Section --- */
+.hero-section {
+    text-align: center;
+    padding: 32px 0;
+}
+
+    .hero-section h1 {
+        font-size: 2.5rem; /* 40px */
+        font-weight: 700;
+        color: #111827; /* Gray-900 */
+        margin: 0 0 12px 0;
+    }
+
+    .hero-section p {
+        font-size: 1.125rem; /* 18px */
+        color: #4B5563; /* Gray-600 */
+        margin: 0;
+    }
+
+/* --- Main Content Area --- */
+.main-content-area {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* 66% 33% split */
+    gap: 32px;
+}
+
+/* --- Left Column --- */
+.faq-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.search-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+    .search-card svg {
+        width: 20px;
+        height: 20px;
+        color: #9CA3AF; /* Gray-400 */
+    }
+
+.search-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: #111827;
+}
+
+    .search-input::placeholder {
+        color: #9CA3AF;
+    }
+
+/* --- FAQ Tabs --- */
+.faq-tabs {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 4px; /* For scrollbar */
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.tab-btn {
+    padding: 12px 16px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4B5563; /* Gray-600 */
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px; /* Align with border */
+    transition: all 0.1s;
+    white-space: nowrap;
+}
+
+    .tab-btn:hover {
+        color: #111827;
+    }
+
+    .tab-btn.active {
+        color: #3B82F6; /* Blue-500 */
+        border-bottom-color: #3B82F6;
+        font-weight: 600;
+    }
+
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* --- Right Column --- */
+.sidebar-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    /* Sticky sidebar */
+    position: sticky;
+    top: 32px;
+    align-self: flex-start;
+}
+
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+    .main-content-area {
+        grid-template-columns: 1fr; /* Stack columns */
+    }
+
+    .sidebar-column {
+        position: relative; /* Un-stick sidebar */
+        top: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .support-page-container {
+        padding: 24px;
+    }
+}

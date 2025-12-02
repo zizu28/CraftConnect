@@ -1,0 +1,134 @@
+﻿/* --- Base Styles (Applied to all sizes) --- */
+.navbar-container {
+    background-color: white;
+    box-shadow: var(--navbar-shadow);
+    padding: 1rem 2rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-sizing: border-box;
+    opacity: 1;
+}
+
+.navbar-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+    .brand-logo img {
+        height: 40px;
+        margin-right: 10px;
+    }
+
+.hamburger-btn {
+    display: none; /* Default: Hidden */
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #333;
+    z-index: 1001;
+}
+
+.nav-links {
+    display: flex; /* Default: Visible and Horizontal */
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+    .nav-links a,
+    .nav-links button {
+        margin-left: 20px;
+        text-decoration: none;
+        /* ... (rest of link and button styles) ... */
+    }
+
+/* --- Mobile-Specific Styles (Max Width 768px - Tablet and smaller) --- */
+@media (max-width: 768px) {
+    .navbar-container {
+        padding: 1rem;
+    }
+
+    .hamburger-btn {
+        display: block; /* Show the hamburger button */
+    }
+
+    .nav-links {
+        /* Hide links by default on mobile */
+        display: none;
+    }
+
+        /* Override the mobile 'display: none' when the menu is open */
+        .nav-links.open {
+            position: fixed;
+            top: 66px; /* Below the header height (e.g., 66px) */
+            left: 0;
+            width: 100%;
+            display: flex; /* Make it visible */
+            flex-direction: column;
+            background-color: white;
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            height: auto;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+
+        .nav-links a,
+        .nav-links button {
+            width: 90%;
+            margin: 8px auto;
+            text-align: center;
+            padding: 12px 15px;
+            box-sizing: border-box;
+        }
+}
+
+/* --- Extra Small/Minimal Device Styles (Max Width 480px) --- */
+@media (max-width: 480px) {
+    .brand-logo {
+        font-size: 1.2rem; /* Shrink logo text */
+    }
+
+        .brand-logo img {
+            height: 30px; /* Shrink logo image */
+        }
+}
+
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: var(--text-color); /* Use theme variable */
+    cursor: pointer;
+    padding: 5px;
+    margin-right: 10px;
+    transition: color 0.2s;
+}
+
+    .theme-toggle-btn:hover {
+        color: var(--primary-color);
+    }
+
+/* Ensure the navbar background uses the theme variable */
+.navbar-container.dashboard-nav {
+    background-color: var(--navbar-bg);
+    box-shadow: var(--navbar-shadow);
+}

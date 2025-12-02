@@ -1,0 +1,149 @@
+﻿.settings-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background-color: #FFFFFF;
+    border-right: 1px solid #E5E7EB; /* Gray-200 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 32px 24px;
+}
+
+.sidebar-top {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #FDE6D8; /* Light Orange */
+    color: #9A3412; /* Dark Orange */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.user-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.user-email {
+    font-size: 0.875rem;
+    color: #6B7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- Navigation Links --- */
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #374151; /* Gray-700 */
+    transition: all 0.1s ease-in-out;
+}
+
+    .nav-item:hover {
+        background-color: #F3F4F6; /* Gray-100 */
+        color: #111827;
+    }
+
+    .nav-item svg {
+        width: 20px;
+        height: 20px;
+        color: #6B7280; /* Gray-500 */
+        flex-shrink: 0;
+    }
+
+    .nav-item.active {
+        background-color: #F3F4F6; /* Gray-100 */
+        color: #111827; /* Gray-900 */
+        font-weight: 600;
+    }
+
+        .nav-item.active svg {
+            color: #111827;
+        }
+
+/* --- Logout Button --- */
+.logout-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #DC2626; /* Red-600 */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+    .logout-btn:hover {
+        background-color: #B91C1C; /* Red-700 */
+    }
+
+@media (max-width: 768px) {
+    .settings-sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid #E5E7EB;
+        flex-direction: row;
+        padding: 16px;
+    }
+
+    .user-profile {
+        margin-bottom: 0;
+    }
+
+    .nav-links {
+        flex-direction: row;
+        margin-left: 16px;
+    }
+
+    .nav-item span {
+        display: none; /* Hide text on mobile */
+    }
+
+    .sidebar-bottom {
+        margin-left: auto; /* Push logout btn to the right */
+    }
+
+    .logout-btn {
+        width: auto;
+        padding: 8px 12px;
+    }
+}

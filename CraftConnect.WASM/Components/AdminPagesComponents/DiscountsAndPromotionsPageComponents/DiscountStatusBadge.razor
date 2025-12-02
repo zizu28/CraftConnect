@@ -1,0 +1,17 @@
+﻿@using CraftConnect.WASM.Enums
+
+<span class="status-badge @GetStatusClass()">
+    @Status.ToString()
+</span>
+
+@code {
+    [Parameter]
+    public DiscountStatus Status { get; set; }
+
+    private string GetStatusClass() => Status switch
+    {
+        DiscountStatus.Active => "status-active",
+        DiscountStatus.Expired => "status-expired",
+        _ => ""
+    };
+}

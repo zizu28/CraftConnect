@@ -14,26 +14,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers();
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 
-builder.Services.AddBackgroundJobs(builder.Configuration);
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddBackgroundJobs(builder.Configuration);
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//builder.AddServiceDefaults();
-// Add services to the container.
+////builder.AddServiceDefaults();
+//// Add services to the container.
 
-builder.Host.ConfigureSerilog();
-builder.Services.AddFluentEmailService(builder.Configuration);
+//builder.Services.AddFluentEmailService(builder.Configuration);
 //builder.Services.AddHybridCacheService(builder.Configuration);
-builder.Services.AddBackgroundJobs(builder.Configuration);
+//builder.Services.AddBackgroundJobs(builder.Configuration);
+builder.Host.ConfigureSerilog();
 builder.Services.RegisterSerilog();
 builder.Services.AddCors(opt =>
 {
-	opt.AddPolicy("frontend", policy =>
+	opt.AddPolicy("BFF", policy =>
 	{
-		policy.WithOrigins("https://localhost:7235")
+		policy.WithOrigins("https://localhost:7272")
 			.AllowAnyMethod()
 			.AllowAnyHeader()
 			.AllowCredentials();
@@ -78,7 +78,7 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.UseCors("frontend");
+app.UseCors("BFF");
 
 app.UseAuthentication();
 

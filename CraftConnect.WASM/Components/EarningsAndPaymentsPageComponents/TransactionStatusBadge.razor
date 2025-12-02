@@ -1,0 +1,18 @@
+﻿@using CraftConnect.WASM.Enums
+
+<span class="status-badge @StatusClass">
+    <span class="status-dot"></span>
+    @Status.ToString()
+</span>
+
+@code {
+    [Parameter]
+    public TransactionStatus Status { get; set; }
+
+    private string StatusClass => Status switch
+    {
+        TransactionStatus.Paid => "status-paid",
+        TransactionStatus.Pending => "status-pending",
+        _ => ""
+    };
+}

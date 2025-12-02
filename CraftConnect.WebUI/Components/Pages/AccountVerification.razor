@@ -60,7 +60,9 @@
         _isLoading = true;
         try
         {
-            var httpClient = HttpClientFactory.CreateClient("Backend");
+            // var httpClient = HttpClientFactory.CreateClient("Backend");
+            var httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("https://localhost:7235"); ;
             var command = new ResendEmailCommand { Email = this.Email };
             var response = await httpClient.PostAsJsonAsync("/api/users/resend-email", command);
             if (response.IsSuccessStatusCode)

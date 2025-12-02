@@ -1,0 +1,14 @@
+﻿.review-layout {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align to top */
+    min-height: 100vh;
+    background-color: #F9FAFB; /* Gray-50 */
+    padding: 48px 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.review-content {
+    width: 100%;
+    max-width: 800px; /* Constrain width */
+}

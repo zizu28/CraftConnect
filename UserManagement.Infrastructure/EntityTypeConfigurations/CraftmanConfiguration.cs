@@ -13,11 +13,17 @@ namespace UserManagement.Infrastructure.EntityTypeConfigurations
 			builder.Property(c => c.LastName).IsRequired().HasMaxLength(50);
 			builder.OwnsMany(c => c.Skills, skills =>
 			{
+				skills.ToJson();
+				//skills.WithOwner().HasForeignKey("CraftmanId");
+				//skills.HasKey("Id");
 				skills.Property(s => s.Name).IsRequired().HasMaxLength(100);
 				skills.Property(s => s.YearsOfExperience).IsRequired();
 			});
 			builder.OwnsMany(c => c.WorkExperience, we =>
 			{
+				we.ToJson();
+				//we.WithOwner().HasForeignKey("CraftmanId");
+				//we.HasKey("Id");
 				we.Property(w => w.Company).IsRequired().HasMaxLength(100);
 				we.Property(w => w.Responsibilities).HasMaxLength(100);
 				we.Property(w => w.Position).HasMaxLength(100);
@@ -26,6 +32,9 @@ namespace UserManagement.Infrastructure.EntityTypeConfigurations
 			});
 			builder.OwnsMany(c => c.Portfolio, portfolio =>
 			{
+				portfolio.ToJson();
+				//portfolio.WithOwner().HasForeignKey("CraftmanId");
+				//portfolio.HasKey("Id");
 				portfolio.Property(p => p.Title).HasMaxLength(100);
 				portfolio.Property(p => p.Description).HasMaxLength(500);
 				portfolio.Property(p => p.ImageUrl).HasMaxLength(150);

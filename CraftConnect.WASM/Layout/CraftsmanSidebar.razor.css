@@ -1,0 +1,162 @@
+﻿.sidebar-craftsman {
+    width: 280px;
+    flex-shrink: 0;
+    background-color: #FFFFFF;
+    border-right: 1px solid #E5E7EB; /* Gray-200 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    padding: 24px 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.sidebar-top {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.user-profile-sidebar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 8px; /* Align with nav-item padding */
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Prevents text overflow */
+}
+
+.user-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #111827; /* Gray-900 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-email {
+    font-size: 0.8rem;
+    color: #6B7280; /* Gray-500 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- Nav Links --- */
+.nav-links, .nav-links-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #374151; /* Gray-700 */
+    transition: all 0.1s ease-in-out;
+}
+
+    .nav-item:hover {
+        background-color: #F3F4F6; /* Gray-100 */
+        color: #111827;
+    }
+
+    .nav-item svg {
+        width: 20px;
+        height: 20px;
+        color: #6B7280; /* Gray-500 */
+        flex-shrink: 0;
+    }
+
+    .nav-item.active {
+        background-color: #E0F2FE; /* Light Sky-100 */
+        color: #0369A1; /* Sky-700 */
+        font-weight: 600;
+    }
+
+        .nav-item.active svg {
+            color: #0369A1; /* Sky-700 */
+        }
+
+/* --- Bottom Section --- */
+.sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-top: 1px solid #E5E7EB; /* Gray-200 */
+    padding-top: 16px;
+}
+
+.new-project-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #0EA5E9; /* Sky-500 */
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+    .new-project-btn:hover {
+        background-color: #0284C7; /* Sky-600 */
+    }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar-craftsman {
+        width: 100%;
+        height: 60px;
+        flex-direction: row;
+        align-items: center;
+        padding: 0 16px;
+        border-right: none;
+        border-bottom: 1px solid #E5E7EB;
+        order: -1; /* Move to top */
+    }
+
+    .user-profile-sidebar {
+        flex-grow: 1;
+    }
+
+    .user-info, .sidebar-bottom, .nav-item span {
+        display: none; /* Hide most items */
+    }
+
+    .sidebar-top {
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .nav-links {
+        flex-direction: row;
+    }
+
+    .nav-item {
+        padding: 8px;
+    }
+}

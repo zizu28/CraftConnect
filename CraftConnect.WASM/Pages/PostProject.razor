@@ -1,0 +1,96 @@
+﻿@page "/customer/{CustomerId:guid}/post-project"
+@using Blazored.FluentValidation
+@using CraftConnect.WASM.Components.PostProjectPageComponents
+@using CraftConnect.WASM.Validators
+@using CraftConnect.WASM.ViewModels
+@using UserManagement.Domain.Entities
+@inject NavigationManager NavigationManager
+@inject IHttpClientFactory HttpClientFactory
+
+<PostProjectNavbar />
+<div class="page-container">
+    @* The Card Container Matching the Image *@
+    <div class="project-form-card">
+        <h2 class="form-title">Post a Project</h2>
+        <p class="form-subtitle">Describe your project and connect with skilled craftsmen ready to bring your vision to life.</p>
+
+        <EditForm Model="@ProjectData" OnValidSubmit="HandleValidSubmit" FormName="post-project">
+            <FluentValidationValidator Validator="@Validator" />
+            <ValidationSummary />
+
+            @* --- Project Description --- *@
+            <div class="form-section">
+                <label class="section-label">Project Description</label>
+                <p class="input-hint">Describe the project in detail, including the scope of work, materials needed, and any specific requirements.</p>
+                <InputTextArea @bind-Value="ProjectData.InitialDescription" class="form-control description-box" />
+            </div>
+
+            @* --- Desired Skills (Using an InputSelect for simplification) --- *@
+            <div class="form-section">
+                <label class="section-label">Desired Skills</label>
+                <p class="input-hint">Select the skills required for the project</p>
+                <MultiSelectDropdown @bind-SelectedItems="ProjectData.DesiredSkills" 
+                    AvailableOptions="@AllAvailableSkills"
+                    Placeholder="e.g., Woodworking, Pottery, Jewelry..." />
+            </div>
+
+            @* --- Budget and Timeline (Side-by-Side) --- *@
+            <div class="form-row-2col">
+                <div class="form-section">
+                    <label class="section-label">Budget</label>
+                    <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <InputNumber @bind-Value="ProjectData.Budget" class="form-control" placeholder="Enter your budget" />
+                    </div>
+                </div>
+                <div class="form-section">
+                    <label class="section-label">Timeline</label>
+                    <InputDate @bind-Value="ProjectData.StartDate" class="form-control" placeholder="e.g., 2-4 weeks" />
+                </div>
+            </div>
+
+            @* --- Contact Information --- *@
+            <h4 class="contact-header">Contact Information</h4>
+            <p class="input-hint">How can interested craftsmen get in touch with you?</p>
+
+            <div class="form-row-2col">
+                <div class="form-section">
+                    <label class="section-label">Email Address</label>
+                    <InputText @bind-Value="ProjectData.EmailAddress" class="form-control" placeholder="you@example.com" />
+                </div>
+                <div class="form-section">
+                    <label class="section-label">Phone Number (Optional)</label>
+                    <InputText @bind-Value="ProjectData.PhoneNumber" class="form-control" placeholder="(123) 456-7890" />
+                </div>
+            </div>
+
+            @* --- Submission Button --- *@
+            <div class="form-actions">
+                <button type="submit" class="btn btn-submit">
+                    <i class="bi bi-check-circle"></i> Submit Project
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid CustomerId { get; set; }
+    private BookingViewModel ProjectData { get; set; } = new();
+    private PostProjectValidator Validator { get; set; } = new();
+    private List<string> AllAvailableSkills = new()
+    {
+        "Woodworking", "Pottery", "Jewelry Making", "Metalwork",
+        "Tiling", "Plumbing", "Electrical", "Carpentry"
+    };
+
+    private async Task HandleValidSubmit()
+    {
+        // var bookingsClient = HttpClientFactory.CreateClient("Bookings");
+        // var bookingsResponse = await bookingsClient.PostAsJsonAsync("", ProjectData);
+        // bookingsResponse.EnsureSuccessStatusCode();
+        Console.WriteLine("Project submitted successfully!");
+        NavigationManager.NavigateTo("/");
+    }
+}

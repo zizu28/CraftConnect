@@ -5,7 +5,10 @@ using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using UserManagement.Application.Extensions;
 using UserManagement.Infrastructure.Extensions;
 using UserManagement.Presentation;
@@ -36,12 +39,31 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddAuthentication(options =>
+{
+	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+	options.TokenValidationParameters = new TokenValidationParameters
+	{
+		ValidateIssuer = true,
+		ValidateAudience = true,
+		ValidateLifetime = true,
+		ValidateIssuerSigningKey = true,
+		ValidIssuer = builder.Configuration["Jwt:Issuer"],
+		ValidAudience = builder.Configuration["Jwt:Audience"],
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+	};
+});
 
 builder.Services.AddCors(opt =>
 {
 	opt.AddPolicy("AllowBlazorOrigin", policy =>
 	{
-		policy.WithOrigins("https://localhost:7284")
+		policy.WithOrigins("https://localhost:7222")
 			.AllowAnyMethod()
 			.AllowAnyHeader()
 			.AllowCredentials();

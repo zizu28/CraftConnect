@@ -29,34 +29,34 @@ namespace PaymentManagement.Application.Extensions
 				client.BaseAddress = new Uri("https://api.paystack.co/");
 				client.DefaultRequestHeaders.Add("Authorization", $"Bearer {configuration["Paystack:SecretKey"]}");
 				client.DefaultRequestHeaders.Add("Accept", "application/json");
-			})
-			.AddResilienceHandler("", pipeline =>
-			{
-				pipeline.AddRetry(new HttpRetryStrategyOptions
-				{
-					MaxRetryAttempts = 3,
-					Delay = TimeSpan.FromMilliseconds(500),
-					BackoffType = DelayBackoffType.Exponential,
-					UseJitter = true
-				});
-				pipeline.AddTimeout(TimeSpan.FromSeconds(30));
-				pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
-				{
-					MinimumThroughput = 8,
-					SamplingDuration = TimeSpan.FromSeconds(30),
-					FailureRatio = 0.9,
-					BreakDuration = TimeSpan.FromSeconds(5),
-				});
-				pipeline.AddRateLimiter(new HttpRateLimiterStrategyOptions
-				{
-					DefaultRateLimiterOptions = new ConcurrencyLimiterOptions
-					{
-						PermitLimit = 100,
-						QueueLimit = 0,
-						QueueProcessingOrder = QueueProcessingOrder.OldestFirst
-					}
-				});
 			});
+			//.AddResilienceHandler("", pipeline =>
+			//{
+			//	pipeline.AddRetry(new HttpRetryStrategyOptions
+			//	{
+			//		MaxRetryAttempts = 3,
+			//		Delay = TimeSpan.FromMilliseconds(500),
+			//		BackoffType = DelayBackoffType.Exponential,
+			//		UseJitter = true
+			//	});
+			//	pipeline.AddTimeout(TimeSpan.FromSeconds(30));
+			//	pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
+			//	{
+			//		MinimumThroughput = 8,
+			//		SamplingDuration = TimeSpan.FromSeconds(30),
+			//		FailureRatio = 0.9,
+			//		BreakDuration = TimeSpan.FromSeconds(5),
+			//	});
+			//	pipeline.AddRateLimiter(new HttpRateLimiterStrategyOptions
+			//	{
+			//		DefaultRateLimiterOptions = new ConcurrencyLimiterOptions
+			//		{
+			//			PermitLimit = 100,
+			//			QueueLimit = 0,
+			//			QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+			//		}
+			//	});
+			//});
 
 			services.AddCors(services =>
 			{

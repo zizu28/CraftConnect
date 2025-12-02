@@ -1,0 +1,61 @@
+﻿<div class="checkout-card">
+    <h2 class="card-title">Billing Information</h2>
+
+    <div class="form-check">
+        <input id="billing-same" type="checkbox"
+               @bind="BillingSameAsRegistered" />
+        <label for="billing-same">Billing address is the same as my registered address</label>
+    </div>
+
+    @if (!BillingSameAsRegistered)
+    {
+        <div class="billing-form">
+            <div class="form-group">
+                <label for="street-address">Street Address</label>
+                <input id="street-address" class="form-control"
+                       @bind="StreetAddress" @bind:event="oninput" />
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input id="city" class="form-control"
+                           @bind="City" @bind:event="oninput" />
+                </div>
+                <div class="form-group">
+                    <label for="state">State/Province</label>
+                    <input id="state" class="form-control"
+                           @bind="State" @bind:event="oninput" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="zip">Zip/Postal Code</label>
+                    <input id="zip" class="form-control"
+                           @bind="ZipCode" @bind:event="oninput" />
+                </div>
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <input id="country" class="form-control"
+                           @bind="Country" @bind:event="oninput" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public bool BillingSameAsRegistered { get; set; }
+    [Parameter] public EventCallback<bool> BillingSameAsRegisteredChanged { get; set; }
+    [Parameter] public string StreetAddress { get; set; }
+    [Parameter] public EventCallback<string> StreetAddressChanged { get; set; }
+    [Parameter] public string City { get; set; }
+    [Parameter] public EventCallback<string> CityChanged { get; set; }
+    [Parameter] public string State { get; set; }
+    [Parameter] public EventCallback<string> StateChanged { get; set; }
+    [Parameter] public string ZipCode { get; set; }
+    [Parameter] public EventCallback<string> ZipCodeChanged { get; set; }
+    [Parameter] public string Country { get; set; }
+    [Parameter] public EventCallback<string> CountryChanged { get; set; }
+}

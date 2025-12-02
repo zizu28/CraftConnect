@@ -1,0 +1,232 @@
+﻿/* Styles for the main page container */
+.proposals-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #111827; /* Gray-900 */
+    /* Removed background-color, page background is default */
+}
+
+.page-header h1 {
+    font-size: 2.25rem; /* 36px */
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+.toolbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.search-container {
+    position: relative;
+    width: 320px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    color: #9CA3AF; /* Gray-400 */
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 10px 10px 40px; /* Left padding for icon */
+    border: 1px solid #D1D5DB; /* Gray-300 */
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background-color: #F9FAFB; /* Gray-50 */
+}
+
+    .search-input:focus {
+        outline: none;
+        border-color: #4F46E5; /* Indigo-600 */
+        box-shadow: 0 0 0 1px #4F46E5;
+        background-color: #FFFFFF;
+    }
+
+
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+}
+
+/* MODIFICATION: Updated filter button styles */
+.filter-btn {
+    padding: 8px 16px;
+    border: none; /* No border */
+    background-color: transparent; /* Transparent background */
+    color: #6B7280; /* Gray-500 */
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.1s ease-in-out;
+}
+
+    .filter-btn:hover:not(.active) {
+        background-color: #F9FAFB; /* Gray-50 */
+        color: #374151; /* Gray-700 */
+    }
+
+    /* MODIFICATION: Updated active button style */
+    .filter-btn.active {
+        background-color: #4F46E5; /* Indigo-600 */
+        color: #FFFFFF; /* White */
+        font-weight: 600;
+    }
+
+/* Table styling (unchanged) */
+.table-container {
+    border: 1px solid #E5E7EB; /* Gray-200 */
+    border-radius: 8px;
+    overflow: hidden; /* To clip the corners of the table */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    /* Add horizontal scroll for smaller viewports */
+    overflow-x: auto;
+}
+
+.proposals-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+    .proposals-table th,
+    .proposals-table td {
+        padding: 16px;
+        text-align: left;
+        border-bottom: 1px solid #E5E7EB; /* Gray-200 */
+        white-space: nowrap;
+    }
+
+    .proposals-table th {
+        background-color: #F9FAFB; /* Gray-50 */
+        color: #6B7280; /* Gray-500 */
+        font-size: 0.75rem; /* 12px */
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .proposals-table td {
+        color: #374151; /* Gray-700 */
+        vertical-align: middle;
+    }
+
+.cell-project-title {
+    font-weight: 500;
+    color: #111827; /* Gray-900 */
+    white-space: normal; /* Allow project title to wrap */
+}
+
+.proposals-table tr:last-child td {
+    border-bottom: none;
+}
+
+.action-link {
+    color: #4F46E5; /* Indigo-600 */
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .action-link:hover {
+        text-decoration: underline;
+    }
+
+/* --- RESPONSIVE MEDIA QUERIES --- */
+
+/* Tablet and large phones (e.g., < 768px) */
+@media (max-width: 768px) {
+    .proposals-container {
+        margin: 20px auto;
+        padding: 16px;
+    }
+
+    .page-header h1 {
+        font-size: 1.8rem; /* 28px */
+    }
+
+    .toolbar-container {
+        padding: 12px;
+    }
+
+    .search-container {
+        width: 100%; /* Make search full-width */
+    }
+
+    .filter-buttons {
+        width: 100%;
+        justify-content: flex-start; /* Align buttons to the left */
+    }
+
+    /* Allow table cells to wrap text instead of forcing no-wrap */
+    .proposals-table th,
+    .proposals-table td {
+        white-space: normal;
+        padding: 12px 10px;
+    }
+
+    /* Stack pagination controls */
+    .pagination-nav {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .page-numbers {
+        order: 1; /* Place numbers in the middle */
+    }
+
+    .pagination-nav .page-link:first-child {
+        order: 0; /* "Previous" on top */
+    }
+
+    .pagination-nav .page-link:last-child {
+        order: 2; /* "Next" on bottom */
+    }
+}
+
+/* Small phones (e.g., < 480px) */
+@media (max-width: 480px) {
+    .proposals-container {
+        padding: 10px;
+    }
+
+    .page-header h1 {
+        font-size: 1.5rem; /* 24px */
+    }
+
+    .filter-buttons .filter-btn {
+        flex-grow: 1; /* Allow 2-3 buttons per line */
+        text-align: center;
+    }
+
+    /* Hide less critical columns on very small screens */
+    .proposals-table th:nth-child(2), /* Hide Client TH */
+    .proposals-table td:nth-child(2), /* Hide Client TD */
+    .proposals-table th:nth-child(3), /* Hide Submitted TH */
+    .proposals-table td:nth-child(3) /* Hide Submitted TD */ {
+        display: none;
+    }
+
+    .proposals-table th,
+    .proposals-table td {
+        padding: 12px 8px; /* Further reduce padding */
+    }
+}

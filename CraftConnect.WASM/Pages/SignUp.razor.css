@@ -1,0 +1,245 @@
+﻿.signup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.signup-header {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+    .signup-header h1 {
+        font-size: 1.5rem; /* 24px */
+        font-weight: 700;
+        color: #1F2937; /* Gray-800 */
+    }
+.spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-rotation 0.8s linear infinite;
+}
+
+@keyframes spinner-rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.toggle-description {
+    font-size: 0.9rem;
+    color: #4B5563; /* Gray-600 */
+    text-align: center;
+    max-width: 350px;
+    line-height: 1.5;
+    margin: -10px 0 10px 0; /* Pull up closer to toggle */
+    min-height: 42px; /* Prevent layout shift */
+}
+
+/* --- Form --- */
+.signup-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+    .form-group label {
+        font-size: 0.875rem; /* 14px */
+        font-weight: 500;
+        color: #374151; /* Gray-700 */
+    }
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    border: 1px solid #D1D5DB; /* Gray-300 */
+    border-radius: 6px;
+    background-color: #FFFFFF;
+}
+
+    .form-control:focus {
+        outline: none;
+        border-color: #F97316; /* Orange-500 */
+        box-shadow: 0 0 0 1px #F97316;
+    }
+
+/* Validation */
+.validation-message {
+    font-size: 0.8rem;
+    color: #EF4444; /* Red-500 */
+}
+
+/* Password Field */
+.password-wrapper {
+    position: relative;
+}
+
+    .password-wrapper .form-control {
+        padding-right: 40px; /* Space for icon */
+    }
+
+.password-toggle-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: #9CA3AF; /* Gray-400 */
+}
+
+    .password-toggle-btn:hover {
+        color: #4B5563; /* Gray-600 */
+    }
+
+    .password-toggle-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
+.field-hint {
+    font-size: 0.8rem;
+    color: #6B7280; /* Gray-500 */
+    margin-top: -2px;
+}
+
+/* Checkbox */
+.form-group-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .form-group-checkbox label {
+        font-size: 0.875rem;
+        color: #4B5563; /* Gray-600 */
+    }
+
+    .form-group-checkbox a {
+        color: #F97316; /* Orange-500 */
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+        .form-group-checkbox a:hover {
+            text-decoration: underline;
+        }
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background-color: #374151; /* Gray-700 */
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.1s;
+    margin-top: 8px;
+}
+
+    .btn-submit:hover {
+        background-color: #1F2937; /* Gray-800 */
+    }
+
+/* --- Separator --- */
+.separator {
+    width: 100%;
+    text-align: center;
+    color: #9CA3AF; /* Gray-400 */
+    font-size: 0.8rem;
+    font-weight: 500;
+    position: relative;
+    margin-top: 8px;
+}
+
+    .separator::before,
+    .separator::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 42%;
+        height: 1px;
+        background-color: #E5E7EB; /* Gray-200 */
+    }
+
+    .separator::before {
+        left: 0;
+    }
+
+    .separator::after {
+        right: 0;
+    }
+
+/* --- Social Logins --- */
+.social-login-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #374151; /* Gray-700 */
+    background-color: #FFFFFF;
+    border: 1px solid #D1D5DB; /* Gray-300 */
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+    .btn-social:hover {
+        background-color: #F9FAFB; /* Gray-50 */
+    }
+
+    .btn-social img {
+        width: 20px;
+        height: 20px;
+    }
+
+/* --- Login Link --- */
+.login-link {
+    font-size: 0.9rem;
+    color: #4B5563; /* Gray-600 */
+    margin-top: 8px;
+}
+
+    .login-link a {
+        color: #F97316; /* Orange-500 */
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }

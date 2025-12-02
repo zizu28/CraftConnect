@@ -1,0 +1,146 @@
+﻿.projects-sidebar {
+    width: 256px; /* 16rem */
+    flex-shrink: 0;
+    background-color: #FFFFFF;
+    border-right: 1px solid #E5E7EB; /* Gray-200 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #111827;
+}
+
+.sidebar-top {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #FECACA; /* Red-200 */
+    color: #991B1B; /* Red-800 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.user-title {
+    font-size: 0.875rem; /* 14px */
+    color: #6B7280; /* Gray-500 */
+}
+
+/* Navigation Links */
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 6px; /* Slightly rounded corners */
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #374151; /* Gray-700 */
+    transition: all 0.1s ease-in-out;
+}
+
+    .nav-item:hover {
+        background-color: #F3F4F6; /* Light gray on hover */
+        color: #111827;
+    }
+
+    .nav-item svg {
+        width: 20px;
+        height: 20px;
+        color: #6B7280; /* Default icon color */
+        flex-shrink: 0;
+    }
+
+    /* Active Nav Item State */
+    .nav-item.active {
+        background-color: #E0F2FE; /* Light Sky-100 from image */
+        color: #0369A1; /* Sky-700 from image */
+        font-weight: 600;
+    }
+
+        .nav-item.active svg {
+            color: #0369A1; /* Active icon color matches text */
+        }
+
+.btn-primary-sidebar {
+    width: 100%;
+    padding: 10px;
+    background-color: #0EA5E9; /* Sky-500 */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.1s ease-in-out;
+}
+
+    .btn-primary-sidebar:hover {
+        background-color: #0284C7; /* Sky-600 */
+    }
+
+/* Bottom Links */
+.sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid #F3F4F6; /* Slate-100 */
+    padding-top: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .projects-sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+        padding: 16px;
+    }
+
+    .sidebar-top {
+        gap: 16px;
+    }
+
+    .btn-primary-sidebar {
+        display: none; /* Hide button on mobile, or move to top bar */
+    }
+
+    .sidebar-bottom {
+        padding-top: 16px;
+        margin-top: 16px;
+    }
+}
