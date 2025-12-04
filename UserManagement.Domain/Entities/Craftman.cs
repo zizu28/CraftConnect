@@ -11,7 +11,7 @@ namespace UserManagement.Domain.Entities
 		public Profession Profession { get; private set; }
 		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public VerificationStatus Status { get; private set; } = VerificationStatus.Unverified;
-
+		public string Bio { get; private set; } = string.Empty;
 		public List<Skill> Skills { get; private set; } = [];
 		public string ProfileImageUrl { get; private set; } = string.Empty;
 		public List<Project> Portfolio { get; private set; } = [];

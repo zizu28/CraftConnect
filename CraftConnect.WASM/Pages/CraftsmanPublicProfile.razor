@@ -1,81 +1,148 @@
 ﻿@page "/craftsman/{id:guid}"
 @using CraftConnect.WASM.Components.CraftsmanPublicProfilePageComponents
+@using CraftConnect.WASM.DTOs
 @using CraftConnect.WASM.ViewModels
+@using System.Threading.Tasks
 @inject IHttpClientFactory Http
 
-<div class="back-link-container">
-    <a href="/find-craftmen" class="back-link">
-        <i class="bi bi-arrow-left"></i> Back to search results
-    </a>
-</div>
-<div class="public-profile-container">
-    <div class="header-section">
-        <img src="@Profile.AvatarUrl" alt="@Profile.Name" class="profile-avatar" />
-        <div class="info-block">
-            <h2>@Profile.Name</h2>
-            <p class="location-text">@Profile.Location</p>
-            <div class="rating-stars">
-                @for (int i = 1; i <= 5; i++)
-                {
-                    <i class="bi bi-star-fill @(i <= Math.Floor(Profile.AvgRating) ? "filled" : "")"></i>
-                }
-                <span class="review-count">(@Profile.ReviewCount reviews)</span>
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="back-link-container">
+        <a href="/find-craftmen" class="back-link">
+            <i class="bi bi-arrow-left"></i> Back to search results
+        </a>
+    </div>
+    <div class="public-profile-container">
+        <div class="header-section">
+            <img src="@Profile.AvatarUrl" alt="@Profile.Name" class="profile-avatar" />
+            <div class="info-block">
+                <h2>@Profile.Name</h2>
+                <p class="location-text">@Profile.Location</p>
+                <div class="rating-stars">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <i class="bi bi-star-fill @(i <= Math.Floor(Profile.AvgRating) ? "filled" : "")"></i>
+                    }
+                    <span class="review-count">(@Profile.ReviewCount reviews)</span>
+                </div>
+            </div>
+            <button class="btn btn-quote">Request a Quote</button>
+        </div>
+
+        @* --- Navigation Tabs --- *@
+        <div class="nav-tabs-container">
+            <div class="nav-tabs">
+                <button class="tab-btn @(ActiveTab == "Portfolio" ? "active" : "")" @onclick="@(() => ActiveTab = "Portfolio")">Portfolio</button>
+                <button class="tab-btn @(ActiveTab == "Skills" ? "active" : "")" @onclick="@(() => ActiveTab = "Skills")">Skills</button>
+                <button class="tab-btn @(ActiveTab == "Reviews" ? "active" : "")" @onclick="@(() => ActiveTab = "Reviews")">Reviews</button>
+                <button class="tab-btn @(ActiveTab == "About" ? "active" : "")" @onclick="@(() => ActiveTab = "About")">About</button>
             </div>
         </div>
-        <button class="btn btn-quote">Request a Quote</button>
-    </div>
 
-    @* --- Navigation Tabs --- *@
-    <div class="nav-tabs-container">
-        <div class="nav-tabs">
-            <button class="tab-btn @(ActiveTab == "Portfolio" ? "active" : "")" @onclick="@(() => ActiveTab = "Portfolio")">Portfolio</button>
-            <button class="tab-btn @(ActiveTab == "Skills" ? "active" : "")" @onclick="@(() => ActiveTab = "Skills")">Skills</button>
-            <button class="tab-btn @(ActiveTab == "Reviews" ? "active" : "")" @onclick="@(() => ActiveTab = "Reviews")">Reviews</button>
-            <button class="tab-btn @(ActiveTab == "About" ? "active" : "")" @onclick="@(() => ActiveTab = "About")">About</button>
+        <div class="content-area">
+            @switch (ActiveTab)
+            {
+                case "Portfolio":
+                    <PortfolioSection PortfolioItems="@Profile.Portfolio" />
+                    break;
+                case "Skills":
+                    <SkillsSection Skills="@Profile.Skills" />
+                    break;
+                case "Reviews":
+                    <ReviewsSection Reviews="@Profile.Reviews" />
+                    break;
+                case "About":
+                    <AboutSection Bio="@Profile.Bio" />
+                    break;
+            }
+        </div>
+
+        <div class="bottom-cta-container">
+            <p class="cta-title">Have a project in mind?</p>
+            <p class="cta-subtext">I'd love to hear about it. Reach out for a free consultation.</p>
+            <button class="btn btn-contact">Contact Eleanor</button>
+            <div class="social-links">
+                <i class="bi bi-facebook"></i>
+                <i class="bi bi-twitter"></i>
+                <i class="bi bi-instagram"></i>
+            </div>
         </div>
     </div>
-    
-    <div class="content-area">
-        @switch (ActiveTab)
-        {
-            case "Portfolio":
-                <PortfolioSection PortfolioItems="@Profile.Portfolio" />
-                break;
-            case "Skills":
-                <SkillsSection Skills="@Profile.Skills" />
-                break;
-            case "Reviews":
-                <ReviewsSection Reviews="@Profile.Reviews" />
-                break;
-            case "About":
-                <AboutSection Bio="@Profile.Bio" />
-                break;
-        }
-    </div>
-    
-    <div class="bottom-cta-container">
-        <p class="cta-title">Have a project in mind?</p>
-        <p class="cta-subtext">I'd love to hear about it. Reach out for a free consultation.</p>
-        <button class="btn btn-contact">Contact Eleanor</button>
-        <div class="social-links">
-            <i class="bi bi-facebook"></i>
-            <i class="bi bi-twitter"></i>
-            <i class="bi bi-instagram"></i>
-        </div>
-    </div>
-</div>
+}
+
 
 @code {
     [Parameter]
     public Guid Id { get; set; }
+    private bool isLoading { get; set; } = false;
+    private string? ErrorMessage { get; set; }
 
     private CraftsmanPublicProfileVM Profile { get; set; } = new();
     private string ActiveTab { get; set; } = "Portfolio";
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // Mock Data Initialization
-        Profile = GetMockProfile();
+        if (isLoading) return;
+        isLoading = true;
+        ErrorMessage = null;
+        try
+        {
+            var httpClient = Http.CreateClient("BFF");
+            var response = await httpClient.GetAsync($"/users/craftsman/{Id}");
+            if (response.IsSuccessStatusCode)
+            {
+                var dto = await response.Content.ReadFromJsonAsync<CraftmanResponseDTO>();
+                if (dto != null)
+                {
+                    Profile = MapToViewModel(dto);
+                }
+            }
+            else
+            {
+                ErrorMessage = "Failed to load data from server.";
+            }
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            ErrorMessage = "An unexpected error occurred.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private CraftsmanPublicProfileVM MapToViewModel(CraftmanResponseDTO dto)
+    {
+        return new CraftsmanPublicProfileVM
+        {
+            Name = $"{dto.FirstName} {dto.LastName}",
+            Location = dto.Location,
+            Bio = dto.Bio,
+            AvatarUrl = GetOptimizedUrl(dto.ProfileImageUrl),
+            Skills = dto.Skills.Select(s => s.Name).ToList(),
+            Portfolio = dto.Portfolio.Select(p => new PortfolioItemVM
+            {
+                ImageUrl = p.ImageUrl,
+                Category = p.Title
+            }).ToList(),
+            Reviews = dto.Portfolio.Select(p => new ReviewVM
+            {
+                
+                
+            }).ToList(),            
+        };
+    }
+
+    private string GetOptimizedUrl(string originalUrl)
+    {
+        if (string.IsNullOrEmpty(originalUrl)) return "/images/default-avatar.png";
+        return originalUrl.Replace("/upload/", "/upload/w_400,h_300,c_fill,q_auto,f_auto/");
     }
 
     // Mock Data based on the image

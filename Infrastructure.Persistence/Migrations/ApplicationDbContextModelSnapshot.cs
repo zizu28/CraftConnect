@@ -810,6 +810,10 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.HasBaseType("UserManagement.Domain.Entities.User");
 
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1502,6 +1506,11 @@ namespace Infrastructure.Persistence.Migrations
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
+                            b1.Property<byte[]>("RowVersion")
+                                .IsConcurrencyToken()
+                                .ValueGeneratedOnAddOrUpdate()
+                                .HasColumnType("rowversion");
+
                             b1.Property<string>("Title")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
@@ -1526,6 +1535,11 @@ namespace Infrastructure.Persistence.Migrations
                             b1.Property<string>("Name")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
+
+                            b1.Property<byte[]>("RowVersion")
+                                .IsConcurrencyToken()
+                                .ValueGeneratedOnAddOrUpdate()
+                                .HasColumnType("rowversion");
 
                             b1.Property<int>("YearsOfExperience")
                                 .HasColumnType("int");
@@ -1561,6 +1575,11 @@ namespace Infrastructure.Persistence.Migrations
                             b1.Property<string>("Responsibilities")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
+
+                            b1.Property<byte[]>("RowVersion")
+                                .IsConcurrencyToken()
+                                .ValueGeneratedOnAddOrUpdate()
+                                .HasColumnType("rowversion");
 
                             b1.Property<DateTime>("StartDate")
                                 .HasColumnType("datetime2");

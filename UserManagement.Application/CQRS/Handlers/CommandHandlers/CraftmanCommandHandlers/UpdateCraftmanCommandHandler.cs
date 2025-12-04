@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
-using Core.SharedKernel.Enums;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.CraftmanCommands;
 using UserManagement.Application.DTOs.CraftmanDTO;
 using UserManagement.Application.Validators.CraftmanValidators;
-using UserManagement.Domain.Entities;
 
 namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.CraftmanCommandHandlers
 {
@@ -33,30 +32,44 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.CraftmanComma
 				response.IsSuccessful = false;
 				response.Message = "Craftman creation failed due to validation errors.";
 				return response;
+			}			
+			try
+			{
+				var updatedCraftman = mapper.Map(request.CraftmanDTO, craftman);
+				await unitOfWork.ExecuteInTransactionAsync(
+					async () => await craftmanRepository.UpdateAsync(updatedCraftman, cancellationToken),
+					cancellationToken
+				);
+				var mappedResponse = mapper.Map<CraftmanResponseDTO>(updatedCraftman);
+				mappedResponse.CraftmanId = request.CraftmanId;
+				mappedResponse.IsSuccessful = true;
+				mappedResponse.Message = "Craftman updated successfully.";
+				logger.LogInformation("Craftman with ID {CraftmanId} updated successfully.", craftman.Id);
+				backgroundJob.Enqueue<IGmailService>(
+					"default",
+					emailService => emailService.SendEmailAsync(
+						craftman.Email.Address,
+						$"{craftman.FirstName} {craftman.LastName} Updated",
+						"Your profile has been updated. If you did not issue this request, kindly contact us for immediate action.",
+						true,
+						CancellationToken.None));
+				return mappedResponse;
+			}
+			catch (DbUpdateConcurrencyException duce)
+			{
+				response.IsSuccessful = false;
+				response.Message = "The record was modified by another user. Please reload the page and try again.";
+				return response;
+			}
+			catch(Exception ex)
+			{
+				logger.LogError(ex, "Unexpected error updating Craftman {Id}", request.CraftmanId);
+
+				response.IsSuccessful = false;
+				response.Message = "An unexpected error occurred while saving.";
+				return response;
 			}
 			
-			var updatedCraftman = mapper.Map(request.CraftmanDTO, craftman);
-			await unitOfWork.ExecuteInTransactionAsync(
-				async () => await craftmanRepository.UpdateAsync(updatedCraftman, cancellationToken), 
-				cancellationToken
-			);
-
-			var mappedResponse = mapper.Map<CraftmanResponseDTO>(updatedCraftman);
-			mappedResponse.CraftmanId = request.CraftmanId;
-			mappedResponse.IsSuccessful = true;
-			mappedResponse.Message = "Craftman updated successfully.";
-			//await cacheService.RemoveSync($"Craftman:{craftman.Id}", cancellationToken);
-			//await cacheService.SetAsync($"Craftman:{request.CraftmanId}", response, cancellationToken);
-			logger.LogInformation("Craftman with ID {CraftmanId} updated successfully.", craftman.Id);
-			backgroundJob.Enqueue<IGmailService>(
-				"default",
-				emailService => emailService.SendEmailAsync(
-					craftman.Email.Address,
-					$"{craftman.FirstName} {craftman.LastName} Updated",
-					"Your profile has been updated. If you did not issue this request, kindly contact us for immediate action.",
-					true, 
-					CancellationToken.None));
-			return mappedResponse;
 		}
 	}
 }

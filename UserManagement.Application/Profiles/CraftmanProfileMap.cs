@@ -45,6 +45,7 @@ namespace UserManagement.Application.Profiles
 					new List<WorkEntry>()));
 
 			CreateMap<Craftman, CraftmanResponseDTO>()
+				.ForMember(dest => dest.CraftmanId, opt => opt.MapFrom(src => src.Id))
 				.ForPath(dest => dest.Skills, opt => opt.MapFrom(src => src.Skills!.Select(s => new SkillsDTO(s.Name, s.YearsOfExperience)).ToList()))
 				.ForPath(dest => dest.EmailAddress, opt => opt.MapFrom(src => src.Email.Address))
 				.ForMember(dest => dest.Profession, opt => opt.MapFrom(src => src.Profession.ToString()));

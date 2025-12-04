@@ -1,10 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands;
 using UserManagement.Application.CQRS.Commands.CraftmanCommands;
+using UserManagement.Application.CQRS.Handlers.QueryHandlers.Queries.CraftmanQueries;
 using UserManagement.Domain.Entities;
 
 namespace UserManagement.Presentation.Controllers
@@ -16,6 +18,15 @@ namespace UserManagement.Presentation.Controllers
 		IMediator mediator,
 		IFileStorageService fileStorageService) : ControllerBase
 	{
+		[HttpGet("get-craftsmen")]
+		[AllowAnonymous]
+		public async Task<IActionResult> GetAllCraftsmen()
+		{
+			var query = new GetAllCraftmenQuery();
+			var result = await mediator.Send(query);
+			return Ok(result);
+		}
+
 		[HttpPost("add-skill")]
 		public async Task<IActionResult> AddSkill([FromBody] AddSkillCommand command)
 		{
@@ -60,6 +71,7 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("/verify-craftman-status")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> VerifyCraftmanStatusAsync([FromBody] VerifyCraftmanCommand command)
 		{
 			if(command == null)

@@ -3,6 +3,8 @@
 @using CraftConnect.WASM.Components.PostProjectPageComponents
 @using CraftConnect.WASM.Validators
 @using CraftConnect.WASM.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @using UserManagement.Domain.Entities
 @inject NavigationManager NavigationManager
 @inject IHttpClientFactory HttpClientFactory
@@ -75,8 +77,12 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
     [Parameter]
     public Guid CustomerId { get; set; }
+    private bool isLoading { get; set; } = false;
     private BookingViewModel ProjectData { get; set; } = new();
     private PostProjectValidator Validator { get; set; } = new();
     private List<string> AllAvailableSkills = new()
@@ -84,6 +90,23 @@
         "Woodworking", "Pottery", "Jewelry Making", "Metalwork",
         "Tiling", "Plumbing", "Electrical", "Carpentry"
     };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationState;
+        var user = authState.User;
+        if(user.Identity == null || !user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if(userIdClaim == null || Guid.Parse(userIdClaim) != CustomerId)
+        {
+            isLoading = false;
+            return;
+        }
+    }
 
     private async Task HandleValidSubmit()
     {

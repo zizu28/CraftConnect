@@ -1,33 +1,31 @@
 ﻿@page "/find-craftmen"
 @using Core.SharedKernel.Domain
+@using CraftConnect.WASM.DTOs
 @using CraftConnect.WASM.ViewModels
 @using CraftConnect.WASM.Components.FindCraftsmenPageComponents
 @using CraftConnect.WASM.Components.SharedComponents
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @inject IHttpClientFactory HttpClientFactory
+@inject NavigationManager NavigationManager
 
 <div class="search-page-container">
-    <FindCraftmentNavbar />
+    <FindCraftmentNavbar CustomerId="@CustomerId" />
     <div class="intro-section">
         <h1>Find Skilled Craftsmen</h1>
         <p>Browse our community of talented artisans and find the perfect match for your project.</p>
     </div>
 
-    <SearchInput @bind-SearchParameters="SearchParameters"
-                 OnSearch="HandleSearch" />
-
-    <FilterBar @bind-SearchParameters="SearchParameters"
-               OnFilterChange="HandleSearch" />
-
-    @if (IsLoading)
+   @if (IsLoading)
     {
         <p class="loading-message">Loading craftsmen...</p>
     }
-    else if (Craftsmen.Any())
+    else if (CraftsmenVM!.Count > 0)
     {
         <div class="results-grid">
-            @foreach (var craftsman in Craftsmen)
+            @foreach (var craftsman in CraftsmenVM)
             {
-                <CraftmanCard Craftsman="@craftsman" />
+                <CraftmanCard Craftsman="@craftsman" CraftsmanId="@craftsman.Id" />
             }
         </div>
         <Pagination CurrentPage="@SearchParameters.PageNumber"
@@ -41,16 +39,34 @@
 </div>
 
 @code {
-    private List<CraftmanViewModel> Craftsmen { get; set; } = new();
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+    public Guid CustomerId { get; set; }
+    private List<CraftmanViewModel>? CraftsmenVM { get; set; }
     private CraftsmanSearchParametersViewModel SearchParameters { get; set; } = new();
     private bool IsLoading { get; set; } = true;
-    private int TotalItems = 28; 
+    private string? ErrorMessage { get; set; }
+    private int TotalItems; 
     private int TotalPages => (int)Math.Ceiling((double)TotalItems / SearchParameters.PageSize);
 
     protected override async Task OnInitializedAsync()
     {
-        // Initial load
-        await LoadCraftsmenAsync();
+        var authState = await AuthenticationState;
+        var user = authState.User;
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (Guid.TryParse(userIdClaim, out var parsedId))
+            {
+                CustomerId = parsedId;
+            }
+            await LoadCraftsmenAsync();
+        }
+        else
+        {
+            await LoadCraftsmenAsync();
+        }        
     }
 
     private async Task HandleSearch()
@@ -68,24 +84,56 @@
     private async Task LoadCraftsmenAsync()
     {
         IsLoading = true;
-        // In a real app, this would be an API call using SearchParameters
-        await Task.Delay(500); // Simulate network latency
-
-        // Mock Data based on the image
-        Craftsmen = GetMockData().ToList();
-
-        IsLoading = false;
+        ErrorMessage = null;
+        StateHasChanged();
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("BFF");
+            var response = await httpClient.GetAsync("/craftmen/get-craftsmen");
+            if (response.IsSuccessStatusCode)
+            {
+                var craftsmen = await response.Content.ReadFromJsonAsync<List<CraftmanResponseDTO>>();
+                
+                if(craftsmen != null)
+                {
+                    TotalItems = craftsmen.Count;
+                    CraftsmenVM = craftsmen.Select(MapToViewModel).ToList();
+                }
+            }
+            else
+            {
+                ErrorMessage = "Failed to load data from server.";
+            }
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            ErrorMessage = "An unexpected error occurred.";
+        }
+        finally
+        {
+            IsLoading = false;
+        }        
     }
 
-    private IEnumerable<CraftmanViewModel> GetMockData()
+    private CraftmanViewModel MapToViewModel(CraftmanResponseDTO dto)
     {
-        // This simulates a paged API response
-        return new List<CraftmanViewModel>
-        {
-            new(Guid.NewGuid(), "Elena Rodriguez", "Expert in custom furniture design and restoration.", "/images/p1.jpg", "5 years of experience.", "Highly Rated", 4.9M, 12),
-            new(Guid.NewGuid(), "David Chen", "Specializes in handcrafted jewelry and metalwork.", "/images/p2.jpg", "8 years of experience.", "Local Artisan", 5.0M, 8),
-            new(Guid.NewGuid(), "Sophia Green", "Creates unique pottery and ceramic art.", "/images/p3.jpg", "3 years of experience.", "Rising Star", 4.5M, 5)
-        }.Skip((SearchParameters.PageNumber - 1) * SearchParameters.PageSize)
-        .Take(SearchParameters.PageSize).ToList();
+        return new CraftmanViewModel
+        (
+            Id: dto.CraftmanId,
+            ImageUrl: GetOptimizedUrl(dto.ProfileImageUrl),
+            Name: $"{dto.FirstName} {dto.LastName}",
+            Description: string.IsNullOrEmpty(dto.Bio) ? $"Professional {dto.Profession}" : dto.Bio,
+            ExperienceSummary: $"{dto.WorkExperience?.Count ?? 0} past roles listed.",
+            Badge: dto.VerificationStatus == "Verified" ? "Verified Pro" : "Member",
+            Rating: 5.0M,
+            ReviewCount: 0
+        );
+    }
+
+    private string GetOptimizedUrl(string? originalUrl)
+    {
+        if (string.IsNullOrEmpty(originalUrl)) return "/images/default-avatar.png";
+        return originalUrl.Replace("/upload/", "/upload/w_400,h_300,c_fill,q_auto,f_auto/");
     }
 }

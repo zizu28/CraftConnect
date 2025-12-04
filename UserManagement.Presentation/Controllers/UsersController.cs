@@ -213,7 +213,7 @@ namespace UserManagement.Presentation.Controllers
 			{
 				return BadRequest("Email verification/confirmation failed");
 			}
-			return Redirect("https://localhost:7284/login");
+			return Redirect("https://localhost:7222/login");
 		}
 
 		[HttpPost("forgot-password")]

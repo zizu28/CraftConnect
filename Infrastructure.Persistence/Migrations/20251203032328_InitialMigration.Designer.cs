@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251129210307_InitialMigration")]
+    [Migration("20251203032328_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -813,6 +813,10 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.HasBaseType("UserManagement.Domain.Entities.User");
 
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1493,11 +1497,9 @@ namespace Infrastructure.Persistence.Migrations
                             b1.Property<Guid>("CraftmanId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<int>("Id")
+                            b1.Property<Guid>("ProjectId")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+                                .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("Description")
                                 .IsRequired()
@@ -1507,11 +1509,16 @@ namespace Infrastructure.Persistence.Migrations
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
+                            b1.Property<byte[]>("RowVersion")
+                                .IsConcurrencyToken()
+                                .ValueGeneratedOnAddOrUpdate()
+                                .HasColumnType("rowversion");
+
                             b1.Property<string>("Title")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.HasKey("CraftmanId", "Id");
+                            b1.HasKey("CraftmanId", "ProjectId");
 
                             b1.ToTable("Project");
 
@@ -1524,20 +1531,23 @@ namespace Infrastructure.Persistence.Migrations
                             b1.Property<Guid>("CraftmanId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<int>("Id")
+                            b1.Property<Guid>("SkillId")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+                                .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("Name")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
+                            b1.Property<byte[]>("RowVersion")
+                                .IsConcurrencyToken()
+                                .ValueGeneratedOnAddOrUpdate()
+                                .HasColumnType("rowversion");
+
                             b1.Property<int>("YearsOfExperience")
                                 .HasColumnType("int");
 
-                            b1.HasKey("CraftmanId", "Id");
+                            b1.HasKey("CraftmanId", "SkillId");
 
                             b1.ToTable("Skill");
 
@@ -1550,17 +1560,15 @@ namespace Infrastructure.Persistence.Migrations
                             b1.Property<Guid>("CraftmanId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<int>("Id")
+                            b1.Property<Guid>("WorkEntryId")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+                                .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("Company")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<DateTime?>("EndDate")
+                            b1.Property<DateTime>("EndDate")
                                 .HasColumnType("datetime2");
 
                             b1.Property<string>("Position")
@@ -1571,10 +1579,15 @@ namespace Infrastructure.Persistence.Migrations
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<DateTime?>("StartDate")
+                            b1.Property<byte[]>("RowVersion")
+                                .IsConcurrencyToken()
+                                .ValueGeneratedOnAddOrUpdate()
+                                .HasColumnType("rowversion");
+
+                            b1.Property<DateTime>("StartDate")
                                 .HasColumnType("datetime2");
 
-                            b1.HasKey("CraftmanId", "Id");
+                            b1.HasKey("CraftmanId", "WorkEntryId");
 
                             b1.ToTable("WorkEntry");
 

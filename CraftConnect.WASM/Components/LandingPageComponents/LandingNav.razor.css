@@ -3,11 +3,13 @@
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 10;
-    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent */
+    z-index: 100;
+    background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
+    font-family: system-ui, -apple-system, sans-serif;
 }
 
 .nav-container {
@@ -22,19 +24,24 @@
 .logo {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     text-decoration: none;
     color: white;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    flex-shrink: 0;
 }
 
-.logo-icon {
-    width: 28px;
-    height: 28px;
+.logo-img {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+    display: block;
 }
 
 .logo span {
-    font-size: 1.125rem;
-    font-weight: 600;
+    font-size: 1.25rem;
+    line-height: 1;
 }
 
 .main-nav {
@@ -43,16 +50,16 @@
     margin-left: 32px;
 }
 
-    .main-nav a {
+    .main-nav .nav-link {
         text-decoration: none;
         color: white;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         font-weight: 500;
         opacity: 0.8;
         transition: opacity 0.2s;
     }
 
-        .main-nav a:hover {
+        .main-nav .nav-link:hover {
             opacity: 1;
         }
 
@@ -64,31 +71,34 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-shrink: 0;
 }
 
 .btn-nav-secondary, .btn-nav-primary {
-    padding: 8px 14px;
+    padding: 8px 16px;
     font-size: 0.875rem;
-    font-weight: 500;
-    border: 1px solid transparent;
+    font-weight: 600;
     border-radius: 6px;
     cursor: pointer;
     text-decoration: none;
     transition: all 0.2s;
+    white-space: nowrap;
+    border: 1px solid transparent;
 }
 
 .btn-nav-secondary {
     background-color: transparent;
     color: white;
-    border-color: white;
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
     .btn-nav-secondary:hover {
         background-color: rgba(255, 255, 255, 0.1);
+        border-color: white;
     }
 
 .btn-nav-primary {
-    background-color: #0275d8; /* Blue */
+    background-color: #0275d8;
     color: white;
     border-color: #0275d8;
 }
@@ -98,8 +108,105 @@
         border-color: #025aa5;
     }
 
+.hamburger-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.75rem;
+    cursor: pointer;
+    padding: 4px;
+    margin-left: 12px;
+    z-index: 101;
+}
+
+.mobile-menu {
+    display: none;
+    position: absolute;
+    top: 72px;
+    left: 0;
+    width: 100%;
+    background-color: #1f2937;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-direction: column;
+    padding: 16px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+    .mobile-menu a {
+        color: white;
+        text-decoration: none;
+        font-size: 1.1rem;
+        font-weight: 500;
+        text-align: center;
+        padding: 16px;
+        border-radius: 8px;
+        transition: background 0.2s;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+        .mobile-menu a:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
 @media (max-width: 768px) {
-    .main-nav, .auth-links {
-        display: none; /* Hide nav links on mobile for simplicity */
+    .nav-container {
+        padding: 0 16px;
+    }
+
+    .main-nav {
+        display: none;
+    }
+
+    .hamburger-btn {
+        display: block;
+    }
+
+    .logo-img {
+        height: 28px;
+    }
+
+    .logo span {
+        font-size: 1.1rem;
+    }
+
+    .auth-links {
+        gap: 8px;
+    }
+
+    .btn-nav-secondary, .btn-nav-primary {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+
+    .mobile-menu.open {
+        display: flex;
+        animation: slideDown 0.3s ease-out;
+    }
+}
+
+@media (max-width: 380px) {
+    .logo span {
+        display: none;
+    }
+
+    .btn-nav-secondary {
+        display: none;ce */
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

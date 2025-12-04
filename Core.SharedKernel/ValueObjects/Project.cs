@@ -1,4 +1,6 @@
-﻿namespace Core.SharedKernel.ValueObjects
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Core.SharedKernel.ValueObjects
 {
 	public record Project
 	{
@@ -6,6 +8,8 @@
 		public string Title { get; set; }
 		public string Description { get; set; }
 		public string ImageUrl { get; set; }
+		[Timestamp]
+		public byte[]? RowVersion { get; set; }
 
 		public Project()
 		{

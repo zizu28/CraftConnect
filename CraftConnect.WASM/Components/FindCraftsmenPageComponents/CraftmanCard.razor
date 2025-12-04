@@ -18,18 +18,19 @@
             <i class="bi bi-star-fill rating-star"></i>
             <span>@Craftsman.Rating (@Craftsman.ReviewCount reviews)</span>
         </div>
-        <button class="btn btn-view-profile" @onclick="() => NavigateToProfile(Craftsman.Id)">View Profile</button>
+        <button class="btn btn-view-profile" @onclick="NavigateToProfile">View Profile</button>
     </div>
 </div>
 
 @code {
     [Parameter]
     public CraftmanViewModel Craftsman { get; set; } = default!;
+    [Parameter]
+    public Guid CraftsmanId { get; set; }
 
-    private void NavigateToProfile(Guid id)
+    private void NavigateToProfile()
     {
-        // TODO: Navigation logic
-        Console.WriteLine($"Navigating to profile: {id}");
-        NavigationManager.NavigateTo($"/craftsman/{id}");
+        Console.WriteLine($"Navigating to profile: {CraftsmanId}");
+        NavigationManager.NavigateTo($"/craftsman/{CraftsmanId}");
     }
 }

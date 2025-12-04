@@ -1,32 +1,49 @@
 ﻿@using CraftConnect.WASM.Components.CustomerDashboardPageComponents
 @using CraftConnect.WASM.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @inherits LayoutComponentBase
 
-<CascadingValue Value="this">
-    <div class="customer-layout">
-        <CustomerSidebar User="currentUser" CustomerId="CustomerId" />
-    
-        <div class="main-view">
-            <CustomerTopBar User="currentUser" />
-            <main class="content-body">
-                @Body
-            </main>
-        </div>
+<div class="customer-layout">
+    <CustomerSidebar User="currentUser" CustomerId="CustomerId" />
+
+    <div class="main-view">
+        <CustomerTopBar User="currentUser" />
+        <main class="content-body">
+            @Body
+        </main>
     </div>
-</CascadingValue>
+</div>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
     public Guid CustomerId { get; set; }
 
     private UserProfileVM currentUser = new UserProfileVM
     {
-        Name = "Jane Doe",
-        AvatarInitials = "JD"
+        Name = "Loading...", // Placeholder
+        AvatarInitials = "??"
     };
 
-    public void SetCurrentCustomerId(Guid id)
+    protected override async Task OnInitializedAsync()
     {
-        CustomerId = id;
-        StateHasChanged();
+        var authState = await AuthenticationState;
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var userIdString = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (Guid.TryParse(userIdString, out var id))
+            {
+                CustomerId = id;
+
+                // Optional: Set Name from claims if available
+                var name = user.FindFirst(ClaimTypes.Name)?.Value ?? "Customer";
+                currentUser.Name = name;
+                currentUser.AvatarInitials = name.Length > 0 ? name[0].ToString() : "C";
+            }
+        }
     }
 }

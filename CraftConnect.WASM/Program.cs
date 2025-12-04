@@ -21,6 +21,10 @@ builder.Services.AddScoped<IValidator<WorkEntry>, WorkEntryValidator>();
 builder.Services.AddScoped<IValidator<Project>, ProjectValidator>();
 builder.Services.AddScoped<IValidator<SkillsDTO>, SkillsDTOValidator>();
 builder.Services.AddTransient<CookieHandler>();
+builder.Services.AddHttpClient("UserManagement", client =>
+{
+	client.BaseAddress = new Uri("https://localhost:7235");
+});
 builder.Services.AddHttpClient("BFF", client =>
 {
 	var baseUrl = builder.Configuration["ApiSettings:BaseUrl"]

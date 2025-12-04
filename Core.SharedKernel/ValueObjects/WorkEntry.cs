@@ -1,4 +1,6 @@
-﻿namespace Core.SharedKernel.ValueObjects
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Core.SharedKernel.ValueObjects
 {
 	public record WorkEntry
 	{
@@ -8,6 +10,8 @@
 		public string Responsibilities { get; set; }
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
+		[Timestamp]
+		public byte[]? RowVersion { get; set; }
 
 		public WorkEntry()
 		{

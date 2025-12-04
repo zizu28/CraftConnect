@@ -33,26 +33,26 @@ namespace UserManagement.Application.Validators.CraftmanValidators
 					.NotEmpty().WithMessage("Project description is required");
 			});
 
-			RuleForEach(x => x.WorkExperience).ChildRules(work =>
-			{
-				work.RuleFor(w => w.StartDate)
-					.NotEmpty().WithMessage("Start date is required");
+			//RuleForEach(x => x.WorkExperience).ChildRules(work =>
+			//{
+			//	work.RuleFor(w => w.StartDate)
+			//		.NotEmpty().WithMessage("Start date is required");
 
-				work.RuleFor(w => w.EndDate)
-					.Must((entry, endDate) => endDate > entry.StartDate)
-					.When(w => w.EndDate > w.StartDate)
-					.WithMessage("End date must be after Start date");
-			});
+			//	work.RuleFor(w => w.EndDate)
+			//		.Must((entry, endDate) => endDate > entry.StartDate)
+			//		.When(w => w.EndDate > w.StartDate)
+			//		.WithMessage("End date must be after Start date");
+			//});
 
-			RuleForEach(x => x.Skills).ChildRules(skill =>
-			{
-				skill.RuleFor(s => s.Name)
-					.NotEmpty().WithMessage("Skill name cannot be empty");
+			//RuleForEach(x => x.Skills).ChildRules(skill =>
+			//{
+			//	skill.RuleFor(s => s.Name)
+			//		.NotEmpty().WithMessage("Skill name cannot be empty");
 
-				skill.RuleFor(s => s.YearsOfExperience)
-					.GreaterThanOrEqualTo(0).WithMessage("Experience cannot be negative")
-					.LessThan(60).WithMessage("Please enter a realistic number of years");
-			});
+			//	skill.RuleFor(s => s.YearsOfExperience)
+			//		.GreaterThanOrEqualTo(0).WithMessage("Experience cannot be negative")
+			//		.LessThan(60).WithMessage("Please enter a realistic number of years");
+			//});
 		}
 	}
 }

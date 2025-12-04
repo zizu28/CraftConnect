@@ -189,6 +189,7 @@ namespace Infrastructure.Persistence.Migrations
                     Discriminator = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     Profession = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: true),
+                    Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProfileImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address_Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -402,16 +403,16 @@ namespace Infrastructure.Persistence.Migrations
                 name: "Project",
                 columns: table => new
                 {
+                    ProjectId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CraftmanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Project", x => new { x.CraftmanId, x.Id });
+                    table.PrimaryKey("PK_Project", x => new { x.CraftmanId, x.ProjectId });
                     table.ForeignKey(
                         name: "FK_Project_Users_CraftmanId",
                         column: x => x.CraftmanId,
@@ -493,15 +494,15 @@ namespace Infrastructure.Persistence.Migrations
                 name: "Skill",
                 columns: table => new
                 {
+                    SkillId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CraftmanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    YearsOfExperience = table.Column<int>(type: "int", nullable: false)
+                    YearsOfExperience = table.Column<int>(type: "int", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Skill", x => new { x.CraftmanId, x.Id });
+                    table.PrimaryKey("PK_Skill", x => new { x.CraftmanId, x.SkillId });
                     table.ForeignKey(
                         name: "FK_Skill_Users_CraftmanId",
                         column: x => x.CraftmanId,
@@ -514,18 +515,18 @@ namespace Infrastructure.Persistence.Migrations
                 name: "WorkEntry",
                 columns: table => new
                 {
+                    WorkEntryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CraftmanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     Company = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Position = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Responsibilities = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WorkEntry", x => new { x.CraftmanId, x.Id });
+                    table.PrimaryKey("PK_WorkEntry", x => new { x.CraftmanId, x.WorkEntryId });
                     table.ForeignKey(
                         name: "FK_WorkEntry_Users_CraftmanId",
                         column: x => x.CraftmanId,

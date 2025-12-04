@@ -144,21 +144,12 @@
         errorMessage = null;
         try
         {
-            var httpClient = HttpClientFactory.CreateClient("BFF");
+            var httpClient = HttpClientFactory.CreateClient("UserManagement");
             userResponse = model.Role switch
             {
-                "Craftman" => await httpClient.PostAsJsonAsync("/users/register/craftman", model, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                }),
-                "Customer" => await httpClient.PostAsJsonAsync("/users/register/customer", model, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                }),
-                _ => await httpClient.PostAsJsonAsync("/users/register", model, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                })
+                "Craftman" => await httpClient.PostAsJsonAsync("/api/users/register/craftman", model),
+                "Customer" => await httpClient.PostAsJsonAsync("/api/users/register/customer", model),
+                _ => await httpClient.PostAsJsonAsync("/api/users/register", model)
             };
             
             if (userResponse.IsSuccessStatusCode)

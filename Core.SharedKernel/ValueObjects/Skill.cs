@@ -1,11 +1,15 @@
-﻿namespace Core.SharedKernel.ValueObjects
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Core.SharedKernel.ValueObjects
 {
 	public record Skill
 	{
 		public Guid SkillId { get; private set; }
 		public string Name { get; set; }
 		public int YearsOfExperience { get; set; }
-		private Skill()
+		[Timestamp]
+		public byte[]? RowVersion { get; set; }
+		public Skill()
 		{
 			SkillId = Guid.Empty;
 			Name = string.Empty;

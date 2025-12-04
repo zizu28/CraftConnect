@@ -27,11 +27,11 @@ namespace CraftConnect.WASM.Validators
 			RuleFor(x => x.Profession)
 				.NotEmpty().WithMessage("Profession is required");
 
-			RuleForEach(x => x.Portfolio).SetValidator(projectValidator);
+			//RuleForEach(x => x.Portfolio).SetValidator(projectValidator);
 
-			RuleForEach(x => x.WorkExperience).SetValidator(workEntryValidator);
+			//RuleForEach(x => x.WorkExperience).SetValidator(workEntryValidator);
 
-			RuleForEach(x => x.Skills).SetValidator(skillsDTOValidator);
+			//RuleForEach(x => x.Skills).SetValidator(skillsDTOValidator);
 		}
 	}
 }

@@ -4,10 +4,12 @@
 @using CraftConnect.WASM.Components.SkeletonComponents
 @using CraftConnect.WASM.Enums
 @using CraftConnect.WASM.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
 
-@if (dashboardData == null)
+@if (isLoading)
 {
-    <DashboardSkeleton />
+    @* <DashboardSkeleton /> *@
+    <p>Loading...</p>
 }
 else
 {
@@ -66,29 +68,11 @@ else
 }
 
 @code {
-    [CascadingParameter]
-    public CustomerLayout? Layout { get; set; }
-
     [Parameter]
     public Guid CustomerId { get; set; }
 
     private CustomerDashboardVM? dashboardData;
-    private bool hasSetLayoutId = false;
-
-    protected override void OnParametersSet()
-    {
-        hasSetLayoutId = false;
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if(!hasSetLayoutId && Layout != null)
-        {
-            hasSetLayoutId = true;
-            Layout.SetCurrentCustomerId(CustomerId);
-            await InvokeAsync(StateHasChanged);
-        }
-    }
+    private bool isLoading = false;
 
     protected override void OnInitialized()
     {

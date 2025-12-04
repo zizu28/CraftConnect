@@ -1,10 +1,12 @@
 ﻿using Core.SharedKernel.Domain;
 using Core.SharedKernel.ValueObjects;
+using System.Text.Json.Serialization;
 
 namespace CraftConnect.WASM.DTOs
 {
 	public class CraftmanResponseDTO
 	{
+		//[JsonPropertyName("Id")]
 		public Guid CraftmanId { get; set; }
 		public string FirstName { get; set; } = string.Empty;
 		public string LastName { get; set; } = string.Empty;

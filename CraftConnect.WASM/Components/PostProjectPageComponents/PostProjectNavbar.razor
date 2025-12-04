@@ -13,22 +13,19 @@
             CraftConnect
         </a>
 
-        @* Hamburger Button - visible only on mobile *@
         <button class="hamburger-btn" @onclick="ToggleMenu">
             <i class="bi bi-list"></i>
         </button>
 
-        @* Navigation Links and Buttons *@
         <nav class="nav-links @(isMenuOpen ? "open" : "")">
             <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
                 <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon" : "bi-sun")"></i>
             </button>
-            @* Central Links *@
+            <a href="/" class="nav-link">Home</a>
             <a href="/explore" class="nav-link">Explore</a>
             <a href="/how-it-works" class="nav-link">How it works</a>
             <a href="/contact" class="nav-link">Contact</a>
 
-            @* Right Side Buttons *@
             <AuthorizeView Context="User">
                 <Authorized>
                     <span class="user-greeting">
