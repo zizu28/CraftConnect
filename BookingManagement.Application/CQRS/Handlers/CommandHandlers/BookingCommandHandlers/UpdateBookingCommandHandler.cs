@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using BookingManagement.Application.Contracts;
 using BookingManagement.Application.CQRS.Commands.BookingCommands;
-using BookingManagement.Application.DTOs.BookingDTOs;
 using BookingManagement.Application.Validators.BookingValidators;
 using Core.Logging;
+using Core.SharedKernel.DTOs;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 

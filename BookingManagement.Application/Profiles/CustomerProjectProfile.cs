@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
-using BookingManagement.Application.DTOs.CustomerProjectDTOs;
-using BookingManagement.Application.DTOs.Shared;
 using BookingManagement.Domain.Entities;
+using Core.SharedKernel.DTOs;
 using Core.SharedKernel.ValueObjects; // Ensure this namespace is correct
 
 namespace BookingManagement.Application.Profiles

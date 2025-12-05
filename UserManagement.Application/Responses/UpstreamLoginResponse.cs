@@ -1,4 +1,4 @@
-﻿using UserManagement.Application.DTOs.UserDTOs;
+﻿using Core.SharedKernel.DTOs;
 
 namespace UserManagement.Application.Responses
 {

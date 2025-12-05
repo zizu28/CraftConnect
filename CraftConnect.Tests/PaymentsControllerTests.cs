@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
 using PaymentManagement.Application.CQRS.Queries.PaymentQueries;
-using PaymentManagement.Application.DTOs.PaymentDTOs;
 using PaymentManagement.Presentation.Controllers;
 using PaymentManagement.Domain.Entities;
 using Core.SharedKernel.ValueObjects;
 using Core.SharedKernel.Enums;
+using Core.SharedKernel.DTOs;
 
 namespace CraftConnect.Tests
 {

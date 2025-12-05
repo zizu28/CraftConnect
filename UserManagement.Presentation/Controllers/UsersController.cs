@@ -1,16 +1,14 @@
-﻿using MediatR;
+﻿using Core.SharedKernel.DTOs;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using UserManagement.Application.CQRS.Commands.UserCommands;
-using UserManagement.Application.CQRS.Handlers.QueryHandlers.Queries.CraftmanQueries;
+using UserManagement.Application.CQRS.Queries.CraftmanQueries;
 using UserManagement.Application.CQRS.Queries.CustomerQueries;
 using UserManagement.Application.CQRS.Queries.UserQueries;
-using UserManagement.Application.DTOs.CraftmanDTO;
-using UserManagement.Application.DTOs.CustomerDTO;
-using UserManagement.Application.DTOs.UserDTOs;
 using UserManagement.Application.Responses;
 
 namespace UserManagement.Presentation.Controllers

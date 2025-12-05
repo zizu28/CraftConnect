@@ -1,4 +1,4 @@
-﻿using BookingManagement.Application.DTOs.CraftmanProposalDTOs; // Ensure this matches your namespace
+﻿using Core.SharedKernel.DTOs;
 using FluentValidation;
 
 namespace BookingManagement.Application.Validators.CraftsmanProposalValidators

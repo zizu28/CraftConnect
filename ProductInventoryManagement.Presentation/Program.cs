@@ -1,6 +1,5 @@
 using Core.EventServices;
 using Core.Logging;
-using CraftConnect.ServiceDefaults;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using ProductInventoryManagement.Application.Extensions;
@@ -8,8 +7,6 @@ using ProductInventoryManagement.Infrastructure.Extensions;
 using ProductInventoryManagement.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
-
-//builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -26,7 +23,6 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-app.MapDefaultEndpoints();
 app.UseExceptionHandler(opt => { });
 
 // Configure the HTTP request pipeline.

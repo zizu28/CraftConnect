@@ -1,9 +1,9 @@
-﻿using MediatR;
+﻿using Core.SharedKernel.DTOs;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.CQRS.Queries.UserQueries;
-using UserManagement.Application.DTOs.UserDTOs;
 using UserManagement.Application.Responses;
 using UserManagement.Presentation.Controllers;
 

@@ -1,8 +1,8 @@
-﻿using MediatR;
+﻿using Core.SharedKernel.DTOs;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Application.CQRS.Commands.CustomerCommands;
 using UserManagement.Application.CQRS.Queries.CustomerQueries;
-using UserManagement.Application.DTOs.CustomerDTO;
 
 namespace UserManagement.Presentation.Controllers
 {

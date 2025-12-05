@@ -1,7 +1,7 @@
-﻿using MediatR;
-using UserManagement.Application.DTOs.CraftmanDTO;
+﻿using Core.SharedKernel.DTOs;
+using MediatR;
 
-namespace UserManagement.Application.CQRS.Handlers.QueryHandlers.Queries.CraftmanQueries
+namespace UserManagement.Application.CQRS.Queries.CraftmanQueries
 {
 	public class GetCraftmanByIdQuery : IRequest<CraftmanResponseDTO>
 	{

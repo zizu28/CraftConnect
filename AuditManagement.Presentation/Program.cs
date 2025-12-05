@@ -1,10 +1,7 @@
 using AuditManagement.Application.Extensions;
 using AuditManagement.Infrastructure.Extensions;
-using CraftConnect.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.AddServiceDefaults();
 
 // Add services to the container.
 
@@ -15,8 +12,6 @@ builder.Services.AddAuditApplicationExtension(builder.Configuration);
 builder.Services.AddAuditInfrastructureExtensions();
 
 var app = builder.Build();
-
-app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

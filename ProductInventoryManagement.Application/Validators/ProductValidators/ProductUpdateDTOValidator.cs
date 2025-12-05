@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using ProductInventoryManagement.Application.DTOs.ProductDTOs;
+﻿using Core.SharedKernel.DTOs;
+using FluentValidation;
 
 namespace ProductInventoryManagement.Application.Validators.ProductValidators
 {

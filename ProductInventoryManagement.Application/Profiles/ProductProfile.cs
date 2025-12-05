@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
+using Core.SharedKernel.DTOs;
 using Core.SharedKernel.ValueObjects;
-using ProductInventoryManagement.Application.DTOs;
-using ProductInventoryManagement.Application.DTOs.ProductDTOs;
 using ProductInventoryManagement.Domain.Entities;
 
 namespace ProductInventoryManagement.Application.Profiles

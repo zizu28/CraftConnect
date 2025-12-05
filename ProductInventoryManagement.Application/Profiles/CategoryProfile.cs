@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ProductInventoryManagement.Application.DTOs.CategoryDTOs;
+using Core.SharedKernel.DTOs;
 using ProductInventoryManagement.Domain.Entities;
 
 namespace ProductInventoryManagement.Application.Profiles

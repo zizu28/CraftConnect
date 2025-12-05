@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Core.Logging;
+using Core.SharedKernel.DTOs;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
 using ProductInventoryManagement.Application.CQRS.Commands.CategoryCommands;
-using ProductInventoryManagement.Application.DTOs.CategoryDTOs;
 using ProductInventoryManagement.Application.Validators.CategoryValidators;
 using ProductInventoryManagement.Domain.Entities;
 

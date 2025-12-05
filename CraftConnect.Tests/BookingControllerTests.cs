@@ -1,8 +1,7 @@
 ﻿using BookingManagement.Application.CQRS.Commands.BookingCommands;
 using BookingManagement.Application.CQRS.Queries.BookingQueries;
-using BookingManagement.Application.DTOs.BookingDTOs;
-using BookingManagement.Application.DTOs.BookingLineItemDTOs;
 using BookingManagement.Presentation.Controllers;
+using Core.SharedKernel.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

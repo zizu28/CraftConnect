@@ -1,10 +1,8 @@
 ﻿using Core.EventServices;
 using Core.Logging;
-using CraftConnect.ServiceDefaults;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,13 +12,14 @@ using UserManagement.Infrastructure.Extensions;
 using UserManagement.Presentation;
 using UserManagement.Presentation.Controllers;
 
+
+
 // To disable automatic claim renaming
 System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // --- 1. SERVICE REGISTRATION ---
-
 builder.Host.ConfigureSerilog();
 builder.Services.AddControllers()
 	.AddApplicationPart(typeof(UsersController).Assembly)
@@ -79,7 +78,6 @@ var app = builder.Build();
 
 
 app.UseExceptionHandler(opt => { });
-app.MapDefaultEndpoints();
 app.AddHangfireDashBoard();
 
 app.UseHttpsRedirection();

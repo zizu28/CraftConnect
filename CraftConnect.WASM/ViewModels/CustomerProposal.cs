@@ -3,6 +3,7 @@
 	public class CustomerProposalVM
 	{
 		public Guid Id { get; set; }
+		public Guid CraftsmanId { get; set; }
 		public Guid ServiceRequestId { get; set; }
 		public string CraftsmanName { get; set; }
 		public string CraftsmanAvatarUrl { get; set; }

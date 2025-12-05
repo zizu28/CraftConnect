@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using Core.SharedKernel.DTOs;
 using MassTransit.Initializers;
 using MediatR;
 using UserManagement.Application.Contracts;
-using UserManagement.Application.CQRS.Handlers.QueryHandlers.Queries.CraftmanQueries;
-using UserManagement.Application.DTOs.CraftmanDTO;
+using UserManagement.Application.CQRS.Queries.CraftmanQueries;
 using UserManagement.Application.Exceptions;
 
 namespace UserManagement.Application.CQRS.Handlers.QueryHandlers.CraftmanQueryHandlers

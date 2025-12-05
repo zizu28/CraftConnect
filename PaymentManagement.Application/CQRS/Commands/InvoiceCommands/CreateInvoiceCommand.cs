@@ -1,5 +1,5 @@
-﻿using MediatR;
-using PaymentManagement.Application.DTOs.InvoiceDTOS;
+﻿using Core.SharedKernel.DTOs;
+using MediatR;
 
 namespace PaymentManagement.Application.CQRS.Commands.InvoiceCommands
 {

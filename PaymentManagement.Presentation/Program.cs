@@ -1,6 +1,5 @@
 using Core.EventServices;
 using Core.Logging;
-using CraftConnect.ServiceDefaults;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using PaymentManagement.Application.Extensions;
@@ -8,8 +7,6 @@ using PaymentManagement.Infrastructure.Extensions;
 using PaymentManagement.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
-
-//builder.AddServiceDefaults();
 
 builder.Services.AddControllers();
 builder.Services.AddPaymentManagementApplicationConfigurations(builder.Configuration);
@@ -23,8 +20,6 @@ builder.Services.AddMessageBroker(builder.Configuration);
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 var app = builder.Build();
-
-app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 

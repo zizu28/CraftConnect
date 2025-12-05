@@ -1,4 +1,4 @@
-﻿using AuditManagement.Application.DTOs;
+﻿using Core.SharedKernel.DTOs;
 using FluentValidation;
 
 namespace AuditManagement.Application.Validators

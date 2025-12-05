@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Core.Logging;
+using Core.SharedKernel.DTOs;
 using MediatR;
 using PaymentManagement.Application.Contracts;
 using PaymentManagement.Application.CQRS.Queries.InvoiceQueries;
-using PaymentManagement.Application.DTOs.InvoiceDTOS;
 
 namespace PaymentManagement.Application.CQRS.Handlers.QueryHandlers.InvoiceQueryHandlers
 {

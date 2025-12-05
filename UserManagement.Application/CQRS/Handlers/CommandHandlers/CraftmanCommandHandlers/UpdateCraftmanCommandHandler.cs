@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.SharedKernel.DTOs;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
@@ -7,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.CraftmanCommands;
-using UserManagement.Application.DTOs.CraftmanDTO;
 using UserManagement.Application.Validators.CraftmanValidators;
 
 namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.CraftmanCommandHandlers

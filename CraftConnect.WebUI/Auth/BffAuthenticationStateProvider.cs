@@ -1,4 +1,4 @@
-﻿using CraftConnect.WebUI.DTOs;
+﻿using Core.SharedKernel.DTOs;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 

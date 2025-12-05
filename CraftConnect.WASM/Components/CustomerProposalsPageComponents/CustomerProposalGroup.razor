@@ -7,7 +7,7 @@
     <div class="proposal-cards-grid">
         @foreach (var proposal in ProjectSummary.Proposals)
         {
-            <CustomerProposalCard Proposal="proposal" />
+            <CustomerProposalCard Proposal="proposal" ProjectId="@ProjectId" />
         }
     </div>
 </div>
@@ -15,4 +15,7 @@
 @code {
     [Parameter]
     public CustomerProjectSummaryVM ProjectSummary { get; set; } = new();
+
+    [Parameter]
+    public Guid ProjectId { get; set; }
 }

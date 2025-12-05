@@ -1,7 +1,7 @@
 ﻿using AuditManagement.Application.Contracts;
 using AuditManagement.Application.CQRS.Queries;
-using AuditManagement.Application.DTOs;
 using AutoMapper;
+using Core.SharedKernel.DTOs;
 using MediatR;
 
 namespace AuditManagement.Application.CQRS.Handlers.QueryHandlers

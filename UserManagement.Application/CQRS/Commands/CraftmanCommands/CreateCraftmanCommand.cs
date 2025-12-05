@@ -1,5 +1,5 @@
-﻿using MediatR;
-using UserManagement.Application.DTOs.CraftmanDTO;
+﻿using Core.SharedKernel.DTOs;
+using MediatR;
 
 namespace UserManagement.Application.CQRS.Commands.CraftmanCommands
 {

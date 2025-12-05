@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using BookingManagement.Application.Contracts;
 using BookingManagement.Application.CQRS.Queries.CraftsmanProposalQueries;
-using BookingManagement.Application.DTOs.CraftmanProposalDTOs;
 using Core.Logging;
 using Core.SharedKernel.Contracts;
+using Core.SharedKernel.DTOs;
 using MediatR;
 
 namespace BookingManagement.Application.CQRS.Handlers.QueryHandlers.CraftsmanProposalsQueryHandlers

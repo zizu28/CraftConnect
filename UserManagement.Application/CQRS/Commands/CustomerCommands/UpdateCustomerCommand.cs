@@ -1,5 +1,5 @@
-﻿using MediatR;
-using UserManagement.Application.DTOs.CustomerDTO;
+﻿using Core.SharedKernel.DTOs;
+using MediatR;
 
 namespace UserManagement.Application.CQRS.Commands.CustomerCommands
 {

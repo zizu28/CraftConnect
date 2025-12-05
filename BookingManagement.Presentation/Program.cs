@@ -1,18 +1,16 @@
 using BookingManagement.Application.Extensions;
+using BookingManagement.Application.Services;
 using BookingManagement.Infrastructure.Extensions;
 using BookingManagement.Presentation;
 using Core.EventServices;
 using Core.Logging;
-using CraftConnect.ServiceDefaults;
+using Core.SharedKernel.Contracts;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
-//builder.AddServiceDefaults();
-//builder.AddRabbitMQClient("rabbitmq");
 
 // Add services to the container.
 
@@ -28,12 +26,14 @@ builder.Services.AddMessageBroker(builder.Configuration);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-
+builder.Services.AddHttpClient<IUserModuleService, UserModuleHttpService>(client =>
+{
+	client.BaseAddress = new Uri("https://usermanagement");
+});
 
 var app = builder.Build();
 
 app.UseExceptionHandler(opt => { });
-app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 

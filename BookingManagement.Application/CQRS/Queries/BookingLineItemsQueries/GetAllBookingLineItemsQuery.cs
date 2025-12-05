@@ -1,4 +1,4 @@
-﻿using BookingManagement.Application.DTOs.BookingLineItemDTOs;
+﻿using Core.SharedKernel.DTOs;
 using MediatR;
 
 namespace BookingManagement.Application.CQRS.Queries.BookingLineItemsQueries

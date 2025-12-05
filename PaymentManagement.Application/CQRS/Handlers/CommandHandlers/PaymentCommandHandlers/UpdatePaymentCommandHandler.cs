@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.EventServices;
 using Core.Logging;
+using Core.SharedKernel.DTOs;
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.IntegrationEvents.PaymentsIntegrationEvents;
 using Core.SharedKernel.ValueObjects;
@@ -8,7 +9,6 @@ using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using PaymentManagement.Application.Contracts;
 using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
-using PaymentManagement.Application.DTOs.PaymentDTOs;
 using PaymentManagement.Application.Validators.PaymentValidators;
 
 namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCommandHandlers

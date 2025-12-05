@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BookingManagement.Application.Contracts;
 using BookingManagement.Application.CQRS.Queries.CustomerProjectQueries;
-using BookingManagement.Application.DTOs.CustomerProjectDTOs;
+using Core.SharedKernel.DTOs;
 using Core.SharedKernel.Enums;
 using MediatR;
 

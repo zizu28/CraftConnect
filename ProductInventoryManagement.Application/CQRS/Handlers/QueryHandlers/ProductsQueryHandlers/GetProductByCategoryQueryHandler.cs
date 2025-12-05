@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Core.Logging;
+using Core.SharedKernel.DTOs;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
 using ProductInventoryManagement.Application.CQRS.Queries.ProductQueries;
-using ProductInventoryManagement.Application.DTOs.ProductDTOs;
 
 namespace ProductInventoryManagement.Application.CQRS.Handlers.QueryHandlers.ProductsQueryHandlers
 {

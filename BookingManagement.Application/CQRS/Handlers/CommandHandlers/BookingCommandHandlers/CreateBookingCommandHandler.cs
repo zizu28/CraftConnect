@@ -2,11 +2,11 @@
 using BookingManagement.Application.Contracts;
 using BookingManagement.Application.CQRS.Commands.BookingCommands;
 using BookingManagement.Application.CQRS.Handlers.DomainEventHandlers;
-using BookingManagement.Application.DTOs.BookingDTOs;
 using BookingManagement.Application.Validators.BookingValidators;
 using BookingManagement.Domain.Entities;
 using Core.EventServices;
 using Core.Logging;
+using Core.SharedKernel.DTOs;
 using Core.SharedKernel.IntegrationEvents.BookingIntegrationEvents;
 using Core.SharedKernel.ValueObjects;
 using Infrastructure.Persistence.UnitOfWork;

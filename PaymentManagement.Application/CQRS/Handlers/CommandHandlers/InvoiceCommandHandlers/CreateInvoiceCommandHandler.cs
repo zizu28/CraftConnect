@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.EventServices;
 using Core.Logging;
+using Core.SharedKernel.DTOs;
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.IntegrationEvents.InvoiceIntegrationEvents;
 using Core.SharedKernel.ValueObjects;
@@ -10,7 +11,6 @@ using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using PaymentManagement.Application.Contracts;
 using PaymentManagement.Application.CQRS.Commands.InvoiceCommands;
-using PaymentManagement.Application.DTOs.InvoiceDTOS;
 using PaymentManagement.Application.Validators.InvoiceValidators;
 using PaymentManagement.Domain.Entities;
 

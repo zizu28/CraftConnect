@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using BookingManagement.Application.DTOs.BookingLineItemDTOs;
 using BookingManagement.Domain.Entities;
+using Core.SharedKernel.DTOs;
 
 namespace BookingManagement.Application.Profiles
 {

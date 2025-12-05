@@ -1,12 +1,9 @@
-using CraftConnect.ServiceDefaults;
 using CraftConnect.WebUI.Auth;
 using CraftConnect.WebUI.Components;
 using CraftConnect.WebUI.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -31,8 +28,6 @@ builder.Services.AddLogging();
 builder.Services.AddSingleton<ThemeService>();
 
 var app = builder.Build();
-
-app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

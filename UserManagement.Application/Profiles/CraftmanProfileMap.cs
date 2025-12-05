@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Core.SharedKernel.Domain;
+using Core.SharedKernel.DTOs;
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.ValueObjects;
-using UserManagement.Application.DTOs.CraftmanDTO;
 using UserManagement.Domain.Entities;
 
 namespace UserManagement.Application.Profiles

@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using PaymentManagement.Application.CQRS.Commands.InvoiceCommands;
 using PaymentManagement.Application.CQRS.Queries.InvoiceQueries;
-using PaymentManagement.Application.DTOs.InvoiceDTOS;
 using PaymentManagement.Presentation.Controllers;
 using Core.SharedKernel.ValueObjects;
+using Core.SharedKernel.DTOs;
 
 namespace CraftConnect.Tests
 {

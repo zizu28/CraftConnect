@@ -1,6 +1,6 @@
-﻿using AuditManagement.Application.DTOs;
-using AuditManagement.Domain.Entities;
+﻿using AuditManagement.Domain.Entities;
 using AutoMapper;
+using Core.SharedKernel.DTOs;
 
 namespace AuditManagement.Application.Profiles
 {

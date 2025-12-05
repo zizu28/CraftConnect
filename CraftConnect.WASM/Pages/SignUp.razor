@@ -6,6 +6,7 @@
 @using System.ComponentModel.DataAnnotations
 @using System.Text.Json
 @using Blazored.FluentValidation
+@using Core.SharedKernel.DTOs
 @using CraftConnect.WASM.Components.SignUpPageComponents
 @using CraftConnect.WASM.Enums
 @using CraftConnect.WASM.Layout
@@ -120,7 +121,7 @@
 
 @code {
     public SignupVMValidator Validator { get; set; } = new();
-    private UserCreateDTO model = new();
+    private UserCreateDTO model { get; set; }
     private bool showPassword = false;
     private bool isLoading = false;
     private HttpResponseMessage userResponse { get; set; }

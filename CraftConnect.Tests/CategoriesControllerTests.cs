@@ -1,9 +1,9 @@
-﻿using MediatR;
+﻿using Core.SharedKernel.DTOs;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ProductInventoryManagement.Application.CQRS.Commands.CategoryCommands;
 using ProductInventoryManagement.Application.CQRS.Queries.CategoryQueries;
-using ProductInventoryManagement.Application.DTOs.CategoryDTOs;
 using ProductInventoryManagement.Presentation.Controllers;
 
 namespace CraftConnect.Tests

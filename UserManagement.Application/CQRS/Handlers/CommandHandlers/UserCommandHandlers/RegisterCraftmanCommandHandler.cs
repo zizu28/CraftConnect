@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.EventServices;
 using Core.Logging;
+using Core.SharedKernel.DTOs;
 using Core.SharedKernel.IntegrationEvents.AllUserActivitiesIntegrationEvents;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
@@ -10,7 +11,6 @@ using MediatR;
 using System.Net;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
-using UserManagement.Application.DTOs.CraftmanDTO;
 using UserManagement.Application.Validators.CraftmanValidators;
 using UserManagement.Domain.Entities;
 

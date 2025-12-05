@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.EventServices;
 using Core.Logging;
+using Core.SharedKernel.DTOs;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.Data;
@@ -10,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Net;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
-using UserManagement.Application.DTOs.CustomerDTO;
 using UserManagement.Application.Validators.CustomerValidators;
 using UserManagement.Domain.Entities;
 using UserManagement.Domain.UserIntegrationEvents;

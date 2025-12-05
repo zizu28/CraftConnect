@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PaymentManagement.Application.DTOs.PaymentTransactionDTOs;
+using Core.SharedKernel.DTOs;
 using PaymentManagement.Domain.Entities;
 
 namespace PaymentManagement.Application.Profiles

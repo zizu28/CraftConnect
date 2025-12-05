@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.SharedKernel.DTOs;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.Cache;
 using Infrastructure.EmailService;
@@ -6,7 +7,6 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.CustomerCommands;
-using UserManagement.Application.DTOs.CustomerDTO;
 using UserManagement.Application.Validators.CustomerValidators;
 using UserManagement.Domain.Entities;
 

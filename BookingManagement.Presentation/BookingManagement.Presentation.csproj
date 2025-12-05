@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookingManagement.Infrastructure\BookingManagement.Infrastructure.csproj" />
-    <ProjectReference Include="..\CraftConnect.ServiceDefaults\CraftConnect.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

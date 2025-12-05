@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using PaymentManagement.Application.DTOs.InvoiceDTOS;
+﻿using Core.SharedKernel.DTOs;
+using FluentValidation;
 
 namespace PaymentManagement.Application.Validators.InvoiceValidators
 {

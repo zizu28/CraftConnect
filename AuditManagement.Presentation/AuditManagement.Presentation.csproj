@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AuditManagement.Infrastructure\AuditManagement.Infrastructure.csproj" />
-    <ProjectReference Include="..\CraftConnect.ServiceDefaults\CraftConnect.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

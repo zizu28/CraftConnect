@@ -1,7 +1,7 @@
-﻿using Core.SharedKernel.Enums;
+﻿using Core.SharedKernel.DTOs;
+using Core.SharedKernel.Enums;
 using FluentValidation;
 using FluentValidation.Validators;
-using PaymentManagement.Application.DTOs.InvoiceDTOS;
 using PaymentManagement.Application.Validators.InvoiceLineItemValidators;
 
 namespace PaymentManagement.Application.Validators.InvoiceValidators

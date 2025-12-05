@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using Core.SharedKernel.DTOs;
 using Core.SharedKernel.Enums;
-using UserManagement.Application.DTOs.UserDTOs;
 using UserManagement.Domain.Entities;
 
 namespace UserManagement.Application.Profiles

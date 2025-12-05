@@ -76,5 +76,20 @@ namespace BookingManagement.Domain.Entities
 			Status = ServiceRequestStatus.Completed;
 			// Raise Event: ProjectCompleted (Trigger payments, etc)
 		}
+
+		public void AddAttachment(Guid documentId)
+		{
+			if (!AttachmentIds.Contains(documentId))
+			{
+				AttachmentIds.Add(documentId);
+			}
+		}
+
+		public void CloseProject()
+		{
+			if (Status == ServiceRequestStatus.Closed) return;
+			Status = ServiceRequestStatus.Closed;
+			//AddIntegrationEvent(new ProjectClosed(Id, CustomerId));
+		}
 	}
 }

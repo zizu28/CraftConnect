@@ -1,5 +1,5 @@
-﻿using BookingManagement.Application.DTOs.BookingDTOs;
-using BookingManagement.Domain.Entities;
+﻿using BookingManagement.Domain.Entities;
+using Core.SharedKernel.DTOs;
 using MediatR;
 
 namespace BookingManagement.Application.CQRS.Queries.BookingQueries

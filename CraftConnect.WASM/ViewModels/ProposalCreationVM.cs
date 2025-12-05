@@ -5,17 +5,14 @@ namespace CraftConnect.WASM.ViewModels
 {
 	public class ProposalCreationVM
 	{
-		public string Description { get; set; } = string.Empty;
-
-		public RateType RateType { get; set; } = RateType.FixedPrice;
-
-		public decimal ProposedCost { get; set; }
-
+		public Guid ProjectId { get; set; } // Needed for submission
+		public string CoverLetter { get; set; } = string.Empty; // Maps to Description
+		public decimal PriceAmount { get; set; }
+		public string PriceCurrency { get; set; } = "USD"; // Default
 		public DateTime? StartDate { get; set; }
-
 		public DateTime? EndDate { get; set; }
 
-		// Placeholder for file uploads (handling files is complex, this just tracks file names)
-		public List<string> SupportingDocuments { get; set; } = [];
+		// Removed RateType for now unless backend supports it
+		// public RateType RateType { get; set; }
 	}
 }

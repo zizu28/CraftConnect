@@ -1,4 +1,4 @@
-﻿using CraftConnect.WASM.DTOs;
+﻿using Core.SharedKernel.DTOs;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Json;
 using System.Security.Claims;

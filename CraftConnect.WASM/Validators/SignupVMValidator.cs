@@ -1,4 +1,4 @@
-﻿using CraftConnect.WASM.ViewModels;
+﻿using Core.SharedKernel.DTOs;
 using FluentValidation;
 
 namespace CraftConnect.WASM.Validators

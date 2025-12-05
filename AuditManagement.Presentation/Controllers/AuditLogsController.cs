@@ -1,6 +1,6 @@
 ﻿using AuditManagement.Application.CQRS.Commands;
 using AuditManagement.Application.CQRS.Queries;
-using AuditManagement.Application.DTOs;
+using Core.SharedKernel.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

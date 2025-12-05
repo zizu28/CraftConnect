@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using BookingManagement.Application.Contracts;
 using BookingManagement.Application.CQRS.Commands.BookingCommands;
-using BookingManagement.Application.DTOs.BookingLineItemDTOs;
 using BookingManagement.Application.Validators;
 using BookingManagement.Domain.Entities;
 using Core.EventServices;
 using Core.Logging;
+using Core.SharedKernel.DTOs;
 using Core.SharedKernel.IntegrationEvents.BookingIntegrationEvents;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using Core.SharedKernel.DTOs;
 using MediatR;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Queries.CustomerQueries;
-using UserManagement.Application.DTOs.CustomerDTO;
 using UserManagement.Application.Exceptions;
 
 namespace UserManagement.Application.CQRS.Handlers.QueryHandlers.CustomerQueryHandlers

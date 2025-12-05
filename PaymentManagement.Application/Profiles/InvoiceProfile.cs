@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using Core.SharedKernel.DTOs;
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.ValueObjects;
-using PaymentManagement.Application.DTOs.InvoiceDTOS;
 using PaymentManagement.Domain.Entities;
 
 namespace PaymentManagement.Application.Profiles

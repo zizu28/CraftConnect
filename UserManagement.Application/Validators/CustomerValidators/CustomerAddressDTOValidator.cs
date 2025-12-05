@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using UserManagement.Application.DTOs.CustomerDTO;
+﻿using Core.SharedKernel.DTOs;
+using FluentValidation;
 
 namespace UserManagement.Application.Validators.CustomerValidators
 {

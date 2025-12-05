@@ -1,13 +1,18 @@
 ﻿@using CraftConnect.WASM.ViewModels
+@inject IHttpClientFactory HttpClientFactory
+@inject ILogger<CustomerProposalCard> Logger
+@inject NavigationManager NavManager
+
 <div class="customer-proposal-card">
     <div class="card-header">
-        <img class="craftsman-avatar" src="@Proposal.CraftsmanAvatarUrl" alt="@Proposal.CraftsmanName" />
+        <img class="craftsman-avatar"
+             src="@(string.IsNullOrEmpty(Proposal.CraftsmanAvatarUrl) ? "/images/user-avatar.png" : Proposal.CraftsmanAvatarUrl)"
+             alt="@Proposal.CraftsmanName" />
+
         <div class="craftsman-details">
             <span class="name">@Proposal.CraftsmanName</span>
             <div class="rating">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.793.73c.828.127 1.162 1.17.558 1.74l-3.468 3.633.82 4.98c.14.825-.718 1.46-1.47 1.088L10 16.273l-4.3 2.26c-.753.372-1.61-.263-1.47-1.088l.82-4.98-3.468-3.633c-.604-.57-.27-1.613.558-1.74l4.793-.73L9.132 2.884z" clip-rule="evenodd" />
-                </svg>
+                <i class="bi bi-star-fill text-warning"></i>
                 <span>@Proposal.Rating.ToString("F1")</span>
                 <span class="reviews">(@Proposal.ReviewCount)</span>
             </div>
@@ -18,14 +23,82 @@
     <p class="quote-summary">@Proposal.QuoteSummary</p>
 
     <div class="card-actions">
-        <a href="/craftsman/@Proposal.Id" class="btn btn-view-portfolio">View Portfolio</a>
-        <button class="btn btn-reject">Reject</button>
-        <button class="btn btn-accept">Accept</button>
+        <!-- View Portfolio Link -->
+        <a href="/craftsman/@Proposal.CraftsmanId" class="btn btn-view-portfolio">View Portfolio</a>
+
+        <button class="btn btn-reject" @onclick="RejectProposal" disabled="@isProcessing">Reject</button>
+        <button class="btn btn-accept" @onclick="AcceptProposal" disabled="@isProcessing">Accept</button>
+
         <button class="btn btn-more-info">More Info</button>
     </div>
 </div>
 
 @code {
-    [Parameter]
+    [Parameter] 
     public CustomerProposalVM Proposal { get; set; } = new();
+
+    [Parameter] 
+    public Guid ProjectId { get; set; }
+
+    private bool isProcessing = false;
+
+    private async Task AcceptProposal()
+    {
+        if (isProcessing) return;
+        isProcessing = true;
+
+        try
+        {
+            var client = HttpClientFactory.CreateClient("BFF");
+            var response = await client.PostAsync($"/customerprojects/{ProjectId}/proposals/{Proposal.Id}/accept", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Logger.LogInformation($"Proposal {Proposal.Id} accepted.");
+                NavManager.NavigateTo(NavManager.Uri, forceLoad: true);
+            }
+            else
+            {
+                Logger.LogError("Failed to accept proposal.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"Error: {ex.Message}");
+        }
+        finally
+        {
+            isProcessing = false;
+        }
+    }
+
+    private async Task RejectProposal()
+    {
+        if (isProcessing) return;
+        isProcessing = true;
+
+        try
+        {
+            var client = HttpClientFactory.CreateClient("BFF");
+            var response = await client.PostAsync($"/customerprojects/{ProjectId}/proposals/{Proposal.Id}/reject", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Logger.LogInformation($"Proposal {Proposal.Id} rejected.");
+                NavManager.NavigateTo(NavManager.Uri, forceLoad: true);
+            }
+            else
+            {
+                Logger.LogError("Failed to reject proposal.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"Error: {ex.Message}");
+        }
+        finally
+        {
+            isProcessing = false;
+        }
+    }
 }

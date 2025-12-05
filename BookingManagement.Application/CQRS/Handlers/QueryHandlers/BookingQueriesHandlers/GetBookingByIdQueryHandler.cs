@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BookingManagement.Application.Contracts;
 using BookingManagement.Application.CQRS.Queries.BookingQueries;
-using BookingManagement.Application.DTOs.BookingDTOs;
+using Core.SharedKernel.DTOs;
 using MediatR;
 
 namespace BookingManagement.Application.CQRS.Handlers.QueryHandlers.BookingQueriesHandlers

@@ -1,5 +1,5 @@
-﻿using MediatR;
-using ProductInventoryManagement.Application.DTOs.CategoryDTOs;
+﻿using Core.SharedKernel.DTOs;
+using MediatR;
 
 namespace ProductInventoryManagement.Application.CQRS.Commands.CategoryCommands
 {

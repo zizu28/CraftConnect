@@ -7,19 +7,20 @@ namespace CraftConnect.WASM.Validators
 	{
 		public ProposalCreationValidator()
 		{
-			RuleFor(x => x.Description)
-				.NotNull().WithMessage("Description is required.")
-				.Length(50, 1000).WithMessage("Description must be at least 50 characters.");
-			RuleFor(x => x.RateType)
-				.NotNull().WithMessage("Rate type must be selected.");
-			RuleFor(x => x.ProposedCost)
-				.NotNull().WithMessage("Proposed cost is required.")
-				.GreaterThan(0).WithMessage("Cost must be a positive number.");
+			RuleFor(x => x.CoverLetter)
+				.NotEmpty().WithMessage("Cover letter is required.")
+				.Length(20, 2000).WithMessage("Please provide between 20 and 2000 characters.");
+
+			RuleFor(x => x.PriceAmount)
+				.GreaterThan(0).WithMessage("Proposed price must be greater than zero.");
+
 			RuleFor(x => x.StartDate)
 				.NotNull().WithMessage("Start Date is required.");
+
 			RuleFor(x => x.EndDate)
 				.NotNull().WithMessage("End Date is required.")
-				.GreaterThan(x => x.StartDate).WithMessage("End Date must be after Start Date.");
+				.GreaterThan(x => x.StartDate).When(x => x.StartDate.HasValue)
+				.WithMessage("End Date must be after Start Date.");
 		}
 	}
 }

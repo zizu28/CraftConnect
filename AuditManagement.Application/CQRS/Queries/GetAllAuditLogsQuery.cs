@@ -1,4 +1,4 @@
-﻿using AuditManagement.Application.DTOs;
+﻿using Core.SharedKernel.DTOs;
 using MediatR;
 
 namespace AuditManagement.Application.CQRS.Queries
