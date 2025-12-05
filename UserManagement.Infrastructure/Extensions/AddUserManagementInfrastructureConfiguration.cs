@@ -13,7 +13,7 @@ namespace UserManagement.Infrastructure.Extensions
 			services.AddScoped<ITokenProvider, TokenProvider>();
 			services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<ICustomerRepository, CustomerRepository>();
-			services.AddScoped<ICraftsmanRepository, CraftmanRepository>();
+			services.AddScoped<ICraftsmanRepository, CraftmanRepository>();			
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			services.AddKeyedScoped<IFileStorageService, LocalFileStorageService>("localStorage");
 			services.AddKeyedScoped<IFileStorageService, S3FileStorageService>("S3Storage");

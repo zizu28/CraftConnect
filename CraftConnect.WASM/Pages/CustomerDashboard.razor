@@ -1,14 +1,16 @@
 ﻿@page "/customer/{CustomerId:guid}/dashboard"
 @layout CustomerLayout
+@inject NavigationManager NavManager
 @using CraftConnect.WASM.Components.CustomerDashboardPageComponents
 @using CraftConnect.WASM.Components.SkeletonComponents
 @using CraftConnect.WASM.Enums
 @using CraftConnect.WASM.ViewModels
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Threading.Tasks
+@using System.Security.Claims
 
 @if (isLoading)
 {
-    @* <DashboardSkeleton /> *@
     <p>Loading...</p>
 }
 else
@@ -31,7 +33,7 @@ else
                         <h2>Service Requests</h2>
                         <a href=@($"/customer/{CustomerId}/service-requests") class="view-all-link">View All</a>
                     </div>
-                    <ServiceRequestsTable Requests="dashboardData.RecentServiceRequests" IsMini="true" />
+                    <ServiceRequestsTable Requests="dashboardData.RecentServiceRequests" IsMini="true" CustomerId="@CustomerId" />
                 </section>
 
                 <section class="dashboard-section">
@@ -68,14 +70,33 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
     [Parameter]
     public Guid CustomerId { get; set; }
 
     private CustomerDashboardVM? dashboardData;
     private bool isLoading = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationState;
+        var user = authState.User;
+        if (user.Identity!.IsAuthenticated)
+        {
+            var userIdString = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (Guid.TryParse(userIdString, out var id))
+            {
+                CustomerId = id;
+            }
+        }
+        else
+        {
+            NavManager.NavigateTo("/login");
+            return;
+        }
+
         // Mock data for the dashboard
         dashboardData = new CustomerDashboardVM
         {

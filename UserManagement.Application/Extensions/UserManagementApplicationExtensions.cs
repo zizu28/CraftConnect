@@ -1,8 +1,8 @@
-﻿using FluentValidation;
-using Infrastructure.Persistence.Data;
-using MassTransit;
+﻿using Core.SharedKernel.Contracts;
+using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using UserManagement.Application.Services;
 namespace UserManagement.Application.Extensions
 {
 	public static class UserManagementApplicationExtensions
@@ -27,6 +27,7 @@ namespace UserManagement.Application.Extensions
 				cfg.AddMaps(typeof(UserManagementApplicationExtensions).Assembly);
 			});
 			services.AddValidatorsFromAssemblyContaining(typeof(UserManagementApplicationExtensions));
+			services.AddScoped<IUserModuleService, UserModuleService>();
 			return services;
 		}
 	}

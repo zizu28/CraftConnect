@@ -16,6 +16,8 @@ namespace BookingManagement.Infrastructure.Extensions
 			//});
 			services.AddScoped<IBookingRepository, BookingRepository>();
 			services.AddScoped<IBookingLineItemRepository, BookingLineItemRepository>();
+			services.AddScoped<ICustomerProjectRepository, CustomerProjectRepository>();
+			services.AddScoped<ICraftsmanProposalRepository, CraftsmanProposalRepository>();
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 			return services;

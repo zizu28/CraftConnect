@@ -1,4 +1,4 @@
-﻿namespace BookingManagement.Application.DTOs
+﻿namespace BookingManagement.Application.DTOs.Shared
 {
 	public record AddressDTO
 	{

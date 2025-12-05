@@ -21,9 +21,44 @@
 }
 
 .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
     color: #333333;
     font-weight: 700;
     font-size: 1.6rem;
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+}
+
+    .brand-logo img {
+        height: 36px; /* Fixed height forces the width to auto-adjust properly */
+        width: auto; /* Maintains aspect ratio */
+        object-fit: contain; /* Ensures the image doesn't look stretched */
+        display: block; /* Removes any bottom margin quirks from inline images */
+    }
+
+@media (max-width: 768px) {
+    .brand-logo {
+        font-size: 1.4rem;
+        gap: 10px;
+    }
+
+        .brand-logo img {
+            height: 32px;
+        }
+}
+
+@media (max-width: 576px) {
+    .brand-logo {
+        font-size: 1.25rem;
+        gap: 8px;
+    }
+
+        .brand-logo img {
+            height: 28px;
+        }
 }
 
 .nav-links {

@@ -1,16 +1,18 @@
-﻿<nav class="top-nav-bar">
+﻿@using CraftConnect.WASM.DTOs
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject IHttpClientFactory HttpClientFactory
+
+<nav class="top-nav-bar">
     <div class="nav-left">
         <a href="/" class="logo-container">
-            <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z" />
-                <path d="M12 6C8.69 6 6 8.69 6 12C6 15.31 8.69 18 12 18C15.31 18 18 15.31 18 12C18 8.69 15.31 6 12 6ZM12 16C9.79 16 8 14.21 8 12C8 9.79 9.79 8 12 8C14.21 8 16 9.79 16 12C16 14.21 14.21 16 12 16Z" />
-            </svg>
+            <img src="/images/craftconnect-logo.png" alt="CraftConnect Logo" class="brand-logo-img" />
             <span class="logo-text">CraftConnect</span>
         </a>
         <div class="nav-links">
             <NavLink href="/projects" Match="NavLinkMatch.Prefix">Projects</NavLink>
             <NavLink href="/customer/messages" Match="NavLinkMatch.Prefix">Messages</NavLink>
-            <NavLink href="/dashboard" Match="NavLinkMatch.Prefix">Profile</NavLink>
+            <NavLink href=@($"/dashboard/{CraftsmanId}") Match="NavLinkMatch.Prefix">Profile</NavLink>
         </div>
     </div>
     <div class="nav-right">
@@ -20,14 +22,19 @@
             </svg>
             <input class="global-search-input" type="text" placeholder="Search" />
         </div>
-        <div class="profile-icon">
-            <!-- User initial or image -->
-        </div>
-        <button class="mobile-menu-button" @onclick="ToggleMobileMenu">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-        </button>
+        <a href="/profile" class="profile-icon-link">
+            <div class="profile-icon">
+                @if (!string.IsNullOrEmpty(CraftsmanImageUrl))
+                {
+                    <img src="@CraftsmanImageUrl" alt="Profile" class="profile-image" />
+                }
+                else
+                {
+                    <!-- Optional: Show initials or default icon while loading -->
+                    <span class="loading-placeholder"></span>
+                }
+            </div>
+        </a>
     </div>
 </nav>
 
@@ -42,10 +49,58 @@
 }
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
+    private Guid CraftsmanId { get; set; }
+    private string CraftsmanImageUrl { get; set; } = "/images/user-avatar.jpg";
+
     private bool isMobileMenuOpen = false;
 
     private void ToggleMobileMenu()
     {
         isMobileMenuOpen = !isMobileMenuOpen;
+    }
+
+    override protected async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationState;
+        var user = authState.User;
+
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (Guid.TryParse(userIdClaim, out var craftsmanId))
+            {
+                CraftsmanId = craftsmanId;
+
+                await LoadProfileImage();
+            }
+        }
+    }
+
+    private async Task LoadProfileImage()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("BFF");
+             var response = await httpClient.GetFromJsonAsync<CraftmanResponseDTO>($"/users/craftsman/{CraftsmanId}");
+
+            if (response != null)
+            {
+                CraftsmanImageUrl = GetOptimizedUrl(response.ProfileImageUrl);
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to load navbar image: {ex.Message}");
+        }
+    }
+
+    private string GetOptimizedUrl(string? originalUrl)
+    {
+        if (string.IsNullOrEmpty(originalUrl)) return "/images/default-avatar.png";
+        return originalUrl.Replace("/upload/", "/upload/w_40,h_40,c_fill,g_face,q_auto,f_auto/");
     }
 }

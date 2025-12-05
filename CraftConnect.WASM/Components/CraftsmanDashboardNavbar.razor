@@ -1,13 +1,17 @@
-﻿@using CraftConnect.WASM.Services
+﻿@using CraftConnect.WASM.DTOs
+@using CraftConnect.WASM.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @inject ThemeService ThemeService
+@inject NavigationManager NavigationManager
+@inject IHttpClientFactory HttpClientFactory
 
 <header class="navbar-container dashboard-nav">
     <div class="navbar-content">
         <a href="/" class="brand-logo">
             <img src="/images/craftconnect-logo.png" alt="CraftConnect Logo" />
             CraftConnect
-        </a>
-
+        </a>     
         <div class="nav-links">
             <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
                 <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon" : "bi-sun")"></i>
@@ -17,19 +21,47 @@
                 <i class="bi bi-bell"></i>
             </a>
             <a href="/profile" class="profile-avatar-link">
-                <img src="/images/user-avatar.jpg" alt="User Avatar" class="profile-avatar" />
+                <img src=@(GetOptimizedUrl(craftsmanDTO.ProfileImageUrl)) alt="User Avatar" class="profile-avatar" />
             </a>
         </div>
     </div>
 </header>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; } = default!;
+
+    public Guid CraftsmanId { get; set; }
+
+    private CraftmanResponseDTO craftsmanDTO { get; set; } = new();
+
     [Parameter]
     public Guid ProjectId { get; set; }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationState;
+        var user = authState.User;
+        if(user.Identity == null || !user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if(userIdClaim == null)
+        {
+
+        }
+        CraftsmanId = Guid.Parse(userIdClaim!);
+        var httpClient = HttpClientFactory.CreateClient("BFF");
+        craftsmanDTO = await httpClient.GetFromJsonAsync<CraftmanResponseDTO>($"/users/craftsman/{CraftsmanId}");
+
         ProjectId = Guid.NewGuid();
-        return base.OnInitializedAsync();
+    }
+
+    private string GetOptimizedUrl(string? originalUrl)
+    {
+        if (string.IsNullOrEmpty(originalUrl)) return "/images/default-avatar.png";
+        return originalUrl.Replace("/upload/", "/upload/w_30,h_30,c_fill,q_auto,f_auto/");
     }
 }

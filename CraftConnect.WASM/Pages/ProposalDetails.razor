@@ -3,6 +3,8 @@
 @using CraftConnect.WASM.Components.SubmittedProposalsListPageComponents
 @using CraftConnect.WASM.Enums
 @using CraftConnect.WASM.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @inject NavigationManager NavigationManager
 
 <SubmittedPropsalsListNavbar />
@@ -66,20 +68,41 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; } = default!;
+
+    [Parameter]
+    public Guid CraftsmanId { get; set; }
+
     [Parameter]
     public Guid ProposalId { get; set; }
 
     private ProposalVM? proposal;
 
-    protected override void OnInitialized()
+    override protected async Task OnInitializedAsync()
     {
-        // In a real app, you would fetch this from a service based on ProposalId
-        LoadMockData();
+        var authState = await AuthenticationState;
+        var user = authState.User;
+
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (Guid.TryParse(userIdClaim, out var craftsmanId))
+            {
+                CraftsmanId = craftsmanId;
+
+                LoadMockData();
+            }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("login");
+        }
     }
 
     private void GoBack()
     {
-        NavigationManager.NavigateTo("/proposals");
+        NavigationManager.NavigateTo($"/craftsman/{CraftsmanId}/proposals");
     }
 
     private void LoadMockData()

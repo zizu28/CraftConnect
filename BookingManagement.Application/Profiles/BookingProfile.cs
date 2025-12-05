@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using BookingManagement.Application.DTOs;
 using BookingManagement.Application.DTOs.BookingDTOs;
+using BookingManagement.Application.DTOs.Shared;
 using BookingManagement.Domain.Entities;
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.ValueObjects;

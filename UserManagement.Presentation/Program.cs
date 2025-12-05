@@ -59,6 +59,11 @@ builder.Services.AddAuthentication(options =>
 	};
 });
 
+builder.Services.AddAuthorization(opt =>
+{
+	opt.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
+
 builder.Services.AddCors(opt =>
 {
 	opt.AddPolicy("AllowBlazorOrigin", policy =>

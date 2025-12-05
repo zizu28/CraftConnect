@@ -1,4 +1,5 @@
 ﻿using BookingManagement.Application.DTOs.BookingLineItemDTOs;
+using BookingManagement.Application.DTOs.Shared;
 
 namespace BookingManagement.Application.DTOs.BookingDTOs
 {

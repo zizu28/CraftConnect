@@ -50,6 +50,14 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			return craftman;
 		}
 
+		public Task<List<Craftman>> GetByIdsAsync(List<Guid> uniqueIds, CancellationToken cancellationToken = default)
+		{
+			var craftmen = dbContext.Craftmen
+				.Where(c => uniqueIds.Contains(c.Id))
+				.ToListAsync(cancellationToken);
+			return craftmen;
+		}
+
 		public async Task<Craftman> GetByProfessionAsync(string profession, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(profession);

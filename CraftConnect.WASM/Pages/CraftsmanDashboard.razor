@@ -4,8 +4,11 @@
 @using CraftConnect.WASM.Components.CustomerDashboardPageComponents
 @using CraftConnect.WASM.Components.SharedComponents
 @using CraftConnect.WASM.Components.SkeletonComponents
+@using CraftConnect.WASM.DTOs
 @using CraftConnect.WASM.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager NavManager
+@inject IHttpClientFactory HttpClientFactory
 
 @if (DashboardData == null && Projects == null && ServiceRequests == null)
 {
@@ -16,7 +19,7 @@ else
     <CraftsmanDashboardNavbar />
 
     <div class="dashboard-page-container">
-        <h2>Welcome, Olivia!</h2>
+        <h2>Welcome, @CurrentCraftsman!</h2>
 
         @* --- 1. Metrics Cards --- *@
         <div class="metrics-grid">
@@ -45,12 +48,20 @@ else
 @code {
     [Parameter]
     public Guid CraftmanId { get; set; }
+    private string CurrentCraftsman { get; set; } = string.Empty;
     private DashboardVM DashboardData { get; set; } = new();
     private List<ProjectItemVM> Projects { get; set; } = new();
     private List<ServiceRequestVM> ServiceRequests { get; set; } = new();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        var httpClient = HttpClientFactory.CreateClient("BFF");
+        var response = await httpClient.GetAsync($"/users/craftsman/{CraftmanId}");
+        if (response.IsSuccessStatusCode)
+        {
+            var user = await response.Content.ReadFromJsonAsync<CraftmanResponseDTO>();
+            CurrentCraftsman = $"{user!.FirstName} {user.LastName}";
+        }
         // Mock Data Initialization
         DashboardData = GetMockMetrics();
         Projects = GetMockProjects();

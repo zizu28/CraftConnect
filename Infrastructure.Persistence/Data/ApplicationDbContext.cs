@@ -24,6 +24,8 @@ namespace Infrastructure.Persistence.Data
 		public DbSet<Payment> Payments { get; set; }
 		public DbSet<Invoice> Invoices { get; set; }
 		public DbSet<AuditLog> AuditLogs { get; set; }
+		public DbSet<CustomerProject> CustomerProjects { get; set; }
+		public DbSet<CraftsmanProposal> CraftsmanProposals { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -39,6 +41,7 @@ namespace Infrastructure.Persistence.Data
 			modelBuilder.Owned<UserAddress>();
 			modelBuilder.Owned<GeoLocation>();
 			modelBuilder.Owned<Skill>();
+			modelBuilder.Owned<DateTimeRange>();
 
 			//modelBuilder.Owned<DateTimeRange>();
 			modelBuilder.Owned<Address>();

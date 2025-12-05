@@ -123,6 +123,69 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("BookingLineItems");
                 });
 
+            modelBuilder.Entity("BookingManagement.Domain.Entities.CraftsmanProposal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CoverLetter")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CraftsmanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CraftsmanProposals");
+                });
+
+            modelBuilder.Entity("BookingManagement.Domain.Entities.CustomerProject", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.PrimitiveCollection<string>("AttachmentIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.PrimitiveCollection<string>("MilestoneIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("SelectedCraftsmanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SelectedProposalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CustomerProjects");
+                });
+
             modelBuilder.Entity("Core.SharedKernel.ValueObjects.InboxMessage", b =>
                 {
                     b.Property<int>("Id")
@@ -906,6 +969,133 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Booking");
                 });
 
+            modelBuilder.Entity("BookingManagement.Domain.Entities.CraftsmanProposal", b =>
+                {
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.Money", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("CraftsmanProposalId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18, 2)");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CraftsmanProposalId");
+
+                            b1.ToTable("CraftsmanProposals");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CraftsmanProposalId");
+                        });
+
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.DateTimeRange", "ProposedTimeline", b1 =>
+                        {
+                            b1.Property<Guid>("CraftsmanProposalId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<DateTime>("End")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<DateTime>("Start")
+                                .HasColumnType("datetime2");
+
+                            b1.HasKey("CraftsmanProposalId");
+
+                            b1.ToTable("CraftsmanProposals");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CraftsmanProposalId");
+                        });
+
+                    b.Navigation("Price")
+                        .IsRequired();
+
+                    b.Navigation("ProposedTimeline")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BookingManagement.Domain.Entities.CustomerProject", b =>
+                {
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.Money", "Budget", b1 =>
+                        {
+                            b1.Property<Guid>("CustomerProjectId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18, 2)");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CustomerProjectId");
+
+                            b1.ToTable("CustomerProjects");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CustomerProjectId");
+                        });
+
+                    b.OwnsMany("Core.SharedKernel.ValueObjects.Skill", "Skills", b1 =>
+                        {
+                            b1.Property<Guid>("CustomerProjectId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<Guid>("SkillId")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<byte[]>("RowVersion")
+                                .IsConcurrencyToken()
+                                .ValueGeneratedOnAddOrUpdate()
+                                .HasColumnType("rowversion");
+
+                            b1.Property<int>("YearsOfExperience")
+                                .HasColumnType("int");
+
+                            b1.HasKey("CustomerProjectId", "SkillId");
+
+                            b1.ToTable("CustomerProjects_Skills");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CustomerProjectId");
+                        });
+
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.DateTimeRange", "Timeline", b1 =>
+                        {
+                            b1.Property<Guid>("CustomerProjectId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<DateTime>("End")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<DateTime>("Start")
+                                .HasColumnType("datetime2");
+
+                            b1.HasKey("CustomerProjectId");
+
+                            b1.ToTable("CustomerProjects");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CustomerProjectId");
+                        });
+
+                    b.Navigation("Budget")
+                        .IsRequired();
+
+                    b.Navigation("Skills");
+
+                    b.Navigation("Timeline")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Core.SharedKernel.ValueObjects.InboxMessage", b =>
                 {
                     b.HasOne("UserManagement.Domain.Entities.Customer", null)
@@ -1523,35 +1713,6 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasForeignKey("CraftmanId");
                         });
 
-                    b.OwnsMany("Core.SharedKernel.ValueObjects.Skill", "Skills", b1 =>
-                        {
-                            b1.Property<Guid>("CraftmanId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<Guid>("SkillId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<byte[]>("RowVersion")
-                                .IsConcurrencyToken()
-                                .ValueGeneratedOnAddOrUpdate()
-                                .HasColumnType("rowversion");
-
-                            b1.Property<int>("YearsOfExperience")
-                                .HasColumnType("int");
-
-                            b1.HasKey("CraftmanId", "SkillId");
-
-                            b1.ToTable("Skill");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CraftmanId");
-                        });
-
                     b.OwnsMany("Core.SharedKernel.ValueObjects.WorkEntry", "WorkExperience", b1 =>
                         {
                             b1.Property<Guid>("CraftmanId")
@@ -1587,6 +1748,35 @@ namespace Infrastructure.Persistence.Migrations
                             b1.HasKey("CraftmanId", "WorkEntryId");
 
                             b1.ToTable("WorkEntry");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CraftmanId");
+                        });
+
+                    b.OwnsMany("Core.SharedKernel.ValueObjects.Skill", "Skills", b1 =>
+                        {
+                            b1.Property<Guid>("CraftmanId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<Guid>("SkillId")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<byte[]>("RowVersion")
+                                .IsConcurrencyToken()
+                                .ValueGeneratedOnAddOrUpdate()
+                                .HasColumnType("rowversion");
+
+                            b1.Property<int>("YearsOfExperience")
+                                .HasColumnType("int");
+
+                            b1.HasKey("CraftmanId", "SkillId");
+
+                            b1.ToTable("Users_Skills");
 
                             b1.WithOwner()
                                 .HasForeignKey("CraftmanId");

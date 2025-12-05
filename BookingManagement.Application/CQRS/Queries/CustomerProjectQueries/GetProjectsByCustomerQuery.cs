@@ -1,0 +1,10 @@
+﻿using BookingManagement.Application.DTOs.CustomerProjectDTOs;
+using MediatR;
+
+namespace BookingManagement.Application.CQRS.Queries.CustomerProjectQueries
+{
+	public class GetProjectsByCustomerQuery : IRequest<List<CustomerProjectResponseDTO>>
+	{
+		public Guid CustomerId { get; set; }
+	}
+}

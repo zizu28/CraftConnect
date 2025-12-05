@@ -1,4 +1,4 @@
-﻿@page "/customer/{CustomerId:guid}/messages"
+﻿@page "/customer/messages"
 @layout CraftsmanLayout
 @using CraftConnect.WASM.Components.CustomerMessagesPageComponents
 @using CraftConnect.WASM.ViewModels
@@ -47,8 +47,6 @@
 </div>
 
 @code {
-    [Parameter]
-    public Guid CustomerId { get; set; }
     private MessagesViewModel viewModel = new();
     private Guid? selectedConversationId = Guid.NewGuid();
 
