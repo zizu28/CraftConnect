@@ -40,9 +40,9 @@
 
 @code {
     [CascadingParameter]
-    public Task<AuthenticationState> AuthenticationState { get; set; }
-    public Guid CustomerId { get; set; }
-    private List<CraftmanViewModel>? CraftsmenVM { get; set; }
+    public Task<AuthenticationState> AuthenticationState { get; set; } = default!;
+    public Guid CustomerId { get; set; } = Guid.Empty;
+    private List<CraftmanViewModel>? CraftsmenVM { get; set; } = new();
     private CraftsmanSearchParametersViewModel SearchParameters { get; set; } = new();
     private bool IsLoading { get; set; } = true;
     private string? ErrorMessage { get; set; }

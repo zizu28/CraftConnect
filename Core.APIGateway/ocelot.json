@@ -7,8 +7,10 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7235
+          //"Host": "localhost",
+          //"Port": 7235
+          "Host": "userManagement",
+          "Port": 8080
         }
       ]
     },
@@ -19,8 +21,10 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7235
+          //"Host": "localhost",
+          //"Port": 7235
+          "Host": "userManagement",
+          "Port": 8080
         }
       ],
       "AuthenticationOptions": {
@@ -40,8 +44,10 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7235
+          //"Host": "localhost",
+          //"Port": 7235
+          "Host": "userManagement",
+          "Port": 8080
         }
       ]
     },
@@ -52,8 +58,10 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7235
+          //"Host": "localhost",
+          //"Port": 7235
+          "Host": "userManagement",
+          "Port": 8080
         }
       ],
       "AuthenticationOptions": {
@@ -73,8 +81,10 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7285
+          //"Host": "localhost",
+          //"Port": 7285
+          "Host": "bookingManagement",
+          "Port": 8080
         }
       ],
       "AuthenticationOptions": {
@@ -94,8 +104,10 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7285
+          //"Host": "localhost",
+          //"Port": 7285
+          "Host": "bookingManagement",
+          "Port": 8080
         }
       ],
       "AuthenticationOptions": {
@@ -110,8 +122,10 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7285
+          //"Host": "localhost",
+          //"Port": 7285
+          "Host": "bookingManagement",
+          "Port": 8080
         }
       ],
       "AuthenticationOptions": {

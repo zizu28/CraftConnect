@@ -5,6 +5,7 @@ using BookingManagement.Presentation;
 using Core.EventServices;
 using Core.Logging;
 using Core.SharedKernel.Contracts;
+using CraftConnect.ServiceDefaults;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
@@ -25,12 +26,13 @@ builder.Services.AddFluentEmailService(builder.Configuration);
 builder.Services.AddBackgroundJobs(builder.Configuration);
 builder.Services.RegisterSerilog();
 builder.Services.AddMessageBroker(builder.Configuration);
+builder.AddSqlServerDbContext<ApplicationDbContext>("CraftConnectDB"); // For Aspire orchestration
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpClient<IUserModuleService, UserModuleHttpService>(client =>
 {
-	client.BaseAddress = new Uri("https://usermanagement");
+	client.BaseAddress = new Uri("https://userManagement");
 });
 
 var app = builder.Build();

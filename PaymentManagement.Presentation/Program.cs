@@ -1,5 +1,6 @@
 using Core.EventServices;
 using Core.Logging;
+using CraftConnect.ServiceDefaults;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using PaymentManagement.Application.Extensions;

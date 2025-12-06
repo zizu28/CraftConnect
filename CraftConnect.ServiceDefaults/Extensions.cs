@@ -2,13 +2,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.ServiceDiscovery;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
-namespace Microsoft.Extensions.Hosting
+namespace CraftConnect.ServiceDefaults
 {
 	// Adds common Aspire services: service discovery, resilience, health checks, and OpenTelemetry.
 	// This project should be referenced by each service project in your solution.
@@ -36,10 +36,10 @@ namespace Microsoft.Extensions.Hosting
 			});
 
 			// Uncomment the following to restrict the allowed schemes for service discovery.
-			builder.Services.Configure<ServiceDiscoveryOptions>(options =>
-			{
-				options.AllowedSchemes = ["https"];
-			});
+			//builder.Services.Configure<ServiceDiscoveryOptions>(options =>
+			//{
+			//	options.AllowedSchemes = ["https"];
+			//});
 
 			return builder;
 		}

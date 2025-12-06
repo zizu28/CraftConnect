@@ -11,13 +11,13 @@ namespace Core.BFF.Controllers
 	[Route("api/[controller]")]
 	public class AuthController(IHttpClientFactory httpClientFactory) : ControllerBase
 	{
-		private readonly HttpClient httpClient = httpClientFactory.CreateClient("UserManagement");
+		private readonly HttpClient httpClient = httpClientFactory.CreateClient("Gateway");
 
 		[HttpPost("login")]
 		public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
 		{
 			ArgumentNullException.ThrowIfNull(command, nameof(command));
-			var response = await httpClient.PostAsJsonAsync("/api/users/signin", command);
+			var response = await httpClient.PostAsJsonAsync("/users/signin", command);
 			if (!response.IsSuccessStatusCode)
 			{
 				return Unauthorized("Invalid credentials");

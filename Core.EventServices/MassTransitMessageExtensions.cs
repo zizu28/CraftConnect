@@ -13,7 +13,7 @@ namespace Core.EventServices
 			{
 				mt.AddEntityFrameworkOutbox<ApplicationDbContext>(config =>
 				{
-					config.QueryDelay = TimeSpan.FromSeconds(30);
+					config.QueryDelay = TimeSpan.FromSeconds(1);
 					config.UseSqlServer().UseBusOutbox();
 				});
 				mt.SetKebabCaseEndpointNameFormatter();

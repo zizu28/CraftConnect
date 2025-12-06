@@ -1,5 +1,6 @@
 using AuditManagement.Application.Extensions;
 using AuditManagement.Infrastructure.Extensions;
+using CraftConnect.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 

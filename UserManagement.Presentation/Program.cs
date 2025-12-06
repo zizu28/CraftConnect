@@ -1,5 +1,6 @@
 ﻿using Core.EventServices;
 using Core.Logging;
+using CraftConnect.ServiceDefaults;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
@@ -32,11 +33,13 @@ builder.Services.AddBackgroundJobs(builder.Configuration);
 builder.Services.RegisterSerilog();
 builder.Services.AddUserApplicationExtensions(builder.Configuration.GetSection("MediatR"));
 builder.Services.AddMessageBroker(builder.Configuration);
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions =>
-	{
-		sqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-	}));
+builder.AddSqlServerDbContext<ApplicationDbContext>("CraftConnectDB"); // For Aspire orchestration
+
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions =>
+//	{
+//		sqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+//	}));
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpContextAccessor();
 
@@ -70,6 +73,7 @@ builder.Services.AddCors(opt =>
 	opt.AddPolicy("AllowBlazorOrigin", policy =>
 	{
 		policy.WithOrigins("https://localhost:7222")
+			//policy.WithOrigins("https://blazor")
 			.AllowAnyMethod()
 			.AllowAnyHeader()
 			.AllowCredentials();

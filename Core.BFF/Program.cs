@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using CraftConnect.ServiceDefaults;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.Transforms;
@@ -12,9 +13,10 @@ builder.AddServiceDefaults();
 builder.Services.AddOpenApi();
 
 builder.Services.AddControllers(); // For the local AuthController
-builder.Services.AddHttpClient("UserManagement", client =>
+builder.Services.AddHttpClient("Gateway", client =>
 {
-	client.BaseAddress = new Uri("https://localhost:7235");
+	client.BaseAddress = new Uri("https://gateway");
+	//client.BaseAddress = new Uri("https://localhost:7235");
 });
 builder.Services.AddAuthentication(options =>
 {
@@ -75,14 +77,18 @@ builder.Services.AddReverseProxy()
 		});
 	});
 
-builder.Services.AddCors(opt =>
+builder.Services.AddCors(options =>
 {
-	opt.AddPolicy("AllowBlazor", policy =>
+	options.AddPolicy("AllowBlazor", builder =>
 	{
-		policy.WithOrigins("https://localhost:7222") // Blazor URL
-			  .AllowAnyMethod()
-			  .AllowAnyHeader()
-			  .AllowCredentials();
+		builder.SetIsOriginAllowed(origin =>
+		{
+			var uri = new Uri(origin);
+			return uri.Host == "localhost";
+		})
+		.AllowAnyMethod()
+		.AllowAnyHeader()
+		.AllowCredentials();
 	});
 });
 
@@ -118,7 +124,7 @@ static ClusterConfig[] GetClusters()
 			{
 				{"Ocelot", new DestinationConfig
 					{
-						Address = "https://localhost:7272"
+						Address = "https://gateway"
 					}
 				}
 			}

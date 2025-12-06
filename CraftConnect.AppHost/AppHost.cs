@@ -1,19 +1,18 @@
-using Core.SharedKernel.ValueObjects;
-
 var builder = DistributedApplication.CreateBuilder(args);
 
-var userDb = builder.AddSqlServer("sql").AddDatabase("CraftConnectDB");
+var userDb = builder.AddSqlServer("sql")
+	.AddDatabase("CraftConnectDB");
 var userModule = builder.AddProject<Projects.UserManagement_Presentation>("userManagement")
 	.WithReference(userDb)
 	.WaitFor(userDb);
 
-var bookingModule = builder.AddProject<Projects.BookingManagement_Presentation>("bookingmanagement")
+var bookingModule = builder.AddProject<Projects.BookingManagement_Presentation>("bookingManagement")
 	.WithReference(userDb)
-	.WaitFor(userModule)
+	.WaitFor(userDb)
 	.WithReference(userModule)
 	.WaitFor(userModule);
 
-var ocelotGateway = builder.AddProject < Projects.Core_APIGateway> ("gateway")
+var ocelotGateway = builder.AddProject<Projects.Core_APIGateway>("gateway")
 	.WithReference(userModule)
 	.WaitFor(userModule)
 	.WithReference(bookingModule)
@@ -25,5 +24,11 @@ var bff = builder.AddProject<Projects.Core_BFF>("bff")
 
 var blazor = builder.AddProject<Projects.CraftConnect_WASM>("blazor")
 	.WithReference(bff);
+
+//builder.Host.UseDefaultServiceProvider(options =>
+//{
+//	options.ValidateScopes = true; // Forces validation on startup
+//	options.ValidateOnBuild = true;
+//});
 
 builder.Build().Run();

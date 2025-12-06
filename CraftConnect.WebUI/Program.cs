@@ -1,3 +1,4 @@
+using CraftConnect.ServiceDefaults;
 using CraftConnect.WebUI.Auth;
 using CraftConnect.WebUI.Components;
 using CraftConnect.WebUI.Services;
@@ -11,7 +12,8 @@ builder.Services.AddRazorComponents()
 builder.AddServiceDefaults();
 builder.Services.AddHttpClient("Backend", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
+    //client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
+    client.BaseAddress = new Uri("https://bff");
 })
 .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
 {
