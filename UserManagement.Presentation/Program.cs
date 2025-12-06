@@ -19,6 +19,8 @@ System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeM
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 // --- 1. SERVICE REGISTRATION ---
 builder.Host.ConfigureSerilog();
 builder.Services.AddControllers()
@@ -76,7 +78,7 @@ builder.Services.AddCors(opt =>
 
 var app = builder.Build();
 
-
+app.MapDefaultEndpoints();
 app.UseExceptionHandler(opt => { });
 app.AddHangfireDashBoard();
 

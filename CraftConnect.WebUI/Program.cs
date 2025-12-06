@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-
+builder.AddServiceDefaults();
 builder.Services.AddHttpClient("Backend", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
@@ -37,6 +37,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.MapDefaultEndpoints();
 app.UseHttpsRedirection();
 
 

@@ -5,7 +5,7 @@ using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.AddServiceDefaults();
+builder.AddServiceDefaults();
 
 // Add services to the container.
 
@@ -89,7 +89,7 @@ builder.Services.AddCors(opt =>
 
 var app = builder.Build();
 
-//app.MapDefaultEndpoints();
+app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

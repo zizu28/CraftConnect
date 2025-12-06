@@ -50,6 +50,7 @@ internal class Program
 		builder.Services.AddSingleton<ThemeService>();
 
 		var app = builder.Build();
+
 		await app.RunAsync();
 	}
 }

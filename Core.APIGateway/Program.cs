@@ -14,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.AddServiceDefaults();
 //builder.Services.AddControllers();
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 
@@ -76,6 +77,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
+app.MapDefaultEndpoints();
 app.UseHttpsRedirection();
 
 app.UseCors("BFF");

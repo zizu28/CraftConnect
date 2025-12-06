@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.5.0" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>d5b56d4e-a2f1-4a57-b280-fff952184333</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.5.0" />
+    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AuditManagement.Presentation\AuditManagement.Presentation.csproj" />
+    <ProjectReference Include="..\BookingManagement.Presentation\BookingManagement.Presentation.csproj" />
+    <ProjectReference Include="..\Core.APIGateway\Core.APIGateway.csproj" />
+    <ProjectReference Include="..\Core.BFF\Core.BFF.csproj" />
+    <ProjectReference Include="..\CraftConnect.WASM\CraftConnect.WASM.csproj" />
+    <ProjectReference Include="..\CraftConnect.WebUI\CraftConnect.WebUI.csproj" />
+    <ProjectReference Include="..\PaymentManagement.Presentation\PaymentManagement.Presentation.csproj" />
+    <ProjectReference Include="..\ProductInventoryManagement.Presentation\ProductInventoryManagement.Presentation.csproj" />
+    <ProjectReference Include="..\UserManagement.Presentation\UserManagement.Presentation.csproj" />
+  </ItemGroup>
+
+</Project>

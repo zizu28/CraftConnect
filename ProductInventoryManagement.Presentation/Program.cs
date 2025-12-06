@@ -8,6 +8,8 @@ using ProductInventoryManagement.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Host.ConfigureSerilog();
@@ -23,6 +25,7 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+app.MapDefaultEndpoints();
 app.UseExceptionHandler(opt => { });
 
 // Configure the HTTP request pipeline.

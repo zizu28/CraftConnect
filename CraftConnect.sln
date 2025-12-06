@@ -139,6 +139,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.BFF", "Core.BFF\Core.B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraftConnect.WASM", "CraftConnect.WASM\CraftConnect.WASM.csproj", "{121C8D46-B14B-3BC5-FE75-4E09772DE0B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraftConnect.AppHost", "CraftConnect.AppHost\CraftConnect.AppHost.csproj", "{869196A3-D61C-49B6-9BCE-C208AA21FB77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraftConnect.ServiceDefaults", "CraftConnect.ServiceDefaults\CraftConnect.ServiceDefaults.csproj", "{6F17A204-57CA-4720-B475-249F66627432}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -305,6 +309,14 @@ Global
 		{121C8D46-B14B-3BC5-FE75-4E09772DE0B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{121C8D46-B14B-3BC5-FE75-4E09772DE0B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{121C8D46-B14B-3BC5-FE75-4E09772DE0B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{869196A3-D61C-49B6-9BCE-C208AA21FB77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{869196A3-D61C-49B6-9BCE-C208AA21FB77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{869196A3-D61C-49B6-9BCE-C208AA21FB77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{869196A3-D61C-49B6-9BCE-C208AA21FB77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F17A204-57CA-4720-B475-249F66627432}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F17A204-57CA-4720-B475-249F66627432}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F17A204-57CA-4720-B475-249F66627432}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F17A204-57CA-4720-B475-249F66627432}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

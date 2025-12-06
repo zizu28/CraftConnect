@@ -8,6 +8,8 @@ using PaymentManagement.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 builder.Services.AddControllers();
 builder.Services.AddPaymentManagementApplicationConfigurations(builder.Configuration);
 builder.Host.ConfigureSerilog();
@@ -22,7 +24,7 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
+app.MapDefaultEndpoints();
 app.UseExceptionHandler(opt => { });
 app.UseHttpsRedirection();
 app.UseCors("PaystackCors");

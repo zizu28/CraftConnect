@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -33,6 +35,7 @@ builder.Services.AddHttpClient<IUserModuleService, UserModuleHttpService>(client
 
 var app = builder.Build();
 
+app.MapDefaultEndpoints();
 app.UseExceptionHandler(opt => { });
 
 // Configure the HTTP request pipeline.
