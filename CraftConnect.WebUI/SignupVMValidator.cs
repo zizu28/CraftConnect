@@ -1,5 +1,4 @@
-﻿using CraftConnect.WebUI.Enums;
-using CraftConnect.WebUI.ViewModels;
+﻿using CraftConnect.WebUI.ViewModels;
 using FluentValidation;
 
 namespace CraftConnect.WebUI

@@ -11,7 +11,7 @@
         </a>
         <div class="nav-links">
             <NavLink href="/projects" Match="NavLinkMatch.Prefix">Projects</NavLink>
-            <NavLink href="/customer/messages" Match="NavLinkMatch.Prefix">Messages</NavLink>
+            <NavLink href=@($"/customer/{CraftsmanId}/messages") Match="NavLinkMatch.Prefix">Messages</NavLink>
             <NavLink href=@($"/dashboard/{CraftsmanId}") Match="NavLinkMatch.Prefix">Profile</NavLink>
         </div>
     </div>

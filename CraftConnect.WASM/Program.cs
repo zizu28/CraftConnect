@@ -24,16 +24,17 @@ internal class Program
 		builder.Services.AddScoped<IValidator<Project>, ProjectValidator>();
 		builder.Services.AddScoped<IValidator<SkillsDTO>, SkillsDTOValidator>();
 		builder.Services.AddTransient<CookieHandler>();
+		builder.Services.AddHttpClient("BookingManagement", client =>
+		{
+			client.BaseAddress = new Uri("https://localhost:7285");
+		});
+		builder.Services.AddHttpClient("UserManagement", client =>
+		{
+			client.BaseAddress = new Uri("https://localhost:7235");
+		});
 		builder.Services.AddHttpClient("BFF", client =>
 		{
-			var bffUrl = builder.Configuration["services:bff:https"]
-			  ?? builder.Configuration["services:bff:http"];
-			if (string.IsNullOrEmpty(bffUrl))
-			{
-				bffUrl = "https://localhost:7136";
-			}
-
-			client.BaseAddress = new Uri(bffUrl);
+			client.BaseAddress = new Uri("https://localhost:7136");
 		})
 		.AddHttpMessageHandler<CookieHandler>();
 

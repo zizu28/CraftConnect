@@ -1,6 +1,5 @@
-﻿using CraftConnect.WebUI.Components.Pages;
-using CraftConnect.WebUI.Enums;
-using System.Net.Mail;
+﻿using Core.SharedKernel.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CraftConnect.WebUI.ViewModels
 {
@@ -15,6 +14,7 @@ namespace CraftConnect.WebUI.ViewModels
 		public ServiceRequestStatus Status { get; set; }
 		public string ProjectDescription { get; set; }
 		public List<string> SkillsRequired { get; set; } = new();
+		[Column(TypeName = "decimal(18,2)")]
 		public decimal Budget { get; set; }
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }

@@ -35,6 +35,16 @@ namespace UserManagement.Application.Services
 			return result;
 		}
 
+		public async Task<string?> GetCustomerNameAsync(Guid customerId, CancellationToken ct = default)
+		{
+			var name = await _dbContext.Users
+			.Where(u => u.Id == customerId)
+			.Select(u => u.FirstName + " " + u.LastName)
+			.FirstOrDefaultAsync(ct);
+
+			return name;
+		}
+
 		public async Task<bool> IsCraftsmanValidAsync(Guid craftsmanId, CancellationToken ct = default)
 		{
 			return await _repo.ExistsAsync(craftsmanId, ct);

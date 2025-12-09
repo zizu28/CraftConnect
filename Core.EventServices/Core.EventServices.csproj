@@ -8,9 +8,9 @@
     <PackageReference Include="Aspire.RabbitMQ.Client.v7" />
     <PackageReference Include="MassTransit.AmazonSQS" />
     <PackageReference Include="MassTransit.RabbitMQ" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" VersionOverride="9.0.9" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" VersionOverride="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" VersionOverride="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core.APIGateway\Core.APIGateway.csproj" />

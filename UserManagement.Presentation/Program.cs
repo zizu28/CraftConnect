@@ -14,8 +14,6 @@ using UserManagement.Presentation;
 using UserManagement.Presentation.Controllers;
 
 
-
-// To disable automatic claim renaming
 System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,13 +31,13 @@ builder.Services.AddBackgroundJobs(builder.Configuration);
 builder.Services.RegisterSerilog();
 builder.Services.AddUserApplicationExtensions(builder.Configuration.GetSection("MediatR"));
 builder.Services.AddMessageBroker(builder.Configuration);
-builder.AddSqlServerDbContext<ApplicationDbContext>("CraftConnectDB"); // For Aspire orchestration
+//builder.AddSqlServerDbContext<ApplicationDbContext>("CraftConnectDB"); // For Aspire orchestration
 
-//builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions =>
-//	{
-//		sqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-//	}));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions =>
+	{
+		sqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+	}));
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpContextAccessor();
 
@@ -63,17 +61,14 @@ builder.Services.AddAuthentication(options =>
 	};
 });
 
-builder.Services.AddAuthorization(opt =>
-{
-	opt.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-});
+builder.Services.AddAuthorizationBuilder()
+	.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
 
 builder.Services.AddCors(opt =>
 {
 	opt.AddPolicy("AllowBlazorOrigin", policy =>
 	{
 		policy.WithOrigins("https://localhost:7222")
-			//policy.WithOrigins("https://blazor")
 			.AllowAnyMethod()
 			.AllowAnyHeader()
 			.AllowCredentials();

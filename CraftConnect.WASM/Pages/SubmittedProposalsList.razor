@@ -1,66 +1,112 @@
 ﻿@page "/craftsman/{CraftsmanId:guid}/proposals"
+@using Core.SharedKernel.DTOs
+@using Core.SharedKernel.Enums
 @using CraftConnect.WASM.Components.SharedComponents
 @using CraftConnect.WASM.Components.SubmittedProposalsListPageComponents
-@using CraftConnect.WASM.Enums
 @using CraftConnect.WASM.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject IHttpClientFactory HttpClientFactory
+@inject NavigationManager NavigationManager
+@inject ILoggerFactory LoggerFactory
 
 <SubmittedPropsalsListNavbar />
-<div class="proposals-container">
-    <header class="page-header">
-        <h1>My Proposals</h1>
-    </header>
 
-    <div class="toolbar-container">
-        <div class="search-container">
-            <InputText @bind-Value="searchTerm" @oninput="OnSearchInput" class="search-input" placeholder="Search by project or client" />
-        </div>
-        <div class="filter-buttons">
-            <button class="filter-btn @(currentFilter == null ? "active" : "")" @onclick="() => ChangeFilter(null)">All</button>
-            <button class="filter-btn @(currentFilter == ProposalStatus.Pending ? "active" : "")" @onclick="() => ChangeFilter(ProposalStatus.Pending)">Pending</button>
-            <button class="filter-btn @(currentFilter == ProposalStatus.Accepted ? "active" : "")" @onclick="() => ChangeFilter(ProposalStatus.Accepted)">Accepted</button>
-            <button class="filter-btn @(currentFilter == ProposalStatus.Rejected ? "active" : "")" @onclick="() => ChangeFilter(ProposalStatus.Rejected)">Rejected</button>
-            <button class="filter-btn @(currentFilter == ProposalStatus.Withdrawn ? "active" : "")" @onclick="() => ChangeFilter(ProposalStatus.Withdrawn)">Withdrawn</button>
+@if(isLoading)
+{
+    <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading your proposals...</p>
+    </div>
+}
+else if (allProposals.Count == 0)
+{
+    <div class="empty-state-container">
+        <div class="empty-state-card">
+            <div class="icon-circle">
+                <i class="bi bi-file-earmark-text"></i>
+            </div>
+            <h3>No Proposals Yet</h3>
+            <p>You haven't submitted any proposals for projects. Start browsing open projects to find your next job!</p>
+            <a href="/find-projects" class="btn-primary-action">Find Projects</a>
         </div>
     </div>
+}
+else if (FilteredProposals.Count == 0) 
+{
+    <div class="empty-state-container">
+        <p class="filter-empty-text">No proposals match your current search filters.</p>
+        <button class="btn-clear-filters" @onclick="ClearFilters">
+            Clear Filters</button>
+    </div>
+}
+else
+{
+    <div class="proposals-container">
+        <header class="page-header">
+            <h1>My Proposals</h1>
+        </header>
 
-    <div class="table-container">
-        <table class="proposals-table">
-            <thead>
-                <tr>
-                    <th>PROJECT TITLE</th>
-                    <th>CLIENT</th>
-                    <th>SUBMITTED</th>
-                    <th>STATUS</th>
-                    <th>ACTION</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var proposal in PaginatedProposals)
-                {
+        <div class="toolbar-container">
+            <div class="search-container">
+                <InputText @bind-Value="searchTerm" @oninput="OnSearchInput" class="search-input" placeholder="Search by project or client" />
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn @(currentFilter == null ? "active" : "")" @onclick="() => ChangeFilter(null)">All</button>
+                <button class="filter-btn @(currentFilter == ProposalStatus.Pending ? "active" : "")" @onclick="() => ChangeFilter(ProposalStatus.Pending)">Pending</button>
+                <button class="filter-btn @(currentFilter == ProposalStatus.Accepted ? "active" : "")" @onclick="() => ChangeFilter(ProposalStatus.Accepted)">Accepted</button>
+                <button class="filter-btn @(currentFilter == ProposalStatus.Rejected ? "active" : "")" @onclick="() => ChangeFilter(ProposalStatus.Rejected)">Rejected</button>
+                <button class="filter-btn @(currentFilter == ProposalStatus.Withdrawn ? "active" : "")" @onclick="() => ChangeFilter(ProposalStatus.Withdrawn)">Withdrawn</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="proposals-table">
+                <thead>
                     <tr>
-                        <td class="cell-project-title">@proposal.ProjectTitle</td>
-                        <td>@proposal.ClientName</td>
-                        <td>@proposal.SubmittedDate.ToString("MMM dd, yyyy")</td>
-                        <td><StatusBadge Status="proposal.Status" /></td>
-                        <td><a href="/proposals/@proposal.Id" class="action-link">View Details</a></td>
+                        <th>PROJECT TITLE</th>
+                        <th>CLIENT</th>
+                        <th>SUBMITTED</th>
+                        <th>STATUS</th>
+                        <th>ACTION</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach (var proposal in PaginatedProposals)
+                    {
+                        <tr>
+                            <td class="cell-project-title">@proposal.ProjectTitle</td>
+                            <td>@proposal.ClientName</td>
+                            <td>@proposal.SubmittedDate.ToString("MMM dd, yyyy")</td>
+                            <td><StatusBadge Status="proposal.Status" /></td>
+                            <td><a href="/proposals/@proposal.Id" class="action-link">View Details</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 
-    <Pagination CurrentPage="currentPage" TotalPages="TotalPages" OnPageChange="OnPageSelected" />
-</div>
+        <Pagination CurrentPage="currentPage" TotalPages="TotalPages" OnPageChange="OnPageSelected" />
+    </div>
+}
+
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthStateTask { get; set; }
+
     [Parameter]
     public Guid CraftsmanId { get; set; }
+    private ILogger Logger => LoggerFactory.CreateLogger<SubmittedProposalsList>();
 
-    private List<ProposalVM> allProposals = new();
+    private List<ProposalVM> allProposals { get; set; } = new();
     private string searchTerm = "";
     private ProposalStatus? currentFilter = null;
     private int currentPage = 1;
     private int pageSize = 4;
+    private string Message { get; set; } = "";
+
+    private bool isLoading = false;
 
     private List<ProposalVM> FilteredProposals
     {
@@ -91,38 +137,85 @@
 
     private int TotalPages => (int)Math.Ceiling(FilteredProposals.Count / (double)pageSize);
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        allProposals = new List<ProposalVM>
+        var authState = await AuthStateTask;
+        var user = authState.User;
+        if(!user.Identity!.IsAuthenticated)
         {
-            new ProposalVM { Id = Guid.NewGuid(), ProjectTitle = "Custom Oak Bookshelf for Living Room", ClientName = "Jane Doe", SubmittedDate = new DateTime(2023, 10, 26), Status = ProposalStatus.Pending },
-            new ProposalVM { Id = Guid.NewGuid(), ProjectTitle = "Kitchen Renovation", ClientName = "John Smith", SubmittedDate = new DateTime(2023, 10, 24), Status = ProposalStatus.Accepted },
-            new ProposalVM { Id = Guid.NewGuid(), ProjectTitle = "Garden Landscaping", ClientName = "Emily White", SubmittedDate = new DateTime(2023, 10, 22), Status = ProposalStatus.Rejected },
-            new ProposalVM { Id = Guid.NewGuid(), ProjectTitle = "Bespoke Walnut Desk", ClientName = "Michael Brown", SubmittedDate = new DateTime(2023, 10, 20), Status = ProposalStatus.Withdrawn },
-            // Add more data to test pagination (page 2)
-            new ProposalVM { Id = Guid.NewGuid(), ProjectTitle = "Attic Conversion", ClientName = "Sarah Lee", SubmittedDate = new DateTime(2023, 10, 19), Status = ProposalStatus.Pending },
-            new ProposalVM { Id = Guid.NewGuid(), ProjectTitle = "Bathroom Remodel", ClientName = "David Kim", SubmittedDate = new DateTime(2023, 10, 18), Status = ProposalStatus.Accepted },
-            new ProposalVM { Id = Guid.NewGuid(), ProjectTitle = "Patio Decking", ClientName = "Chris Taylor", SubmittedDate = new DateTime(2023, 10, 17), Status = ProposalStatus.Pending },
-            // Add more data to test pagination (page 3)
-            new ProposalVM { Id = Guid.NewGuid(), ProjectTitle = "Home Office Setup", ClientName = "Alex Johnson", SubmittedDate = new DateTime(2023, 10, 15), Status = ProposalStatus.Rejected },
-            new ProposalVM { Id = Guid.NewGuid(), ProjectTitle = "Driveway Paving", ClientName = "Maria Garcia", SubmittedDate = new DateTime(2023, 10, 14), Status = ProposalStatus.Withdrawn }
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if(userId != CraftsmanId.ToString())
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("BFF");
+            var response = await httpClient.GetAsync("/craftsmanproposals/my-proposals");
+            if (response.IsSuccessStatusCode)
+            {
+                var dtos = await response.Content.ReadFromJsonAsync<List<CraftsmanProposalResponseDTO>>();
+
+                if (dtos != null && dtos.Count > 0)
+                {
+                    allProposals = dtos.Select(MapToVM).ToList();
+                }
+                else
+                {
+                    Message = "You have not submitted any proposals yet.";
+                }
+            }
+            else
+            {
+                Logger.LogWarning("Failed to load proposals.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError("Error fetching proposals: {error}", ex.Message);
+        }
+    }
+
+    private ProposalVM MapToVM(CraftsmanProposalResponseDTO dto)
+    {
+        var httpClient = HttpClientFactory.CreateClient("BFF");
+        return new ProposalVM
+        {
+            Id = dto.Id,
+            ProjectTitle = dto.ProjectTitle ?? "Project #" + dto.ProjectId.ToString()[..4],
+            ClientName = dto.ClientName,
+            SubmittedDate = dto.SubmittedDate,
+            Status = Enum.Parse<ProposalStatus>(dto.StatusName, true),
+            ProposedSolution = dto.CoverLetter,
+            Pricing = dto.Price.Amount,
         };
     }
 
     private void ChangeFilter(ProposalStatus? filter)
     {
         currentFilter = filter;
-        currentPage = 1; // Reset to first page on filter change
+        currentPage = 1;
     }
 
     private void OnSearchInput(ChangeEventArgs e)
     {
         searchTerm = e.Value?.ToString() ?? "";
-        currentPage = 1; // Reset to first page on search
+        currentPage = 1;
     }
 
     private void OnPageSelected(int page)
     {
         currentPage = page;
+    }
+
+    private void ClearFilters()
+    {
+        searchTerm = "";
+        currentFilter = null;
+        currentPage = 1;
     }
 }

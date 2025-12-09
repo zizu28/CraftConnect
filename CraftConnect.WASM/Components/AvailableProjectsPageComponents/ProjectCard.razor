@@ -1,13 +1,18 @@
 ﻿@using Core.SharedKernel.Domain
 @using CraftConnect.WASM.ViewModels
 @using static CraftConnect.WASM.Pages.AvailableProjects
+@inject NavigationManager NavManager
 
 <div class="project-card">
     <div class="card-header">
-        <div class="user-avatar-box" style="background-image: url('@Project.UserAvatarUrl');"></div>
+        <div class="user-avatar-box"
+             style="background-image: url('@(string.IsNullOrEmpty(Project.UserAvatarUrl) ? "/images/user-avatar.jpg" : Project.UserAvatarUrl)');">
+        </div>
         <div class="project-info">
             <h4>@Project.Title</h4>
-            <p class="description">@Project.Description</p>
+            <p class="description">
+                @((Project.Description.Length > 100) ? Project.Description.Substring(0, 100) + "..." : Project.Description)
+            </p>
         </div>
     </div>
 
@@ -34,12 +39,25 @@
     </div>
 
     <div class="card-actions">
-        <button class="btn btn-view-details">View Details</button>
-        <button class="btn btn-submit-proposal">Submit Proposal</button>
+        <button class="btn btn-view-details" @onclick="ViewDetails">View Details</button>
+        <button class="btn btn-submit-proposal" @onclick="SubmitProposal">Submit Proposal</button>
     </div>
 </div>
 
 @code {
     [Parameter]
     public ProjectViewModel Project { get; set; } = default!;
+
+    // [Parameter]
+    // public Guid ProjectId { get; set; }
+
+    private void ViewDetails()
+    {
+        NavManager.NavigateTo($"/projects/{Project.Id}");
+    }
+
+    private void SubmitProposal()
+    {
+        NavManager.NavigateTo($"/proposal/create/{Project.Id}");
+    }
 }

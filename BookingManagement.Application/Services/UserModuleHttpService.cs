@@ -8,19 +8,56 @@ namespace BookingManagement.Application.Services
 		private readonly HttpClient _httpClient = httpClientFactory.CreateClient("UserModule");
 		public async Task<string?> GetCraftsmanNameAsync(Guid craftsmanId, CancellationToken ct = default)
 		{
-			//var response = await _httpClient.GetFromJsonAsync<CraftmanResponseDTO>($"/api/users/{craftsmanId}/name", ct);
-			//return response?.Name;
-			throw new NotImplementedException();
+			try
+			{
+				var response = await _httpClient.GetFromJsonAsync<string>($"/api/users/get-name/{craftsmanId}", ct);
+				return response;
+			}
+			catch(HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+			{
+				return null;
+			}			
 		}
 
-		public Task<Dictionary<Guid, string>> GetCraftsmanNamesAsync(IEnumerable<Guid> craftsmanIds, CancellationToken ct = default)
+		public async Task<Dictionary<Guid, string>> GetCraftsmanNamesAsync(IEnumerable<Guid> craftsmanIds, CancellationToken ct = default)
 		{
-			throw new NotImplementedException();
+			var uniqueIds = craftsmanIds.Distinct().ToList();
+			if(!(uniqueIds.Count > 0)) return [];
+			try
+			{
+				var response = await _httpClient.PostAsJsonAsync("/api/users/craftsman/batch-names", uniqueIds, ct);
+
+				if (response.IsSuccessStatusCode)
+				{
+					var result = await response.Content.ReadFromJsonAsync<Dictionary<Guid, string>>(cancellationToken: ct);
+					return result ?? [];
+				}
+
+			}
+			catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+			{
+				return [];
+			}
+			return [];
 		}
 
-		public Task<bool> IsCraftsmanValidAsync(Guid craftsmanId, CancellationToken ct = default)
+		public async Task<string?> GetCustomerNameAsync(Guid customerId, CancellationToken ct = default)
 		{
-			throw new NotImplementedException();
+			return await GetCraftsmanNameAsync(customerId, ct);
+		}
+
+		public async Task<bool> IsCraftsmanValidAsync(Guid craftsmanId, CancellationToken ct = default)
+		{
+			try
+			{
+				var request = new HttpRequestMessage(HttpMethod.Head, $"/api/users/craftsman/{craftsmanId}");
+				var response = await _httpClient.SendAsync(request, ct);
+				return response.IsSuccessStatusCode;
+			}
+			catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+			{
+				return false;
+			}
 		}
 	}
 }

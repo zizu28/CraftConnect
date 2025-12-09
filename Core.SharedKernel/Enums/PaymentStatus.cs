@@ -2,15 +2,15 @@
 {
 	public enum PaymentStatus
 	{
-		Paid,
 		Unpaid,
 		PartiallyPaid,
+		Paid,
+		Completed,
 		Pending,
 		Authorized,
-		Completed,
-		Refunded,
 		Failed,
-		PartiallyRefunded,
-		Cancelled
+		Refunded,
+		Cancelled,
+		PartiallyRefunded
 	}
 }

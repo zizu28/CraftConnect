@@ -1,6 +1,4 @@
-﻿using CraftConnect.WebUI.Enums;
-
-namespace CraftConnect.WebUI.ViewModels
+﻿namespace CraftConnect.WebUI.ViewModels
 {
 	public class SignupVM
 	{

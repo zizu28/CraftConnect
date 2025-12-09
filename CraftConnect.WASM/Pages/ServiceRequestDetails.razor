@@ -1,10 +1,15 @@
-﻿@page "/customer/{Customerid:guid}/service-requests/{RequestId:guid}"
+﻿@page "/projects/{ProjectId:guid}"
+@* @page "/customer/{Customerid:guid}/service-requests/{RequestId:guid}" *@
 @layout CraftedMainLayout
+@using Core.SharedKernel.DTOs
+@using Core.SharedKernel.Enums
 @using CraftConnect.WASM.Layout
 @using CraftConnect.WASM.Components.ServiceRequestDetailsPageComponents
-@using CraftConnect.WASM.Enums
 @using CraftConnect.WASM.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager NavigationManager
+@inject ILoggerFactory LoggerFactory
+@inject IHttpClientFactory HttpClientFactory
 
 <div class="page-container">
     <!-- Breadcrumbs -->
@@ -93,37 +98,64 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; } = default!;
+    private ILogger Logger => LoggerFactory.CreateLogger<ServiceRequestDetails>();
+
     [Parameter]
-    public Guid CustomerId { get; set; }
-    [Parameter]
-    public Guid RequestId { get; set; }
+    public Guid ProjectId { get; set; }
 
     private ServiceRequestVM request = new();
+    public CustomerProjectResponseDTO? projectDto { get; set; } = new();
+    private bool isLoading = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // Mock data for this specific page (ID 101)
-        request = new ServiceRequestVM
+        if (isLoading) return;
+        isLoading = true;
+        var authState = await AuthenticationState;
+        var user = authState.User;
+        if (user.Identity == null || !user.Identity.IsAuthenticated)
         {
-            Id = Guid.NewGuid(),
-            ProjectTitle = "Custom Bookshelf for Living Room",
-            Status = ServiceRequestStatus.Open,
-            ProjectDescription = "I'm looking for a custom-built bookshelf to fit a specific nook in my living room. I have a design in mind and can provide sketches and measurements. The material should be solid oak with a light, natural finish.",
-            SkillsRequired = new List<string> { "Woodworking", "Carpentry", "Finishing" },
-            Budget = 1200,
-            StartDate = new DateTime(2024, 8, 1),
-            EndDate = new DateTime(2024, 9, 1),
-            Attachments = new List<AttachedDocument>
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("BFF");
+            var response = await httpClient.GetAsync($"/customerprojects/{ProjectId}");
+            if (response.IsSuccessStatusCode)
             {
-                new AttachedDocument { FileName = "bookshelf_sketch.jpg", DownloadUrl = "#" },
-                new AttachedDocument { FileName = "measurements.pdf", DownloadUrl = "#" }
-            },
-            Proposals = new List<CustomerProposalVM>
-            {
-                new CustomerProposalVM { Id = Guid.NewGuid(), CraftsmanName = "John Doe", CraftsmanAvatarUrl = "https://placehold.co/40x40/FDBA74/7C2D12?text=JD", Price = 1150, QuoteSummary = "I have extensive experience with oak furniture. I can start next week and guarantee a high-quality finish." },
-                new CustomerProposalVM { Id = Guid.NewGuid(), CraftsmanName = "Jane Smith", CraftsmanAvatarUrl = "https://placehold.co/40x40/94A3B8/FFFFFF?text=JS", Price = 1300, QuoteSummary = "Passionate woodworker specializing in custom pieces. My quote includes premium materials and detailed finishing." },
-                new CustomerProposalVM { Id = Guid.NewGuid(), CraftsmanName = "Sam Brown", CraftsmanAvatarUrl = "https://placehold.co/40x40/B6A49A/4F46E5?text=SB", Price = 1200, QuoteSummary = "I can match your budget and timeline. Let's discuss the design details." }
+                projectDto = await response.Content.ReadFromJsonAsync<CustomerProjectResponseDTO>();
+                if (projectDto != null)
+                {
+                    request = new ServiceRequestVM
+                    {
+                        Id = projectDto.Id,
+                        ProjectTitle = projectDto.Title,
+                        Status = projectDto.Status,
+                        ProjectDescription = projectDto.Description,
+                        SkillsRequired = projectDto.Skills.Select(s => s.Name).ToList(),
+                        Budget = projectDto.Budget.Amount,
+                        StartDate = projectDto.StartDate,
+                        EndDate = projectDto.EndDate,
+                    };
+                }
+                else
+                {
+                    Logger.LogWarning("Project DTO is null for ProjectId: {ProjectId}", ProjectId);
+                }
             }
-        };
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "An error occurred while loading service request details.");
+            // Handle error (e.g., show a message or redirect)
+        }
+        finally
+        {
+            isLoading = false;
+        }            
     }
 }

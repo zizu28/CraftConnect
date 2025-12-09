@@ -86,7 +86,7 @@ namespace BookingManagement.Presentation.Controllers
 			return NoContent();
 		}
 
-		[HttpPost]
+		[HttpPost("post-project")]
 		public async Task<IActionResult> PostProject([FromBody] CreateCustomerProjectDTO dto)
 		{
 			var customerId = GetUserId();

@@ -19,8 +19,7 @@ namespace CraftConnect.WASM.Validators
 
 			RuleFor(x => x.EndDate)
 				.NotNull().WithMessage("End Date is required.")
-				.GreaterThan(x => x.StartDate).When(x => x.StartDate.HasValue)
-				.WithMessage("End Date must be after Start Date.");
+				.GreaterThan(x => x.StartDate).WithMessage("End Date must be after Start Date.");
 		}
 	}
 }

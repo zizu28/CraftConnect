@@ -8,7 +8,6 @@
 @using Blazored.FluentValidation
 @using Core.SharedKernel.DTOs
 @using CraftConnect.WASM.Components.SignUpPageComponents
-@using CraftConnect.WASM.Enums
 @using CraftConnect.WASM.Layout
 @using CraftConnect.WASM.Validators
 @using CraftConnect.WASM.ViewModels
@@ -121,10 +120,17 @@
 
 @code {
     public SignupVMValidator Validator { get; set; } = new();
-    private UserCreateDTO model { get; set; }
+    private UserCreateDTO model { get; set; } = new()
+    {
+        Email = string.Empty,
+        Password = string.Empty,
+        ConfirmPassword = string.Empty,
+        Role = string.Empty,
+        AgreeToTerms = false
+    };
     private bool showPassword = false;
     private bool isLoading = false;
-    private HttpResponseMessage userResponse { get; set; }
+    private HttpResponseMessage userResponse { get; set; } = default!;
     private string? errorMessage;
 
     private void OnUserTypeChanged(string newUserType)

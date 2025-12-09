@@ -2,8 +2,9 @@
 {
 	public enum DiscountStatus
 	{
-		Active, 
-		Expired, 
+		Active,
+		Expired,
 		Inactive
 	}
+
 }

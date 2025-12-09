@@ -1,7 +1,7 @@
 ﻿@page "/proposals/{ProposalId:guid}"
+@using Core.SharedKernel.Enums
 @using CraftConnect.WASM.Components.ProjectDetailsPageComponents
 @using CraftConnect.WASM.Components.SubmittedProposalsListPageComponents
-@using CraftConnect.WASM.Enums
 @using CraftConnect.WASM.ViewModels
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
@@ -71,7 +71,6 @@ else
     [CascadingParameter]
     public Task<AuthenticationState> AuthenticationState { get; set; } = default!;
 
-    [Parameter]
     public Guid CraftsmanId { get; set; }
 
     [Parameter]
@@ -96,7 +95,7 @@ else
         }
         else
         {
-            NavigationManager.NavigateTo("login");
+            NavigationManager.NavigateTo("/login");
         }
     }
 

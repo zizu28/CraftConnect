@@ -1,4 +1,5 @@
-﻿using Core.SharedKernel.DTOs;
+﻿using Core.SharedKernel.Contracts;
+using Core.SharedKernel.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -9,13 +10,14 @@ using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.CQRS.Queries.CraftmanQueries;
 using UserManagement.Application.CQRS.Queries.CustomerQueries;
 using UserManagement.Application.CQRS.Queries.UserQueries;
-using UserManagement.Application.Responses;
 
 namespace UserManagement.Presentation.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
-	public class UsersController(IMediator mediator) : ControllerBase
+	public class UsersController(
+		IMediator mediator,
+		IUserModuleService userModuleService) : ControllerBase
 	{
 		[HttpGet("me")]
 		[Authorize]
@@ -65,6 +67,32 @@ namespace UserManagement.Presentation.Controllers
 			return Ok(user);
 		}
 
+		[HttpGet("get-name/{Id:guid}")]
+		public async Task<IActionResult> GetCraftsmanName([FromRoute] Guid id)
+		{
+			var name = await userModuleService.GetCraftsmanNameAsync(id);
+			if (name == null)
+			{
+				return NotFound($"Craftsman with ID {id} not found.");
+			}
+			return Ok(name);
+		}
+
+		[HttpPost("craftsman/batch-names")]
+		public async Task<IActionResult> GetBatchNames([FromBody] List<Guid> ids)
+		{
+			var names = await userModuleService.GetCraftsmanNamesAsync(ids);
+			//var names = await mediator.Send(new GetBatchNamesQuery { Ids = ids });
+			return Ok(names);
+		}
+
+		[HttpHead("craftsman/{id}")]
+		public async Task<IActionResult> CheckExists(Guid id)
+		{
+			var exists = await mediator.Send(new CheckUserExistsQuery { UserId = id });
+			return exists ? Ok() : NotFound();
+		}
+
 		[HttpGet("craftsman/{id:guid}")]
 		public async Task<IActionResult> GetCraftsmanByIdAsync([FromRoute] Guid id)
 		{
@@ -90,7 +118,6 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("register")]
-		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RegisterNewUserAsync([FromBody] UserCreateDTO user)
 		{
 			var command = new RegisterUserCommand { User = user };
@@ -103,7 +130,6 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("register/craftman")]
-		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RegisterNewCraftmanAsync([FromBody] CraftmanCreateDTO craftman)
 		{
 			var command = new RegisterCraftmanCommand { Craftman = craftman };
@@ -116,7 +142,6 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("register/customer")]
-		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RegisterNewCustomerAsync([FromBody] CustomerCreateDTO customer)
 		{
 			var command = new RegisterCustomerCommand { Customer = customer };
@@ -129,7 +154,6 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("resend-email")]
-		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ResendEmailAsync([FromBody] ResendEmailCommand command)
 		{
 			if(command == null)
@@ -153,6 +177,7 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("signin")]
+		[AllowAnonymous]
 		public async Task<IActionResult> LoginUserAsync([FromBody] LoginUserCommand command)
 		{
 			ArgumentNullException.ThrowIfNull(command, nameof(command));
@@ -164,10 +189,10 @@ namespace UserManagement.Presentation.Controllers
 			var userQuery = new GetUserByEmailQuery { Email = command.Email };
 			var userResponseDto = await mediator.Send(userQuery);			
 
-			return Ok(new UpstreamLoginResponse
+			return Ok(new 
 			{
-				AccessToken = loginResponse.AccessToken,
-				RefreshToken = loginResponse.RefreshToken,
+				loginResponse.AccessToken,
+				loginResponse.RefreshToken,
 				User = userResponseDto
 			});
 		}
@@ -181,7 +206,6 @@ namespace UserManagement.Presentation.Controllers
 
 
 		[HttpPost("refresh-token")]
-		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RefreshTokenAsync()
 		{
 			if(!Request.Cookies.TryGetValue("X-Refresh-Token", out var refreshToken))
@@ -223,7 +247,6 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("change-password")]
-		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordCommand command)
 		{
 			ArgumentNullException.ThrowIfNull(command);

@@ -1,4 +1,4 @@
-﻿using CraftConnect.WASM.Enums;
+﻿using Core.SharedKernel.Enums;
 
 namespace CraftConnect.WASM.ViewModels
 {

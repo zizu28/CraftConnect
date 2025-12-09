@@ -10,7 +10,7 @@ namespace BookingManagement.Presentation.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
-	[Authorize] // Requires Authentication
+	[Authorize]
 	public class CraftsmanProposalsController(IMediator mediator) : ControllerBase
 	{
 		private readonly IMediator _mediator = mediator;
@@ -23,19 +23,6 @@ namespace BookingManagement.Presentation.Controllers
 			var result = await _mediator.Send(query);
 			return Ok(result);
 		}
-
-		//[HttpGet("project/{projectId:guid}")]
-		//public async Task<IActionResult> GetProposalsForProject(Guid projectId)
-		//{
-		//	// Note: This endpoint is usually for CUSTOMERS (Project Owners)
-		//	// But if a Craftsman wants to see their specific bid on a project, logic differs.
-		//	// For now, let's assume this returns all proposals for a project (Customer View).
-
-		//	// TODO: Add logic to ensure only the Project Owner can see ALL proposals.
-		//	var query = new GetProposalsByProjectQuery { ProjectId = projectId };
-		//	var result = await _mediator.Send(query);
-		//	return Ok(result);
-		//}
 
 		[HttpGet("{id:guid}")]
 		public async Task<IActionResult> GetProposalById(Guid id)
@@ -50,7 +37,7 @@ namespace BookingManagement.Presentation.Controllers
 			return Ok(result);
 		}
 
-		[HttpPost]
+		[HttpPost("submit-proposal")]
 		public async Task<IActionResult> SubmitProposal([FromBody] CreateCraftsmanProposalDTO dto)
 		{
 			var craftsmanId = GetUserId();

@@ -1,9 +1,9 @@
 ﻿@page "/customer/{CustomerId:guid}/dashboard"
 @layout CustomerLayout
+@using Core.SharedKernel.Enums
 @using CraftConnect.WebUI.Components.CustomerDashboardPageComponents
 @using CraftConnect.WebUI.Components.Layout
 @using CraftConnect.WebUI.Components.SkeletonComponents
-@using CraftConnect.WebUI.Enums
 
 @if (dashboardData == null)
 {

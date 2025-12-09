@@ -1,8 +1,10 @@
 ﻿@page "/projects/available"
+@using Core.SharedKernel.DTOs
 @using CraftConnect.WASM.Components.AvailableProjectsPageComponents
 @using CraftConnect.WASM.Components.SharedComponents
 @using CraftConnect.WASM.ViewModels
 @inject IHttpClientFactory HttpClientFactory
+@inject ILoggerFactory LoggerFactory
 
 <DashboardNavbar />
 
@@ -27,6 +29,13 @@
         {
             <p class="loading-message">Fetching new projects...</p>
         }
+        else if(!Projects.Any() && SearchParameters.PageNumber > 1)
+        {
+            <div class="no-results">
+                <p>You have reached the end of the results.</p>
+                <button class="btn-primary-action" @onclick="async () => { SearchParameters.PageNumber = 1; await LoadProjectsAsync(); }">Return to First Page</button>
+            </div>
+        }
         else if (Projects.Any())
         {
             <div class="projects-grid">
@@ -50,8 +59,11 @@
     private List<ProjectViewModel> Projects { get; set; } = new();
     private ProjectSearchParameters SearchParameters { get; set; } = new();
     private bool IsLoading { get; set; } = true;
-    private int TotalItems = 25;
-    private int TotalPages => (int)Math.Ceiling((double)TotalItems / 9); // Assuming 9 items per page
+    private ILogger Logger => LoggerFactory.CreateLogger<AvailableProjects>();
+
+    private int TotalItems = 0;
+    private int PageSize = 10;
+    private int TotalPages => (int)Math.Ceiling((double)TotalItems / PageSize);
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,69 +76,74 @@
         await LoadProjectsAsync();
     }
 
+    private async Task ClearFilters()
+    {
+        SearchParameters = new(); // Reset
+        await LoadProjectsAsync();
+    }
+
     private async Task LoadProjectsAsync()
     {
         IsLoading = true;
-        // var bookingsClient = HttpClientFactory.CreateClient("Bookings");
-        // var bookingsResponse = await bookingsClient.GetAsync("api/bookings/");
-        await Task.Delay(500);
-        Projects = GetMockData().ToList();
-        IsLoading = false;
         StateHasChanged();
+
+        try
+        {
+            var client = HttpClientFactory.CreateClient("BFF");
+
+            // Build Query String manually or use a helper
+            var query = $"/customerprojects/search?searchTerm={SearchParameters.Keyword}&pageNumber={SearchParameters.PageNumber}&pageSize={PageSize}";
+
+            // Call API
+            var response = await client.GetAsync(query);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var dtos = await response.Content.ReadFromJsonAsync<List<CustomerProjectResponseDTO>>();
+
+                if (dtos != null)
+                {
+                    TotalItems = dtos.Count < PageSize ? dtos.Count : 100;
+
+                    Projects = dtos.Select(MapToViewModel).ToList();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"Error loading projects: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
-    // Placeholder data models
-    public record ProjectSearchParameters()
+    private ProjectViewModel MapToViewModel(CustomerProjectResponseDTO dto)
+    {
+        return new ProjectViewModel
+        {
+            Id = dto.Id,
+            Title = dto.Title,
+            Description = dto.Description,
+            UserAvatarUrl = dto.CustomerAvatarUrl ?? "/images/default-user.png", // Need to add to DTO
+            BudgetRange = $"${dto.Budget.Amount} {dto.Budget.Currency}",
+            Deadline = dto.Timeline.End.ToString("MMM dd, yyyy"),
+            Location = dto.Location,
+            Tags = dto.Skills.Select(s => s.Name).Take(3).ToList()
+        };
+    }
+
+    // Parameters Class (Kept in same file or moved to ViewModels)
+    public class ProjectSearchParameters
     {
         public string Keyword { get; set; } = string.Empty;
         public string SortBy { get; set; } = "Newest";
         public int PageNumber { get; set; } = 1;
         public List<string> Skills { get; set; } = new();
-        public decimal MinBudget { get; set; } = 0;
-        public decimal MaxBudget { get; set; } = 0;
-        public DateTime? Deadline { get; set; } = null;
-        public string Location { get; set; } = string.Empty;
-    }
-    
-
-
-    private IEnumerable<ProjectViewModel> GetMockData()
-    {
-        return new List<ProjectViewModel>
-        {
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Title = "Custom Bookshelf for Living Room",
-                Description = "Looking for a skilled carpenter to build a custom, floor-to-ceiling bookshelf. Needs to be sturdy and match existing decor.",
-                UserAvatarUrl = "/images/p1.jpg",
-                Tags = new List<string>{"Woodworking", "Carpentry", "Furniture Design"},
-                BudgetRange = "$500 - $1000",
-                Deadline = "By Oct 31, 2024",
-                Location = "New York, NY"
-            },
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Title = "Hand-thrown Pottery Set",
-                Description = "Seeking a potter to create a custom 12-piece dinnerware set. Must be food-safe and dishwasher-safe.",
-                UserAvatarUrl = "/images/p2.jpg",
-                Tags = new List<string>{"Pottery", "Ceramics"},
-                BudgetRange = "$300 - $600",
-                Deadline = "By Nov 15, 2024",
-                Location = "Remote"
-            },
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Title = "Wrought Iron Garden Gate",
-                Description = "Need a custom wrought iron gate for my garden entrance. Looking for an ornate, classic design. Dimensions will be provided.",
-                UserAvatarUrl = "/images/p3.jpg",
-                Tags = new List<string>{"Metalwork", "Blacksmithing"},
-                BudgetRange = "$1200 - $2000",
-                Deadline = "By Dec 01, 2024",
-                Location = "Chicago, IL"
-            },
-        }.Skip((SearchParameters.PageNumber - 1) * 9).Take(9).ToList();
+        public decimal? MinBudget { get; set; }
+        public decimal? MaxBudget { get; set; }
+        public DateTime? Deadline { get; set; }
+        public string? Location { get; set; }
     }
 }

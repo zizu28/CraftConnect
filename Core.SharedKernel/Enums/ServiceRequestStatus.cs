@@ -2,9 +2,10 @@
 {
 	public enum ServiceRequestStatus
 	{
-		Open,
+		AwaitingProposals,
 		InProgress,
 		Completed,
+		Open, 
 		Closed
 	}
 }

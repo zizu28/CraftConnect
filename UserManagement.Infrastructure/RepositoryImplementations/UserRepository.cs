@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto;
 using System.Linq.Expressions;
 using UserManagement.Application.Contracts;
 using UserManagement.Domain.Entities;
@@ -44,6 +45,14 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 		public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
 		{
 			return await FindBy(u => u.Id == id, cancellationToken);
+		}
+
+		public async Task<Dictionary<Guid, string>> GetNamesByIdsAsync(List<Guid> uniqueIds, CancellationToken cancellationToken)
+		{
+			return await dbContext.Users
+			.Where(u => uniqueIds.Contains(u.Id))
+			.Select(u => new { u.Id, FullName = u.FirstName + " " + u.LastName })
+			.ToDictionaryAsync(k => k.Id, v => v.FullName, cancellationToken);
 		}
 
 		public Task UpdateAsync(User entity, CancellationToken cancellationToken = default)

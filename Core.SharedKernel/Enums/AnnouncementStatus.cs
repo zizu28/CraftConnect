@@ -1,5 +1,9 @@
 ﻿namespace Core.SharedKernel.Enums
 {
-	public enum AnnouncementStatus { Draft, Scheduled, Published, Archived }
-
+	public enum AnnouncementStatus
+	{
+		Published,
+		Scheduled,
+		Draft
+	}
 }

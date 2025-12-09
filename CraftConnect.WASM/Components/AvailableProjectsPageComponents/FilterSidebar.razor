@@ -29,7 +29,7 @@
             <input type="range" min="0" max="5000" step="100" @bind="SearchParameters.MinBudget" />
             <div class="range-labels">
                 <span>$@SearchParameters.MinBudget</span>
-                <span>$5000+</span>
+                <span>@(SearchParameters.MaxBudget > 0 ? SearchParameters.MaxBudget.ToString() : "5000+")</span>
             </div>
         </div>
     </div>
@@ -86,12 +86,10 @@
         {
             SearchParameters.Skills.Add(skill);
         }
-        // No StateHasChanged needed here; it will happen when ApplyFilters is called.
     }
 
     private async Task ApplyFiltersAndNotify()
     {
-        // Notify parent to run search with the new parameters
         await SearchParametersChanged.InvokeAsync(SearchParameters);
         await OnApplyFilters.InvokeAsync();
     }

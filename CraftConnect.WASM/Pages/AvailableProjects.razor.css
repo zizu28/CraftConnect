@@ -1,65 +1,188 @@
-﻿.main-dashboard-container {
+﻿/* =========================================
+   PAGE LAYOUT
+   ========================================= */
+
+.main-dashboard-container {
     display: grid;
-    grid-template-columns: 280px 1fr; /* Fixed sidebar width, flexible results */
+    /* Sidebar is fixed 280px on desktop, Results take the rest */
+    grid-template-columns: 280px 1fr;
     max-width: 1400px;
-    margin: 80px auto 40px; /* Space for fixed navbar */
-    gap: 30px;
-    padding: 0 20px;
+    margin: 90px auto 40px; /* Accounts for fixed navbar height */
+    gap: 40px;
+    padding: 0 40px;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #1f2937;
 }
 
 .results-area {
-    padding-top: 20px;
+    width: 100%;
+    min-width: 0; /* Prevents grid blowout */
 }
+
+/* =========================================
+   HEADER & SORTING
+   ========================================= */
 
 .results-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 20px;
-    padding-right: 15px;
-    border-bottom: 1px solid #eee;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+    flex-wrap: wrap; /* Wraps on mobile */
+    gap: 16px;
 }
 
-    .results-header h1 {
-        font-size: 2rem;
-        margin-bottom: 5px;
-    }
+.header-text h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #111827;
+}
 
-    .results-header p {
-        color: #666;
-        margin-bottom: 15px;
-    }
+.header-text p {
+    color: #6b7280;
+    font-size: 1rem;
+    margin: 0;
+}
 
 .sort-control {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 12px;
 }
 
-    .sort-control select {
-        padding: 8px 12px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
+    .sort-control label {
+        font-weight: 500;
+        color: #374151;
+        font-size: 0.9rem;
     }
+
+    .sort-control select {
+        padding: 8px 36px 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        background-color: #fff;
+        font-size: 0.9rem;
+        color: #1f2937;
+        cursor: pointer;
+        /* Custom arrow logic handled by browser or add svg background here */
+    }
+
+/* =========================================
+   RESULTS GRID
+   ========================================= */
 
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 30px;
-    margin-top: 20px;
+    /* Smart responsive grid: Cards are min 350px wide */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
 }
 
-/* --- Responsive Layout --- */
-@media (max-width: 1024px) {
-    .main-dashboard-container {
-        grid-template-columns: 1fr; /* Stack sidebar and results vertically */
-        gap: 20px;
-        padding: 0 15px;
+/* =========================================
+   EMPTY STATE / LOADING (Unified Style)
+   ========================================= */
+
+.loading-state,
+.empty-state-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    text-align: center;
+    background-color: #f9fafb;
+    border-radius: 12px;
+    padding: 40px;
+}
+
+.empty-state-card {
+    max-width: 400px;
+}
+
+.icon-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: #eff6ff;
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 16px;
+}
+
+.empty-state-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #1f2937;
+}
+
+.empty-state-card p {
+    color: #6b7280;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.btn-primary-action {
+    background-color: #2563eb;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .btn-primary-action:hover {
+        background-color: #1d4ed8;
     }
 
+/* =========================================
+   RESPONSIVE BREAKPOINTS
+   ========================================= */
+
+/* Tablet & Large Mobile (Max 1024px) */
+@media (max-width: 1024px) {
+    .main-dashboard-container {
+        /* Stack Sidebar on top of Results */
+        grid-template-columns: 1fr;
+        padding: 0 24px;
+        gap: 24px;
+    }
+
+    /* Adjust Header for stacking */
     .results-header {
         flex-direction: column;
         align-items: flex-start;
+        gap: 16px;
+    }
+
+    .sort-control {
+        width: 100%;
+        justify-content: space-between; /* Spread label and select */
+    }
+}
+
+/* Small Mobile (Max 600px) */
+@media (max-width: 600px) {
+    .main-dashboard-container {
+        padding: 0 16px;
+        margin-top: 80px;
+    }
+
+    .header-text h1 {
+        font-size: 1.75rem;
+    }
+
+    /* Allow cards to go full width */
+    .projects-grid {
+        grid-template-columns: 1fr;
     }
 }

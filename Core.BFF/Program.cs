@@ -15,8 +15,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddControllers(); // For the local AuthController
 builder.Services.AddHttpClient("Gateway", client =>
 {
-	client.BaseAddress = new Uri("https://gateway");
-	//client.BaseAddress = new Uri("https://localhost:7235");
+	client.BaseAddress = new Uri("https://localhost:7272");
 });
 builder.Services.AddAuthentication(options =>
 {
@@ -81,11 +80,7 @@ builder.Services.AddCors(options =>
 {
 	options.AddPolicy("AllowBlazor", builder =>
 	{
-		builder.SetIsOriginAllowed(origin =>
-		{
-			var uri = new Uri(origin);
-			return uri.Host == "localhost";
-		})
+		builder.WithOrigins("https://localhost:7222")
 		.AllowAnyMethod()
 		.AllowAnyHeader()
 		.AllowCredentials();
@@ -124,7 +119,7 @@ static ClusterConfig[] GetClusters()
 			{
 				{"Ocelot", new DestinationConfig
 					{
-						Address = "https://gateway"
+						Address = "https://localhost:7272"
 					}
 				}
 			}

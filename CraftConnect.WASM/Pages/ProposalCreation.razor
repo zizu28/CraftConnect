@@ -3,6 +3,8 @@
 @using Core.SharedKernel.DTOs
 @using CraftConnect.WASM.Validators
 @using CraftConnect.WASM.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @inject NavigationManager NavManager
 @inject IHttpClientFactory HttpClientFactory
 @inject ILogger<ProposalCreation> Logger
@@ -78,11 +80,15 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthStateTask { get; set; }
+
     [Parameter] 
     public Guid ProjectId { get; set; }
+    public Guid CraftsmanId { get; set; }
 
     private ProposalCreationVM ProposalData { get; set; } = new();
-    private CustomerProjectResponseDTO? projectDetails;
+    private CustomerProjectResponseDTO? projectDetails { get; set; }
     private ProposalCreationValidator Validator = new();
 
     private bool isLoadingProject = true;
@@ -90,6 +96,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        CraftsmanId = await GetCraftsmanId();
         try
         {
             var client = HttpClientFactory.CreateClient("BFF");
@@ -118,20 +125,20 @@
         {
             var client = HttpClientFactory.CreateClient("BFF");
 
-            var payload = new
+            var payload = new CreateCraftsmanProposalDTO
             {
                 ProjectId = ProposalData.ProjectId,
                 CoverLetter = ProposalData.CoverLetter,
-                Price = new { Amount = ProposalData.PriceAmount, Currency = ProposalData.PriceCurrency },
-                ProposedTimeline = new { Start = ProposalData.StartDate, End = ProposalData.EndDate }
+                Price = new MoneyDTO{ Amount = ProposalData.PriceAmount, Currency = ProposalData.PriceCurrency },
+                ProposedTimeline = new DateTimeRangeDTO{ Start = ProposalData.StartDate, End = ProposalData.EndDate }
             };
 
-            var response = await client.PostAsJsonAsync("/craftsmanproposals", payload);
+            var response = await client.PostAsJsonAsync("/craftsmanproposals/submit-proposal", payload);
 
             if (response.IsSuccessStatusCode)
             {
                 Logger.LogInformation("Proposal submitted!");
-                NavManager.NavigateTo("/craftsman/proposals");
+                NavManager.NavigateTo($"/craftsman/{CraftsmanId}/proposals");
             }
             else
             {
@@ -152,6 +159,14 @@
 
     private void Cancel()
     {
-        NavManager.NavigateTo("/find-projects"); // Or wherever you came from
+        NavManager.NavigateTo("/projects/available");
+    }
+
+    private async Task<Guid> GetCraftsmanId()
+    {
+        var authState = await AuthStateTask;
+        var user = authState.User;
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return Guid.Parse(userId!);
     }
 }

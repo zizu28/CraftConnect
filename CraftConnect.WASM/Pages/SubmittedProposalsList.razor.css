@@ -1,157 +1,289 @@
-﻿/* Styles for the main page container */
+﻿/* =========================================
+   BASE LAYOUT (Container & Typography)
+   ========================================= */
+
 .proposals-container {
     max-width: 1100px;
     margin: 40px auto;
     padding: 24px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: #111827; /* Gray-900 */
-    /* Removed background-color, page background is default */
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #1f2937; /* Gray-800 for better readability */
 }
 
 .page-header h1 {
-    font-size: 2.25rem; /* 36px */
+    font-size: 2.25rem;
     font-weight: 700;
     margin-bottom: 24px;
+    color: #111827;
 }
+
+/* =========================================
+   TOOLBAR (Search & Filters)
+   ========================================= */
 
 .toolbar-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
     gap: 16px;
+    flex-wrap: wrap; /* Allows stacking on smaller screens */
+
     background-color: #FFFFFF;
     border: 1px solid #E5E7EB;
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 16px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 24px;
 }
 
+/* Search Bar */
 .search-container {
     position: relative;
     width: 320px;
+    /* Flex grow ensures it fills space on mobile */
+    flex: 1 1 300px;
 }
 
 .search-icon {
     position: absolute;
-    left: 5px;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
     width: 20px;
     height: 20px;
-    color: #9CA3AF; /* Gray-400 */
+    color: #9CA3AF;
 }
 
 .search-input {
     width: 100%;
-    padding: 10px 10px 10px 40px; /* Left padding for icon */
-    border: 1px solid #D1D5DB; /* Gray-300 */
+    padding: 10px 10px 10px 40px; /* Space for icon */
+    border: 1px solid #D1D5DB;
     border-radius: 8px;
-    font-size: 0.9rem;
-    background-color: #F9FAFB; /* Gray-50 */
+    font-size: 0.95rem;
+    background-color: #F9FAFB;
+    transition: all 0.2s;
 }
 
     .search-input:focus {
         outline: none;
-        border-color: #4F46E5; /* Indigo-600 */
-        box-shadow: 0 0 0 1px #4F46E5;
+        border-color: #4F46E5;
         background-color: #FFFFFF;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
     }
 
-
+/* Filter Buttons */
 .filter-buttons {
     display: flex;
     gap: 8px;
-    flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+    flex-wrap: wrap;
 }
 
-/* MODIFICATION: Updated filter button styles */
 .filter-btn {
     padding: 8px 16px;
-    border: none; /* No border */
-    background-color: transparent; /* Transparent background */
-    color: #6B7280; /* Gray-500 */
+    border: none;
+    background-color: transparent;
+    color: #6B7280;
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: 500;
-    transition: all 0.1s ease-in-out;
+    transition: all 0.2s;
 }
 
     .filter-btn:hover:not(.active) {
-        background-color: #F9FAFB; /* Gray-50 */
-        color: #374151; /* Gray-700 */
+        background-color: #F3F4F6;
+        color: #374151;
     }
 
-    /* MODIFICATION: Updated active button style */
     .filter-btn.active {
-        background-color: #4F46E5; /* Indigo-600 */
-        color: #FFFFFF; /* White */
+        background-color: #4F46E5;
+        color: #FFFFFF;
         font-weight: 600;
     }
 
-/* Table styling (unchanged) */
+/* =========================================
+   TABLE STYLING
+   ========================================= */
+
 .table-container {
-    border: 1px solid #E5E7EB; /* Gray-200 */
-    border-radius: 8px;
-    overflow: hidden; /* To clip the corners of the table */
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-    /* Add horizontal scroll for smaller viewports */
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    background-color: #fff;
+    /* Enable horizontal scroll on mobile without breaking layout */
     overflow-x: auto;
 }
 
 .proposals-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    min-width: 600px; /* Force scrollbar if too narrow */
 }
 
     .proposals-table th,
     .proposals-table td {
         padding: 16px;
         text-align: left;
-        border-bottom: 1px solid #E5E7EB; /* Gray-200 */
-        white-space: nowrap;
+        border-bottom: 1px solid #E5E7EB;
     }
 
     .proposals-table th {
-        background-color: #F9FAFB; /* Gray-50 */
-        color: #6B7280; /* Gray-500 */
-        font-size: 0.75rem; /* 12px */
-        font-weight: 600;
+        background-color: #F9FAFB;
+        color: #6B7280;
+        font-size: 0.75rem;
         text-transform: uppercase;
+        font-weight: 600;
         letter-spacing: 0.05em;
     }
 
     .proposals-table td {
-        color: #374151; /* Gray-700 */
+        color: #374151;
         vertical-align: middle;
+    }
+
+    .proposals-table tr:last-child td {
+        border-bottom: none;
     }
 
 .cell-project-title {
     font-weight: 500;
-    color: #111827; /* Gray-900 */
-    white-space: normal; /* Allow project title to wrap */
-}
-
-.proposals-table tr:last-child td {
-    border-bottom: none;
+    color: #111827;
+    /* Limit title width and wrap gracefully */
+    max-width: 250px;
+    white-space: normal;
 }
 
 .action-link {
-    color: #4F46E5; /* Indigo-600 */
+    color: #4F46E5;
     font-weight: 600;
     text-decoration: none;
+    transition: color 0.2s;
 }
 
     .action-link:hover {
+        color: #3730a3;
         text-decoration: underline;
     }
 
-/* --- RESPONSIVE MEDIA QUERIES --- */
+/* =========================================
+   EMPTY STATE & LOADING
+   ========================================= */
 
-/* Tablet and large phones (e.g., < 768px) */
+.loading-state,
+.empty-state-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+    padding: 20px;
+    background-color: #f9fafb;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+/* Card Style for Empty State */
+.empty-state-card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.icon-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: #eff6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+    .icon-circle i {
+        font-size: 2rem;
+        color: #3b82f6;
+    }
+
+.empty-state-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.empty-state-card p {
+    font-size: 0.95rem;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.btn-primary-action {
+    background-color: #2563eb;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+    .btn-primary-action:hover {
+        background-color: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+
+.filter-empty-text {
+    font-size: 1.1rem;
+    color: #4b5563;
+    margin-bottom: 12px;
+}
+
+.btn-clear-filters {
+    background: white;
+    border: 1px solid #d1d5db;
+    padding: 8px 16px;
+    border-radius: 6px;
+    color: #374151;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+    .btn-clear-filters:hover {
+        background-color: #f3f4f6;
+    }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================
+   RESPONSIVE BREAKPOINTS
+   ========================================= */
+
+/* 1. Tablet & Large Mobile (Max 768px) */
 @media (max-width: 768px) {
     .proposals-container {
         margin: 20px auto;
@@ -159,74 +291,67 @@
     }
 
     .page-header h1 {
-        font-size: 1.8rem; /* 28px */
+        font-size: 1.75rem;
     }
 
+    /* Stack the Toolbar */
     .toolbar-container {
-        padding: 12px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
     }
 
     .search-container {
-        width: 100%; /* Make search full-width */
-    }
-
-    .filter-buttons {
         width: 100%;
-        justify-content: flex-start; /* Align buttons to the left */
+        max-width: 100%;
     }
 
-    /* Allow table cells to wrap text instead of forcing no-wrap */
+    /* Scrollable Filter Buttons */
+    .filter-buttons {
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        flex-wrap: nowrap; /* Force horizontal scroll line */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .filter-btn {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    /* Table Adjustments */
     .proposals-table th,
     .proposals-table td {
-        white-space: normal;
-        padding: 12px 10px;
-    }
-
-    /* Stack pagination controls */
-    .pagination-nav {
-        flex-direction: column;
-        align-items: center;
-        gap: 16px;
-    }
-
-    .page-numbers {
-        order: 1; /* Place numbers in the middle */
-    }
-
-    .pagination-nav .page-link:first-child {
-        order: 0; /* "Previous" on top */
-    }
-
-    .pagination-nav .page-link:last-child {
-        order: 2; /* "Next" on bottom */
+        padding: 12px;
     }
 }
 
-/* Small phones (e.g., < 480px) */
+/* 2. Small Phones (Max 480px) */
 @media (max-width: 480px) {
     .proposals-container {
-        padding: 10px;
+        padding: 12px;
     }
 
     .page-header h1 {
-        font-size: 1.5rem; /* 24px */
+        font-size: 1.5rem;
     }
 
-    .filter-buttons .filter-btn {
-        flex-grow: 1; /* Allow 2-3 buttons per line */
-        text-align: center;
-    }
-
-    /* Hide less critical columns on very small screens */
-    .proposals-table th:nth-child(2), /* Hide Client TH */
-    .proposals-table td:nth-child(2), /* Hide Client TD */
-    .proposals-table th:nth-child(3), /* Hide Submitted TH */
-    .proposals-table td:nth-child(3) /* Hide Submitted TD */ {
+    /* Hide less critical columns to fit screen */
+    .proposals-table th:nth-child(3), /* Hide Submitted Date */
+    .proposals-table td:nth-child(3) {
         display: none;
     }
 
-    .proposals-table th,
-    .proposals-table td {
-        padding: 12px 8px; /* Further reduce padding */
+    /* Adjust Empty State */
+    .empty-state-card {
+        padding: 24px;
+        box-shadow: none;
+        border: none;
+        background: transparent;
+    }
+
+    .empty-state-container {
+        background-color: transparent; /* Cleaner look on tiny screens */
     }
 }

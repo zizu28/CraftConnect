@@ -1,4 +1,5 @@
-﻿using Core.SharedKernel.DTOs;
+﻿using Core.SharedKernel.Contracts;
+using Core.SharedKernel.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -12,12 +13,13 @@ namespace CraftConnect.Tests
 	public class UserControllerTest
 	{
 		private readonly Mock<IMediator> _mediatorMock;
+		private readonly Mock<IUserModuleService> _userModuleService;
 		private readonly UsersController _usersController;
 
 		public UserControllerTest()
 		{
 			_mediatorMock = new Mock<IMediator>();
-			_usersController = new UsersController(_mediatorMock.Object);
+			_usersController = new UsersController(_mediatorMock.Object, _userModuleService!.Object);
 		}
 
 		[Fact]

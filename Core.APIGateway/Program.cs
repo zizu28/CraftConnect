@@ -19,8 +19,7 @@ builder.Services.AddCors(opt =>
 {
 	opt.AddPolicy("AllowBFF", policy =>
 	{
-		//policy.WithOrigins("https://localhost:7272")
-		policy.WithOrigins("https://bff")
+		policy.WithOrigins("https://localhost:7136")
 		.AllowAnyMethod()
 			.AllowAnyHeader()
 			.AllowCredentials();

@@ -2,6 +2,12 @@
 @layout CraftsmanLayout
 @using CraftConnect.WASM.Components.CustomerMessagesPageComponents
 @using CraftConnect.WASM.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject IHttpClientFactory HttpClientFactory
+@inject NavigationManager NavigationManager
+@inject ILoggerFactory LoggerFactory
+
 
 <div class="messages-page-layout">
     <!-- Search and Conversation List -->
@@ -47,10 +53,14 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthStateTask { get; set; }
+    [Parameter]
+    public Guid CustomerId { get; set; }
     private MessagesViewModel viewModel = new();
     private Guid? selectedConversationId = Guid.NewGuid();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         // Mock Data based on the image
         viewModel.CurrentUser = new UserProfileVM { Name = "John Smith" };

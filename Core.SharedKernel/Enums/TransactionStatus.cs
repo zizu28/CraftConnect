@@ -1,4 +1,4 @@
-﻿namespace CraftConnect.WebUI.Enums
+﻿namespace Core.SharedKernel.Enums
 {
 	public enum TransactionStatus
 	{

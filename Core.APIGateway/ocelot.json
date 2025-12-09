@@ -1,36 +1,63 @@
 {
   "Routes": [
     {
+      "UpstreamPathTemplate": "/users/signin",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/users/signin",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7235
+        }
+      ],
+    },
+    {
       "UpstreamPathTemplate": "/users/craftsman/{Id}",
       "UpstreamHttpMethod": [ "GET" ],
       "DownstreamPathTemplate": "/api/users/craftsman/{Id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          //"Host": "localhost",
-          //"Port": 7235
-          "Host": "userManagement",
-          "Port": 8080
+          "Host": "localhost",
+          "Port": 7235
+          //"Host": "userManagement",
+          //"Port": 8080
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/users/customer/{Id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/users/customer/{Id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7235
+          //"Host": "userManagement",
+          //"Port": 8080
         }
       ]
     },
     {
       "UpstreamPathTemplate": "/users/{everything}",
-      "UpstreamHttpMethod": [ "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "DownstreamPathTemplate": "/api/users/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          //"Host": "localhost",
-          //"Port": 7235
-          "Host": "userManagement",
-          "Port": 8080
+          "Host": "localhost",
+          "Port": 7235
+          //"Host": "userManagement",
+          //"Port": 8080
         }
       ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
       },
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "RateLimitOptions": {
         "EnableRateLimiting": true,
         "Period": "30s",
@@ -44,10 +71,10 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          //"Host": "localhost",
-          //"Port": 7235
-          "Host": "userManagement",
-          "Port": 8080
+          "Host": "localhost",
+          "Port": 7235
+          //"Host": "userManagement",
+          //"Port": 8080
         }
       ]
     },
@@ -58,16 +85,17 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          //"Host": "localhost",
-          //"Port": 7235
-          "Host": "userManagement",
-          "Port": 8080
+          "Host": "localhost",
+          "Port": 7235
+          //"Host": "userManagement",
+          //"Port": 8080
         }
       ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
       },
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "RateLimitOptions": {
         "EnableRateLimiting": true,
         "Period": "30s",
@@ -81,16 +109,17 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          //"Host": "localhost",
-          //"Port": 7285
-          "Host": "bookingManagement",
-          "Port": 8080
+          "Host": "localhost",
+          "Port": 7285
+          //"Host": "bookingManagement",
+          //"Port": 8080
         }
       ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
       },
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "RateLimitOptions": {
         "EnableRateLimiting": true,
         "Period": "30s",
@@ -104,15 +133,20 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          //"Host": "localhost",
-          //"Port": 7285
-          "Host": "bookingManagement",
-          "Port": 8080
+          "host": "localhost",
+          "port": 7285
+          //"Host": "bookingManagement",
+          //"Port": 8080
         }
       ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
+      },
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "30s",
+        "Limit": 15
       }
     },
     {
@@ -122,15 +156,20 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          //"Host": "localhost",
-          //"Port": 7285
-          "Host": "bookingManagement",
-          "Port": 8080
+          "Host": "localhost",
+          "Port": 7285
+          //"Host": "bookingManagement",
+          //"Port": 8080
         }
       ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
+      },
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "30s",
+        "Limit": 15
       }
     },
     {

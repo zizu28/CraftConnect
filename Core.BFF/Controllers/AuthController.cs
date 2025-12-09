@@ -22,13 +22,11 @@ namespace Core.BFF.Controllers
 			{
 				return Unauthorized("Invalid credentials");
 			}
-			var loginResponse = await response.Content.ReadFromJsonAsync<UpstreamLoginResponse>();
-			
+			var loginResponse = await response.Content.ReadFromJsonAsync<UpstreamLoginResponse>();			
 			if(string.IsNullOrEmpty(loginResponse!.AccessToken))
 			{
 				return Unauthorized();
-			}
-			
+			}			
 			var claims = new List<Claim>
 			{
 				new(ClaimTypes.Name, command.Email),
@@ -36,7 +34,6 @@ namespace Core.BFF.Controllers
 				new(ClaimTypes.Role, loginResponse.User.Role.ToString()),
 			};
 			var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
 			var authProperties = new AuthenticationProperties
 			{
 				IsPersistent = command.RememberMe,
@@ -49,12 +46,11 @@ namespace Core.BFF.Controllers
 				new AuthenticationToken { Name = "access-token", Value = loginResponse.AccessToken },
 				new AuthenticationToken { Name = "refresh-token", Value = loginResponse.RefreshToken }
 			]);
-
 			await HttpContext.SignInAsync(
 				CookieAuthenticationDefaults.AuthenticationScheme,
 				new ClaimsPrincipal(identity),
-				authProperties);
-
+				authProperties
+			);
 			return Ok(loginResponse.User);
 		}
 

@@ -1,4 +1,4 @@
-﻿using CraftConnect.WebUI.Enums;
+﻿using Core.SharedKernel.Enums;
 
 namespace CraftConnect.WebUI.ViewModels
 {

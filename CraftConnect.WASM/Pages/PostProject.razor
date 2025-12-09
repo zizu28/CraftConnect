@@ -1,5 +1,6 @@
 ﻿@page "/customer/{CustomerId:guid}/post-project"
 @using Blazored.FluentValidation
+@using Core.SharedKernel.DTOs
 @using CraftConnect.WASM.Components.PostProjectPageComponents
 @using CraftConnect.WASM.Validators
 @using CraftConnect.WASM.ViewModels
@@ -8,6 +9,7 @@
 @using UserManagement.Domain.Entities
 @inject NavigationManager NavigationManager
 @inject IHttpClientFactory HttpClientFactory
+@inject ILoggerFactory LoggerFactory
 
 <PostProjectNavbar />
 <div class="page-container">
@@ -38,16 +40,34 @@
 
             @* --- Budget and Timeline (Side-by-Side) --- *@
             <div class="form-row-2col">
+                <!-- Budget -->
                 <div class="form-section">
                     <label class="section-label">Budget</label>
                     <div class="input-group">
                         <span class="input-prefix">$</span>
-                        <InputNumber @bind-Value="ProjectData.Budget" class="form-control" placeholder="Enter your budget" />
+                        <InputNumber @bind-Value="ProjectData.Budget" class="form-control" placeholder="0.00" />
                     </div>
+                    <ValidationMessage For="@(() => ProjectData.Budget)" />
                 </div>
-                <div class="form-section">
+
+                <!-- Timeline Group -->
+                <div class="form-section timeline-group">
                     <label class="section-label">Timeline</label>
-                    <InputDate @bind-Value="ProjectData.StartDate" class="form-control" placeholder="e.g., 2-4 weeks" />
+                    <div class="date-range-container">
+                        <div class="date-input-wrapper">
+                            <span class="date-label">Start</span>
+                            <InputDate @bind-Value="ProjectData.StartDate" class="form-control" />
+                        </div>
+                        <span class="date-separator">to</span>
+                        <div class="date-input-wrapper">
+                            <span class="date-label">End</span>
+                            <InputDate @bind-Value="ProjectData.EndDate" class="form-control" />
+                        </div>
+                    </div>
+                    <p class="input-hint">Approximate dates are fine.</p>
+                    <!-- Combined validation message area -->
+                    <ValidationMessage For="@(() => ProjectData.StartDate)" />
+                    <ValidationMessage For="@(() => ProjectData.EndDate)" />
                 </div>
             </div>
 
@@ -83,6 +103,7 @@
     [Parameter]
     public Guid CustomerId { get; set; }
     private bool isLoading { get; set; } = false;
+    private ILogger logger => LoggerFactory.CreateLogger<PostProject>();
     private BookingViewModel ProjectData { get; set; } = new();
     private PostProjectValidator Validator { get; set; } = new();
     private List<string> AllAvailableSkills = new()
@@ -110,10 +131,44 @@
 
     private async Task HandleValidSubmit()
     {
-        // var bookingsClient = HttpClientFactory.CreateClient("Bookings");
-        // var bookingsResponse = await bookingsClient.PostAsJsonAsync("", ProjectData);
-        // bookingsResponse.EnsureSuccessStatusCode();
-        Console.WriteLine("Project submitted successfully!");
-        NavigationManager.NavigateTo("/");
+        if(isLoading) return;
+        isLoading = true;
+        try
+        {
+            var bookingsClient = HttpClientFactory.CreateClient("BFF");
+            var dto = new CreateCustomerProjectDTO
+            {
+                Title = "Project Request",
+                Description = ProjectData.InitialDescription,
+                Budget = new MoneyDTO { Amount = ProjectData.Budget, Currency = "USD" },
+                Timeline = new DateTimeRangeDTO
+                {
+                    Start = ProjectData.StartDate,
+                    End = ProjectData.EndDate // Fallback logic
+                },
+                RequiredSkills = ProjectData.DesiredSkills
+                    .Select(s => new SkillDTO { Name = s, YearsOfExperience = 0 })
+                    .ToList()
+            };
+            var response = await bookingsClient.PostAsJsonAsync("/customerprojects/post-project", dto);
+            if (response.IsSuccessStatusCode)
+            {
+                logger.LogInformation("Project posted successfully!");
+                NavigationManager.NavigateTo($"/customer/{CustomerId}/dashboard");
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                logger.LogError($"Failed to post project: {error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error submitting project proposal");
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 }

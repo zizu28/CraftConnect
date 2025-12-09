@@ -2,9 +2,9 @@
 {
 	public enum MilestoneStatus
 	{
-		ToDo, 
-		InProgress, 
-		Pending, 
+		ToDo,
+		InProgress,
+		Pending,
 		Completed
 	}
 }

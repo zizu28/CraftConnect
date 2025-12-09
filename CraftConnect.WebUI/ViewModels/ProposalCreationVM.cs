@@ -1,5 +1,5 @@
-﻿using CraftConnect.WebUI.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using Core.SharedKernel.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CraftConnect.WebUI.ViewModels
 {
@@ -9,6 +9,7 @@ namespace CraftConnect.WebUI.ViewModels
 
 		public RateType RateType { get; set; } = RateType.FixedPrice;
 
+		[Column(TypeName = "decimal(18,2)")]
 		public decimal ProposedCost { get; set; }
 
 		public DateTime? StartDate { get; set; }

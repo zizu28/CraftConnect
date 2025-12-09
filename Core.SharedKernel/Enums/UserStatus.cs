@@ -2,9 +2,10 @@
 {
 	public enum UserStatus
 	{
-		EmailNotVerified, 
-		Active, 
-		Suspended, 
-		Deactivated
+		Active,
+		Inactive,
+		Suspended,
+		Deactivated,
+		EmailNotVerified,
 	}
 }
