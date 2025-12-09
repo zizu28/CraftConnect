@@ -1,75 +1,155 @@
-﻿/* --- Earnings Chart Styling (EarningsChart.razor) --- */
-.earnings-header {
+﻿.earnings-chart-section {
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f0f0f0;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Header */
+.chart-header {
     display: flex;
     justify-content: space-between;
-    font-size: 0.9rem;
-    color: var(--subtle-text);
-    margin-bottom: 15px;
+    align-items: flex-start;
+    margin-bottom: 30px;
 }
 
-.total-value {
-    font-weight: 600;
+h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
 }
 
-.chart-placeholder {
-    height: 150px;
+.earnings-summary {
+    text-align: right;
+}
+
+    .earnings-summary .label {
+        display: block;
+        font-size: 0.75rem;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+    }
+
+    .earnings-summary .value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #10b981; /* Success Green */
+    }
+
+/* Chart Container */
+.chart-container {
+    position: relative;
+    height: 180px;
+    padding-bottom: 20px; /* Space for labels */
+}
+
+.chart-bars {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 100%;
+    position: relative;
+    z-index: 2; /* Above grid lines */
+}
+
+.bar-group {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
     justify-content: flex-end;
 }
 
-.bar-chart-mock {
+.bar-wrapper {
+    height: 100%;
+    width: 24px; /* Bar Width */
     display: flex;
     align-items: flex-end;
-    height: 80%;
-    gap: 10px;
-    border-bottom: 1px solid var(--border-color);
+    position: relative;
 }
 
-    .bar-chart-mock div {
-        width: 30%;
-        background-color: var(--primary-color);
-        border-radius: 4px 4px 0 0;
+.bar {
+    width: 100%;
+    background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%); /* Modern Blue Gradient */
+    border-radius: 6px 6px 0 0;
+    transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s; /* Bounce effect */
+    position: relative;
+    cursor: pointer;
+}
+
+    .bar:hover {
+        opacity: 0.9;
+        background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
     }
 
-.month-labels {
-    display: flex;
-    justify-content: space-around;
-    font-size: 0.8rem;
-    color: var(--subtle-text);
-    margin-top: 5px;
-}
-
-.dashboard-section {
-    background-color: #ffffff;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    /* No bottom margin needed, as this is the last element in the right panel */
-    margin-bottom: 0;
-}
-
-    .dashboard-section h3 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: 25px;
-        color: #333333;
-    }
-
-.earnings-header {
-    display: flex;
-    justify-content: flex-end; /* Align total earnings to the right */
-    font-size: 0.9rem;
-    color: #6c757d;
-    margin-bottom: 15px;
-}
-
-.total-label {
-    margin-right: 5px;
-}
-
-.total-value {
+/* Tooltip (Hidden by default, shown on hover) */
+.tooltip {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1f2937;
+    color: white;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    white-space: nowrap;
     font-weight: 600;
-    color: #333;
 }
 
+    /* Arrow for tooltip */
+    .tooltip::after {
+        content: "";
+        position: absolute;
+        bottom: -4px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 4px;
+        border-style: solid;
+        border-color: #1f2937 transparent transparent transparent;
+    }
+
+.bar:hover .tooltip {
+    opacity: 1;
+    top: -35px; /* Slide up slightly */
+}
+
+.month-label {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* Background Grid Lines */
+.chart-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.grid-line {
+    width: 100%;
+    height: 1px;
+    background-color: #f3f4f6; /* Very subtle grey */
+    border-top: 1px dashed #e5e7eb;
+}
+
+    .grid-line:last-child {
+        border-top: 1px solid #d1d5db; /* Solid baseline */
+    }

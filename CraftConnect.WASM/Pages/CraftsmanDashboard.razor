@@ -9,6 +9,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager NavManager
 @inject IHttpClientFactory HttpClientFactory
+@inject ILoggerFactory LoggerFactory
 
 @if (DashboardData == null && Projects == null && ServiceRequests == null)
 {
@@ -33,7 +34,19 @@ else
         <div class="main-content-grid">
             <div class="left-panel">
                 <ProjectTable Projects="@Projects" />
-                <ServiceRequests Requests="@ServiceRequests" />
+                @if (IsLoading)
+                {
+                    <p>Loading service requests...</p>
+                }
+                else if (ServiceRequests == null || ServiceRequests.Count == 0)
+                {
+                    <p>No service requests available.</p>
+                }
+                else
+                {
+                    <ServiceRequests Requests="@ServiceRequests" />
+                }
+                
             </div>
 
             <div class="right-panel">
@@ -50,22 +63,65 @@ else
     public Guid CraftmanId { get; set; }
     private string CurrentCraftsman { get; set; } = string.Empty;
     private DashboardVM DashboardData { get; set; } = new();
+    private bool IsLoading { get; set; } = false;
     private List<ProjectItemVM> Projects { get; set; } = new();
     private List<ServiceRequestVM> ServiceRequests { get; set; } = new();
+    private ILogger Logger => LoggerFactory.CreateLogger<CraftsmanDashboard>();
 
     protected override async Task OnInitializedAsync()
     {
-        var httpClient = HttpClientFactory.CreateClient("BFF");
-        var response = await httpClient.GetAsync($"/users/craftsman/{CraftmanId}");
-        if (response.IsSuccessStatusCode)
+        if (IsLoading) return;
+        IsLoading = true;
+        try
         {
-            var user = await response.Content.ReadFromJsonAsync<CraftmanResponseDTO>();
-            CurrentCraftsman = $"{user!.FirstName} {user.LastName}";
+            var httpClient = HttpClientFactory.CreateClient("BFF");
+            var response = await httpClient.GetAsync($"/users/craftsman/{CraftmanId}");
+            var serviceRequestResponse = await httpClient.GetAsync($"/customerprojects");
+            if (response.IsSuccessStatusCode)
+            {
+                var user = await response.Content.ReadFromJsonAsync<CraftmanResponseDTO>();
+                CurrentCraftsman = $"{user!.FirstName} {user.LastName}";
+                Logger.LogInformation("Successfully fetched craftsman details.");
+            }
+            if (serviceRequestResponse.IsSuccessStatusCode)
+            {
+                var responseData = await serviceRequestResponse.Content.ReadFromJsonAsync<List<CustomerProjectResponseDTO>>();
+                if (responseData != null)
+                {
+                    ServiceRequests = MapToViewModel(responseData);
+                }
+                Logger.LogInformation("Successfully fetched service requests.");
+            }
+            else
+            {
+                Logger.LogError("Failed to fetch service requests.");
+            }
         }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "An error occurred while initializing the dashboard.");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    
         // Mock Data Initialization
         DashboardData = GetMockMetrics();
         Projects = GetMockProjects();
-        ServiceRequests = GetMockRequests();
+        // ServiceRequests = GetMockRequests();
+    }
+
+    private List<ServiceRequestVM> MapToViewModel(List<CustomerProjectResponseDTO> dtos)
+    {
+        return dtos.Select(dto => new ServiceRequestVM
+        {
+            Id = dto.Id,
+            Title = dto.Title,
+            Description = dto.Description,
+        })
+        .OrderByDescending(r => r.StartDate)
+        .ToList();
     }
 
     private DashboardVM GetMockMetrics() => new()

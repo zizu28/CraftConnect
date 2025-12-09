@@ -92,7 +92,7 @@
             var client = HttpClientFactory.CreateClient("BFF");
 
             // Build Query String manually or use a helper
-            var query = $"/customerprojects/search?searchTerm={SearchParameters.Keyword}&pageNumber={SearchParameters.PageNumber}&pageSize={PageSize}";
+            var query = $"/customerprojects";
 
             // Call API
             var response = await client.GetAsync(query);

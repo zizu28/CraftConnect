@@ -11,12 +11,11 @@ namespace CraftConnect.WASM.ViewModels
 		public string Category { get; set; } = string.Empty;
 		public DateTime DateSubmitted { get; set; }
 		public ServiceRequestStatus Status { get; set; }
-		public string ProjectDescription { get; set; }
-		public List<string> SkillsRequired { get; set; } = new();
+		public List<string> SkillsRequired { get; set; } = [];
 		public decimal Budget { get; set; }
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
-		public List<AttachedDocument> Attachments { get; set; } = new();
-		public List<CustomerProposalVM> Proposals { get; set; } = new();
+		public List<AttachedDocument> Attachments { get; set; } = [];
+		public List<CustomerProposalVM> Proposals { get; set; } = [];
 	}
 }

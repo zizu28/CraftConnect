@@ -1,23 +1,55 @@
 ﻿<div class="dashboard-section earnings-chart-section">
-    <h3>Earnings</h3>
-    <div class="earnings-header">
-        <p class="total-label">Last 3 Months</p>
-        <p class="total-value">Total: $@TotalEarnings.ToString("N0")</p>
+    <div class="chart-header">
+        <h3>Earnings Overview</h3>
+        <div class="earnings-summary">
+            <span class="label">Last 3 Months</span>
+            <span class="value">$@TotalEarnings.ToString("N0")</span>
+        </div>
     </div>
 
-    @* --- Placeholder for Chart --- *@
-    <div class="chart-placeholder">
-        @* Replace this div with your actual charting library component (e.g., Chart.js, Plotly) *@
-        <div class="bar-chart-mock">
-            <div style="height: 50%;" title="Oct"></div>
-            <div style="height: 85%;" title="Nov"></div>
-            <div style="height: 70%;" title="Dec"></div>
+    <div class="chart-container">
+        <div class="chart-bars">
+            @foreach (var point in DataPoints)
+            {
+                // Calculate height percentage relative to max value
+                var heightPercent = MaxValue > 0 ? (point.Amount / MaxValue) * 100 : 0;
+                
+                <div class="bar-group">
+                    <div class="bar-wrapper">
+                        <div class="bar" style="height: @heightPercent%;">
+                            <span class="tooltip">$@point.Amount.ToString("N0")</span>
+                        </div>
+                    </div>
+                    <span class="month-label">@point.Month</span>
+                </div>
+            }
         </div>
-        <div class="month-labels"><span>Oct</span><span>Nov</span><span>Dec</span></div>
+        <!-- Optional Background Grid Lines -->
+        <div class="chart-grid">
+            <div class="grid-line"></div>
+            <div class="grid-line"></div>
+            <div class="grid-line"></div>
+        </div>
     </div>
 </div>
 
 @code {
     [Parameter]
     public decimal TotalEarnings { get; set; }
+
+    // Dynamic Data Model
+    public class EarningPoint 
+    { 
+        public string Month { get; set; } 
+        public decimal Amount; 
+    }
+
+    private List<EarningPoint> DataPoints = new()
+    {
+        new() { Month = "Oct", Amount = 1200 },
+        new() { Month = "Nov", Amount = 3500 },
+        new() { Month = "Dec", Amount = 2500 }
+    };
+
+    private decimal MaxValue => DataPoints.Max(x => x.Amount) * 1.1m; // 10% buffer
 }

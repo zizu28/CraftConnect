@@ -40,7 +40,7 @@
             <div class="details-card">
                 <div class="detail-item">
                     <label>Project Description</label>
-                    <p>@request.ProjectDescription</p>
+                    <p>@request.Description</p>
                 </div>
                 <div class="detail-item">
                     <label>Skills Required</label>
@@ -135,7 +135,7 @@
                         Id = projectDto.Id,
                         ProjectTitle = projectDto.Title,
                         Status = projectDto.Status,
-                        ProjectDescription = projectDto.Description,
+                        Description = projectDto.Description,
                         SkillsRequired = projectDto.Skills.Select(s => s.Name).ToList(),
                         Budget = projectDto.Budget.Amount,
                         StartDate = projectDto.StartDate,

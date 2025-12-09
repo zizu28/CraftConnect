@@ -15,6 +15,14 @@ namespace BookingManagement.Presentation.Controllers
 	{
 		private readonly IMediator _mediator = mediator;
 
+		[HttpGet]
+		public async Task<IActionResult> GetAllProjects()
+		{
+			var query = new GetAllCustomerProjectsQuery();
+			var result = await _mediator.Send(query);
+			return Ok(result);
+		}
+
 		[HttpGet("my-projects")]
 		public async Task<IActionResult> GetMyProjects()
 		{
