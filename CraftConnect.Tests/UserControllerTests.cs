@@ -3,10 +3,12 @@ using Core.SharedKernel.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Microsoft.AspNetCore.Http;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.CQRS.Queries.UserQueries;
 using UserManagement.Application.Responses;
 using UserManagement.Presentation.Controllers;
+using System.Reflection;
 
 namespace CraftConnect.Tests
 {
@@ -15,11 +17,22 @@ namespace CraftConnect.Tests
 		private readonly Mock<IMediator> _mediatorMock;
 		private readonly Mock<IUserModuleService> _userModuleService;
 		private readonly UsersController _usersController;
+		private readonly Mock<HttpContext> _httpContextMock;
+		private readonly Mock<IRequestCookieCollection> _cookiesMock;
 
 		public UserControllerTest()
 		{
 			_mediatorMock = new Mock<IMediator>();
-			_usersController = new UsersController(_mediatorMock.Object, _userModuleService!.Object);
+			_userModuleService = new Mock<IUserModuleService>();
+			
+			_httpContextMock = new Mock<HttpContext>();
+			_cookiesMock = new Mock<IRequestCookieCollection>();
+			var requestMock = new Mock<HttpRequest>();
+			requestMock.Setup(r => r.Cookies).Returns(_cookiesMock.Object);
+			_httpContextMock.Setup(c => c.Request).Returns(requestMock.Object);
+
+			_usersController = new UsersController(_mediatorMock.Object, _userModuleService.Object);
+			_usersController.ControllerContext = new ControllerContext { HttpContext = _httpContextMock.Object };
 		}
 
 		[Fact]
@@ -46,10 +59,13 @@ namespace CraftConnect.Tests
 			var result = await _usersController.LoginUserAsync(loginCommand);
 
 			// Assert
+			// Assert
 			var okResult = Assert.IsType<OkObjectResult>(result);
-			dynamic returnedTokens = okResult.Value;
-			Assert.Equal(accessToken, returnedTokens.Item1);
-			Assert.Equal(refreshToken, returnedTokens.Item2);
+			object returnedTokens = okResult.Value;
+			var at = returnedTokens.GetType().GetProperty("AccessToken").GetValue(returnedTokens);
+			var rt = returnedTokens.GetType().GetProperty("RefreshToken").GetValue(returnedTokens);
+			Assert.Equal(accessToken, at);
+			Assert.Equal(refreshToken, rt);
 		}
 
 		[Fact]
@@ -74,7 +90,7 @@ namespace CraftConnect.Tests
 			var result = await _usersController.LoginUserAsync(loginCommand);
 
 			// Assert
-			Assert.IsType<UnauthorizedObjectResult>(result);
+			Assert.IsType<UnauthorizedResult>(result);
 		}
 
 		[Fact]
@@ -175,7 +191,7 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			_usersController.ModelState.Clear();
-			var confirmCommand = new ConfirmEmailCommand();
+			var confirmCommand = new ConfirmEmailCommand { token = "valid_token" };
 			_mediatorMock.Setup(m => m.Send(It.IsAny<ConfirmEmailCommand>(), default))
 				.ReturnsAsync(true);
 
@@ -183,7 +199,7 @@ namespace CraftConnect.Tests
 			var result = await _usersController.ConfirmEmailAsync(confirmCommand.token);
 
 			// Assert
-			Assert.IsType<OkObjectResult>(result);
+			Assert.IsType<RedirectResult>(result);
 		}
 
 		[Fact]
@@ -191,7 +207,7 @@ namespace CraftConnect.Tests
 		{
 			// Arrange
 			_usersController.ModelState.Clear();
-			var confirmCommand = new ConfirmEmailCommand();
+			var confirmCommand = new ConfirmEmailCommand { token = "invalid_token" };
 			_mediatorMock.Setup(m => m.Send(It.IsAny<ConfirmEmailCommand>(), default))
 				.ReturnsAsync(false);
 
@@ -252,6 +268,12 @@ namespace CraftConnect.Tests
 			//var refreshTokenDto = new RefreshTokenCommand();
 			var newAccessToken = "newAccessToken";
 			var newRefreshToken = "newRefreshToken";
+			
+			_cookiesMock.Setup(c => c.TryGetValue("X-Refresh-Token", out It.Ref<string>.IsAny)).Returns((string key, out string value) => {
+				value = "valid_refresh_token";
+				return true;
+			});
+
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(), default))
 				.ReturnsAsync((newAccessToken, newRefreshToken));
 
@@ -271,6 +293,11 @@ namespace CraftConnect.Tests
 			// Arrange
 			_usersController.ModelState.Clear();
 			//var refreshTokenDto = new RefreshTokenCommand();
+			_cookiesMock.Setup(c => c.TryGetValue("X-Refresh-Token", out It.Ref<string>.IsAny)).Returns((string key, out string value) => {
+				value = "valid_refresh_token";
+				return true;
+			});
+
 			_mediatorMock.Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(), default))
 				.ReturnsAsync((string.Empty, string.Empty));
 
@@ -416,6 +443,56 @@ namespace CraftConnect.Tests
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
+		}
+
+		[Fact]
+		public async Task GetCraftsmanName_ReturnsOkResult_WhenCraftsmanExists()
+		{
+			// Arrange
+			var craftsmanId = Guid.NewGuid();
+			var craftsmanName = "John Doe";
+			_userModuleService.Setup(s => s.GetCraftsmanNameAsync(craftsmanId, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(craftsmanName);
+
+			// Act
+			var result = await _usersController.GetCraftsmanName(craftsmanId);
+
+			// Assert
+			var okResult = Assert.IsType<OkObjectResult>(result);
+			Assert.Equal(craftsmanName, okResult.Value);
+		}
+
+		[Fact]
+		public async Task GetCraftsmanName_ReturnsNotFound_WhenCraftsmanDoesNotExist()
+		{
+			// Arrange
+			var craftsmanId = Guid.NewGuid();
+			_userModuleService.Setup(s => s.GetCraftsmanNameAsync(craftsmanId, It.IsAny<CancellationToken>()))
+				.ReturnsAsync((string)null);
+
+			// Act
+			var result = await _usersController.GetCraftsmanName(craftsmanId);
+
+			// Assert
+			var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+			Assert.Equal($"Craftsman with ID {craftsmanId} not found.", notFoundResult.Value);
+		}
+
+		[Fact]
+		public async Task GetBatchNames_ReturnsOkResult_WhenCalled()
+		{
+			// Arrange
+			var ids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
+			var names = new Dictionary<Guid, string> { { ids[0], "John" }, { ids[1], "Doe" } };
+			_userModuleService.Setup(s => s.GetCraftsmanNamesAsync(ids, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(names);
+
+			// Act
+			var result = await _usersController.GetBatchNames(ids);
+
+			// Assert
+			var okResult = Assert.IsType<OkObjectResult>(result);
+			Assert.Equal(names, okResult.Value);
 		}
 	}
 }

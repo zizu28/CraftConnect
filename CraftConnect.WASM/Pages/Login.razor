@@ -1,6 +1,6 @@
 ﻿@page "/login"
 @layout LoginLayout
-@inject IHttpClientFactory HttpClientFactory
+@inject IUserService UserService
 @inject ILogger<Login> logger
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthStateProvider
@@ -12,6 +12,7 @@
 @using CraftConnect.WASM.Layout
 @using CraftConnect.WASM.Validators
 @using CraftConnect.WASM.ViewModels
+@using CraftConnect.WASM.Services
 @using Microsoft.AspNetCore.Components.Authorization
 
 <div class="login-card">
@@ -116,8 +117,7 @@
         IsLoading = true;
         try
         {
-            var httpClient = HttpClientFactory.CreateClient("BFF");
-            HttpResponseMessage response = await httpClient.PostAsJsonAsync("/api/auth/login", model);
+            HttpResponseMessage response = await UserService.LoginAsync(model);
             if (response.IsSuccessStatusCode)
             {
                 var userInfo = await response.Content.ReadFromJsonAsync<UserResponseDTO>();

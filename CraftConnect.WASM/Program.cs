@@ -49,6 +49,7 @@ internal class Program
 
 		builder.Services.AddLogging();
 		builder.Services.AddSingleton<ThemeService>();
+		builder.Services.AddScoped<IUserService, UserService>();
 
 		var app = builder.Build();
 

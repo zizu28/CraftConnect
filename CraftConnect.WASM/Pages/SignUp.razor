@@ -2,7 +2,7 @@
 @layout AuthLayout
 @inject NavigationManager NavigationManager
 @inject ILogger<SignUp> logger
-@inject IHttpClientFactory HttpClientFactory
+@inject IUserService UserService
 @using System.ComponentModel.DataAnnotations
 @using System.Text.Json
 @using Blazored.FluentValidation
@@ -11,6 +11,7 @@
 @using CraftConnect.WASM.Layout
 @using CraftConnect.WASM.Validators
 @using CraftConnect.WASM.ViewModels
+@using CraftConnect.WASM.Services
 
 <div class="signup-container">
     <header class="signup-header">
@@ -151,13 +152,7 @@
         errorMessage = null;
         try
         {
-            var httpClient = HttpClientFactory.CreateClient("UserManagement");
-            userResponse = model.Role switch
-            {
-                "Craftman" => await httpClient.PostAsJsonAsync("/api/users/register/craftman", model),
-                "Customer" => await httpClient.PostAsJsonAsync("/api/users/register/customer", model),
-                _ => await httpClient.PostAsJsonAsync("/api/users/register", model)
-            };
+            userResponse = await UserService.RegisterAsync(model);
             
             if (userResponse.IsSuccessStatusCode)
             {

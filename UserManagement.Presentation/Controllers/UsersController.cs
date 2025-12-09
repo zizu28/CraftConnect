@@ -180,6 +180,10 @@ namespace UserManagement.Presentation.Controllers
 		[AllowAnonymous]
 		public async Task<IActionResult> LoginUserAsync([FromBody] LoginUserCommand command)
 		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
 			ArgumentNullException.ThrowIfNull(command, nameof(command));
 			var loginResponse = await mediator.Send(command);
 			if (loginResponse == null || string.IsNullOrEmpty(loginResponse.AccessToken))
@@ -208,6 +212,10 @@ namespace UserManagement.Presentation.Controllers
 		[HttpPost("refresh-token")]
 		public async Task<IActionResult> RefreshTokenAsync()
 		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
 			if(!Request.Cookies.TryGetValue("X-Refresh-Token", out var refreshToken))
 			{
 				return Unauthorized("No refresh token provided.");
@@ -249,6 +257,10 @@ namespace UserManagement.Presentation.Controllers
 		[HttpPost("change-password")]
 		public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordCommand command)
 		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
 			ArgumentNullException.ThrowIfNull(command);
 			var result = await mediator.Send(command);
 			if (result == Unit.Value)
