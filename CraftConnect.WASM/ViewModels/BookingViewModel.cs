@@ -4,6 +4,7 @@
 	{
 		public Guid CustomerId { get; set; }
 		public Guid CraftmanId { get; set; }
+		public string Title { get; set; } = string.Empty;
 		public string EmailAddress { get; set; } = string.Empty;
 		public string PhoneNumber { get; set; } = string.Empty;
 		public string InitialDescription { get; set; } = string.Empty;

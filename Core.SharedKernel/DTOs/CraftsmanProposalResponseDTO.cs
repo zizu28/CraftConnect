@@ -9,6 +9,7 @@ namespace Core.SharedKernel.DTOs
 		public Guid CraftsmanId { get; set; }
 		public string ClientName { get; set; } = string.Empty;
 		public string ProjectTitle { get; set; } = string.Empty;
+		public string CraftsmanAvatarUrl { get; set; } = string.Empty;
 		public string CraftsmanName { get; set; } = string.Empty;
 		public MoneyDTO Price { get; set; } = new();
 		public string CoverLetter { get; set; } = string.Empty;

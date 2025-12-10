@@ -48,6 +48,41 @@
             background-color: #FFFFFF;
         }
 
+.search-bar-messages {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 1rem;
+}
+
+.search-bar-messages input {
+    padding-left: 36px; /* Space for icon */
+}
+
+/* Empty State Icon */
+.no-chat-selected {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #6b7280;
+    text-align: center;
+}
+
+.icon-large {
+    font-size: 4rem; /* Big icon */
+    color: #e5e7eb;
+    margin-bottom: 16px;
+}
+
+
 .conversation-list {
     flex-grow: 1;
     overflow-y: auto;
@@ -117,5 +152,15 @@
 
     .no-chat-selected {
         display: none; /* Hide placeholder on mobile */
+    }
+
+    .mobile-hidden {
+        display: none !important;
+    }
+
+    .mobile-visible {
+        display: block !important;
+        width: 100%;
+        height: 100%;
     }
 }

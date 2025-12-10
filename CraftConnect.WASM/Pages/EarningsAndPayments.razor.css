@@ -1,155 +1,186 @@
-﻿.page-header {
+﻿/* =========================================
+   1. Page Layout & Typography
+   ========================================= */
+.earnings-page {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 24px;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #1e293b; /* Slate-800 */
+}
+
+.page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
-    .page-header h1 {
-        font-size: 2.25rem; /* 36px */
-        font-weight: 700;
-        color: #1E293B; /* Slate-800 */
-        margin: 0;
-    }
+h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    color: #0f172a; /* Slate-900 */
+}
 
+/* =========================================
+   2. Buttons & Inputs
+   ========================================= */
 .btn-export {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 16px;
-    background-color: #0284C7; /* Sky-600 */
-    color: #FFFFFF;
+    padding: 10px 20px;
+    background-color: #0284c7; /* Sky-600 */
+    color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
+    font-weight: 600;
     font-size: 0.9rem;
-    font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s;
 }
 
     .btn-export:hover {
-        background-color: #0369A1; /* Sky-700 */
+        background-color: #0369a1; /* Sky-700 */
     }
 
-    .btn-export svg {
-        width: 20px;
-        height: 20px;
-    }
-
-/* --- Stat Cards --- */
-.stat-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    margin-bottom: 24px;
+.form-select {
+    padding: 10px 36px 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background-color: white;
+    font-size: 0.9rem;
+    color: #334155;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    min-width: 160px;
 }
 
-/* --- Filter Bar --- */
+/* =========================================
+   3. Stats Grid
+   ========================================= */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+/* =========================================
+   4. Filter Bar
+   ========================================= */
 .filter-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 16px;
-    background-color: #FFFFFF;
+    background-color: white;
     padding: 16px;
-    border-radius: 8px;
-    border: 1px solid #E2E8F0; /* Slate-200 */
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
     margin-bottom: 24px;
+    flex-wrap: wrap;
 }
 
 .search-container {
     position: relative;
-    flex-grow: 1;
+    flex: 1;
+    min-width: 250px;
 }
 
-    .search-container svg {
-        position: absolute;
-        left: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 20px;
-        height: 20px;
-        color: #94A3B8; /* Slate-400 */
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: #f8fafc;
+    box-sizing: border-box;
+}
+
+    .search-input:focus {
+        outline: none;
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+        background-color: white;
     }
 
-    .search-container input {
-        width: 100%;
-        padding: 10px 12px 10px 40px;
-        border: 1px solid #CBD5E1; /* Slate-300 */
-        border-radius: 6px;
-        font-size: 0.9rem;
-        background-color: #F8FAFC; /* Slate-50 */
-    }
-
-        .search-container input:focus {
-            outline: none;
-            border-color: #0284C7;
-            box-shadow: 0 0 0 1px #0284C7;
-            background-color: #FFFFFF;
-        }
-
-.filter-dropdowns {
+.filter-group {
     display: flex;
     gap: 12px;
+    flex-wrap: wrap;
 }
 
-    .filter-dropdowns select {
-        border: 1px solid #CBD5E1;
-        padding: 10px 12px;
-        border-radius: 6px;
-        background-color: #FFFFFF;
-        font-size: 0.9rem;
-        color: #334155; /* Slate-700 */
-        font-weight: 500;
-        padding-right: 32px; /* Space for arrow */
-        cursor: pointer;
-    }
+/* =========================================
+   5. Table Container & Pagination
+   ========================================= */
+.table-card {
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden; /* Rounds corners of table */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
 
-        .filter-dropdowns select:focus {
-            outline: none;
-            border-color: #0284C7;
-            box-shadow: 0 0 0 1px #0284C7;
-        }
-
-/* --- Pagination --- */
 .pagination-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 24px;
-    padding: 0 8px;
+    padding: 16px 24px;
+    border-top: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
-    .pagination-footer span {
-        font-size: 0.9rem;
-        color: #475569; /* Slate-600 */
+.pagination-info {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+    .pagination-info strong {
+        color: #0f172a;
     }
 
-    .pagination-footer strong {
-        color: #1E293B; /* Slate-800 */
-    }
-
-/* --- Responsive --- */
-@media (max-width: 900px) {
-    .stat-grid {
-        grid-template-columns: 1fr;
+/* =========================================
+   6. Responsiveness
+   ========================================= */
+@media (max-width: 768px) {
+    .earnings-page {
+        padding: 0 16px;
+        margin-top: 24px;
     }
 
     .filter-bar {
         flex-direction: column;
         align-items: stretch;
     }
-}
 
-@media (max-width: 640px) {
-    .page-header {
+    .filter-group {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
+    }
+
+    .form-select {
+        width: 100%;
     }
 
     .pagination-footer {
         flex-direction: column;
-        gap: 16px;
+        align-items: flex-start;
     }
 }

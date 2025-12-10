@@ -161,3 +161,37 @@
         font-size: 1.25rem;
     }
 }
+
+.loading-text {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 1.2rem;
+    color: #6b7280;
+}
+
+/* Actions Card */
+.actions-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 8px;
+}
+
+.text-muted {
+    color: #6b7280;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.mb-2 {
+    margin-bottom: 8px;
+}
+
+/* Bootstrap Icons Override */
+.back-button i {
+    font-size: 1.5rem;
+}

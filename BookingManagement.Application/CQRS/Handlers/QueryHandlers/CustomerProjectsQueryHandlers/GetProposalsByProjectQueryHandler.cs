@@ -25,16 +25,19 @@ namespace BookingManagement.Application.CQRS.Handlers.QueryHandlers.CustomerProj
 			
 			var proposalDtos = _mapper.Map<IEnumerable<CraftsmanProposalResponseDTO>>(proposals);
 			var craftsmanIds = proposalDtos.Select(p => p.CraftsmanId).Distinct();
-			var names = await _userService.GetCraftsmanNamesAsync(craftsmanIds, cancellationToken);
+			var summaries = await _userService.GetCraftsmanSummariesAsync(craftsmanIds, cancellationToken);
+			
 			foreach (var dto in proposalDtos)
 			{
-				if (names.TryGetValue(dto.CraftsmanId, out var name))
+				if (summaries.TryGetValue(dto.CraftsmanId, out var summary))
 				{
-					dto.CraftsmanName = name;
+					dto.CraftsmanName = summary.Name;
+					dto.CraftsmanAvatarUrl = summary.AvatarUrl;
 				}
 				else
 				{
 					dto.CraftsmanName = "Unknown Craftsman";
+					dto.CraftsmanAvatarUrl = "/images/user-avatar.jpg"; 
 				}
 			}
 			return proposalDtos;

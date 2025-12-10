@@ -7,7 +7,6 @@ namespace CraftConnect.WASM.Validators
 	{
 		public PostProjectValidator()
 		{
-			
 		}
 	}
 }

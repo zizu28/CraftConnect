@@ -1,5 +1,7 @@
 ﻿@using Core.SharedKernel.Domain
 @using CraftConnect.WASM.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @using static CraftConnect.WASM.Pages.AvailableProjects
 @inject NavigationManager NavManager
 
@@ -40,23 +42,52 @@
 
     <div class="card-actions">
         <button class="btn btn-view-details" @onclick="ViewDetails">View Details</button>
-        <button class="btn btn-submit-proposal" @onclick="SubmitProposal">Submit Proposal</button>
+        <button class="btn btn-submit-proposal" @onclick="SubmitProposal" disabled="@IsUserSameAsCustomer">
+            @if (IsUserSameAsCustomer)
+            {
+                <span disabled>You are the Owner</span>
+            }
+            else
+            {
+                <span>Submit Proposal</span>
+            }
+        </button>
     </div>
 </div>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthStateTask { get; set; } = default!;
+
     [Parameter]
     public ProjectViewModel Project { get; set; } = default!;
 
-    // [Parameter]
-    // public Guid ProjectId { get; set; }
+    [Parameter]
+    public Guid CustomerId { get; set; }
+
+    private bool IsUserSameAsCustomer { get; set; } = false;
 
     private void ViewDetails()
     {
         NavManager.NavigateTo($"/projects/{Project.Id}");
     }
 
-    private void SubmitProposal()
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateTask;
+        var user = authState.User;
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim is not null)
+            {
+                var userId = Guid.Parse(userIdClaim.Value);
+                IsUserSameAsCustomer = userId == CustomerId;
+            }
+        }
+    }
+
+    private async Task SubmitProposal()
     {
         NavManager.NavigateTo($"/proposal/create/{Project.Id}");
     }

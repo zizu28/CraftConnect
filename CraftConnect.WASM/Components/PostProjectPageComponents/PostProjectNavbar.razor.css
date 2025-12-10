@@ -1,18 +1,29 @@
-﻿/* --- Base Layout & Positioning --- */
+﻿/* =========================================
+   1. Base Layout & Container (The Fix)
+   ========================================= */
 .navbar-container {
-    background-color: white;
-    box-shadow: var(--navbar-shadow);
-    box-sizing: border-box;
-    padding: 1rem 2rem;
+    /* FIXED POSITIONING: Keeps nav at top while scrolling */
     position: fixed;
-    width: 100%;
     top: 0;
     left: 0;
-    z-index: 1000;
-    opacity: 1;
+    width: 100%;
+    height: 72px; /* Explicit height helps with layout calculations */
+    /* SOLID BACKGROUND: Fixes the superimposition issue */
+    background-color: #ffffff;
+    /* Optional: Use theme variable if defined: background-color: var(--navbar-bg, #ffffff); */
+    /* SHADOW & BORDER: Visual separation from content */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #e5e7eb;
+    /* LAYOUT */
+    padding: 0 2rem;
+    display: flex;
+    align-items: center; /* Vertically center content */
+    z-index: 1000; /* Ensure it stays on top of all other content */
+    box-sizing: border-box;
 }
 
 .navbar-content {
+    width: 100%;
     max-width: 1300px;
     margin: 0 auto;
     display: flex;
@@ -20,131 +31,195 @@
     align-items: center;
 }
 
+/* =========================================
+   2. Brand Logo (Responsive Optimization)
+   ========================================= */
 .brand-logo {
     display: flex;
     align-items: center;
+    gap: 10px;
     text-decoration: none;
     color: #333;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 1.5rem;
+    letter-spacing: -0.5px;
+    flex-shrink: 0; /* Prevents logo from squishing */
 }
 
     .brand-logo img {
-        height: 40px;
-        margin-right: 10px;
-    }
-
-.hamburger-btn {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 2rem;
-    cursor: pointer;
-    color: #333;
-    z-index: 1001;
-}
-
-/* --- Navigation Links and Buttons Flow --- */
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-    /* Central Links */
-    .nav-links .nav-link {
-        text-decoration: none;
-        color: #555;
-        font-weight: 500;
-        padding: 5px 0;
-        margin-right: 15px;
-    }
-
-/* --- Buttons Styling --- */
-.btn-primary.btn-post-project {
-    background-color: #007bff; /* Blue fill */
-    color: white;
-    border: 1px solid #007bff;
-    padding: 8px 15px;
-    border-radius: 5px;
-    font-weight: 600;
-    text-decoration: none;
-}
-
-.btn-secondary.btn-login {
-    background-color: transparent; /* Transparent background */
-    color: #333; /* Dark text */
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    font-weight: 600;
-    text-decoration: none;
-}
-
-    .btn-secondary.btn-login:hover {
-        background-color: #f0f0f0;
-    }
-
-/* --- Mobile Breakpoint (Max Width 768px) --- */
-@media (max-width: 768px) {
-    .hamburger-btn {
+        height: 36px; /* Fixed height forces width to auto-scale */
+        width: auto;
+        object-fit: contain;
         display: block;
     }
 
-    .nav-links {
-        display: none; /* Hide menu entirely */
-    }
-
-        .nav-links.open {
-            /* Mobile menu display logic */
-            position: fixed;
-            top: 60px;
-            left: 0;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            background-color: white;
-            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
-            z-index: 999;
-            height: auto;
-            padding: 10px 0;
-            align-items: flex-start; /* Stack items vertically */
-        }
-
-        .nav-links .nav-link,
-        .nav-links .btn-primary,
-        .nav-links .btn-secondary {
-            width: 90%;
-            margin: 8px auto;
-            text-align: left;
-            padding: 12px 15px;
-            box-sizing: border-box;
-        }
-
-    .btn-secondary.btn-login {
-        /* On mobile, give the login button a full background for clarity */
-        background-color: #f7f7f7;
-    }
+/* =========================================
+   3. Desktop Navigation
+   ========================================= */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
+.nav-link {
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 5px 0;
+    transition: color 0.2s;
+    white-space: nowrap;
+}
 
+    .nav-link:hover {
+        color: #007bff;
+    }
+
+/* User Greeting Text */
+.user-greeting {
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+/* =========================================
+   4. Buttons & Avatar
+   ========================================= */
+.btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none;
+}
+
+/* Theme Toggle */
 .theme-toggle-btn {
     background: none;
-    border: none;
-    font-size: 1.3rem;
-    color: var(--text-color); /* Use theme variable */
-    cursor: pointer;
-    padding: 5px;
-    margin-right: 10px;
-    transition: color 0.2s;
+    font-size: 1.2rem;
+    color: #666;
+    padding: 4px;
 }
 
     .theme-toggle-btn:hover {
-        color: var(--primary-color);
+        color: #007bff;
     }
 
-/* Ensure the navbar background uses the theme variable */
-.navbar-container.dashboard-nav {
-    background-color: var(--navbar-bg);
-    box-shadow: var(--navbar-shadow);
+/* Login Button */
+.btn-secondary.btn-login {
+    background-color: transparent;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+    .btn-secondary.btn-login:hover {
+        background-color: #f8f9fa;
+        border-color: #ccc;
+    }
+
+/* Logout Button */
+.btn-outline-danger.btn-logout {
+    background-color: transparent;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+}
+
+    .btn-outline-danger.btn-logout:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+/* Avatar */
+.profile-avatar-link {
+    display: flex;
+    align-items: center;
+}
+
+.profile-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px #e5e7eb;
+}
+
+/* Hamburger (Mobile Toggle) */
+.hamburger-btn {
+    display: none; /* Hidden on desktop */
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #333;
+}
+
+/* =========================================
+   5. Mobile Responsiveness (Max Width 768px)
+   ========================================= */
+@media (max-width: 768px) {
+    .navbar-container {
+        padding: 0 16px; /* Less padding on mobile */
+    }
+
+    .brand-logo {
+        font-size: 1.3rem;
+    }
+
+        .brand-logo img {
+            height: 30px;
+        }
+
+    .hamburger-btn {
+        display: block; /* Show hamburger */
+    }
+
+    /* Hide nav links by default */
+    .nav-links {
+        display: none;
+    }
+
+        /* Open State */
+        .nav-links.open {
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 72px; /* Matches header height */
+            left: 0;
+            width: 100%;
+            background-color: #ffffff; /* Solid White Background */
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 16px;
+            align-items: stretch; /* Full width items */
+            gap: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Mobile Link Adjustments */
+        .nav-links .nav-link {
+            padding: 12px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+    .user-greeting {
+        padding: 10px 0;
+        text-align: center;
+    }
+
+    .btn {
+        width: 100%;
+        text-align: center;
+        margin-top: 5px;
+    }
+
+    .profile-avatar-link {
+        justify-content: center;
+        margin-top: 10px;
+    }
 }

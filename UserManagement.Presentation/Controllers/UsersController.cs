@@ -43,6 +43,13 @@ namespace UserManagement.Presentation.Controllers
 			return Ok(user);
 		}
 
+		[HttpPost("craftsman/batch-summaries")]
+		public async Task<IActionResult> GetBatchSummaries([FromBody] List<Guid> ids)
+		{
+			var summaries = await mediator.Send(new GetBatchCraftsmanSummariesQuery { Ids = ids });
+			return Ok(summaries);
+		}
+
 		[HttpGet]
 		public async Task<IActionResult> GetAllUsersAsync()
 		{

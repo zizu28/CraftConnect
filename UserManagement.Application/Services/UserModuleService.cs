@@ -1,4 +1,5 @@
 ﻿using Core.SharedKernel.Contracts;
+using Core.SharedKernel.DTOs;
 using Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Application.Contracts;
@@ -33,6 +34,27 @@ namespace UserManagement.Application.Services
 				result[craftsman.Id] = $"{craftsman.FirstName} {craftsman.LastName}";
 			}
 			return result;
+		}
+
+		public async Task<Dictionary<Guid, CraftsmanSummaryDto>> GetCraftsmanSummariesAsync(IEnumerable<Guid> ids, CancellationToken ct = default)
+		{
+			var uniqueIds = ids.Distinct().ToList();
+			if (uniqueIds.Count == 0) return [];
+
+			var data = await _dbContext.Craftmen
+			   .Where(c => uniqueIds.Contains(c.Id))
+			   .Select(c => new
+			   {
+				   c.Id,
+				   FullName = c.FirstName + " " + c.LastName,
+				   c.ProfileImageUrl
+			   })
+			   .ToListAsync(ct);
+
+			return data.ToDictionary(
+				k => k.Id,
+				v => new CraftsmanSummaryDto(v.FullName, v.ProfileImageUrl)
+			);
 		}
 
 		public async Task<string?> GetCustomerNameAsync(Guid customerId, CancellationToken ct = default)

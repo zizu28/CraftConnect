@@ -1,9 +1,19 @@
-﻿.signup-container {
+﻿/* =========================================
+   1. Card Layout
+   ========================================= */
+.signup-card {
+    width: 100%;
+    max-width: 480px; /* Slightly wider for the toggle */
+    margin: 40px auto;
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0; /* Slate-200 */
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 20px;
-    width: 100%;
+    font-family: system-ui, -apple-system, sans-serif;
 }
 
 .signup-header {
@@ -12,42 +22,32 @@
 }
 
     .signup-header h1 {
-        font-size: 1.5rem; /* 24px */
+        font-size: 1.75rem;
         font-weight: 700;
-        color: #1F2937; /* Gray-800 */
-    }
-.spinner {
-    width: 14px;
-    height: 14px;
-    border: 2px solid currentColor;
-    border-right-color: transparent;
-    border-radius: 50%;
-    animation: spinner-rotation 0.8s linear infinite;
-}
-
-@keyframes spinner-rotation {
-    0% {
-        transform: rotate(0deg);
+        color: #1E293B; /* Slate-800 */
+        margin: 0 0 4px 0;
     }
 
-    100% {
-        transform: rotate(360deg);
+    .signup-header p {
+        font-size: 0.95rem;
+        color: #64748B;
+        margin: 0;
     }
-}
 
+/* User Type Description Text */
 .toggle-description {
     font-size: 0.9rem;
-    color: #4B5563; /* Gray-600 */
+    color: #475569;
     text-align: center;
-    max-width: 350px;
-    line-height: 1.5;
-    margin: -10px 0 10px 0; /* Pull up closer to toggle */
-    min-height: 42px; /* Prevent layout shift */
+    line-height: 1.4;
+    margin: -10px 0 10px 0;
+    min-height: 40px; /* Prevent layout shift */
 }
 
-/* --- Form --- */
+/* =========================================
+   2. Form Elements
+   ========================================= */
 .signup-form {
-    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -59,85 +59,92 @@
     gap: 6px;
 }
 
-    .form-group label {
-        font-size: 0.875rem; /* 14px */
-        font-weight: 500;
-        color: #374151; /* Gray-700 */
-    }
+label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+}
 
 .form-control {
     width: 100%;
     padding: 10px 12px;
-    font-size: 0.9rem;
-    border: 1px solid #D1D5DB; /* Gray-300 */
-    border-radius: 6px;
+    font-size: 0.95rem;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
     background-color: #FFFFFF;
+    box-sizing: border-box;
+    transition: all 0.2s;
 }
 
     .form-control:focus {
         outline: none;
-        border-color: #F97316; /* Orange-500 */
-        box-shadow: 0 0 0 1px #F97316;
+        border-color: #0EA5E9; /* Sky-500 */
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
     }
 
-/* Validation */
-.validation-message {
-    font-size: 0.8rem;
-    color: #EF4444; /* Red-500 */
-}
-
-/* Password Field */
+/* Password Toggle */
 .password-wrapper {
     position: relative;
 }
 
     .password-wrapper .form-control {
-        padding-right: 40px; /* Space for icon */
+        padding-right: 40px;
     }
 
 .password-toggle-btn {
     position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 40px;
-    background-color: transparent;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    background: transparent;
     border: none;
     cursor: pointer;
-    color: #9CA3AF; /* Gray-400 */
+    color: #94A3B8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
 }
 
     .password-toggle-btn:hover {
-        color: #4B5563; /* Gray-600 */
-    }
-
-    .password-toggle-btn svg {
-        width: 20px;
-        height: 20px;
+        color: #475569;
+        background-color: #F1F5F9;
     }
 
 .field-hint {
     font-size: 0.8rem;
-    color: #6B7280; /* Gray-500 */
-    margin-top: -2px;
+    color: #64748B;
+    margin-top: 4px;
 }
 
 /* Checkbox */
 .form-group-checkbox {
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* Align with top line of text */
     gap: 8px;
 }
 
+    .form-group-checkbox input {
+        margin-top: 3px; /* Align check with text */
+        width: 16px;
+        height: 16px;
+        accent-color: #0EA5E9;
+        cursor: pointer;
+    }
+
     .form-group-checkbox label {
-        font-size: 0.875rem;
-        color: #4B5563; /* Gray-600 */
+        font-size: 0.85rem;
+        color: #475569;
+        font-weight: 400;
+        line-height: 1.4;
     }
 
     .form-group-checkbox a {
-        color: #F97316; /* Orange-500 */
-        font-weight: 500;
+        color: #0EA5E9;
         text-decoration: none;
+        font-weight: 500;
     }
 
         .form-group-checkbox a:hover {
@@ -148,78 +155,77 @@
 .btn-submit {
     width: 100%;
     padding: 12px;
-    background-color: #374151; /* Gray-700 */
-    color: #FFFFFF;
+    background-color: #0F172A; /* Slate-900 (Dark for Contrast) */
+    color: white;
     border: none;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.1s;
+    transition: background-color 0.2s;
     margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-    .btn-submit:hover {
-        background-color: #1F2937; /* Gray-800 */
+    .btn-submit:hover:not(:disabled) {
+        background-color: #1E293B; /* Slate-800 */
     }
 
-/* --- Separator --- */
+    .btn-submit:disabled {
+        background-color: #94A3B8;
+        cursor: not-allowed;
+        opacity: 0.8;
+    }
+
+/* =========================================
+   3. Separator & Footer
+   ========================================= */
 .separator {
-    width: 100%;
-    text-align: center;
-    color: #9CA3AF; /* Gray-400 */
-    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    color: #94A3B8;
+    font-size: 0.85rem;
     font-weight: 500;
-    position: relative;
-    margin-top: 8px;
+    gap: 12px;
+    margin: 4px 0;
 }
 
     .separator::before,
     .separator::after {
         content: "";
-        position: absolute;
-        top: 50%;
-        width: 42%;
+        flex: 1;
         height: 1px;
-        background-color: #E5E7EB; /* Gray-200 */
+        background-color: #E2E8F0;
     }
 
-    .separator::before {
-        left: 0;
-    }
-
-    .separator::after {
-        right: 0;
-    }
-
-/* --- Social Logins --- */
+/* Social Buttons */
 .social-login-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
-    margin-top: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
 }
 
 .btn-social {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    width: 100%;
-    padding: 10px 12px;
+    gap: 8px;
+    padding: 10px;
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    cursor: pointer;
     font-size: 0.9rem;
     font-weight: 500;
-    color: #374151; /* Gray-700 */
-    background-color: #FFFFFF;
-    border: 1px solid #D1D5DB; /* Gray-300 */
-    border-radius: 6px;
-    cursor: pointer;
+    color: #334155;
     transition: background-color 0.1s;
 }
 
     .btn-social:hover {
-        background-color: #F9FAFB; /* Gray-50 */
+        background-color: #F8FAFC;
+        border-color: #94A3B8;
     }
 
     .btn-social img {
@@ -227,19 +233,59 @@
         height: 20px;
     }
 
-/* --- Login Link --- */
+/* Login Link */
 .login-link {
+    text-align: center;
     font-size: 0.9rem;
-    color: #4B5563; /* Gray-600 */
+    color: #64748B;
     margin-top: 8px;
 }
 
     .login-link a {
-        color: #F97316; /* Orange-500 */
-        font-weight: 500;
+        color: #0EA5E9;
+        font-weight: 600;
         text-decoration: none;
     }
 
         .login-link a:hover {
             text-decoration: underline;
         }
+
+/* Alerts */
+.alert {
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.alert-danger {
+    background-color: #FEF2F2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+}
+
+/* Validation Messages */
+::deep .validation-message {
+    color: #EF4444;
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+/* =========================================
+   4. Mobile
+   ========================================= */
+@media (max-width: 480px) {
+    .signup-card {
+        padding: 24px 20px;
+        margin: 20px auto;
+        border: none;
+        box-shadow: none;
+        background-color: transparent;
+    }
+
+    .social-login-group {
+        grid-template-columns: 1fr; /* Stack buttons */
+    }
+}

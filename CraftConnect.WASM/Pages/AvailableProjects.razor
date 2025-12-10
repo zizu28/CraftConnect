@@ -41,7 +41,7 @@
             <div class="projects-grid">
                 @foreach (var project in Projects)
                 {
-                    <ProjectCard Project="@project" />
+                    <ProjectCard Project="@project" CustomerId="@project.CustomerId" />
                 }
             </div>
             <Pagination CurrentPage="@SearchParameters.PageNumber"
@@ -58,6 +58,7 @@
 @code {
     private List<ProjectViewModel> Projects { get; set; } = new();
     private ProjectSearchParameters SearchParameters { get; set; } = new();
+    private Guid CurrentUserId { get; set; } = Guid.Empty;
     private bool IsLoading { get; set; } = true;
     private ILogger Logger => LoggerFactory.CreateLogger<AvailableProjects>();
 
@@ -85,7 +86,7 @@
     private async Task LoadProjectsAsync()
     {
         IsLoading = true;
-        StateHasChanged();
+        // StateHasChanged();
 
         try
         {
@@ -104,7 +105,6 @@
                 if (dtos != null)
                 {
                     TotalItems = dtos.Count < PageSize ? dtos.Count : 100;
-
                     Projects = dtos.Select(MapToViewModel).ToList();
                 }
             }
@@ -124,6 +124,7 @@
         return new ProjectViewModel
         {
             Id = dto.Id,
+            CustomerId = dto.CustomerId,
             Title = dto.Title,
             Description = dto.Description,
             UserAvatarUrl = dto.CustomerAvatarUrl ?? "/images/default-user.png", // Need to add to DTO

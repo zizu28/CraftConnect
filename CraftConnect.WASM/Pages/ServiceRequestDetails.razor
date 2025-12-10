@@ -7,6 +7,7 @@
 @using CraftConnect.WASM.Components.ServiceRequestDetailsPageComponents
 @using CraftConnect.WASM.ViewModels
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @inject NavigationManager NavigationManager
 @inject ILoggerFactory LoggerFactory
 @inject IHttpClientFactory HttpClientFactory
@@ -33,7 +34,7 @@
             </header>
 
             <div class="action-buttons">
-                <button class="btn btn-primary">Edit Request</button>
+                <button class="btn btn-primary" @onclick="EditProject">Edit Request</button>
                 <button class="btn btn-secondary">Close Request</button>
             </div>
             
@@ -84,7 +85,7 @@
             <div class="proposals-list">
                 @foreach (var proposal in request.Proposals)
                 {
-                    <ProposalSidebarCard Proposal="proposal" />
+                    <ProposalSidebarCard Proposal="proposal" ProjectId="ProjectId" />
                 }
             </div>
 
@@ -104,6 +105,7 @@
 
     [Parameter]
     public Guid ProjectId { get; set; }
+    public Guid CustomerId { get; set; }
 
     private ServiceRequestVM request = new();
     public CustomerProjectResponseDTO? projectDto { get; set; } = new();
@@ -120,32 +122,46 @@
             NavigationManager.NavigateTo("/login");
             return;
         }
+        var customerIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (customerIdClaim != null)
+        {
+            CustomerId = Guid.Parse(customerIdClaim);
+        }
 
         try
         {
             var httpClient = HttpClientFactory.CreateClient("BFF");
             var response = await httpClient.GetAsync($"/customerprojects/{ProjectId}");
-            if (response.IsSuccessStatusCode)
+            var projectTask = httpClient.GetFromJsonAsync<CustomerProjectResponseDTO>($"/customerprojects/{ProjectId}");
+            var proposalsTask = httpClient.GetFromJsonAsync<List<CraftsmanProposalResponseDTO>>($"/customerprojects/{ProjectId}/proposals");
+            await Task.WhenAll(projectTask, proposalsTask);
+            var projectDto = projectTask.Result;
+            var proposalDtos = proposalsTask.Result;
+            if (projectDto != null)
             {
-                projectDto = await response.Content.ReadFromJsonAsync<CustomerProjectResponseDTO>();
-                if (projectDto != null)
+                request = new ServiceRequestVM
                 {
-                    request = new ServiceRequestVM
+                    Id = projectDto.Id,
+                    ProjectTitle = projectDto.Title,
+                    Status = projectDto.Status,
+                    Description = projectDto.Description,
+                    SkillsRequired = projectDto.Skills.Select(s => s.Name).ToList(),
+                    Budget = projectDto.Budget.Amount,
+                    StartDate = projectDto.StartDate,
+                    EndDate = projectDto.EndDate,
+                    Proposals = proposalDtos!.Select(p => new CustomerProposalVM
                     {
-                        Id = projectDto.Id,
-                        ProjectTitle = projectDto.Title,
-                        Status = projectDto.Status,
-                        Description = projectDto.Description,
-                        SkillsRequired = projectDto.Skills.Select(s => s.Name).ToList(),
-                        Budget = projectDto.Budget.Amount,
-                        StartDate = projectDto.StartDate,
-                        EndDate = projectDto.EndDate,
-                    };
-                }
-                else
-                {
-                    Logger.LogWarning("Project DTO is null for ProjectId: {ProjectId}", ProjectId);
-                }
+                        Id = p.Id,
+                        CraftsmanName = p.CraftsmanName ?? "Unknown",
+                        Price = p.Price.Amount,
+                        QuoteSummary = p.CoverLetter,
+                        CraftsmanAvatarUrl = GetOptimizedUrl(p.CraftsmanAvatarUrl),
+                    }).ToList(),
+                };
+            }
+            else
+            {
+                Logger.LogWarning("Project DTO is null for ProjectId: {ProjectId}", ProjectId);
             }
         }
         catch (Exception ex)
@@ -157,5 +173,62 @@
         {
             isLoading = false;
         }            
+    }
+
+    private async Task EditProject()
+    {
+        if (!await IsCustomerOwnerOfProject())
+        {
+            Logger.LogWarning("Unauthorized attempt to edit project.");
+            if(!await IsUserCustomer())
+            {
+                NavigationManager.NavigateTo($"/dashboard/{CustomerId}");
+                return;
+            }
+            NavigationManager.NavigateTo($"/customer/{CustomerId}/dashboard");
+            return;
+        }
+        NavigationManager.NavigateTo($"/customer/{CustomerId}/edit-project/{ProjectId}");
+    }
+
+    private string GetOptimizedUrl(string? originalUrl)
+    {
+        if (string.IsNullOrEmpty(originalUrl)) return "/images/user-avatar.png";
+        return originalUrl.Replace("/upload/", "/upload/w_50,h_50,c_fill,g_face,q_auto,f_auto/");
+    }
+
+    private async Task<bool> IsCustomerOwnerOfProject()
+    {
+        try
+        {
+            var bookingsClient = HttpClientFactory.CreateClient("BFF");
+            var response = await bookingsClient.GetAsync($"/customerprojects/{ProjectId}");
+            if (response.IsSuccessStatusCode)
+            {
+                var project = await response.Content.ReadFromJsonAsync<CustomerProjectResponseDTO>();
+                if (project != null && project.CustomerId == CustomerId)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        catch
+        {
+            return false;
+        }
+        return true;
+    }
+
+    private async Task<bool> IsUserCustomer()
+    {
+        var authState = await AuthenticationState;
+        var user = authState.User;
+        if (user.Identity == null || !user.Identity.IsAuthenticated)
+        {
+            return false;
+        }
+        var roleClaim = user.FindFirst(ClaimTypes.Role)?.Value;
+        return roleClaim == "Customer";
     }
 }

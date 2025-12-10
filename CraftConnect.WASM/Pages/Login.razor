@@ -1,18 +1,17 @@
 ﻿@page "/login"
 @layout LoginLayout
-@inject IUserService UserService
-@inject ILogger<Login> logger
+@inject IHttpClientFactory HttpClientFactory
+@inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthStateProvider
+
 @using System.Security.Claims
-@using System.Text.Json
 @using Blazored.FluentValidation
 @using Core.SharedKernel.DTOs
 @using CraftConnect.WASM.Auth
 @using CraftConnect.WASM.Layout
 @using CraftConnect.WASM.Validators
 @using CraftConnect.WASM.ViewModels
-@using CraftConnect.WASM.Services
 @using Microsoft.AspNetCore.Components.Authorization
 
 <div class="login-card">
@@ -22,43 +21,39 @@
     </header>
 
     <!-- Login Form -->
-    <EditForm Model="model" OnValidSubmit="HandleValidSubmit" class="login-form" Enhance>
+    <EditForm Model="model" OnValidSubmit="HandleValidSubmit" class="login-form">
         <FluentValidationValidator Validator="@Validator" />
 
+        <!-- Email -->
         <div class="form-group">
             <label for="email">Email or Username</label>
-            <InputText id="email" @bind-Value="model.Email" class="form-control" placeholder="Enter your email or username" />
+            <InputText id="email" @bind-Value="model.Email" class="form-control" placeholder="you@example.com" />
             <ValidationMessage For="() => model.Email" />
         </div>
 
+        <!-- Password -->
         <div class="form-group">
             <div class="label-row">
                 <label for="password">Password</label>
                 <a href="/forgot-password" class="link-forgot">Forgot Password?</a>
             </div>
             <div class="password-wrapper">
-                <InputText id="password" @bind-Value="model.Password" type="@(showPassword ? "text" : "password")" class="form-control" placeholder="Enter your password" />
-                <button type="button" class="password-toggle-btn" @onclick="TogglePasswordVisibility">
-                    @if (showPassword)
-                    {
-                        <!-- Eye icon -->
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.18l.879-1.148a1.65 1.65 0 0 1 1.969-.608l.34.114A1.65 1.65 0 0 0 5.05 8.223l.54-1.217a1.65 1.65 0 0 1 1.58-1.074h.54a1.65 1.65 0 0 1 1.58 1.074l.54 1.217a1.65 1.65 0 0 0 1.212.874l.34-.114a1.65 1.65 0 0 1 1.969.608l.879 1.148a1.651 1.651 0 0 1 0 1.18l-.879 1.148a1.65 1.65 0 0 1-1.969.608l-.34-.114a1.65 1.65 0 0 0-1.212.874l-.54 1.217a1.65 1.65 0 0 1-1.58 1.074h-.54a1.65 1.65 0 0 1-1.58-1.074l-.54-1.217a1.65 1.65 0 0 0-1.212-.874l-.34.114a1.65 1.65 0 0 1-1.969-.608L.664 10.59Z" clip-rule="evenodd" /></svg>
-                    }
-                    else
-                    {
-                        <!-- Eye-slash icon -->
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.28 2.22a.75.75 0 0 0-1.06 1.06l14.5 14.5a.75.75 0 1 0 1.06-1.06l-1.745-1.745a10.029 10.029 0 0 0 3.3-4.632.75.75 0 0 0 0-.5c-1.583-3.483-4.654-6.002-8.25-6.002-1.764 0-3.407.59-4.79 1.579L3.28 2.22ZM7.5 7.5c0-1.38.86-2.554 2.067-2.923l.634.634a.75.75 0 0 0 1.06-1.06l-.633-.634A4.502 4.502 0 0 1 18.25 10c-1.583 3.483-4.654 6.002-8.25 6.002-1.207 0-2.34-.282-3.37-.778l-1.171 1.171a.75.75 0 1 0 1.06 1.06l1.17-1.17a10.029 10.029 0 0 0 2.24.44c3.596 0 6.667-2.519 8.25-6.002a.75.75 0 0 0 0-.5c-.322-.705-.69-1.382-1.103-2.022l-1.507 1.507a2.983 2.983 0 0 0-3.39-3.39L7.5 7.5Z" clip-rule="evenodd" /></svg>
-                    }
+                <InputText id="password" @bind-Value="model.Password" type="@(showPassword ? "text" : "password")" class="form-control" placeholder="••••••••" />
+
+                <button type="button" class="password-toggle-btn" @onclick="TogglePasswordVisibility" tabindex="-1">
+                    <i class="bi @(showPassword ? "bi-eye" : "bi-eye-slash")"></i>
                 </button>
             </div>
             <ValidationMessage For="() => model.Password" />
         </div>
 
+        <!-- Remember Me -->
         <div class="form-group-checkbox">
             <InputCheckbox id="remember" @bind-Value="model.RememberMe" />
             <label for="remember">Remember Me</label>
         </div>
 
+        <!-- Submit Button -->
         <button type="submit" class="btn-submit" disabled="@IsLoading">
             @if (IsLoading)
             {
@@ -68,20 +63,30 @@
             else
             {
                 <span>Log in</span>
+                <i class="bi bi-arrow-right"></i>
             }
         </button>
+
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="alert alert-danger mt-2" style="font-size: 0.9rem; padding: 10px;">
+                @ErrorMessage
+            </div>
+        }
     </EditForm>
 
     <!-- Separator -->
-    <div class="separator">Or log in with</div>
+    <div class="separator">Or continue with</div>
 
     <!-- Social Logins -->
     <div class="social-login-group">
-        <button class="btn-social">
+        <button type="button" class="btn-social">
             <img src="https://www.vectorlogo.zone/logos/github/github-icon.svg" alt="GitHub" />
+            <span>GitHub</span>
         </button>
-        <button class="btn-social">
+        <button type="button" class="btn-social">
             <img src="https://www.vectorlogo.zone/logos/google/google-icon.svg" alt="Google" />
+            <span>Google</span>
         </button>
     </div>
 
@@ -95,64 +100,70 @@
     public LoginVMValidator Validator { get; set; } = new();
     private LoginUserCommand model = new();
     private bool showPassword = false;
-    private string userRole = "";
-    private UserResponseDTO? user { get; set; }
     private bool IsLoading = false;
+    private string? ErrorMessage;
 
-    private void TogglePasswordVisibility()
-    {
-        showPassword = !showPassword;
-    }
-
-    public class LoginResponse
-    {
-        public Guid UserId { get; set; }
-        public string AccessToken { get; set; } = string.Empty;
-        public string RefreshToken { get; set; } = string.Empty;
-    }
+    private void TogglePasswordVisibility() => showPassword = !showPassword;
 
     private async Task HandleValidSubmit()
     {
         if (IsLoading) return;
         IsLoading = true;
+        ErrorMessage = null;
+
         try
         {
-            HttpResponseMessage response = await UserService.LoginAsync(model);
+            var httpClient = HttpClientFactory.CreateClient("BFF");
+
+            HttpResponseMessage response = await httpClient.PostAsJsonAsync("/api/auth/login", model);
+
             if (response.IsSuccessStatusCode)
             {
                 var userInfo = await response.Content.ReadFromJsonAsync<UserResponseDTO>();
-                var customAuthStateProvider = (BffAuthenticationStateProvider)AuthStateProvider;                
-                
+
                 if (userInfo != null)
                 {
-                    customAuthStateProvider.NotifyUserLoggedIn(userInfo);
-                    if (userInfo.Role == "Customer")
-                    {
-                        NavigationManager.NavigateTo($"/customer/{userInfo.UserId}/dashboard");
-                    }
-                    else if (userInfo.Role == "Craftman")
-                    {
-                        NavigationManager.NavigateTo($"/dashboard/{userInfo.UserId}");
-                    }
-                    else if (userInfo.Role == "Admin")
-                    {
-                        NavigationManager.NavigateTo("/admin/dashboard");
-                    }
+                    var authProvider = (BffAuthenticationStateProvider)AuthStateProvider;
+                    authProvider.NotifyUserLoggedIn(userInfo);
+
+                    Logger.LogInformation($"User {model.Email} logged in.");
+
+                    NavigateUser(userInfo);
                 }
-                logger.LogInformation($"User with email {model.Email} has successfully logged in");
             }
             else
             {
-                logger.LogInformation($"Error logging in.");
+                ErrorMessage = "Invalid email or password.";
+                Logger.LogWarning($"Login failed: {response.StatusCode}");
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error logging in user. Error: {ex.Message}");
+            ErrorMessage = "An unexpected error occurred. Please try again.";
+            Logger.LogError(ex, "Login exception");
         }
         finally
         {
             IsLoading = false;
+        }
+    }
+
+    private void NavigateUser(UserResponseDTO user)
+    {
+        switch (user.Role)
+        {
+            case "Customer":
+                NavigationManager.NavigateTo($"/customer/{user.UserId}/dashboard");
+                break;
+            case "Craftman":
+                NavigationManager.NavigateTo($"/dashboard/{user.UserId}");
+                break;
+            case "Admin":
+                NavigationManager.NavigateTo("/admin/dashboard");
+                break;
+            default:
+                NavigationManager.NavigateTo("/");
+                break;
         }
     }
 }

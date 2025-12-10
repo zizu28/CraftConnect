@@ -1,176 +1,299 @@
-﻿/* --- Base Layout & Positioning --- */
+﻿/* =========================================
+   1. Base Container & Layout
+   ========================================= */
 .navbar-container.dashboard-nav {
-    background-color: white;
-    box-shadow: var(--navbar-shadow);
-    box-sizing: border-box;
-    padding: 1rem 2rem;
+    /* FIXED POSITIONING: Keeps nav at top while scrolling */
     position: fixed;
-    width: 100%;
     top: 0;
     left: 0;
-    z-index: 1000;
+    width: 100%;
+    height: 72px; /* Fixed height for consistent layout calculations */
+    /* SOLID BACKGROUND: Prevents content from showing through (Fixes transparency issue) */
+    background-color: #ffffff;
+    /* Use theme var if available: background-color: var(--navbar-bg, #ffffff); */
+    /* SEPARATION: Visual divider */
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    /* LAYOUT */
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    z-index: 1000; /* Stays above all page content */
+    box-sizing: border-box;
     opacity: 1;
 }
 
 .navbar-content {
-    max-width: 1400px;
+    width: 100%;
+    max-width: 1300px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
+/* =========================================
+   2. Brand Logo
+   ========================================= */
 .brand-logo {
     display: flex;
     align-items: center;
+    gap: 12px;
     text-decoration: none;
     color: #333;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 1.5rem;
-    /* Keeps logo on the far left */
+    letter-spacing: -0.5px;
+    flex-shrink: 0; /* Prevents logo from squishing */
 }
 
     .brand-logo img {
-        height: 40px;
-        margin-right: 10px;
+        height: 36px; /* Explicit height forces width to scale correctly */
+        width: auto;
+        object-fit: contain;
+        display: block;
     }
 
-.hamburger-btn {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 2rem;
-    cursor: pointer;
-    color: #333;
-    z-index: 1001;
-}
-
-/* --- Navigation Links and User Actions Flow --- */
+/* =========================================
+   3. Desktop Navigation Links
+   ========================================= */
 .nav-links {
     display: flex;
     align-items: center;
-    /* Pushes the link group and button/avatar away from the logo */
-    margin-left: auto;
-    gap: 25px;
+    gap: 20px;
 }
 
-/* Central Links */
 .nav-link {
     text-decoration: none;
     color: #555;
     font-weight: 500;
+    font-size: 0.95rem;
     padding: 5px 0;
     transition: color 0.2s;
+    white-space: nowrap;
 }
 
     .nav-link:hover {
         color: #007bff;
     }
 
-/* --- Post a Project Button --- */
-.btn-primary.btn-post-project {
-    background-color: #ffc107; /* Yellow button matching the image */
-    color: #333;
-    border: 1px solid #ffc107;
-    padding: 8px 15px;
-    border-radius: 5px;
-    font-weight: 600;
-    text-decoration: none;
-}
-
-    .btn-primary.btn-post-project:hover {
-        background-color: #e0a800;
-    }
-
-/* --- Profile Avatar --- */
-.profile-avatar-link {
-    text-decoration: none;
-}
-
-.profile-avatar {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #007bff; /* Small blue ring */
-    cursor: pointer;
-    transition: border-color 0.2s;
-}
-
-/* --- Mobile Breakpoint (Max Width 768px) --- */
-@media (max-width: 768px) {
-    .navbar-container.dashboard-nav {
-        padding: 1rem;
-    }
-
-    .hamburger-btn {
-        display: block; /* Show the hamburger button */
-    }
-
-    .nav-links {
-        display: none; /* Hide menu entirely */
-    }
-
-        /* Mobile menu display logic */
-        .nav-links.open {
-            position: fixed;
-            top: 60px; /* Below the header */
-            left: 0;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            background-color: white;
-            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
-            z-index: 999;
-            height: auto;
-            padding: 10px 0;
-            align-items: flex-start; /* Stack items vertically */
-            gap: 0; /* Remove vertical gap */
-        }
-
-    .nav-link,
-    .btn-post-project,
-    .profile-avatar-link {
-        width: 100%; /* Take full width of the mobile menu */
-        padding: 12px 20px;
-        margin: 0;
-        border-bottom: 1px solid #eee;
-        box-sizing: border-box;
-        text-align: left;
-    }
-
-    .btn-post-project {
-        /* On mobile, make the button a full-width block */
-        border-radius: 0;
-        text-align: center;
-        margin-top: 10px;
-    }
-
-    .profile-avatar-link {
-        /* Ensure avatar is still visible but part of the stacked flow */
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-}
-
+/* Theme Toggle */
 .theme-toggle-btn {
     background: none;
     border: none;
-    font-size: 1.3rem;
-    color: var(--text-color); /* Use theme variable */
+    font-size: 1.2rem;
+    color: #666;
     cursor: pointer;
-    padding: 5px;
-    margin-right: 10px;
+    padding: 4px;
     transition: color 0.2s;
 }
 
     .theme-toggle-btn:hover {
-        color: var(--primary-color);
+        color: #333;
     }
 
-/* Ensure the navbar background uses the theme variable */
-.navbar-container.dashboard-nav {
-    background-color: var(--navbar-bg);
-    box-shadow: var(--navbar-shadow);
+/* =========================================
+   4. User Actions Area (Greeting, Logout, Buttons)
+   ========================================= */
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-left: 15px;
+    border-left: 1px solid #e5e7eb; /* Visual divider */
+}
+
+/* Greeting Text */
+.user-greeting {
+    font-size: 0.9rem;
+    color: #555;
+    white-space: nowrap;
+}
+
+    .user-greeting strong {
+        color: #333;
+        font-weight: 600;
+    }
+
+/* Logout Button */
+.btn-logout {
+    background: transparent;
+    border: 1px solid #fee2e2;
+    color: #dc2626; /* Red */
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .btn-logout:hover {
+        background-color: #fef2f2;
+        border-color: #fca5a5;
+    }
+
+/* "Post a Project" Button */
+.btn-primary.btn-post-project {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+    .btn-primary.btn-post-project:hover {
+        background-color: #0056b3;
+    }
+
+/* Avatar */
+.profile-avatar-link {
+    display: flex;
+    align-items: center;
+}
+
+.profile-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px #e5e7eb;
+    transition: transform 0.2s;
+}
+
+    .profile-avatar:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 2px #007bff;
+    }
+
+/* Hamburger (Mobile Toggle) */
+.hamburger-btn {
+    display: none; /* Hidden on Desktop */
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #333;
+}
+
+/* =========================================
+   5. Responsive Breakpoints
+   ========================================= */
+
+/* --- Medium Screens (Tablets/Small Laptops) --- */
+@media (max-width: 992px) {
+    /* Hide Greeting on smaller laptops to save space */
+    .user-greeting {
+        display: none;
+    }
+}
+
+/* --- Mobile Screens (Tablets Portrait & Phones) --- */
+@media (max-width: 768px) {
+    .navbar-container.dashboard-nav {
+        padding: 0 16px; /* Reduced padding */
+        height: 64px;
+    }
+
+    .brand-logo {
+        font-size: 1.3rem;
+    }
+
+        .brand-logo img {
+            height: 30px;
+        }
+
+    /* Show Hamburger */
+    .hamburger-btn {
+        display: block;
+    }
+
+    /* Hide Desktop Menu by default */
+    .nav-links {
+        display: none;
+    }
+
+        /* Open State (The Dropdown Menu) */
+        .nav-links.open {
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 64px; /* Push down below navbar height */
+            left: 0;
+            width: 100%;
+            /* Solid background for mobile menu */
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 16px;
+            align-items: stretch; /* Full width items */
+            gap: 12px;
+            box-sizing: border-box;
+            animation: slideDown 0.2s ease-out;
+            z-index: 999;
+        }
+
+        /* Adjust items inside mobile menu */
+        .nav-links .nav-link {
+            padding: 12px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+    /* Stack User Actions Area */
+    .user-actions {
+        flex-direction: column;
+        align-items: stretch;
+        border-left: none;
+        padding-left: 0;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #f3f4f6;
+        gap: 10px;
+    }
+
+    /* Show Greeting in Menu */
+    .user-greeting {
+        display: block;
+        text-align: center;
+        padding: 5px 0;
+    }
+
+    /* Mobile Buttons */
+    .btn-logout {
+        width: 100%;
+        justify-content: center;
+        padding: 10px;
+        background-color: #fef2f2;
+    }
+
+    .btn-primary.btn-post-project {
+        text-align: center;
+        margin-top: 5px;
+    }
+
+    .profile-avatar-link {
+        justify-content: center;
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

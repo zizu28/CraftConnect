@@ -1,9 +1,31 @@
-﻿.checkout-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.25fr; /* Columns as seen in image */
-    gap: 24px;
+﻿/* =========================================
+   1. Page Layout
+   ========================================= */
+.checkout-page {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 24px;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #1e293b; /* Slate-800 */
 }
 
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+    color: #0f172a;
+}
+
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr; /* Right side slightly wider */
+    gap: 32px;
+    align-items: start;
+}
+
+/* =========================================
+   2. Columns
+   ========================================= */
 .checkout-column-left,
 .checkout-column-right {
     display: flex;
@@ -11,66 +33,88 @@
     gap: 24px;
 }
 
+/* =========================================
+   3. Submit Section
+   ========================================= */
 .submit-section {
     display: flex;
     flex-direction: column;
     gap: 16px;
     align-items: center;
+    margin-top: 16px;
 }
 
 .btn-submit {
     width: 100%;
-    padding: 14px 24px;
-    font-size: 1rem;
+    padding: 16px;
+    font-size: 1.1rem;
     font-weight: 600;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    background-color: #0295D8; /* Blue from image */
+    background-color: #0284c7; /* Sky-600 */
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    transition: background-color 0.2s;
+    gap: 10px;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 4px 6px rgba(2, 132, 199, 0.2);
 }
 
-    .btn-submit:hover {
-        background-color: #0275B0; /* Darker blue */
+    .btn-submit:hover:not(:disabled) {
+        background-color: #0369a1; /* Sky-700 */
+        transform: translateY(-1px);
     }
 
-    .btn-submit svg {
-        width: 20px;
-        height: 20px;
+    .btn-submit:disabled {
+        background-color: #94a3b8;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
     }
 
 .ssl-badge {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.875rem;
-    color: #6B7280; /* Gray-500 */
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #64748b; /* Slate-500 */
+    font-weight: 500;
 }
 
-    .ssl-badge svg {
-        width: 16px;
-        height: 16px;
-        color: #9CA3AF; /* Gray-400 */
+    .ssl-badge i {
+        color: #10b981; /* Green for security */
+        font-size: 1.1rem;
     }
 
-
-/* --- Responsive --- */
-@media (max-width: 900px) {
+/* =========================================
+   4. Responsiveness
+   ========================================= */
+@media (max-width: 992px) {
     .checkout-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Stack columns */
+        gap: 40px;
     }
 
     .checkout-column-left {
-        /* Re-order for mobile: Show payment details first */
-        order: 2;
+        /* On mobile, show Order Summary first? Or Payment details?
+           Typically users want to confirm amount first. */
+        order: 1;
     }
 
     .checkout-column-right {
-        order: 1;
+        order: 2;
+    }
+}
+
+@media (max-width: 480px) {
+    .checkout-page {
+        padding: 0 16px;
+        margin-top: 24px;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
     }
 }

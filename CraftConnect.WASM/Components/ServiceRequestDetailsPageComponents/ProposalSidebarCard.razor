@@ -1,4 +1,7 @@
 ﻿@using CraftConnect.WASM.ViewModels
+@inject IHttpClientFactory HttpClientFactory
+@inject NavigationManager NavManager
+
 <div class="proposal-sidebar-card">
     <div class="card-header">
         <div class="craftsman-info">
@@ -15,6 +18,17 @@
 </div>
 
 @code {
-    [Parameter]
-    public CustomerProposalVM Proposal { get; set; } = new();
+    [Parameter] public CustomerProposalVM Proposal { get; set; } = new();
+    [Parameter] public Guid ProjectId { get; set; } // Pass this down from parent
+
+    private async Task AcceptProposal()
+    {
+        var client = HttpClientFactory.CreateClient("BFF");
+        var response = await client.PostAsync($"/customerprojects/{ProjectId}/proposals/{Proposal.Id}/accept", null);
+
+        if (response.IsSuccessStatusCode)
+        {
+            NavManager.NavigateTo(NavManager.Uri, forceLoad: true);
+        }
+    }
 }

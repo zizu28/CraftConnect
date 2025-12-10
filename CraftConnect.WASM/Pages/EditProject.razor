@@ -1,0 +1,221 @@
+﻿@page "/customer/{CustomerId:guid}/edit-project/{ProjectId:guid}"
+@using Blazored.FluentValidation
+@using Core.SharedKernel.DTOs
+@using CraftConnect.WASM.Components.PostProjectPageComponents
+@using CraftConnect.WASM.Validators
+@using CraftConnect.WASM.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using UserManagement.Domain.Entities
+@inject NavigationManager NavigationManager
+@inject IHttpClientFactory HttpClientFactory
+@inject ILoggerFactory LoggerFactory
+
+<PostProjectNavbar />
+<div class="page-container">
+    @* The Card Container Matching the Image *@
+    <div class="project-form-card">
+        <h2 class="form-title">Edit Project @ProjectData.Title</h2>
+
+        <EditForm Model="@ProjectData" OnValidSubmit="HandleValidSubmit" FormName="edit-project">
+            <FluentValidationValidator Validator="@Validator" />
+            <ValidationSummary />
+
+            @* --- Project Description --- *@
+            <div class="form-section">
+                <label class="section-label">Project Description</label>
+                <p class="input-hint">Describe the project in detail, including the scope of work, materials needed, and any specific requirements.</p>
+                <InputTextArea @bind-Value="ProjectData.InitialDescription" class="form-control description-box" />
+            </div>
+
+            @* --- Desired Skills (Using an InputSelect for simplification) --- *@
+            <div class="form-section">
+                <label class="section-label">Desired Skills</label>
+                <p class="input-hint">Select the skills required for the project</p>
+                <MultiSelectDropdown @bind-SelectedItems="ProjectData.DesiredSkills" 
+                    AvailableOptions="@AllAvailableSkills"
+                    Placeholder="e.g., Woodworking, Pottery, Jewelry..." />
+            </div>
+
+            @* --- Budget and Timeline (Side-by-Side) --- *@
+            <div class="form-row-2col">
+                <!-- Budget -->
+                <div class="form-section">
+                    <label class="section-label">Budget</label>
+                    <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <InputNumber @bind-Value="ProjectData.Budget" class="form-control" placeholder="0.00" />
+                    </div>
+                    <ValidationMessage For="@(() => ProjectData.Budget)" />
+                </div>
+
+                <!-- Timeline Group -->
+                <div class="form-section timeline-group">
+                    <label class="section-label">Timeline</label>
+                    <div class="date-range-container">
+                        <div class="date-input-wrapper">
+                            <span class="date-label">Start</span>
+                            <InputDate @bind-Value="ProjectData.StartDate" class="form-control" />
+                        </div>
+                        <span class="date-separator">to</span>
+                        <div class="date-input-wrapper">
+                            <span class="date-label">End</span>
+                            <InputDate @bind-Value="ProjectData.EndDate" class="form-control" />
+                        </div>
+                    </div>
+                    <p class="input-hint">Approximate dates are fine.</p>
+                    <!-- Combined validation message area -->
+                    <ValidationMessage For="@(() => ProjectData.StartDate)" />
+                    <ValidationMessage For="@(() => ProjectData.EndDate)" />
+                </div>
+            </div>
+
+            @* --- Contact Information --- *@
+            <h4 class="contact-header">Contact Information</h4>
+            <p class="input-hint">How can interested craftsmen get in touch with you?</p>
+
+            <div class="form-row-2col">
+                <div class="form-section">
+                    <label class="section-label">Email Address</label>
+                    <InputText @bind-Value="ProjectData.EmailAddress" class="form-control" placeholder="you@example.com" />
+                </div>
+                <div class="form-section">
+                    <label class="section-label">Phone Number (Optional)</label>
+                    <InputText @bind-Value="ProjectData.PhoneNumber" class="form-control" placeholder="(123) 456-7890" />
+                </div>
+            </div>
+
+            @* --- Submission Button --- *@
+            <div class="form-actions">
+                <button type="submit" class="btn btn-submit" disabled="@isLoading">
+                    @if(isLoading)
+                    {
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="loading-text">Submitting...</span>
+                    }
+                    else
+                    {
+                        <span>Edit Project</span>
+                    }
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
+    [Parameter]
+    public Guid CustomerId { get; set; }
+    [Parameter]
+    public Guid ProjectId { get; set; }
+
+    private bool isLoading { get; set; } = false;
+    private ILogger logger => LoggerFactory.CreateLogger<EditProject>();
+    private BookingViewModel ProjectData { get; set; } = new();
+    private PostProjectValidator Validator { get; set; } = new();
+    private string userRole = string.Empty;
+    private List<string> AllAvailableSkills = new()
+    {
+        "Woodworking", "Pottery", "Jewelry Making", "Metalwork",
+        "Tiling", "Plumbing", "Electrical", "Carpentry"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationState;
+        var user = authState.User;
+        if(user.Identity == null || !user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if(userIdClaim == null || Guid.Parse(userIdClaim) != CustomerId)
+        {
+            isLoading = false;
+            return;
+        }
+        var roleClaim = user.FindFirst(ClaimTypes.Role)?.Value;
+        if(roleClaim != null)
+        {
+            userRole = roleClaim;
+        }
+        var bookingsClient = HttpClientFactory.CreateClient("BFF");
+        var response = await bookingsClient.GetAsync($"/customerprojects/{ProjectId}");
+        if (response.IsSuccessStatusCode)
+        {
+            var projectDto = await response.Content.ReadFromJsonAsync<CustomerProjectResponseDTO>();
+            if (projectDto != null)
+            {
+                ProjectData.Title = projectDto.Title;
+                ProjectData.InitialDescription = projectDto.Description;
+                ProjectData.Budget = projectDto.Budget.Amount;
+                ProjectData.StartDate = projectDto.Timeline.Start;
+                ProjectData.EndDate = projectDto.Timeline.End;
+                ProjectData.DesiredSkills = projectDto.Skills.Select(s => s.Name).ToList();
+            }
+        }
+        else
+        {
+            logger.LogError($"Failed to load project data: {response.ReasonPhrase}");
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if(isLoading) return;
+        isLoading = true;
+        
+
+        try
+        {
+            var bookingsClient = HttpClientFactory.CreateClient("BFF");
+            var dto = new UpdateCustomerProjectDTO
+            {
+                ProjectId = ProjectId,
+                Title = ProjectData.Title,
+                Description = ProjectData.InitialDescription,
+                Budget = new MoneyDTO { Amount = ProjectData.Budget, Currency = "USD" },
+                Timeline = new DateTimeRangeDTO
+                {
+                    Start = ProjectData.StartDate,
+                    End = ProjectData.EndDate // Fallback logic
+                },
+                RequiredSkills = ProjectData.DesiredSkills
+                    .Select(s => new SkillDTO { Name = s, YearsOfExperience = 0 })
+                    .ToList()
+            };
+            var response = await bookingsClient.PutAsJsonAsync($"/customerprojects/{ProjectId}", dto);
+            if (response.IsSuccessStatusCode)
+            {
+                logger.LogInformation("Project posted successfully!");
+                if(userRole == "Customer")
+                {
+                    NavigationManager.NavigateTo($"/customer/{CustomerId}/dashboard");
+                }
+                NavigationManager.NavigateTo($"/dashboard/{CustomerId}");
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                logger.LogError($"Failed to edit project: {error}");
+                if (userRole == "Customer")
+                {
+                    NavigationManager.NavigateTo($"/customer/{CustomerId}/dashboard");
+                }
+                NavigationManager.NavigateTo($"/dashboard/{CustomerId}");
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error editing project.");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

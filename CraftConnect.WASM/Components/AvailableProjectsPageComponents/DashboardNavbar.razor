@@ -1,6 +1,11 @@
-﻿@using CraftConnect.WASM.Services
+﻿@using Core.SharedKernel.DTOs
+@using CraftConnect.WASM.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @inject ThemeService ThemeService
 @implements IDisposable
+@inject NavigationManager NavigationManager
+@inject IHttpClientFactory HttpClientFactory
 
 <header class="navbar-container dashboard-nav">
     <div class="navbar-content">
@@ -9,50 +14,93 @@
             CraftConnect
         </a>
 
-        @* Hamburger Button - visible only on mobile *@
         <button class="hamburger-btn" @onclick="ToggleMenu">
             <i class="bi bi-list"></i>
         </button>
 
-        @* Navigation Links and User Actions *@
         <nav class="nav-links @(isMenuOpen ? "open" : "")">
             <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
                 <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon" : "bi-sun")"></i>
             </button>
-            @* Central Links *@
-            <a href="/dashboard" class="nav-link">Dashboard</a>
+
+            <a href=@(userRole == "Customer" ? $"/customer/{UserId}/dashboard" : $"/dashboard/{UserId}") class="nav-link">Dashboard</a>
             <a href="/profile" class="nav-link">Profile</a>
             <a href="/customer/messages" class="nav-link">Messages</a>
 
-            @* Right Side Button & Avatar *@
-            <a href="/post-project" class="btn btn-primary btn-post-project">Post a Project</a>
-            <a href="/profile" class="profile-avatar-link">
-                <img src="/images/user-avatar.jpg" alt="User Avatar" class="profile-avatar" />
-            </a>
+            <!-- --- NEW USER ACTIONS SECTION --- -->
+            <div class="user-actions">
+                <span class="user-greeting">Welcome, <strong>@DisplayName</strong></span>
+
+                <button class="btn btn-logout" @onclick="HandleLogout" title="Log out">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+
+                <a href=@($"/customer/{UserId}/post-project") class="btn btn-primary btn-post-project">Post a Project</a>
+
+                <a href="/profile" class="profile-avatar-link">
+                    <img src="/images/user-avatar.jpg" alt="User Avatar" class="profile-avatar" />
+                </a>
+            </div>
         </nav>
     </div>
 </header>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthStateTask { get; set; } = default!;
+
+    private Guid UserId { get; set; }
+    private string userRole = string.Empty;
+    private string DisplayName { get; set; } = "User"; // Default
     private bool isMenuOpen = false;
 
-    private void ToggleMenu()
-    {
-        isMenuOpen = !isMenuOpen;
-    }
+    private void ToggleMenu() => isMenuOpen = !isMenuOpen;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateTask;
+        var user = authState.User;
+
+        if (user.Identity == null || !user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim))
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+        var userEmail = user.FindFirst(ClaimTypes.Name)?.Value ?? "User";
+        UserId = Guid.Parse(userIdClaim);
+        userRole = user.FindFirst(ClaimTypes.Role)?.Value ?? "";
+        if (!string.IsNullOrEmpty(userEmail))
+        {
+            // If name is full email, just take the part before @
+            DisplayName = userEmail.Split('@')[0];
+        }
+
         ThemeService.OnThemeChanged += OnThemeChangedHandler;
     }
 
-    private void OnThemeChangedHandler()
+    private async Task HandleLogout()
     {
-        InvokeAsync(StateHasChanged);
+        try
+        {
+            var client = HttpClientFactory.CreateClient("BFF");
+            await client.PostAsync("/api/auth/logout", null);
+            NavigationManager.NavigateTo("/login");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Logout error: {ex.Message}");
+            NavigationManager.NavigateTo("/login");
+        }
     }
 
-    public void Dispose()
-    {
-        ThemeService.OnThemeChanged -= OnThemeChangedHandler;
-    }
+    private void OnThemeChangedHandler() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => ThemeService.OnThemeChanged -= OnThemeChangedHandler;
 }

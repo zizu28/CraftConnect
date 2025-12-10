@@ -11,18 +11,34 @@
         <a href="/" class="brand-logo">
             <img src="/images/craftconnect-logo.png" alt="CraftConnect Logo" />
             CraftConnect
-        </a>     
+        </a>
         <div class="nav-links">
+            <!-- Theme Toggle -->
             <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
                 <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon" : "bi-sun")"></i>
             </button>
-            <a href="/proposal/create/@ProjectId" class="btn btn-primary btn-proposal">Create Proposal</a>
-            <a href="/notifications" class="nav-icon-link">
-                <i class="bi bi-bell"></i>
+
+            <!-- Create Proposal -->
+            <a href="/proposal/create/@ProjectId" class="btn btn-primary btn-proposal">
+                <i class="bi bi-plus-lg"></i> <span class="btn-text">Create Proposal</span>
             </a>
-            <a href="/profile" class="profile-avatar-link">
-                <img src=@(GetOptimizedUrl(craftsmanDTO.ProfileImageUrl)) alt="User Avatar" class="profile-avatar" />
-            </a>
+
+            <!-- Welcome & Logout Section -->
+            <div class="user-actions">
+                <span class="user-greeting">Welcome, <strong>@DisplayName</strong></span>
+
+                <button class="btn btn-logout" @onclick="HandleLogout" title="Log out">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+
+                <a href="/notifications" class="nav-icon-link" title="Notifications">
+                    <i class="bi bi-bell"></i>
+                </a>
+
+                <a href="/profile" class="profile-avatar-link">
+                    <img src="@(GetOptimizedUrl(craftsmanDTO.ProfileImageUrl))" alt="Profile" class="profile-avatar" />
+                </a>
+            </div>
         </div>
     </div>
 </header>
@@ -31,37 +47,71 @@
     [CascadingParameter]
     public Task<AuthenticationState> AuthenticationState { get; set; } = default!;
 
-    public Guid CraftsmanId { get; set; }
-
-    private CraftmanResponseDTO craftsmanDTO { get; set; } = new();
-
     [Parameter]
     public Guid ProjectId { get; set; }
+
+    public Guid CraftsmanId { get; set; }
+    private CraftmanResponseDTO craftsmanDTO { get; set; } = new();
+    private string? UserEmail { get; set; }
+
+    // Logic to determine what name to show
+    private string DisplayName =>
+        !string.IsNullOrEmpty(craftsmanDTO.FirstName)
+            ? craftsmanDTO.FirstName
+            : (UserEmail ?? "User");
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationState;
         var user = authState.User;
-        if(user.Identity == null || !user.Identity.IsAuthenticated)
+
+        if (user.Identity == null || !user.Identity.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/login");
             return;
         }
+
         var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if(userIdClaim == null)
+        UserEmail = user.FindFirst(ClaimTypes.Name)?.Value;
+
+        if (userIdClaim != null && Guid.TryParse(userIdClaim, out var id))
         {
-
+            CraftsmanId = id;
+            try
+            {
+                var httpClient = HttpClientFactory.CreateClient("BFF");
+                // Fetch profile to get the Image and First Name
+                var response = await httpClient.GetFromJsonAsync<CraftmanResponseDTO>($"/users/craftsman/{CraftsmanId}");
+                if (response != null) craftsmanDTO = response;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching profile: {ex.Message}");
+            }
         }
-        CraftsmanId = Guid.Parse(userIdClaim!);
-        var httpClient = HttpClientFactory.CreateClient("BFF");
-        craftsmanDTO = await httpClient.GetFromJsonAsync<CraftmanResponseDTO>($"/users/craftsman/{CraftsmanId}");
 
-        ProjectId = Guid.NewGuid();
+        if (ProjectId == Guid.Empty) ProjectId = Guid.NewGuid();
+    }
+
+    private async Task HandleLogout()
+    {
+        try
+        {
+            var client = HttpClientFactory.CreateClient("BFF");
+            await client.PostAsync("/api/auth/logout", null);
+
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Logout failed: {ex.Message}");
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+        }
     }
 
     private string GetOptimizedUrl(string? originalUrl)
     {
         if (string.IsNullOrEmpty(originalUrl)) return "/images/default-avatar.png";
-        return originalUrl.Replace("/upload/", "/upload/w_30,h_30,c_fill,q_auto,f_auto/");
+        return originalUrl.Replace("/upload/", "/upload/w_40,h_40,c_fill,q_auto,f_auto/");
     }
 }

@@ -1,18 +1,22 @@
 ﻿/* Components/CraftsmanDashboardNavbar.razor.css */
 
 .navbar-container.dashboard-nav {
-    /* KEY: Ensure solid white background */
     background-color: #ffffff;
-    padding: 1rem 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Clear, modern shadow */
+    padding: 0 32px; /* Adjusted padding */
+    height: 72px;    /* Fixed height */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     position: fixed;
     width: 100%;
     top: 0;
     left: 0;
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
 }
 
 .navbar-content {
+    width: 100%;
     max-width: 1400px;
     margin: 0 auto;
     display: flex;
@@ -20,6 +24,7 @@
     align-items: center;
 }
 
+/* --- Brand Logo --- */
 .brand-logo {
     display: flex;
     align-items: center;
@@ -27,74 +32,154 @@
     text-decoration: none;
     color: #333333;
     font-weight: 700;
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     letter-spacing: -0.5px;
     flex-shrink: 0;
 }
 
-    .brand-logo img {
-        height: 36px; /* Fixed height forces the width to auto-adjust properly */
-        width: auto; /* Maintains aspect ratio */
-        object-fit: contain; /* Ensures the image doesn't look stretched */
-        display: block; /* Removes any bottom margin quirks from inline images */
-    }
-
-@media (max-width: 768px) {
-    .brand-logo {
-        font-size: 1.4rem;
-        gap: 10px;
-    }
-
-        .brand-logo img {
-            height: 32px;
-        }
+.brand-logo img {
+    height: 36px;
+    width: auto;
+    object-fit: contain;
+    display: block;
 }
 
-@media (max-width: 576px) {
-    .brand-logo {
-        font-size: 1.25rem;
-        gap: 8px;
-    }
-
-        .brand-logo img {
-            height: 28px;
-        }
-}
-
+/* --- Nav Links Area --- */
 .nav-links {
     display: flex;
     align-items: center;
     gap: 20px;
 }
 
-/* Specific Button: Create Proposal */
+/* --- User Actions Group --- */
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-left: 15px;
+    border-left: 1px solid #eee; /* Visual separator */
+}
+
+/* Greeting Text */
+.user-greeting {
+    font-size: 0.9rem;
+    color: #555;
+    white-space: nowrap;
+}
+
+.user-greeting strong {
+    color: #333;
+    font-weight: 600;
+}
+
+/* Logout Button */
+.btn-logout {
+    background: transparent;
+    border: 1px solid #fee2e2;
+    color: #dc2626; /* Red */
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-logout:hover {
+    background-color: #fef2f2;
+    border-color: #fca5a5;
+}
+
+/* Create Proposal Button */
 .btn-primary.btn-proposal {
-    background-color: #007bff; /* Solid Blue */
+    background-color: #007bff;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 8px 16px;
     border-radius: 6px;
     font-weight: 600;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
 }
 
-    .btn-primary.btn-proposal:hover {
-        background-color: #0056b3;
-    }
+.btn-primary.btn-proposal:hover {
+    background-color: #0056b3;
+}
 
 /* Icons and Avatar */
 .nav-icon-link i {
     font-size: 1.3rem;
-    color: #555;
+    color: #666;
     transition: color 0.2s;
 }
+.nav-icon-link:hover i { color: #007bff; }
 
 .profile-avatar {
-    width: 35px;
-    height: 35px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #fff; /* Ensures visibility against white background */
-    box-shadow: 0 0 0 1px #ccc;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px #e5e7eb;
     cursor: pointer;
+    transition: transform 0.2s;
+}
+.profile-avatar:hover { transform: scale(1.05); }
+
+/* Theme Toggle */
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #666;
+    cursor: pointer;
+    padding: 4px;
+}
+
+/* =========================================
+   Responsive Breakpoints
+   ========================================= */
+
+@media (max-width: 992px) {
+    /* Hide Greeting on smaller desktops/tablets */
+    .user-greeting {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-container.dashboard-nav {
+        padding: 0 16px;
+    }
+
+    .brand-logo { font-size: 1.3rem; }
+    .brand-logo img { height: 30px; }
+
+    /* Hide text inside "Create Proposal", show only + icon */
+    .btn-proposal .btn-text {
+        display: none;
+    }
+    
+    .nav-links {
+        gap: 10px;
+    }
+    
+    .user-actions {
+        gap: 10px;
+        padding-left: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Hide Brand Text on mobile */
+    .brand-logo { 
+        gap: 0;
+        font-size: 0; /* Hides text */
+    }
+    .brand-logo img { height: 32px; } /* Keep icon */
 }

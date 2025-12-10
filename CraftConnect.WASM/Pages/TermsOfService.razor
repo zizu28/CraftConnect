@@ -1,18 +1,16 @@
 ﻿@page "/terms"
 @using CraftConnect.WASM.Layout
 @layout TermsLayout
+@inject IJSRuntime JSRuntime
 
 <header class="terms-header">
-    <div>
+    <div class="header-text">
         <h1>Terms of Service</h1>
         <p>Last Updated: October 26, 2025</p>
     </div>
-    <button class="print-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M5 2.75C5 1.784 5.784 1 6.75 1h6.5c.966 0 1.75.784 1.75 1.75v3.5a.75.75 0 0 1-1.5 0V3.5h-5v2.75a.75.75 0 0 1-1.5 0v-3.5Z" clip-rule="evenodd" />
-            <path d="M3.5 8a.75.75 0 0 1 .75-.75h11a.75.75 0 0 1 0 1.5h-11a.75.75 0 0 1-.75-.75ZM3 12.25c0-.966.784-1.75 1.75-1.75h10.5c.966 0 1.75.784 1.75 1.75v3a.75.75 0 0 1-1.5 0v-3a.25.25 0 0 0-.25-.25H4.75a.25.25 0 0 0-.25.25v3a.75.75 0 0 1-1.5 0v-3Z" />
-            <path d="M5.5 14.25c0-.414.336-.75.75-.75h7a.75.75 0 0 1 0 1.5h-7a.75.75 0 0 1-.75-.75Z" />
-        </svg>
+
+    <button class="btn btn-print" @onclick="PrintPage">
+        <i class="bi bi-printer"></i>
         <span>Print / Download</span>
     </button>
 </header>
@@ -123,3 +121,10 @@
         </p>
     </section>
 </div>
+
+@code {
+    private async Task PrintPage()
+    {
+        await JSRuntime.InvokeVoidAsync("window.print");
+    }
+}

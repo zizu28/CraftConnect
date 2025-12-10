@@ -1,44 +1,55 @@
-﻿.login-card {
+﻿/* =========================================
+   1. Card Container
+   ========================================= */
+.login-card {
     width: 100%;
+    max-width: 440px; /* Restrict width on large screens */
+    margin: 40px auto; /* Center horizontally */
     background-color: #FFFFFF;
     border: 1px solid #E2E8F0; /* Slate-200 */
     border-radius: 12px;
-    padding: 32px 28px;
-    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+    padding: 40px 32px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     display: flex;
     flex-direction: column;
     gap: 24px;
+    font-family: system-ui, -apple-system, sans-serif;
 }
 
+/* Header */
 .login-card-header {
     text-align: center;
+    margin-bottom: 8px;
 }
 
     .login-card-header h2 {
-        font-size: 1.5rem; /* 24px */
+        font-size: 1.75rem; /* 28px */
         font-weight: 700;
         color: #1E293B; /* Slate-800 */
-        margin: 0;
+        margin: 0 0 8px 0;
     }
 
     .login-card-header p {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         color: #64748B; /* Slate-500 */
-        margin: 4px 0 0 0;
+        margin: 0;
+        line-height: 1.5;
     }
 
-/* --- Form --- */
+/* =========================================
+   2. Form Elements
+   ========================================= */
 .login-form {
-    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
     gap: 6px;
+    position: relative;
 }
 
 .label-row {
@@ -47,15 +58,71 @@
     align-items: center;
 }
 
-    .label-row label {
-        font-size: 0.875rem; /* 14px */
-        font-weight: 500;
-        color: #334155; /* Slate-700 */
+label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #334155; /* Slate-700 */
+}
+
+/* Inputs */
+.form-control {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 0.95rem;
+    border: 1px solid #CBD5E1; /* Slate-300 */
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    transition: all 0.2s ease-in-out;
+    box-sizing: border-box; /* Critical for padding */
+}
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0EA5E9; /* Sky-500 */
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
     }
 
+/* Password Toggle */
+.password-wrapper {
+    position: relative;
+}
+
+    .password-wrapper .form-control {
+        padding-right: 44px; /* Make room for eye icon */
+    }
+
+.password-toggle-btn {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #94A3B8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+    .password-toggle-btn:hover {
+        color: #475569;
+        background-color: #F1F5F9;
+    }
+
+    .password-toggle-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
+/* "Forgot Password" Link */
 .link-forgot {
-    font-size: 0.8rem;
-    color: #0EA5E9; /* Sky-500 */
+    font-size: 0.85rem;
+    color: #0EA5E9;
     text-decoration: none;
     font-weight: 500;
 }
@@ -64,187 +131,164 @@
         text-decoration: underline;
     }
 
-.form-control {
-    width: 100%;
-    padding: 10px 12px;
-    font-size: 0.9rem;
-    border: 1px solid #CBD5E1; /* Slate-300 */
-    border-radius: 6px;
-    background-color: #F8FAFC; /* Slate-50 */
-}
-
-    .form-control:focus {
-        outline: none;
-        border-color: #0EA5E9; /* Sky-500 */
-        box-shadow: 0 0 0 1px #0EA5E9;
-        background-color: #FFFFFF;
-    }
-
-.spinner {
-    width: 14px;
-    height: 14px;
-    border: 2px solid currentColor;
-    border-right-color: transparent;
-    border-radius: 50%;
-    animation: spinner-rotation 0.8s linear infinite;
-}
-
-@keyframes spinner-rotation {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
-/* Validation */
-.validation-message {
-    font-size: 0.8rem;
-    color: #EF4444; /* Red-500 */
-}
-
-/* Password Field */
-.password-wrapper {
-    position: relative;
-}
-
-    .password-wrapper .form-control {
-        padding-right: 40px; /* Space for icon */
-    }
-
-.password-toggle-btn {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 40px;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    color: #94A3B8; /* Slate-400 */
-}
-
-    .password-toggle-btn:hover {
-        color: #475569; /* Slate-600 */
-    }
-
-    .password-toggle-btn svg {
-        width: 20px;
-        height: 20px;
-    }
-
 /* Checkbox */
 .form-group-checkbox {
     display: flex;
     align-items: center;
     gap: 8px;
+    margin-top: -4px; /* Tighten up spacing */
 }
 
-    .form-group-checkbox label {
-        font-size: 0.875rem;
-        color: #475569; /* Slate-600 */
-        font-weight: 500;
+    .form-group-checkbox input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: #0EA5E9;
+        cursor: pointer;
     }
 
+    .form-group-checkbox label {
+        font-size: 0.9rem;
+        color: #475569;
+        cursor: pointer;
+        font-weight: 400;
+    }
+
+/* =========================================
+   3. Actions & Social
+   ========================================= */
 /* Submit Button */
 .btn-submit {
     width: 100%;
     padding: 12px;
-    background-color: #0EA5E9; /* Sky-500 */
-    color: #FFFFFF;
+    background-color: #0EA5E9;
+    color: white;
     border: none;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.1s;
-    margin-top: 8px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-    .btn-submit:hover {
+    .btn-submit:hover:not(:disabled) {
         background-color: #0284C7; /* Sky-600 */
     }
 
-/* --- Separator --- */
+    .btn-submit:disabled {
+        background-color: #94A3B8;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+/* Separator */
 .separator {
-    width: 100%;
-    text-align: center;
-    color: #94A3B8; /* Slate-400 */
-    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    color: #94A3B8;
+    font-size: 0.85rem;
     font-weight: 500;
-    position: relative;
-    margin-top: 8px;
+    gap: 12px;
+    margin: 8px 0;
 }
 
     .separator::before,
     .separator::after {
         content: "";
-        position: absolute;
-        top: 50%;
-        width: 38%; /* Adjusted width */
+        flex: 1;
         height: 1px;
-        background-color: #E2E8F0; /* Slate-200 */
+        background-color: #E2E8F0;
     }
 
-    .separator::before {
-        left: 0;
-    }
-
-    .separator::after {
-        right: 0;
-    }
-
-/* --- Social Logins --- */
+/* Social Buttons */
 .social-login-group {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    width: 100%;
-    margin-top: 8px;
+    gap: 16px;
 }
 
 .btn-social {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    width: 100%;
-    padding: 10px 12px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #334155; /* Slate-700 */
+    padding: 10px;
     background-color: #FFFFFF;
-    border: 1px solid #CBD5E1; /* Slate-300 */
-    border-radius: 6px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.1s;
+    transition: all 0.2s;
 }
 
     .btn-social:hover {
-        background-color: #F8FAFC; /* Slate-50 */
+        background-color: #F8FAFC;
+        border-color: #CBD5E1;
     }
 
     .btn-social img {
-        width: 20px;
-        height: 20px;
+        width: 24px;
+        height: 24px;
     }
 
-/* --- Sign Up Link --- */
+/* Footer Link */
 .signup-link {
-    font-size: 0.9rem;
-    color: #64748B; /* Slate-500 */
-    margin-top: 8px;
     text-align: center;
+    font-size: 0.9rem;
+    color: #64748B;
 }
 
     .signup-link a {
-        color: #0EA5E9; /* Sky-500 */
-        font-weight: 500;
+        color: #0EA5E9;
+        font-weight: 600;
         text-decoration: none;
     }
 
         .signup-link a:hover {
             text-decoration: underline;
         }
+
+/* Validation Message (Blazor) */
+::deep .validation-message {
+    font-size: 0.8rem;
+    color: #EF4444;
+    margin-top: 4px;
+}
+
+/* Loading Spinner */
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================
+   4. Mobile Responsiveness
+   ========================================= */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 24px 20px;
+        margin: 20px auto;
+        border: none; /* Remove border on very small screens for cleaner look */
+        box-shadow: none;
+        background-color: transparent;
+    }
+
+    .social-login-group {
+        grid-template-columns: 1fr; /* Stack social buttons */
+    }
+
+    .login-card-header h2 {
+        font-size: 1.5rem;
+    }
+}
