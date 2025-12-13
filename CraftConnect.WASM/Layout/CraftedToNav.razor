@@ -1,38 +1,125 @@
-﻿<header class="top-nav-header">
+﻿@using Core.SharedKernel.DTOs
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject NavigationManager NavigationManager
+@inject IHttpClientFactory HttpClientFactory
+
+<header class="top-nav-header">
     <div class="nav-content">
         <div class="nav-left">
             <a href="/" class="logo">
-                <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                </svg>
+                <img src="/images/craftconnect-logo.png" alt="CraftConnect" class="logo-img" />
                 <span class="logo-text">CraftConnect</span>
             </a>
+
+            <!-- Desktop Nav -->
             <nav class="main-navigation">
-                <a href="/my-requests" class="nav-link active">My Requests</a>
-                <a href="/find-craftmen" class="nav-link">Find Craftsmen</a>
+                <NavLink href="/customer/service-requests" Match="NavLinkMatch.Prefix" class="nav-link">My Requests</NavLink>
+                <NavLink href="/find-craftmen" Match="NavLinkMatch.Prefix" class="nav-link">Find Craftsmen</NavLink>
             </nav>
         </div>
 
         <div class="nav-right">
-            <button class="icon-btn notification-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.017 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
-                </svg>
+            <span class="user-greeting">Welcome, <strong>@DisplayName</strong></span>
+            <button class="btn btn-logout" @onclick="HandleLogout" title="Log out">
+                <i class="bi bi-box-arrow-right"></i>
             </button>
-            <button class="profile-btn">
-                <span class="avatar">JD</span>
+            <!-- Notifications -->
+            <button class="icon-btn notification-btn" title="Notifications">
+                <i class="bi bi-bell"></i>
+                <span class="notification-dot"></span>
+            </button>
+
+            <!-- User Profile -->
+            <a href="/profile" class="profile-btn" title="My Profile">
+                @if (!string.IsNullOrEmpty(AvatarUrl))
+                {
+                    <img src="@AvatarUrl" alt="User" class="avatar-img" />
+                }
+                else
+                {
+                    <span class="avatar-initials">@Initials</span>
+                }
+            </a>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="icon-btn mobile-menu-btn" @onclick="ToggleMobileMenu">
+                <i class="bi @(isMobileMenuOpen ? "bi-x-lg" : "bi-list")"></i>
             </button>
         </div>
-
-        <!-- Mobile Menu Button -->
-        <button class="icon-btn mobile-menu-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-        </button>
     </div>
+
+    <!-- Mobile Dropdown -->
+    @if (isMobileMenuOpen)
+    {
+        <div class="mobile-menu">
+            <NavLink href="/customer/service-requests" class="mobile-link" @onclick="ToggleMobileMenu">My Requests</NavLink>
+            <NavLink href="/find-craftmen" class="mobile-link" @onclick="ToggleMobileMenu">Find Craftsmen</NavLink>
+            <NavLink href="/profile" class="mobile-link" @onclick="ToggleMobileMenu">My Profile</NavLink>
+            <button class="mobile-link logout-link" @onclick="HandleLogout">
+                <i class="bi bi-box-arrow-right"></i> Log out
+            </button>
+        </div>
+    }
 </header>
 
 @code {
-    // Add mobile menu toggle logic here
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; } = default!;
+
+    private bool isMobileMenuOpen = false;
+    private string Initials { get; set; } = "U";
+    private string AvatarUrl { get; set; } = "";
+    private string DisplayName { get; set; } = "User";
+
+    private void ToggleMobileMenu() => isMobileMenuOpen = !isMobileMenuOpen;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationState;
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var name = user.FindFirst(ClaimTypes.GivenName)?.Value ?? user.Identity.Name;
+            if (!string.IsNullOrEmpty(name))
+            {
+                Initials = name[0].ToString().ToUpper();
+            }
+
+            // Load Avatar Logic (Optional - Reuse logic from other navbars)
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (Guid.TryParse(userId, out var id))
+            {
+                var httpClient = HttpClientFactory.CreateClient("BFF");
+                var response = await httpClient.GetAsync($"/users/craftsman/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var profile = await response.Content.ReadFromJsonAsync<CraftmanResponseDTO>();
+                    DisplayName = profile?.FirstName ?? (profile?.EmailAddress!).Split('@')[0];
+                    AvatarUrl = GetOptimizedUrl(profile?.ProfileImageUrl);
+                }
+            }
+        }
+    }
+
+    private string GetOptimizedUrl(string? originalUrl)
+    {
+        if (string.IsNullOrEmpty(originalUrl)) return "/images/user-avatar.png";
+        return originalUrl.Replace("/upload/", "/upload/w_50,h_50,c_fill,g_face,q_auto,f_auto/");
+    }
+
+    private async Task HandleLogout()
+    {
+        try
+        {
+            var client = HttpClientFactory.CreateClient("BFF");
+            await client.PostAsync("/api/auth/logout", null);
+            NavigationManager.NavigateTo("/login");
+        }
+        catch
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
 }

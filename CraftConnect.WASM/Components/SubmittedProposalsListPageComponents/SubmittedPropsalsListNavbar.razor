@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 @inject IHttpClientFactory HttpClientFactory
+@inject NavigationManager NavigationManager
 
 <nav class="top-nav-bar">
     <div class="nav-left">
@@ -17,24 +18,30 @@
     </div>
     <div class="nav-right">
         <div class="global-search-container">
-            <svg class="global-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
-            </svg>
+            <i class="bi bi-search global-search-icon"></i>
             <input class="global-search-input" type="text" placeholder="Search" />
         </div>
-        <a href="/profile" class="profile-icon-link">
-            <div class="profile-icon">
-                @if (!string.IsNullOrEmpty(CraftsmanImageUrl))
-                {
+        <div class="user-actions">
+            <!-- Greeting -->
+            <span class="user-greeting">Hi, <strong>@DisplayName</strong></span>
+
+            <!-- Profile Avatar -->
+            <a href="/profile" class="profile-icon-link" title="My Profile">
+                <div class="profile-icon">
                     <img src="@CraftsmanImageUrl" alt="Profile" class="profile-image" />
-                }
-                else
-                {
-                    <!-- Optional: Show initials or default icon while loading -->
-                    <span class="loading-placeholder"></span>
-                }
-            </div>
-        </a>
+                </div>
+            </a>
+
+            <!-- Logout Button -->
+            <button class="btn-logout" @onclick="HandleLogout" title="Log out">
+                <i class="bi bi-box-arrow-right"></i>
+            </button>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-button" @onclick="ToggleMobileMenu">
+                <i class="bi @(isMobileMenuOpen ? "bi-x-lg" : "bi-list")"></i>
+            </button>
+        </div>
     </div>
 </nav>
 
@@ -45,22 +52,25 @@
         <NavLink href="/projects" Match="NavLinkMatch.Prefix">Projects</NavLink>
         <NavLink href="/customer/messages" Match="NavLinkMatch.Prefix">Messages</NavLink>
         <NavLink href="/dashboard" Match="NavLinkMatch.Prefix">Profile</NavLink>
+        <button class="mobile-logout-link" @onclick="HandleLogout">
+            <i class="bi bi-box-arrow-right me-2"></i> Log out
+        </button>
     </div>
 }
 
 @code {
     [CascadingParameter]
-    public Task<AuthenticationState> AuthenticationState { get; set; }
+    public Task<AuthenticationState> AuthenticationState { get; set; } = default!;
+
+    // [Parameter]
+    // public Guid CustomerId { get; set; } // Pass from parent if available
 
     private Guid CraftsmanId { get; set; }
     private string CraftsmanImageUrl { get; set; } = "/images/user-avatar.jpg";
+    private string DisplayName { get; set; } = "User";
+    private bool isMobileMenuOpen = false;    private string? UserEmail { get; set; }
 
-    private bool isMobileMenuOpen = false;
-
-    private void ToggleMobileMenu()
-    {
-        isMobileMenuOpen = !isMobileMenuOpen;
-    }
+    private void ToggleMobileMenu() => isMobileMenuOpen = !isMobileMenuOpen;
 
     override protected async Task OnInitializedAsync()
     {
@@ -70,10 +80,17 @@
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
             var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (Guid.TryParse(userIdClaim, out var craftsmanId))
-            {
-                CraftsmanId = craftsmanId;
+            var nameClaim = user.FindFirst(ClaimTypes.Name)?.Value;
 
+            // Set Display Name
+            if (!string.IsNullOrEmpty(nameClaim))
+            {
+                DisplayName = nameClaim.Contains("@") ? nameClaim.Split('@')[0] : nameClaim;
+            }
+
+            if (Guid.TryParse(userIdClaim, out var id))
+            {
+                CraftsmanId = id;
                 await LoadProfileImage();
             }
         }
@@ -84,17 +101,32 @@
         try
         {
             var httpClient = HttpClientFactory.CreateClient("BFF");
-             var response = await httpClient.GetFromJsonAsync<CraftmanResponseDTO>($"/users/craftsman/{CraftsmanId}");
+            var response = await httpClient.GetFromJsonAsync<CraftmanResponseDTO>($"/users/craftsman/{CraftsmanId}");
 
             if (response != null)
             {
                 CraftsmanImageUrl = GetOptimizedUrl(response.ProfileImageUrl);
+                if (!string.IsNullOrEmpty(response.FirstName)) DisplayName = response.FirstName;
                 StateHasChanged();
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Failed to load navbar image: {ex.Message}");
+        }
+    }
+
+    private async Task HandleLogout()
+    {
+        try
+        {
+            var client = HttpClientFactory.CreateClient("BFF");
+            await client.PostAsync("/api/auth/logout", null);
+            NavigationManager.NavigateTo("/login");
+        }
+        catch 
+        { 
+            NavigationManager.NavigateTo("/login"); 
         }
     }
 

@@ -6,7 +6,7 @@
         {
             <li class="ra-item">
                 <div class="ra-icon @GetIconClass(item.IconType)">
-                    @((MarkupString)GetIconSvg(item.IconType))
+                    @((MarkupString)GetIconMarkup(item.IconType))
                 </div>
                 <div class="ra-content">
                     <span class="ra-title">@item.Title</span>
@@ -32,14 +32,15 @@
         };
     }
 
-    private string GetIconSvg(string iconType)
+    private string GetIconMarkup(string iconType)
     {
-        return iconType switch
+        string iconClass = iconType switch
         {
-            "user" => "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'><path d='M11 5a3 3 0 11-6 0 3 3 0 016 0zM14 11a5 5 0 10-10 0 5 5 0 0010 0z' /><path d='M15.362 14.638a.75.75 0 01.326 1.018A8.001 8.001 0 0110 18a8 8 0 01-5.688-2.344.75.75 0 111.03-1.09 6.5 6.5 0 009.32 0 .75.75 0 011.018-.326z' /></svg>",
-            "project" => "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'><path fill-rule='evenodd' d='M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm0 2h12v10H4V5z' clip-rule='evenodd' /><path d='M10 8a.75.75 0 01.75.75v2.5a.75.75 0 01-1.5 0v-2.5A.75.75 0 0110 8zM8.25 9.5a.75.75 0 000 1.5h3.5a.75.75 0 000-1.5h-3.5z' /></svg>",
-            "milestone" => "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'><path fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5.5c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V5z' clip-rule='evenodd' /></svg>",
-            _ => ""
+            "user" => "bi-person-fill",
+            "project" => "bi-folder-fill",
+            "milestone" => "bi-flag-fill",
+            _ => "bi-app-indicator" // Default
         };
+        return $"<i class='bi {iconClass}'></i>";
     }
 }

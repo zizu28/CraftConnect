@@ -19,9 +19,9 @@
         </button>
 
         <nav class="nav-links @(isMenuOpen ? "open" : "")">
-            <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+            @* <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
                 <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon" : "bi-sun")"></i>
-            </button>
+            </button> *@
 
             <a href=@(userRole == "Customer" ? $"/customer/{UserId}/dashboard" : $"/dashboard/{UserId}") class="nav-link">Dashboard</a>
             <a href="/profile" class="nav-link">Profile</a>

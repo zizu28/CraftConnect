@@ -18,9 +18,9 @@
         </button>
 
         <nav class="nav-links @(isMenuOpen ? "open" : "")">
-            <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+            @* <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
                 <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon" : "bi-sun")"></i>
-            </button>
+            </button> *@
             <a href="/" class="nav-link">Home</a>
             <a href="/explore" class="nav-link">Explore</a>
             <a href="/how-it-works" class="nav-link">How it works</a>
@@ -30,7 +30,7 @@
                 <Authorized>
                     <span class="user-greeting">
                         <!-- 'context' contains the ClaimsPrincipal -->
-                        Hi, @User.User.Identity?.Name
+                        Hi, @((User.User.Identity?.Name)!.Split('@')[0])
                     </span>
                     <button class="btn btn-outline-danger btn-logout" @onclick="HandleLogout">
                         Log out

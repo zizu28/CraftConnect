@@ -1,143 +1,219 @@
-﻿/* CraftedTopNav.razor.css */
+﻿/* =========================================
+   1. Header Layout
+   ========================================= */
 .top-nav-header {
-    width: 100%;
     background-color: #FFFFFF;
-    border-bottom: 1px solid #E5E7EB; /* Gray-200 */
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-    padding: 0 24px;
-    height: 64px;
-    position: sticky;
+    border-bottom: 1px solid #E5E7EB;
+    position: sticky; /* Or fixed depending on layout needs */
     top: 0;
     z-index: 50;
+    font-family: system-ui, -apple-system, sans-serif;
 }
 
 .nav-content {
-    width: 100%;
-    max-width: 1280px; /* lg breakpoint */
-    height: 100%;
+    max-width: 1280px;
     margin: 0 auto;
+    padding: 0 24px;
+    height: 64px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.nav-left, .nav-right {
+/* =========================================
+   2. Branding & Navigation
+   ========================================= */
+.nav-left {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 32px;
 }
 
 .logo {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     text-decoration: none;
-    color: #111827; /* Gray-900 */
+    color: #111827;
 }
 
-.logo-icon {
-    width: 28px;
-    height: 28px;
-    color: #4F46E5; /* Indigo-600 */
+.logo-img {
+    height: 32px;
+    width: auto;
 }
 
 .logo-text {
-    font-size: 1.25rem; /* 20px */
+    font-size: 1.25rem;
     font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
 .main-navigation {
     display: flex;
-    gap: 16px;
+    gap: 24px;
 }
 
 .nav-link {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #374151; /* Gray-700 */
     text-decoration: none;
-    padding: 8px 0;
-    border-bottom: 2px solid transparent;
-    transition: all 0.1s ease-in-out;
+    color: #4B5563; /* Gray-600 */
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.2s;
 }
 
-    .nav-link:hover {
-        color: #111827;
+    .nav-link:hover, .nav-link.active {
+        color: #2563EB; /* Blue-600 */
     }
 
-    .nav-link.active {
-        color: #4F46E5; /* Indigo-600 */
-        border-bottom-color: #4F46E5;
-    }
+/* =========================================
+   3. Right Actions
+   ========================================= */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
 
 .icon-btn {
-    background-color: transparent;
+    background: transparent;
     border: none;
-    padding: 6px;
-    border-radius: 50%;
-    color: #6B7280; /* Gray-500 */
+    font-size: 1.25rem;
+    color: #6B7280;
     cursor: pointer;
-    transition: background-color 0.1s, color 0.1s;
+    position: relative;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
     .icon-btn:hover {
-        background-color: #F3F4F6; /* Gray-100 */
         color: #111827;
     }
 
-    .icon-btn svg {
-        width: 24px;
-        height: 24px;
-    }
-
-.profile-btn {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
+.user-greeting {
+    font-size: 0.9rem;
+    color: #555;
+    white-space: nowrap;
 }
 
-.avatar {
+    .user-greeting strong {
+        color: #333;
+        font-weight: 600;
+    }
+
+/* Logout Button */
+.btn-logout {
+    background: transparent;
+    border: 1px solid #fee2e2;
+    color: #dc2626; /* Red */
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .btn-logout:hover {
+        background-color: #fef2f2;
+        border-color: #fca5a5;
+    }
+
+.notification-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    background-color: #EF4444; /* Red */
+    border-radius: 50%;
+    border: 1px solid #fff;
+}
+
+.profile-btn {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.avatar-initials, .avatar-img {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background-color: #FDBA74; /* Amber-300 */
-    color: #7C2D12; /* Amber-900 */
+    object-fit: cover;
+}
+
+.avatar-initials {
+    background-color: #DBEAFE; /* Blue-100 */
+    color: #1E40AF; /* Blue-800 */
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
-    font-size: 0.875rem;
-    border: 2px solid #F3F4F6;
-    transition: border-color 0.1s;
+    font-size: 0.9rem;
+    border: 1px solid #BFDBFE;
 }
 
-.profile-btn:hover .avatar {
-    border-color: #E5E7EB; /* Gray-200 */
-}
-
+/* =========================================
+   4. Mobile Menu
+   ========================================= */
 .mobile-menu-btn {
-    display: none;
+    display: none; /* Hidden on desktop */
 }
 
-/* Responsive */
+.mobile-menu {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E5E7EB;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.mobile-link {
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #374151;
+    font-weight: 500;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    text-align: left;
+    font-size: 1rem;
+    width: 100%;
+}
+
+    .mobile-link:hover {
+        background-color: #F3F4F6;
+    }
+
+.logout-link {
+    color: #DC2626; /* Red */
+    margin-top: 8px;
+    border-top: 1px solid #F3F4F6;
+    padding-top: 16px;
+}
+
+/* =========================================
+   5. Responsiveness
+   ========================================= */
 @media (max-width: 768px) {
     .main-navigation {
-        display: none; /* Hide main nav links */
+        display: none; /* Hide Desktop Nav */
     }
 
     .mobile-menu-btn {
-        display: block;
+        display: flex; /* Show Hamburger */
     }
 
-    .nav-left {
-        flex-grow: 1; /* Allow logo to take space */
-    }
-
-    .nav-right {
-        gap: 12px;
-    }
-
-    .top-nav-header {
+    .nav-content {
         padding: 0 16px;
     }
 }

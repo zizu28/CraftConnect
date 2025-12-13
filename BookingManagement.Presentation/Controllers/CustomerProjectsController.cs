@@ -52,8 +52,8 @@ namespace BookingManagement.Presentation.Controllers
 		[HttpGet("{projectId:guid}/proposals")]
 		public async Task<IActionResult> GetProposalsForProject(Guid projectId)
 		{
-			var project = await _mediator.Send(new GetCustomerProjectByIdQuery { ProjectId = projectId });
-			if (project.CustomerId != GetUserId()) return Forbid();
+			//var project = await _mediator.Send(new GetCustomerProjectByIdQuery { ProjectId = projectId });
+			//if (project.CustomerId != GetUserId()) return Forbid();
 
 			var query = new GetProposalsByProjectQuery { ProjectId = projectId };
 			var result = await _mediator.Send(query);

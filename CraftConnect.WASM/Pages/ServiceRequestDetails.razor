@@ -17,7 +17,14 @@
     <nav class="breadcrumbs" aria-label="Breadcrumb">
         <ol>
             <li><a href="/">Home</a></li>
-            <li><a href="/customer/service-requests">My Requests</a></li>
+            @if (isOwnerOfProject)
+            {
+                <li><a href="/customer/service-requests">My Requests</a></li>
+            }
+            else
+            {
+                <li><a href="/projects/available">Available Projects</a></li>
+            }
             <li><a href="#" aria-current="page">@request.ProjectTitle</a></li>
         </ol>
     </nav>
@@ -33,10 +40,13 @@
                 </span>
             </header>
 
-            <div class="action-buttons">
-                <button class="btn btn-primary" @onclick="EditProject">Edit Request</button>
-                <button class="btn btn-secondary">Close Request</button>
-            </div>
+            @if (isOwnerOfProject)
+            {
+                <div class="action-buttons">
+                    <button class="btn btn-primary" @onclick="NavigateToEdit">Edit Request</button>
+                    <button class="btn btn-secondary">Close Request</button>
+                </div>
+            }
             
             <div class="details-card">
                 <div class="detail-item">
@@ -71,30 +81,47 @@
                         }
                     </div>
                 </div>
+                @if (!isOwnerOfProject && request.Status == ServiceRequestStatus.AwaitingProposals)
+                {
+                    <div class="craftsman-action-area mt-4">
+                        <button class="btn btn-primary btn-lg" @onclick="NavigateToSubmitProposal">
+                            Submit a Proposal
+                        </button>
+                    </div>
+                }
             </div>
         </div>
 
         <!-- Right Column: Sidebar -->
-        <aside class="sidebar-column">
-            <div class="sidebar-tabs">
-                <button class="tab-item active">Proposals (@request.Proposals.Count)</button>
-                <button class="tab-item">Messages</button>
-                <button class="tab-item">Activity</button>
-            </div>
-            
-            <div class="proposals-list">
-                @foreach (var proposal in request.Proposals)
-                {
-                    <ProposalSidebarCard Proposal="proposal" ProjectId="ProjectId" />
-                }
-            </div>
+        @if (isOwnerOfProject)
+        {
+            <aside class="sidebar-column">
+                <div class="sidebar-tabs">
+                    <button class="tab-item active">Proposals (@request.Proposals.Count)</button>
+                    <button class="tab-item">Messages</button>
+                    <button class="tab-item">Activity</button>
+                </div>
 
-            <div class="sidebar-cta">
-                <p>Waiting for more proposals? You can also invite craftsmen to your project.</p>
-                <button class="btn btn-secondary-cta" 
-                    @onclick="@(() => NavigationManager.NavigateTo("/find-craftmen"))">Find Craftsmen</button>
-            </div>
-        </aside>
+                <div class="proposals-list">
+                    @foreach (var proposal in request.Proposals)
+                    {
+                        <ProposalSidebarCard Proposal="proposal" ProjectId="ProjectId" />
+                    }
+                    @if (request.Proposals.Count == 0)
+                    {
+                        <p class="text-muted text-center py-3">No proposals yet.</p>
+                    }
+                </div>
+
+                <div class="sidebar-cta">
+                    <p>Waiting for more proposals? You can also invite craftsmen to your project.</p>
+                    <button class="btn btn-secondary-cta"
+                            @onclick="@(() => NavigationManager.NavigateTo("/find-craftmen"))">
+                        Find Craftsmen
+                    </button>
+                </div>
+            </aside>
+        }
     </div>
 </div>
 
@@ -105,11 +132,14 @@
 
     [Parameter]
     public Guid ProjectId { get; set; }
+
     public Guid CustomerId { get; set; }
+    private string DisplayName { get; set; } = "User";
 
     private ServiceRequestVM request = new();
     public CustomerProjectResponseDTO? projectDto { get; set; } = new();
     private bool isLoading = false;
+    private bool isOwnerOfProject = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -123,9 +153,11 @@
             return;
         }
         var customerIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (customerIdClaim != null)
+        var nameClaim = user.FindFirst(ClaimTypes.GivenName)?.Value ?? user.FindFirst(ClaimTypes.Name)?.Value;
+        if (customerIdClaim != null) CustomerId = Guid.Parse(customerIdClaim);
+        if (!string.IsNullOrEmpty(nameClaim))
         {
-            CustomerId = Guid.Parse(customerIdClaim);
+            DisplayName = nameClaim.Contains("@") ? nameClaim.Split('@')[0] : nameClaim;
         }
 
         try
@@ -139,6 +171,7 @@
             var proposalDtos = proposalsTask.Result;
             if (projectDto != null)
             {
+                isOwnerOfProject = (projectDto.CustomerId == CustomerId);
                 request = new ServiceRequestVM
                 {
                     Id = projectDto.Id,
@@ -175,20 +208,12 @@
         }            
     }
 
-    private async Task EditProject()
+    private void NavigateToEdit()
     {
-        if (!await IsCustomerOwnerOfProject())
+        if (isOwnerOfProject)
         {
-            Logger.LogWarning("Unauthorized attempt to edit project.");
-            if(!await IsUserCustomer())
-            {
-                NavigationManager.NavigateTo($"/dashboard/{CustomerId}");
-                return;
-            }
-            NavigationManager.NavigateTo($"/customer/{CustomerId}/dashboard");
-            return;
+            NavigationManager.NavigateTo($"/customer/{CustomerId}/edit-project/{ProjectId}");
         }
-        NavigationManager.NavigateTo($"/customer/{CustomerId}/edit-project/{ProjectId}");
     }
 
     private string GetOptimizedUrl(string? originalUrl)
@@ -197,38 +222,8 @@
         return originalUrl.Replace("/upload/", "/upload/w_50,h_50,c_fill,g_face,q_auto,f_auto/");
     }
 
-    private async Task<bool> IsCustomerOwnerOfProject()
+    private void NavigateToSubmitProposal()
     {
-        try
-        {
-            var bookingsClient = HttpClientFactory.CreateClient("BFF");
-            var response = await bookingsClient.GetAsync($"/customerprojects/{ProjectId}");
-            if (response.IsSuccessStatusCode)
-            {
-                var project = await response.Content.ReadFromJsonAsync<CustomerProjectResponseDTO>();
-                if (project != null && project.CustomerId == CustomerId)
-                {
-                    return true;
-                }
-                return false;
-            }
-        }
-        catch
-        {
-            return false;
-        }
-        return true;
-    }
-
-    private async Task<bool> IsUserCustomer()
-    {
-        var authState = await AuthenticationState;
-        var user = authState.User;
-        if (user.Identity == null || !user.Identity.IsAuthenticated)
-        {
-            return false;
-        }
-        var roleClaim = user.FindFirst(ClaimTypes.Role)?.Value;
-        return roleClaim == "Customer";
+        NavigationManager.NavigateTo($"/proposal/create/{ProjectId}");
     }
 }
