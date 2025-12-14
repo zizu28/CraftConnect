@@ -26,6 +26,10 @@
                 <i class="bi bi-speedometer2"></i>
                 <span>Dashboard</span>
             </NavLink>
+            <NavLink href=@($"/customer/{CustomerId}/profile/edit") Match="NavLinkMatch.All" class="nav-item">
+                <i class="bi bi-person-gear"></i>
+                <span>Profile Setup</span>
+            </NavLink>
             <NavLink href=@($"/customer/{CustomerId}/service-requests") Match="NavLinkMatch.Prefix" class="nav-item">
                 <i class="bi bi-clipboard-data-fill"></i>
                 <span>Service Requests</span>

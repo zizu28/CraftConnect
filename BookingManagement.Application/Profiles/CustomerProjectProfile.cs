@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BookingManagement.Domain.Entities;
 using Core.SharedKernel.DTOs;
-using Core.SharedKernel.ValueObjects; // Ensure this namespace is correct
+using Core.SharedKernel.ValueObjects;
 
 namespace BookingManagement.Application.Profiles
 {
@@ -15,6 +15,8 @@ namespace BookingManagement.Application.Profiles
 					new MoneyDTO { Amount = src.Budget.Amount, Currency = src.Budget.Currency }))
 				.ForMember(dest => dest.Timeline, opt => opt.MapFrom(src =>
 					new DateTimeRangeDTO { Start = src.Timeline.Start, End = src.Timeline.End }))
+				.ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.Timeline.Start))
+				.ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.Timeline.End))
 				.ForMember(dest => dest.Skills, opt => opt.MapFrom(src =>
 					src.Skills.Select(s => new SkillDTO { Name = s.Name, YearsOfExperience = s.YearsOfExperience })));
 

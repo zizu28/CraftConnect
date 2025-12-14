@@ -65,7 +65,7 @@
         </div>
 
         <!-- Terms -->
-        <div class="form-group-checkbox">
+        <div class="form-group-checkbox mt-3">
             <InputCheckbox id="terms" @bind-Value="model.AgreeToTerms" />
             <label for="terms">
                 I agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.
@@ -119,6 +119,7 @@
 @code {
     [Inject] public SignupVMValidator Validator { get; set; } = default!;
 
+    // 1. Use ONE model for the form
     private UserCreateDTO model { get; set; } = new()
     {
         Role = "Customer", // Default
@@ -148,12 +149,37 @@
 
         try
         {
-            var httpClient = HttpClientFactory.CreateClient("BFF");
-            string endpoint = model.Role == "Craftman"
-                ? "/users/register/craftman"
-                : "/users/register/customer";
+            var httpClient = HttpClientFactory.CreateClient("UserManagement");
+            HttpResponseMessage response;
 
-            var response = await httpClient.PostAsJsonAsync(endpoint, model);
+            if (model.Role == "Craftman")
+            {
+                var craftmanDto = new CraftmanCreateDTO
+                {
+                    Email = model.Email,
+                    Password = model.Password,
+                    ConfirmPassword = model.ConfirmPassword,
+                    AgreeToTerms = model.AgreeToTerms,
+                    Role = "Craftman"
+                };
+                response = await httpClient.PostAsJsonAsync("/api/users/register/craftman", craftmanDto);
+            }
+            else if (model.Role == "Customer")
+            {
+                var customerDto = new CustomerCreateDTO
+                {
+                    Email = model.Email,
+                    Password = model.Password,
+                    ConfirmPassword = model.ConfirmPassword,
+                    AgreeToTerms = model.AgreeToTerms,
+                    Role = "Customer"
+                };
+                response = await httpClient.PostAsJsonAsync("/api/users/register/customer", customerDto);
+            }
+            else
+            {
+                response = await httpClient.PostAsJsonAsync("/api/users/register/customer", model);
+            }
 
             if (response.IsSuccessStatusCode)
             {

@@ -1,4 +1,5 @@
 using Core.SharedKernel.Domain;
+using Core.SharedKernel.DTOs;
 using Core.SharedKernel.ValueObjects;
 using CraftConnect.WASM;
 using CraftConnect.WASM.Auth;
@@ -23,6 +24,8 @@ internal class Program
 		builder.Services.AddScoped<IValidator<WorkEntry>, WorkEntryValidator>();
 		builder.Services.AddScoped<IValidator<Project>, ProjectValidator>();
 		builder.Services.AddScoped<IValidator<SkillsDTO>, SkillsDTOValidator>();
+		builder.Services.AddScoped<IValidator<CustomerUpdateDTO>, CustomerProfileUpdateValidator>();
+		builder.Services.AddScoped<SignupVMValidator>();
 		builder.Services.AddTransient<CookieHandler>();
 		builder.Services.AddHttpClient("BookingManagement", client =>
 		{

@@ -6,7 +6,7 @@ namespace UserManagement.Domain.Entities
 {
 	public class Customer : User
 	{
-		public UserAddress? Address { get; set; }
+		public Address? Address { get; set; }
 		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public PaymentMethod PreferredPaymentMethod { get; set; }
 		private List<ServiceRequest> _serviceRequests = [];
@@ -17,7 +17,7 @@ namespace UserManagement.Domain.Entities
 		public IReadOnlyCollection<Proposal> Proposals => _proposals.AsReadOnly();
 
 		private Customer() : base() { }
-		public Customer(Email email, UserAddress address, PaymentMethod preferredPaymentMethod) 
+		public Customer(Email email, Address address, PaymentMethod preferredPaymentMethod) 
 			: base(email, UserRole.Customer)
 		{
 			Address = address;

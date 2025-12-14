@@ -70,7 +70,6 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 		public async Task UpdateAsync(Customer entity, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(entity);
-			dbContext.Entry(entity).State = EntityState.Detached;
 			dbContext.Customers.Update(entity);
 		}
 	}

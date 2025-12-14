@@ -4,9 +4,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Yarp.ReverseProxy" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-    <PackageReference Include="Microsoft.Extensions.Logging" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CraftConnect.ServiceDefaults\CraftConnect.ServiceDefaults.csproj" />

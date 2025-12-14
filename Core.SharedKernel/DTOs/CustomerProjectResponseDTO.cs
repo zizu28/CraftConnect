@@ -11,6 +11,7 @@ namespace Core.SharedKernel.DTOs
 		public string CustomerAvatarUrl { get; set; } = string.Empty;
 		public string Location { get; set; } = string.Empty;
 		public ServiceRequestStatus Status { get; set; }
+		public ServiceCategory Category { get; set; } = ServiceCategory.General;
 		public string StatusName => Status.ToString();
 		public MoneyDTO Budget { get; set; } = new();
 		public DateTimeRangeDTO Timeline { get; set; } = new();

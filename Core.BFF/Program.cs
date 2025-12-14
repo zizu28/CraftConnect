@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Yarp.ReverseProxy.Configuration;
+using Yarp.ReverseProxy.Forwarder;
 using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -122,7 +123,12 @@ static ClusterConfig[] GetClusters()
 						Address = "https://localhost:7272"
 					}
 				}
-			}
+			},
+			//HttpRequest = new ForwarderRequestConfig
+			//{
+			//	Version = new Version(1, 1),
+			//	VersionPolicy = HttpVersionPolicy.RequestVersionOrLower
+			//}
 		}
 	];
 }

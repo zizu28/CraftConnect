@@ -21,12 +21,6 @@ namespace UserManagement.Application.Validators.CustomerValidators
 					.EmailAddress().WithMessage("Invalid email address");
 			});
 
-			When(dto => dto.Password != null, () =>
-			{
-				RuleFor(dto => dto.Password)
-					.NotEmpty().WithMessage("Password is required")
-					.MinimumLength(8).WithMessage("Password must be at least 8 characters long");
-			});
 			When(dto => dto.PreferredPaymentMethod != null, () =>
 			{
 				RuleFor(dto => dto.PreferredPaymentMethod)

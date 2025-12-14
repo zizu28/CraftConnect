@@ -13,6 +13,7 @@ namespace UserManagement.Infrastructure.EntityTypeConfigurations
 			builder.Property(c => c.FirstName).IsRequired().HasMaxLength(50);
 			builder.Property(c => c.LastName).IsRequired().HasMaxLength(50);
 			builder.Property(c => c.Username).IsRequired().HasMaxLength(50);
+			builder.Property(c => c.RowVersion).IsRowVersion();
 			builder.OwnsOne(c => c.Email, email =>
 			{
 				email.Property(e => e.Address).IsRequired().HasMaxLength(100).HasColumnName("Email");
@@ -20,9 +21,11 @@ namespace UserManagement.Infrastructure.EntityTypeConfigurations
 			});
 			builder.OwnsOne(c => c.Address, address =>
 			{
-				address.Property(a => a.Street).IsRequired().HasMaxLength(100).HasColumnName("Street");
-				address.Property(a => a.City).IsRequired().HasMaxLength(50).HasColumnName("City");
-				address.Property(a => a.PostalCode).IsRequired().HasMaxLength(20).HasColumnName("PostalCode");
+				address.WithOwner();
+				address.Property(a => a.Street).IsRequired().HasMaxLength(100).HasColumnName("Address_Street");
+				address.Property(a => a.City).IsRequired().HasMaxLength(50).HasColumnName("Address_City");
+				address.Property(a => a.PostalCode).IsRequired().HasMaxLength(20).HasColumnName("Address_PostalCode");
+				address.Ignore("RowVersion");
 			});
 			builder.OwnsOne(c => c.Phone, phone =>
 			{

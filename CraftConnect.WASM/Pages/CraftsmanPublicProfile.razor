@@ -141,7 +141,7 @@ else
 
     private string GetOptimizedUrl(string originalUrl)
     {
-        if (string.IsNullOrEmpty(originalUrl)) return "/images/default-avatar.png";
+        if (string.IsNullOrEmpty(originalUrl)) return "/images/user-avatar.jpg";
         return originalUrl.Replace("/upload/", "/upload/w_400,h_300,c_fill,q_auto,f_auto/");
     }
 

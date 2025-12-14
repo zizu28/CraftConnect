@@ -23,6 +23,15 @@ namespace BookingManagement.Presentation.Controllers
 			return Ok(result);
 		}
 
+		[HttpGet("incoming-proposals")]
+		public async Task<IActionResult> GetProjectsWithIncomingProposals()
+		{
+			var customerId = GetUserId();
+			var query = new GetProjectsWithIncomingProposalsQuery { CustomerId = customerId };
+			var result = await _mediator.Send(query);
+			return Ok(result);
+		}
+
 		[HttpGet("my-projects")]
 		public async Task<IActionResult> GetMyProjects()
 		{

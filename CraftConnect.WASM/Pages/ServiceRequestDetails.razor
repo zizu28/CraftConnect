@@ -180,8 +180,8 @@
                     Description = projectDto.Description,
                     SkillsRequired = projectDto.Skills.Select(s => s.Name).ToList(),
                     Budget = projectDto.Budget.Amount,
-                    StartDate = projectDto.StartDate,
-                    EndDate = projectDto.EndDate,
+                    StartDate = projectDto.Timeline?.Start ?? DateTime.MinValue,
+                    EndDate = projectDto.Timeline?.End ?? DateTime.MinValue,
                     Proposals = proposalDtos!.Select(p => new CustomerProposalVM
                     {
                         Id = p.Id,

@@ -1,19 +1,54 @@
 ﻿@using CraftConnect.WASM.ViewModels
+@inject NavigationManager NavigationManager
+@inject IHttpClientFactory HttpClientFactory
+
 <header class="top-bar">
     <div class="search-container">
         <i class="bi bi-search search-icon"></i>
         <input type="text" class="search-input" placeholder="Search for projects, proposals or craftsmen" />
     </div>
 
-    <div class="profile-menu">
-        <div class="profile-avatar">
-            <span>@User.AvatarInitials</span>
+    <!-- User Actions Group -->
+    <div class="user-actions">
+        <!-- Welcome Message -->
+        <span class="welcome-text">
+            Welcome, <strong>@(User.Name.Split('@')[0])</strong>
+        </span>
+
+        <!-- Notifications -->
+        <button class="icon-btn" title="Notifications">
+            <i class="bi bi-bell"></i>
+            <span class="notification-dot"></span>
+        </button>
+
+        <!-- Logout Button -->
+        <button class="icon-btn logout-btn" @onclick="HandleLogout" title="Log out">
+            <i class="bi bi-box-arrow-right"></i>
+        </button>
+
+        <!-- Profile Avatar (Clickable for settings?) -->
+        <div class="profile-menu">
+            <div class="profile-avatar">
+                <span>@User.AvatarInitials</span>
+            </div>
         </div>
-        <i class="bi bi-chevron-down profile-chevron"></i>
     </div>
 </header>
 
 @code {
-    [Parameter]
-    public UserProfileVM User { get; set; }
+    [Parameter] public UserProfileVM User { get; set; } = new();
+
+    private async Task HandleLogout()
+    {
+        try
+        {
+            var client = HttpClientFactory.CreateClient("BFF");
+            await client.PostAsync("/api/auth/logout", null);
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+        }
+        catch
+        {
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+        }
+    }
 }

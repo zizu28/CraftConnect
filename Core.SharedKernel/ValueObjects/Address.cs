@@ -6,6 +6,13 @@
 		public string City { get; init; } = string.Empty;
 		public string PostalCode { get; init; } = string.Empty;
 
+		private Address()
+		{
+			Street = string.Empty;
+			City = string.Empty;
+			PostalCode = string.Empty;
+		}
+
 		public Address(string street, string city, string postalCode)
 		{
 			Street = street;

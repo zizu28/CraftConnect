@@ -1,6 +1,7 @@
 ﻿@page "/customer/{CustomerId:guid}/dashboard"
 @layout CustomerLayout
 @inject NavigationManager NavManager
+@using Core.SharedKernel.DTOs
 @using Core.SharedKernel.Enums
 @using CraftConnect.WASM.Components.CustomerDashboardPageComponents
 @using CraftConnect.WASM.Components.SkeletonComponents
@@ -8,6 +9,8 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Threading.Tasks
 @using System.Security.Claims
+@inject IHttpClientFactory HttpClientFactory
+@inject ILoggerFactory LoggerFactory
 
 @if (isLoading)
 {
@@ -28,26 +31,40 @@ else
         <div class="dashboard-grid">
             <!-- Left Column -->
             <div class="dashboard-col">
-                <section class="dashboard-section">
-                    <div class="section-header">
-                        <h2>Service Requests</h2>
-                        <a href=@($"/customer/{CustomerId}/service-requests") class="view-all-link">View All</a>
-                    </div>
-                    <ServiceRequestsTable Requests="dashboardData.RecentServiceRequests" IsMini="true" CustomerId="@CustomerId" />
-                </section>
-
-                <section class="dashboard-section">
-                    <div class="section-header">
-                        <h2>Incoming Proposals</h2>
-                        <a href=@($"/customer/{CustomerId}/proposals") class="view-all-link">View All</a>
-                    </div>
-                    <div class="card-list">
-                        @foreach (var proposal in dashboardData.IncomingProposals)
-                        {
-                            <ProposalCard Proposal="proposal" />
-                        }
-                    </div>
-                </section>
+                @if(dashboardData.RecentServiceRequests.Count == 0)
+                {
+                    <p>No service requests available for you.</p>
+                }
+                else
+                {
+                    <section class="dashboard-section">
+                        <div class="section-header">
+                            <h2>Service Requests</h2>
+                            <a href=@($"/customer/{CustomerId}/service-requests") class="view-all-link">View All</a>
+                        </div>
+                        <ServiceRequestsTable Requests="dashboardData.RecentServiceRequests" IsMini="true" CustomerId="@CustomerId" />
+                    </section>
+                }
+                
+                @if(dashboardData.IncomingProposals.Count == 0)
+                {
+                    <p>No proposals available for you.</p>
+                }
+                else
+                {
+                    <section class="dashboard-section">
+                        <div class="section-header">
+                            <h2>Incoming Proposals</h2>
+                            <a href=@($"/customer/{CustomerId}/proposals") class="view-all-link">View All</a>
+                        </div>
+                        <div class="card-list">
+                            @foreach (var proposal in dashboardData.IncomingProposals)
+                            {
+                                <ProposalCard Proposal="proposal" />
+                            }
+                        </div>
+                    </section>
+                }                
             </div>
             
             <!-- Right Column (Sidebar) -->
@@ -55,7 +72,7 @@ else
                 <section class="dashboard-section">
                     <div class="section-header">
                         <h2>Inbox Preview</h2>
-                        <a href=@($"/customer/{CustomerId}/messages") class="view-all-link">View All</a>
+                        <a href=@($"/customer/messages") class="view-all-link">View All</a>
                     </div>
                     <div class="inbox-list">
                         @foreach (var message in dashboardData.InboxPreview)
@@ -73,14 +90,18 @@ else
     [CascadingParameter]
     public Task<AuthenticationState> AuthenticationState { get; set; }
 
+    private ILogger<CustomerDashboard> logger => LoggerFactory.CreateLogger<CustomerDashboard>();
+
     [Parameter]
     public Guid CustomerId { get; set; }
 
-    private CustomerDashboardVM? dashboardData;
+    private CustomerDashboardVM? dashboardData { get; set; }
+
     private bool isLoading = false;
 
     protected override async Task OnInitializedAsync()
     {
+        isLoading = true;
         var authState = await AuthenticationState;
         var user = authState.User;
         if (user.Identity!.IsAuthenticated)
@@ -96,30 +117,67 @@ else
             NavManager.NavigateTo("/login");
             return;
         }
-
-        // Mock data for the dashboard
-        dashboardData = new CustomerDashboardVM
+        try
         {
-            ActiveServiceRequests = 3,
-            NewProposals = 5,
-            UnreadMessages = 2,
-            RecentServiceRequests = new List<ServiceRequestVM>
+            var httpClient = HttpClientFactory.CreateClient("BFF");
+            var proposalsTask = httpClient.GetFromJsonAsync<List<CraftsmanProposalResponseDTO>>($"/customerprojects/incoming-proposals");
+            var projectsTask = httpClient.GetFromJsonAsync<List<CustomerProjectResponseDTO>>("/customerprojects/my-projects");
+
+            await Task.WhenAll(proposalsTask, projectsTask);
+
+            var proposals = proposalsTask.Result ?? new();
+            var projects = projectsTask.Result ?? new();
+            dashboardData = new CustomerDashboardVM
             {
-                new ServiceRequestVM { Id = Guid.NewGuid(), ProjectTitle = "Custom Bookshelf", Category = "Carpentry", DateSubmitted = new DateTime(2023, 10, 26), Status = ServiceRequestStatus.InProgress },
-                new ServiceRequestVM { Id = Guid.NewGuid(), ProjectTitle = "Kitchen Sink Repair", Category = "Plumbing", DateSubmitted = new DateTime(2023, 10, 24), Status = ServiceRequestStatus.AwaitingProposals },
-                new ServiceRequestVM { Id = Guid.NewGuid(), ProjectTitle = "Garden Landscaping", Category = "Gardening", DateSubmitted = new DateTime(2023, 09, 15), Status = ServiceRequestStatus.Completed }
-            },
-            IncomingProposals = new List<CustomerProposalSummaryVM>
-            {
-                new CustomerProposalSummaryVM { Id = Guid.NewGuid(), CraftsmanName = "John Smith", CraftsmanRating = 4.8, Price = 450, Excerpt = "\"I can build your custom bookshelf with high-quality oak and have it done within a week.\"", ProposalUrl = "#", ProfileUrl = "#" },
-                new CustomerProposalSummaryVM { Id = Guid.NewGuid(), CraftsmanName = "Maria Garcia", CraftsmanRating = 5.0, Price = 120, Excerpt = "\"Expert in all types of sink repairs. I can come by this afternoon to take a look and fix it on the spot.\"", ProposalUrl = "#", ProfileUrl = "#" }
-            },
-            InboxPreview = new List<InboxMessageVM>
+                ActiveServiceRequests = projects.Count(p => p.Status == ServiceRequestStatus.Open || p.Status == ServiceRequestStatus.InProgress),
+                NewProposals = proposals.Count(p => p.Status == ProposalStatus.Pending),
+                UnreadMessages = 2,
+                RecentServiceRequests = projects
+                    .OrderByDescending(p => p.Timeline.Start)
+                    .Take(3)
+                    .Select(p => new ServiceRequestVM
+                    {
+                        Id = p.Id,
+                        ProjectTitle = p.Title,
+                        Category = p.Category.ToString(),
+                        DateSubmitted = p.Timeline.Start,
+                        Status = p.Status
+                    }).ToList(),
+                IncomingProposals = proposals
+                    .OrderByDescending(p => p.SubmittedDate)
+                    .Take(5)
+                    .Select(p => new CustomerProposalSummaryVM
+                    {
+                        Id = p.Id,
+                        CraftsmanName = p.CraftsmanName,
+                        Price = p.Price.Amount,
+                        CraftsmanAvatarUrl = GetOptimizedImage(p.CraftsmanAvatarUrl),
+                        CraftsmanRating = 5.0, // 
+                        Excerpt = p.CoverLetter.Length > 60 ? p.CoverLetter.Substring(0, 60) + "..." : p.CoverLetter                        
+                    }).ToList(),
+                InboxPreview = new List<InboxMessageVM>
             {
                 new InboxMessageVM { Id = 1, SenderName = "Alex Johnson", Excerpt = "Sounds great! I'll send over the final designs by the end of the day.", ReceivedTime = "10:45 AM", IsRead = false, IsSupportTicket = false, SenderAvatarInitials = "AJ" },
                 new InboxMessageVM { Id = 2, SenderName = "John Smith", Excerpt = "I've received the payment. Thank you!", ReceivedTime = "Yesterday", IsRead = true, IsSupportTicket = false, SenderAvatarInitials = "JS" },
                 new InboxMessageVM { Id = 3, SenderName = "Support Team", Excerpt = "We've updated our terms of service. Please review them.", ReceivedTime = "2 days ago", IsRead = true, IsSupportTicket = true, SenderAvatarInitials = "ST" }
             }
-        };
+            };
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error loading dashboard data for customer {CustomerId}", CustomerId);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+        
+    }
+
+    private string GetOptimizedImage(string? url)
+    {
+        if (string.IsNullOrEmpty(url)) return "/images/user-avatar.jpg"; // Fix relative path
+                                                                            // Cloudinary standard
+        return url.Replace("/upload/", "/upload/w_100,h_100,c_fill,q_auto,f_auto/");
     }
 }

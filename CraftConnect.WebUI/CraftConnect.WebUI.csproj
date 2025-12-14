@@ -3,9 +3,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Blazored.FluentValidation" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-    <PackageReference Include="Microsoft.Extensions.Logging" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CraftConnect.ServiceDefaults\CraftConnect.ServiceDefaults.csproj" />

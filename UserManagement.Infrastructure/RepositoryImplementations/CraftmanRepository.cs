@@ -87,7 +87,6 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 		public async Task UpdateAsync(Craftman entity, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(entity);
-			dbContext.Craftmen.Entry(entity).State = EntityState.Detached;
 			dbContext.Craftmen.Update(entity);
 		}
 	}

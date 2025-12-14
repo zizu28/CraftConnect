@@ -10,7 +10,7 @@
           "Host": "localhost",
           "Port": 7235
         }
-      ],
+      ]
     },
     {
       "UpstreamPathTemplate": "/users/craftsman/{Id}",
@@ -57,7 +57,6 @@
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
       },
-      "DangerousAcceptAnyServerCertificateValidator": true,
       "RateLimitOptions": {
         "EnableRateLimiting": true,
         "Period": "30s",
@@ -95,7 +94,29 @@
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
       },
-      "DangerousAcceptAnyServerCertificateValidator": true,
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "30s",
+        "Limit": 15
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/customers/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/customers/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7235
+          //"Host": "userManagement",
+          //"Port": 8080
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
       "RateLimitOptions": {
         "EnableRateLimiting": true,
         "Period": "30s",
@@ -119,7 +140,6 @@
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
       },
-      "DangerousAcceptAnyServerCertificateValidator": true,
       "RateLimitOptions": {
         "EnableRateLimiting": true,
         "Period": "30s",

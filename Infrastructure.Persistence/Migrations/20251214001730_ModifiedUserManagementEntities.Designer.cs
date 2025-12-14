@@ -4,6 +4,7 @@ using Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251214001730_ModifiedUserManagementEntities")]
+    partial class ModifiedUserManagementEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -824,10 +827,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<bool>("AgreeToTerms")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Bio")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -848,10 +847,6 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProfileImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -881,6 +876,10 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.HasBaseType("UserManagement.Domain.Entities.User");
 
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -888,8 +887,21 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<int>("Profession")
                         .HasColumnType("int");
 
+                    b.Property<string>("ProfileImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.ToTable("Users", t =>
+                        {
+                            t.Property("Bio")
+                                .HasColumnName("Craftman_Bio");
+
+                            t.Property("ProfileImageUrl")
+                                .HasColumnName("Craftman_ProfileImageUrl");
+                        });
 
                     b.HasDiscriminator().HasValue("Craftman");
                 });
@@ -898,8 +910,16 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.HasBaseType("UserManagement.Domain.Entities.User");
 
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("PreferredPaymentMethod")
                         .HasColumnType("int");
+
+                    b.Property<string>("ProfileImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("Customer");
                 });
@@ -1791,7 +1811,7 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("UserManagement.Domain.Entities.Customer", b =>
                 {
-                    b.OwnsOne("Core.SharedKernel.ValueObjects.Address", "Address", b1 =>
+                    b.OwnsOne("Core.SharedKernel.ValueObjects.UserAddress", "Address", b1 =>
                         {
                             b1.Property<Guid>("CustomerId")
                                 .HasColumnType("uniqueidentifier");
@@ -1821,6 +1841,34 @@ namespace Infrastructure.Persistence.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("CustomerId");
+
+                            b1.OwnsOne("Core.SharedKernel.ValueObjects.GeoLocation", "Location", b2 =>
+                                {
+                                    b2.Property<Guid>("UserAddressCustomerId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<double>("Latitude")
+                                        .HasColumnType("float");
+
+                                    b2.Property<double>("Longitude")
+                                        .HasColumnType("float");
+
+                                    b2.Property<byte[]>("_TableSharingConcurrencyTokenConvention_RowVersion")
+                                        .IsConcurrencyToken()
+                                        .IsRequired()
+                                        .ValueGeneratedOnAddOrUpdate()
+                                        .HasColumnType("rowversion")
+                                        .HasColumnName("RowVersion");
+
+                                    b2.HasKey("UserAddressCustomerId");
+
+                                    b2.ToTable("Users");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("UserAddressCustomerId");
+                                });
+
+                            b1.Navigation("Location");
                         });
 
                     b.Navigation("Address");

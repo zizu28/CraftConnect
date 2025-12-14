@@ -1,0 +1,253 @@
+﻿@page "/customer/{CustomerId:guid}/profile/edit"
+@using Blazored.FluentValidation
+@using Core.SharedKernel.DTOs
+@using CraftConnect.WASM.Validators
+@using CraftConnect.WASM.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using System.Net.Http.Headers
+@inject NavigationManager NavigationManager
+@inject IHttpClientFactory HttpClientFactory
+@inject ILoggerFactory LoggerFactory
+
+<div class="profile-edit-container">
+    <div class="header-section">
+        <h1>Edit Profile</h1>
+        <p>Update your personal information and contact details.</p>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="loading-state">
+            <div class="spinner-border text-primary" role="status"></div>
+            <span class="ms-2">Loading your profile...</span>
+        </div>
+    }
+    else
+    {
+        <EditForm Model="@customerData" OnValidSubmit="HandleValidSubmit" class="edit-form" FormName="customer-edit">
+            <FluentValidationValidator Validator="@CustomerValidator" />
+            <ValidationSummary />
+
+            <!-- Profile Picture Section -->
+            <div class="card-section profile-photo-card">
+                <div class="avatar-wrapper">
+                    <img src="@GetOptimizedAvatarUrl(customerData.ProfileImageUrl)" alt="Profile" class="profile-avatar" />
+                    <div class="upload-overlay">
+                        <label class="btn-upload">
+                            <i class="bi bi-camera"></i> Change
+                            <InputFile OnChange="HandleImageUpload" accept=".jpg,.jpeg,.png" />
+                        </label>
+                    </div>
+                </div>
+                <div class="photo-info">
+                    <h3>Profile Photo</h3>
+                    <p>We recommend an image of at least 400x400px.</p>
+                    @if (isUploadingImage)
+                    {
+                        <span class="text-primary small">Uploading...</span>
+                    }
+                </div>
+            </div>
+
+            <!-- Personal Info -->
+            <div class="card-section">
+                <h3 class="section-title">Personal Information</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <InputText @bind-Value="customerData.FirstName" class="form-control" />
+                        <ValidationMessage For="@(() => customerData.FirstName)" />
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <InputText @bind-Value="customerData.LastName" class="form-control" />
+                        <ValidationMessage For="@(() => customerData.LastName)" />
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Bio</label>
+                        <InputTextArea @bind-Value="customerData.Bio" class="form-control" rows="3" placeholder="Tell craftsmen a bit about yourself..." />
+                        <ValidationMessage For="@(() => customerData.Bio)" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="card-section">
+                <h3 class="section-title">Contact Details</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <InputText @bind-Value="customerData.Email" class="form-control" disabled />
+                        <span class="input-hint">Contact support to change email.</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <InputText @bind-Value="customerData.Phone" class="form-control" />
+                        <ValidationMessage For="@(() => customerData.Phone)" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Address Section -->
+            <div class="card-section">
+                <h3 class="section-title">Address</h3>
+                <div class="form-grid address-grid">
+                    <div class="form-group full-width">
+                        <label>Street Address</label>
+                        <InputText @bind-Value="customerData.Street" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <InputText @bind-Value="customerData.City" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>State</label>
+                        <InputText @bind-Value="customerData.PostalCode" class="form-control" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+                <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                    @(isSubmitting ? "Saving..." : "Save Changes")
+                </button>
+            </div>
+
+        </EditForm>
+    }
+</div>
+
+@code {
+    [Parameter] public Guid CustomerId { get; set; }
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; } = default!;
+
+    private ILogger<CustomerProfileEdit> Logger => LoggerFactory.CreateLogger<CustomerProfileEdit>();
+
+    private CustomerProfileUpdateValidator CustomerValidator { get; set; } = new();
+
+    private CustomerUpdateDTO customerData = new();
+    private bool isLoading = true;
+    private bool isSubmitting = false;
+    private bool isUploadingImage = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateTask;
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated != true)
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+
+        var idClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (idClaim == null || Guid.Parse(idClaim) != CustomerId)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        try
+        {
+            var client = HttpClientFactory.CreateClient("BFF");
+            var dto = await client.GetFromJsonAsync<CustomerResponseDTO>($"/users/customer/{CustomerId}");
+
+            if (dto != null)
+            {
+                customerData = new CustomerUpdateDTO
+                {
+                    CustomerId = dto.CustomerId,
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    Email = dto.Email ?? "",
+                    Phone = dto.Phone,
+                    Bio = dto.Bio,
+                    ProfileImageUrl = dto.ProfileImageUrl,
+                    Address = dto.Address,
+                    City = dto.City,
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"Load Error: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        isSubmitting = true;
+        try
+        {
+            var client = HttpClientFactory.CreateClient("BFF");
+            var response = await client.PutAsJsonAsync($"/customers/{CustomerId}", customerData);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Logger.LogInformation("Profile updated.");
+                NavigationManager.NavigateTo($"/customer/{CustomerId}/dashboard");
+            }
+            else
+            {
+                Logger.LogError($"Update failed with status code: {response.StatusCode}");
+            }
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        if (isUploadingImage) return;
+        isUploadingImage = true;
+        try
+        {
+            var file = e.File;
+            long maxFileSize = 1024 * 1024 * 5;
+            using var content = new MultipartFormDataContent();
+            var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+            content.Add(fileContent, "file", file.Name);
+            var httpClient = HttpClientFactory.CreateClient("BFF");
+            var response = await httpClient.PostAsync("/customers/upload-avatar", content);
+            if (response.IsSuccessStatusCode)
+            {
+                var url = await response.Content.ReadAsStringAsync();
+
+                customerData.ProfileImageUrl = url;
+                StateHasChanged();
+            }
+            else
+            {
+                Logger.LogError("Image upload failed");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error uploading image");
+        }
+        finally
+        {
+            isUploadingImage = false;
+        }
+    }
+
+    private void Cancel() => NavigationManager.NavigateTo($"/customer/{CustomerId}/dashboard");
+
+    private string GetOptimizedAvatarUrl(string? url)
+    {
+        return string.IsNullOrEmpty(url)
+            ? "/images/user-avatar.jpg"
+            : url.Replace("/upload/", "/upload/w_150,h_150,c_fill,g_face,q_auto,f_auto/");
+    }
+}

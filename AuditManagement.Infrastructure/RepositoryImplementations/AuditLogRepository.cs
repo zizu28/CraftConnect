@@ -51,7 +51,6 @@ namespace AuditManagement.Infrastructure.RepositoryImplementations
 		public Task UpdateAsync(AuditLog entity, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(entity);
-			dbContext.Entry(entity).State = EntityState.Detached;
 			dbContext.AuditLogs.Update(entity);
 			return Task.CompletedTask;
 		}

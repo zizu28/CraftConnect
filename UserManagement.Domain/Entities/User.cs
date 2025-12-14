@@ -13,6 +13,8 @@ namespace UserManagement.Domain.Entities
 		public string FirstName { get; private set; } = string.Empty;
 		public string LastName { get; private set; } = string.Empty;
 		public bool AgreeToTerms { get; private set; }
+		public string Bio { get; private set; } = string.Empty;
+		public string ProfileImageUrl { get; private set; } = string.Empty;
 		public Email Email { get; private set; }
 		public bool IsEmailConfirmed { get; set; } = false;
 		public string PasswordHash { get; set; } = string.Empty;

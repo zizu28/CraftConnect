@@ -8,6 +8,7 @@ namespace BookingManagement.Application.Contracts
 		Task<IEnumerable<CraftsmanProposal>> GetProposalsByProjectAsync(Guid projectId, CancellationToken cancellationToken = default);
 
 		Task<IEnumerable<CraftsmanProposal>> GetProposalsByCraftsmanAsync(Guid craftsmanId, CancellationToken cancellationToken = default);
+		Task<IEnumerable<CraftsmanProposal>> GetProposalsByProjectIdsAsync(List<Guid> Ids, CancellationToken cancellationToken = default);
 
 		Task<bool> HasCraftsmanAppliedAsync(Guid projectId, Guid craftsmanId, CancellationToken cancellationToken = default);
 

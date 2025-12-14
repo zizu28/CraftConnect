@@ -2,6 +2,7 @@
 using BookingManagement.Domain.Entities;
 using Core.SharedKernel.Enums;
 using Infrastructure.Persistence.Data;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookingManagement.Infrastructure.RepositoryImplementations
@@ -35,6 +36,15 @@ namespace BookingManagement.Infrastructure.RepositoryImplementations
 			return await _context.CraftsmanProposals
 				.Where(p => p.ProjectId == projectId && p.Status == ProposalStatus.Pending)
 				.ToListAsync(cancellationToken);
+		}
+
+		public async Task<IEnumerable<CraftsmanProposal>> GetProposalsByProjectIdsAsync(List<Guid> Ids, CancellationToken cancellationToken = default)
+		{
+			var proposals = await context.CraftsmanProposals
+				   .Where(p => Ids.Contains(p.ProjectId) && p.Status == ProposalStatus.Pending)
+				   .Include(p => p.Price)
+				   .ToListAsync(cancellationToken);
+			return proposals;
 		}
 	}
 }

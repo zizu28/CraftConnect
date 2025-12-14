@@ -1,6 +1,10 @@
-﻿@using CraftConnect.WASM.ViewModels
+﻿@using Core.SharedKernel.DTOs
+@using CraftConnect.WASM.ViewModels
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+@inject IHttpClientFactory HttpClientFactory
+@inject ILoggerFactory LoggerFactory
+
 <div class="table-card-wrapper">
     <table class="service-table">
         <thead>
@@ -25,7 +29,7 @@
                     <td><StatusLabel Status="request.Status" /></td>
                     @if (!IsMini)
                     {
-                        <td><a href=@($"/customer/{CustomerId}/service-requests/{request.Id}") class="action-link">View Details</a></td>
+                        <td><a href=@($"/projects/{request.Id}") class="action-link">View Details</a></td>
                     }
                 </tr>
             }
@@ -37,26 +41,14 @@
     [CascadingParameter]
     public Task<AuthenticationState> AuthenticationState { get; set; }
 
-    [Parameter]
-    public Guid CustomerId { get; set; }
+    private ILogger<ServiceRequestsTable> Logger => LoggerFactory.CreateLogger<ServiceRequestsTable>();
 
     [Parameter]
     public List<ServiceRequestVM> Requests { get; set; } = new();
 
     [Parameter]
-    public bool IsMini { get; set; } = false; // Hides 'Actions' for dashboard
+    public Guid CustomerId { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthenticationState;
-        var user = authState.User;
-        if (user.Identity!.IsAuthenticated)
-        {
-            var userIdString = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (Guid.TryParse(userIdString, out var id))
-            {
-                CustomerId = id;
-            }
-        }
-    }
+    [Parameter]
+    public bool IsMini { get; set; } = false;    
 }
