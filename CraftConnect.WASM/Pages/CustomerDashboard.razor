@@ -60,7 +60,8 @@ else
                         <div class="card-list">
                             @foreach (var proposal in dashboardData.IncomingProposals)
                             {
-                                <ProposalCard Proposal="proposal" />
+                                <ProposalCard Proposal="@proposal" CustomerId="@(Guid.Parse(proposal.ProfileUrl))" 
+                                    ProposalId="@proposal.Id"/>
                             }
                         </div>
                     </section>
@@ -153,6 +154,8 @@ else
                         Price = p.Price.Amount,
                         CraftsmanAvatarUrl = GetOptimizedImage(p.CraftsmanAvatarUrl),
                         CraftsmanRating = 5.0, // 
+                        ProfileUrl = p.CraftsmanId.ToString(),
+                        ProposalUrl = p.Id.ToString(),
                         Excerpt = p.CoverLetter.Length > 60 ? p.CoverLetter.Substring(0, 60) + "..." : p.CoverLetter                        
                     }).ToList(),
                 InboxPreview = new List<InboxMessageVM>

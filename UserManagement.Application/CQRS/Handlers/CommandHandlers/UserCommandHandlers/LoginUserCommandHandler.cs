@@ -1,4 +1,5 @@
 ﻿using Core.Logging;
+using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
@@ -10,7 +11,8 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 	public class LoginUserCommandHandler(
 		ILoggingService<LoginUserCommandHandler> _logger,
 		IUserRepository _user, 
-		ITokenProvider _refreshToken) 
+		ITokenProvider _refreshToken,
+		IUnitOfWork unitOfWork) 
 		: IRequestHandler<LoginUserCommand, LoginResponse>
 	{
 
@@ -26,7 +28,8 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 			}
 			var user = await _user.FindBy(user => user.Email.Address.Equals(request.Email), cancellationToken)
 				?? throw new KeyNotFoundException($"User with email {request.Email} not found.");
-			var isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+			await _refreshToken.RemoveOldRefreshTokens(user.Id);
+				var isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
 			if(!isPasswordValid)
 			{
 				_logger.LogWarning("Invalid login attempt for user with email: {Email}", request.Email);

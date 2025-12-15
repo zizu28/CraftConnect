@@ -6,6 +6,7 @@
 @implements IDisposable
 @inject NavigationManager NavigationManager
 @inject IHttpClientFactory HttpClientFactory
+@inject ILoggerFactory LoggerFactory
 
 <header class="navbar-container dashboard-nav">
     <div class="navbar-content">
@@ -38,7 +39,7 @@
                 <a href=@($"/customer/{UserId}/post-project") class="btn btn-primary btn-post-project">Post a Project</a>
 
                 <a href="/profile" class="profile-avatar-link">
-                    <img src="/images/user-avatar.jpg" alt="User Avatar" class="profile-avatar" />
+                    <img src="@GetOptimizedUrl(AvatarUrl)" alt="User Avatar" class="profile-avatar" />
                 </a>
             </div>
         </nav>
@@ -49,9 +50,12 @@
     [CascadingParameter]
     public Task<AuthenticationState> AuthStateTask { get; set; } = default!;
 
+    private ILogger Logger => LoggerFactory.CreateLogger<DashboardNavbar>();
+
     private Guid UserId { get; set; }
     private string userRole = string.Empty;
     private string DisplayName { get; set; } = "User"; // Default
+    private string AvatarUrl { get; set; } = "/images/user-avatar.jpg";
     private bool isMenuOpen = false;
 
     private void ToggleMenu() => isMenuOpen = !isMenuOpen;
@@ -75,11 +79,40 @@
         }
         var userEmail = user.FindFirst(ClaimTypes.Name)?.Value ?? "User";
         UserId = Guid.Parse(userIdClaim);
-        userRole = user.FindFirst(ClaimTypes.Role)?.Value ?? "";
+        userRole = user.FindFirst(ClaimTypes.Role)?.Value
+           ?? user.FindFirst("role")?.Value
+           ?? "";
+        bool isCustomer = userRole.Equals("Customer", StringComparison.OrdinalIgnoreCase);
+        bool isCraftsman = userRole.Equals("Craftman", StringComparison.OrdinalIgnoreCase);
         if (!string.IsNullOrEmpty(userEmail))
         {
             // If name is full email, just take the part before @
             DisplayName = userEmail.Split('@')[0];
+        }
+
+        try
+        {
+            var client = HttpClientFactory.CreateClient("BFF");
+            if (isCustomer)
+            {
+                var customer = await client.GetFromJsonAsync<CustomerResponseDTO>($"/users/customer/{UserId}");
+                if (customer != null)
+                {
+                    AvatarUrl = customer.ProfileImageUrl;
+                }
+            }
+            else if (isCraftsman)
+            {
+                var craftsman = await client.GetFromJsonAsync<CraftmanResponseDTO>($"/users/craftsman/{UserId}");
+                if (craftsman != null)
+                {
+                    AvatarUrl = craftsman.ProfileImageUrl;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"Error initializing navbar for user {UserId}: {ex.Message}");
         }
 
         ThemeService.OnThemeChanged += OnThemeChangedHandler;
@@ -103,4 +136,10 @@
     private void OnThemeChangedHandler() => InvokeAsync(StateHasChanged);
 
     public void Dispose() => ThemeService.OnThemeChanged -= OnThemeChangedHandler;
+
+    private string GetOptimizedUrl(string originalUrl)
+    {
+        if (string.IsNullOrEmpty(originalUrl)) return "/images/user-avatar.jpg";
+        return originalUrl.Replace("/upload/", "/upload/w_40,h_30,c_fill,q_auto,f_auto/");
+    }
 }

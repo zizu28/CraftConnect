@@ -10,6 +10,7 @@ namespace Core.SharedKernel.DTOs
 		public Guid CraftmanId { get; set; }
 		public string FirstName { get; set; } = string.Empty;
 		public string LastName { get; set; } = string.Empty;
+		public DateTime CreatedAtUtc { get; set; }
 		public string Bio { get; set; } = string.Empty;
 		public string Profession { get; set; } = string.Empty;
 		public string VerificationStatus { get; set; } = string.Empty;

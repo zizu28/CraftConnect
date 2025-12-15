@@ -12,7 +12,7 @@
         <div class="request-card">
             <div class="request-content">
                 <p class="request-title">@req.Title</p>
-                <p class="request-description">@req.Description</p>
+                <p class="request-description">@(req.Description.Substring(0, 200))...</p>
             </div>
             <div class="request-actions">
                 <button class="btn btn-view-details" @onclick=@(() => ViewDetails(req.Id))>View Details</button>

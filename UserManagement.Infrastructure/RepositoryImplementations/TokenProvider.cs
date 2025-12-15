@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Persistence.Data;
+using Infrastructure.Persistence.UnitOfWork;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,7 +14,8 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 {
 	public class TokenProvider(
 		ApplicationDbContext dBContext, 
-		IConfiguration _configuration) : ITokenProvider
+		IConfiguration _configuration,
+		IUnitOfWork unitOfWork) : ITokenProvider
 	{
 		public string GenerateAccessToken(Guid userId, string emailAddress, string role)
 		{
@@ -164,11 +166,24 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 				UserId = user.Id,
 				ExpiresOnUtc = DateTime.UtcNow.AddDays(7)
 			};
-			user.RefreshTokens.Add(refreshTokenEntity);			
-			await dBContext.RefreshTokens.AddAsync(refreshTokenEntity);
-			dBContext.Users.Update(user);
-			await dBContext.SaveChangesAsync();
+			await unitOfWork.ExecuteInTransactionAsync(async () =>
+			{
+				user.RefreshTokens.Add(refreshTokenEntity);			
+				await dBContext.RefreshTokens.AddAsync(refreshTokenEntity);
+				//dBContext.Users.Update(user);
+			});
 			return refreshToken;
+		}
+
+		public async Task RemoveOldRefreshTokens(Guid userId)
+		{
+			await unitOfWork.ExecuteInTransactionAsync(async () =>
+			{
+				var tokens = dBContext.RefreshTokens
+				.Where(rt => rt.UserId == userId && rt.ExpiresOnUtc <= DateTime.UtcNow);
+
+				dBContext.RefreshTokens.RemoveRange(tokens);
+			});
 		}
 	}
 }

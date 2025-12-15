@@ -6,7 +6,7 @@
 		public string Title { get; set; }
 		public string Category { get; set; }
 		public DateTime PostedDate { get; set; }
-		public string OriginalListingUrl { get; set; } = "https://localhost:7284/projects/available";
+		public string OriginalListingUrl { get; set; } = "https://localhost:7222/projects/available";
 		public ClientVM Client { get; set; }
 	}
 }

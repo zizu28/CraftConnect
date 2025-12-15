@@ -3,6 +3,10 @@
 @using CraftConnect.WASM.Components.AvailableProjectsPageComponents
 @using CraftConnect.WASM.Components.SharedComponents
 @using CraftConnect.WASM.ViewModels
+@using System.Threading.Tasks
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject NavigationManager NavigationManager
 @inject IHttpClientFactory HttpClientFactory
 @inject ILoggerFactory LoggerFactory
 
@@ -56,9 +60,11 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
     private List<ProjectViewModel> Projects { get; set; } = new();
     private ProjectSearchParameters SearchParameters { get; set; } = new();
-    private Guid CurrentUserId { get; set; } = Guid.Empty;
     private bool IsLoading { get; set; } = true;
     private ILogger Logger => LoggerFactory.CreateLogger<AvailableProjects>();
 
@@ -86,27 +92,25 @@
     private async Task LoadProjectsAsync()
     {
         IsLoading = true;
-        // StateHasChanged();
-
         try
         {
             var client = HttpClientFactory.CreateClient("BFF");
-
-            // Build Query String manually or use a helper
             var query = $"/customerprojects";
-
-            // Call API
             var response = await client.GetAsync(query);
 
             if (response.IsSuccessStatusCode)
             {
                 var dtos = await response.Content.ReadFromJsonAsync<List<CustomerProjectResponseDTO>>();
-
                 if (dtos != null)
                 {
                     TotalItems = dtos.Count < PageSize ? dtos.Count : 100;
-                    Projects = dtos.Select(MapToViewModel).ToList();
+                    var projectViewModelTasks = dtos.Select(dto => MapToViewModel(dto, client)).ToList();
+                    Projects = (await Task.WhenAll(projectViewModelTasks)).ToList();
                 }
+            }
+            else
+            {
+                Logger.LogError("Failed to load projects.");
             }
         }
         catch (Exception ex)
@@ -119,20 +123,33 @@
         }
     }
 
-    private ProjectViewModel MapToViewModel(CustomerProjectResponseDTO dto)
+    private async Task<ProjectViewModel> MapToViewModel(CustomerProjectResponseDTO dto, HttpClient client)
     {
+        var userAvatarUrl = await GetUserAvatarUrl(dto.CustomerId, client);
         return new ProjectViewModel
-        {
-            Id = dto.Id,
-            CustomerId = dto.CustomerId,
-            Title = dto.Title,
-            Description = dto.Description,
-            UserAvatarUrl = dto.CustomerAvatarUrl ?? "/images/default-user.png", // Need to add to DTO
-            BudgetRange = $"${dto.Budget.Amount} {dto.Budget.Currency}",
-            Deadline = dto.Timeline.End.ToString("MMM dd, yyyy"),
-            Location = dto.Location,
-            Tags = dto.Skills.Select(s => s.Name).Take(3).ToList()
-        };
+            {
+                Id = dto.Id,
+                CustomerId = dto.CustomerId,
+                Title = dto.Title,
+                Description = dto.Description,
+                UserAvatarUrl = GetOptimizedUrl(userAvatarUrl), // Need to add to DTO
+                BudgetRange = $"${dto.Budget.Amount} {dto.Budget.Currency}",
+                Deadline = dto.Timeline.End.ToString("MMM dd, yyyy"),
+                Location = dto.Location,
+                Tags = dto.Skills.Select(s => s.Name).Take(3).ToList()
+            };
+    }
+
+    private async Task<string> GetUserAvatarUrl(Guid customerId, HttpClient client)
+    {
+        var userResponse = await client.GetFromJsonAsync<UserResponseDTO>($"/users/{customerId}");
+        return userResponse!.ProfileUrl ?? "/images/user-avatar.jpg";
+    }
+
+    private string GetOptimizedUrl(string originalUrl)
+    {
+        if (string.IsNullOrEmpty(originalUrl)) return "/images/user-avatar.jpg";
+        return originalUrl.Replace("/upload/", "/upload/w_40,h_30,c_fill,q_auto,f_auto/");
     }
 
     // Parameters Class (Kept in same file or moved to ViewModels)

@@ -2,7 +2,7 @@
 <div class="proposal-card">
     <div class="proposal-header">
         <div class="craftsman-info">
-            <img class="craftsman-avatar" src="@(string.IsNullOrEmpty(Proposal.CraftsmanAvatarUrl) ? "https://placehold.co/40x40/FBBF24/78350F?text=JS" : Proposal.CraftsmanAvatarUrl)" alt="@Proposal.CraftsmanName" />
+            <img class="craftsman-avatar" src="@(string.IsNullOrEmpty(Proposal.CraftsmanAvatarUrl) ? "/images/user-avatar.jpg" : Proposal.CraftsmanAvatarUrl)" alt="@Proposal.CraftsmanName" />
             <div>
                 <span class="craftsman-name">@Proposal.CraftsmanName</span>
                 <div class="craftsman-rating">
@@ -17,8 +17,8 @@
     <p class="proposal-excerpt">@Proposal.Excerpt</p>
 
     <div class="proposal-actions">
-        <a href="@Proposal.ProposalUrl" class="action-btn btn-primary">View Proposal</a>
-        <a href="@Proposal.ProfileUrl" class="action-btn btn-secondary">View Profile</a>
+        <a href=@($"https://localhost:7222/proposals/{ProposalId}") class="action-btn btn-primary">View Proposal</a>
+        <a href=@($"https://localhost:7222/craftsman/{Proposal.ProfileUrl}") class="action-btn btn-secondary">View Profile</a>
     </div>
 </div>
 
@@ -26,15 +26,9 @@
     [Parameter]
     public CustomerProposalSummaryVM Proposal { get; set; }
 
-
-
     [Parameter]
     public Guid CustomerId { get; set; }
 
-    protected override Task OnInitializedAsync()
-    {
-        Proposal.ProfileUrl = $"https://localhost:7284/craftsman/{Proposal.Id}";
-        Proposal.ProposalUrl = $"https://localhost:7284/proposals/{Proposal.Id}";
-        return base.OnInitializedAsync();
-    }
+    [Parameter]
+    public Guid ProposalId { get; set; }
 }

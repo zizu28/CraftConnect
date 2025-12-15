@@ -36,6 +36,7 @@ namespace UserManagement.Application.Profiles
 				.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email.Address))
 				.ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone.Number))
 				.ForMember(dest => dest.CustomerId, opt => opt.MapFrom(src => src.Id))
+				.ForMember(dest => dest.ProfileImageUrl, opt => opt.MapFrom(src => src.ProfileImageUrl))
 
 				// Flatten Address for display
 				.ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Address != null ? src.Address.Street : ""))

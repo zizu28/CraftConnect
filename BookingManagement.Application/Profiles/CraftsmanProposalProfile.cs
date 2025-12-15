@@ -11,6 +11,7 @@ namespace BookingManagement.Application.Profiles
 		{
 			CreateMap<CraftsmanProposal, CraftsmanProposalResponseDTO>()
 				.ForMember(dest => dest.StatusName, opt => opt.MapFrom(src => src.Status.ToString()))
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
 				.ForMember(dest => dest.Price, opt => opt.MapFrom(src =>
 					new MoneyDTO { Amount = src.Price.Amount, Currency = src.Price.Currency }))
 				.ForMember(dest => dest.ProposedTimeline, opt => opt.MapFrom(src =>

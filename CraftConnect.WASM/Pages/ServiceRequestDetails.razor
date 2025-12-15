@@ -81,7 +81,8 @@
                         }
                     </div>
                 </div>
-                @if (!isOwnerOfProject && request.Status == ServiceRequestStatus.AwaitingProposals)
+                @if (!isOwnerOfProject && (request.Status == ServiceRequestStatus.AwaitingProposals || 
+                                request.Status == ServiceRequestStatus.Open))
                 {
                     <div class="craftsman-action-area mt-4">
                         <button class="btn btn-primary btn-lg" @onclick="NavigateToSubmitProposal">

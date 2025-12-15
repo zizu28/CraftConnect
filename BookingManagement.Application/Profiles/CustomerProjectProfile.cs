@@ -13,6 +13,7 @@ namespace BookingManagement.Application.Profiles
 				.ForMember(dest => dest.StatusName, opt => opt.MapFrom(src => src.Status.ToString()))
 				.ForMember(dest => dest.Budget, opt => opt.MapFrom(src =>
 					new MoneyDTO { Amount = src.Budget.Amount, Currency = src.Budget.Currency }))
+				//.ForMember(dest => dest.CustomerAvatarUrl, opt => opt.MapFrom(src => src.))
 				.ForMember(dest => dest.Timeline, opt => opt.MapFrom(src =>
 					new DateTimeRangeDTO { Start = src.Timeline.Start, End = src.Timeline.End }))
 				.ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.Timeline.Start))

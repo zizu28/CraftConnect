@@ -22,6 +22,13 @@
             <FluentValidationValidator Validator="@Validator" />
             <ValidationSummary />
 
+            @* --- Project Title --- *@
+            <div class="form-section">
+                <label class="section-label">Project Title</label>
+                <p class="input-hint">Give a title to your project.</p>
+                <InputText @bind-Value="ProjectData.Title" class="form-control description-box" />
+            </div>
+
             @* --- Project Description --- *@
             <div class="form-section">
                 <label class="section-label">Project Description</label>
@@ -72,7 +79,7 @@
             </div>
 
             @* --- Contact Information --- *@
-            <h4 class="contact-header">Contact Information</h4>
+            @* <h4 class="contact-header">Contact Information</h4>
             <p class="input-hint">How can interested craftsmen get in touch with you?</p>
 
             <div class="form-row-2col">
@@ -84,7 +91,7 @@
                     <label class="section-label">Phone Number (Optional)</label>
                     <InputText @bind-Value="ProjectData.PhoneNumber" class="form-control" placeholder="(123) 456-7890" />
                 </div>
-            </div>
+            </div> *@
 
             @* --- Submission Button --- *@
             <div class="form-actions">
@@ -138,7 +145,7 @@
             var bookingsClient = HttpClientFactory.CreateClient("BFF");
             var dto = new CreateCustomerProjectDTO
             {
-                Title = "Project Request",
+                Title = ProjectData.Title,
                 Description = ProjectData.InitialDescription,
                 Budget = new MoneyDTO { Amount = ProjectData.Budget, Currency = "USD" },
                 Timeline = new DateTimeRangeDTO

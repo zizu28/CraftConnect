@@ -8,5 +8,6 @@ namespace UserManagement.Application.Contracts
 		string GenerateAccessToken(Guid userId, string emailAddress, string role);
 		string GenerateCustomerEmailConfirmationToken(Customer customer);
 		string GenerateCraftmanEmailConfirmationToken(Craftman craftman);
+		Task RemoveOldRefreshTokens(Guid userId);
 	}
 }

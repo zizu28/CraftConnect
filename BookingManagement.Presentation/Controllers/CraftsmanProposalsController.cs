@@ -31,8 +31,8 @@ namespace BookingManagement.Presentation.Controllers
 			var result = await _mediator.Send(query);
 			if (result == null) return NotFound();
 
-			var userId = GetUserId();
-			if (result.CraftsmanId != userId) return Forbid(); 
+			//var userId = GetUserId();
+			//if (result.CraftsmanId != userId) return Forbid();
 
 			return Ok(result);
 		}

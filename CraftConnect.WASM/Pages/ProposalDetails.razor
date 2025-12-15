@@ -6,6 +6,7 @@
 @using CraftConnect.WASM.ViewModels
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+@using System.Threading.Tasks
 @inject NavigationManager NavigationManager
 @inject IHttpClientFactory HttpClientFactory
 @inject ILogger<ProposalDetails> Logger
@@ -56,8 +57,15 @@ else if (proposal != null)
                     </div>
 
                     <!-- TODO: Attachments implementation -->
-                    <h3 class="attached-title">Attached Documents</h3>
-                    <DocumentRow Document="proposal.Document" />
+                    @if (proposal.Document != null && !string.IsNullOrEmpty(proposal.Document.FileName))
+                    {
+                        <h3 class="attached-title">Attached Documents</h3>
+                        <DocumentRow Document="@proposal.Document" />
+                    }
+                    else
+                    {
+                        <p class="text-muted mt-3">No documents attached.</p>
+                    }
                 </div>
 
                 <!-- Messages Placeholder -->
@@ -69,7 +77,7 @@ else if (proposal != null)
 
             <!-- Sidebar -->
             <aside class="sidebar">
-                <ProjectDetailsCard Project="proposal.ProjectDetails" />
+                <ProjectDetailsCard Project="@proposal.ProjectDetails" />
 
                 <!-- Actions -->
                 <div class="actions-card card">
@@ -128,12 +136,11 @@ else if (proposal != null)
         try
         {
             var client = HttpClientFactory.CreateClient("BFF");
-            // Call BFF -> Ocelot -> BookingManagement
             var dto = await client.GetFromJsonAsync<CraftsmanProposalResponseDTO>($"/craftsmanproposals/{ProposalId}");
 
             if (dto != null)
             {
-                proposal = MapToVM(dto);
+                proposal = await MapToVM(dto);
             }
             else
             {
@@ -177,24 +184,31 @@ else if (proposal != null)
         }
     }
 
-    private ProposalVM MapToVM(CraftsmanProposalResponseDTO dto)
+    private async Task<ProposalVM> MapToVM(CraftsmanProposalResponseDTO dto)
     {
+        var client = HttpClientFactory.CreateClient("BFF");
+        var user = await client.GetFromJsonAsync<CraftmanResponseDTO>($"/users/craftsman/{CraftsmanId}");
         return new ProposalVM
         {
             Id = dto.Id,
-            ProjectTitle = dto.ProjectTitle ?? "Project Details", // Backend enriched this!
-            Status = (ProposalStatus)Enum.Parse(typeof(ProposalStatus), dto.StatusName),
+            ProjectTitle = dto.ProjectTitle ?? "Project Details",
+            Status = Enum.Parse<ProposalStatus>(dto.StatusName, true),
             ProposedSolution = dto.CoverLetter,
             Pricing = dto.Price.Amount,
-            PricingType = RateType.FixedPrice, // Assuming Fixed for now
+            PricingType = RateType.FixedPrice,
+            SubmittedDate = dto.SubmittedDate,
             EstimatedTimeline = $"{dto.ProposedTimeline.Start:MMM d} - {dto.ProposedTimeline.End:MMM d}",
-
-            // Nested Project VM
             ProjectDetails = new ProjectVM
             {
-                Id = 0, // Id not critical for display
+                Id = 0,
                 Title = dto.ProjectTitle ?? "Unknown Project",
-                Client = new ClientVM { Name = dto.ClientName ?? "Client" }
+                PostedDate = dto.ProposedTimeline.Start,
+                Client = new ClientVM 
+                { 
+                    Name = string.Join(" ", user!.FirstName, user!.LastName),
+                    MemberSince = user!.CreatedAtUtc,
+                    AvatarInitials = $"{user!.FirstName[0]}{user!.LastName[0]}"
+                }
             }
         };
     }

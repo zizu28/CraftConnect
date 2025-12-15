@@ -16,7 +16,7 @@ namespace BookingManagement.Application.Services
 		{
 			try
 			{
-				var response = await _httpClient.GetFromJsonAsync<string>($"/api/users/get-name/{craftsmanId}", ct);
+				var response = await _httpClient.GetStringAsync($"/api/users/get-name/{craftsmanId}", ct);
 				return response;
 			}
 			catch(HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)

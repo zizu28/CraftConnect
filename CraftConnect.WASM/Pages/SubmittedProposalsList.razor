@@ -155,7 +155,7 @@ else
         try
         {
             var httpClient = HttpClientFactory.CreateClient("BFF");
-            var response = await httpClient.GetAsync("/craftsmanproposals/my-proposals");
+            var response = await httpClient.GetAsync($"/craftsmanproposals/my-proposals");
             if (response.IsSuccessStatusCode)
             {
                 var dtos = await response.Content.ReadFromJsonAsync<List<CraftsmanProposalResponseDTO>>();

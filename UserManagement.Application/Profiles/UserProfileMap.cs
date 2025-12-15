@@ -23,7 +23,8 @@ namespace UserManagement.Application.Profiles
 			CreateMap<User, UserResponseDTO>()
 				.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email.Address))
 				.ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone.Number))
-				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id));
+				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+				.ForMember(dest => dest.ProfileUrl, opt => opt.MapFrom(src => src.ProfileImageUrl));				
 		}
 	}
 }
