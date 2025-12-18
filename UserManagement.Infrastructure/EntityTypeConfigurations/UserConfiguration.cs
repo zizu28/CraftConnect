@@ -26,6 +26,9 @@ namespace UserManagement.Infrastructure.EntityTypeConfigurations
 				phone.Property(p => p.CountryCode).IsRequired().HasMaxLength(5)
 				.HasColumnName("PhoneCountryCode");
 			});
+			builder.HasMany(u => u.RefreshTokens).WithOne()
+				.HasForeignKey(rt => rt.UserId)
+				.OnDelete(DeleteBehavior.Cascade); ;
 			builder.Property(b => b.RowVersion).IsRowVersion().ValueGeneratedOnAddOrUpdate().IsConcurrencyToken();
 			builder.Property(u => u.Role).HasConversion(
 				role => role.ToString(),

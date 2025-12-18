@@ -1,6 +1,8 @@
 ﻿using Core.Logging;
+using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.Responses;
@@ -10,9 +12,9 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 {
 	public class LoginUserCommandHandler(
 		ILoggingService<LoginUserCommandHandler> _logger,
-		IUserRepository _user, 
 		ITokenProvider _refreshToken,
-		IUnitOfWork unitOfWork) 
+		IUnitOfWork unitOfWork,
+		ApplicationDbContext dBContext) 
 		: IRequestHandler<LoginUserCommand, LoginResponse>
 	{
 
@@ -26,10 +28,21 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				_logger.LogWarning("Validation failed for login request");
 				return response;
 			}
-			var user = await _user.FindBy(user => user.Email.Address.Equals(request.Email), cancellationToken)
+			var user = await dBContext.Users
+				.Include(u => u.RefreshTokens)
+				.FirstOrDefaultAsync(u => u.Email.Address == request.Email, cancellationToken)
 				?? throw new KeyNotFoundException($"User with email {request.Email} not found.");
-			await _refreshToken.RemoveOldRefreshTokens(user.Id);
-				var isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+			var refreshTokens = user.RefreshTokens;
+			if (refreshTokens != null)
+			{
+				foreach ( var refreshToken in refreshTokens )
+				{
+					refreshToken.IsRevoked = true;
+					refreshToken.RevokedOnUtc = DateTime.UtcNow;
+					refreshToken.RevokedReason = "Replaced";
+				}
+			}
+			var isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
 			if(!isPasswordValid)
 			{
 				_logger.LogWarning("Invalid login attempt for user with email: {Email}", request.Email);
@@ -43,8 +56,8 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 			}
 			response.UserId = user.Id;
 			response.AccessToken = _refreshToken.GenerateAccessToken(user.Id, user.Email.Address, user.Role.ToString());
-			response.RefreshToken = await _refreshToken.GenerateRefreshToken(user);
-			
+			response.RefreshToken = _refreshToken.GenerateRefreshToken(user);
+			await unitOfWork.SaveChangesAsync(cancellationToken);
 			_logger.LogInformation("User with email {Email} logged in successfully.", request.Email);
 			_logger.LogDebug("JWT Token: {Token}", response.AccessToken);
 			_logger.LogDebug("Refresh Token: {RefreshToken}", response.RefreshToken);

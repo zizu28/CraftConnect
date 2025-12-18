@@ -1,4 +1,5 @@
-﻿@using CraftConnect.WASM.ViewModels
+﻿@using Core.SharedKernel.Enums
+@using CraftConnect.WASM.ViewModels
 <div class="dashboard-section project-table-section">
     <h3>My Projects</h3>
     <table class="project-table">
@@ -17,9 +18,13 @@
                 <tr>
                     <td>@item.Project</td>
                     <td>@item.Client</td>
-                    <td><span class="status-tag @(item.Status.Replace(" ", "-").ToLower())">@item.Status</span></td>
+                    <td>
+                        <span class="status-tag @GetStatusClass(Enum.Parse<ServiceRequestStatus>(item.Status))">
+                            @GetStatus(Enum.Parse<ServiceRequestStatus>(item.Status))
+                        </span>
+                    </td>
                     <td>@item.DueDate</td>
-                    <td><a href="/project/@item.Project">View Details</a></td>
+                    <td><a href="/projects/@item.ProjectId">View Details</a></td>
                 </tr>
             }
         </tbody>
@@ -29,4 +34,29 @@
 @code {
     [Parameter]
     public List<ProjectItemVM> Projects { get; set; } = new();
+
+    private string GetStatus(ServiceRequestStatus status)
+    {
+        var projectStatus = status switch
+        {
+            ServiceRequestStatus.AwaitingProposals => "Awaiting Proposals",
+            ServiceRequestStatus.InProgress => "In Progress",
+            ServiceRequestStatus.Completed => "Completed",
+            ServiceRequestStatus.Closed => "Closed",
+            _ => "Open"
+        };
+        return projectStatus;
+    }
+
+    private string GetStatusClass(ServiceRequestStatus status)
+    {
+        return status switch
+        {
+            ServiceRequestStatus.AwaitingProposals => "status-awaiting",
+            ServiceRequestStatus.InProgress => "status-progress",
+            ServiceRequestStatus.Completed => "status-completed",
+            ServiceRequestStatus.Closed => "status-closed",
+            _ => "status-default" // Open
+        };
+    }
 }

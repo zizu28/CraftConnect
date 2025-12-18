@@ -1,5 +1,6 @@
 ﻿@page "/dashboard/{CraftmanId:guid}"
 @using Core.SharedKernel.DTOs
+@using Core.SharedKernel.Enums
 @using CraftConnect.WASM.Components
 @using CraftConnect.WASM.Components.CraftsmanDashboardPageComponents
 @using CraftConnect.WASM.Components.CustomerDashboardPageComponents
@@ -75,17 +76,22 @@ else
         try
         {
             var httpClient = HttpClientFactory.CreateClient("BFF");
-            var response = await httpClient.GetAsync($"/users/craftsman/{CraftmanId}");
-            var serviceRequestResponse = await httpClient.GetAsync($"/customerprojects");
-            if (response.IsSuccessStatusCode)
+            var response = httpClient.GetAsync($"/users/craftsman/{CraftmanId}");
+            var serviceRequestResponse = httpClient.GetAsync($"/customerprojects");
+            var projectsResponse = httpClient.GetAsync("/customerprojects/my-projects");
+            await Task.WhenAll(response, serviceRequestResponse, projectsResponse);
+            var responseTask = response.Result;
+            var serviceTask = serviceRequestResponse.Result;
+            var projectTask = projectsResponse.Result;
+            if (responseTask.IsSuccessStatusCode)
             {
-                var user = await response.Content.ReadFromJsonAsync<CraftmanResponseDTO>();
+                var user = await responseTask.Content.ReadFromJsonAsync<CraftmanResponseDTO>();
                 CurrentCraftsman = $"{user!.FirstName} {user.LastName}";
                 Logger.LogInformation("Successfully fetched craftsman details.");
             }
-            if (serviceRequestResponse.IsSuccessStatusCode)
+            if (serviceTask.IsSuccessStatusCode)
             {
-                var responseData = await serviceRequestResponse.Content.ReadFromJsonAsync<List<CustomerProjectResponseDTO>>();
+                var responseData = await serviceTask.Content.ReadFromJsonAsync<List<CustomerProjectResponseDTO>>();
                 if (responseData != null)
                 {
                     ServiceRequests = MapToViewModel(responseData);
@@ -96,6 +102,19 @@ else
             {
                 Logger.LogError("Failed to fetch service requests.");
             }
+            if (projectTask.IsSuccessStatusCode)
+            {
+                var responseData = await projectTask.Content.ReadFromJsonAsync<List<CustomerProjectResponseDTO>>();
+                if (responseData != null)
+                {
+                    Projects = MapToProjectViewModel(responseData);
+                }
+                Logger.LogInformation("Successfully fetched project requests.");
+            }
+            else
+            {
+                Logger.LogError("Failed to fetch project requests.");
+            }
         }
         catch (Exception ex)
         {
@@ -105,11 +124,24 @@ else
         {
             IsLoading = false;
         }
-    
+
         // Mock Data Initialization
         DashboardData = GetMockMetrics();
-        Projects = GetMockProjects();
+        // Projects = GetMockProjects();
         // ServiceRequests = GetMockRequests();
+    }
+
+    private List<ProjectItemVM> MapToProjectViewModel(List<CustomerProjectResponseDTO> dtos)
+    {
+        return dtos.Select(dto => new ProjectItemVM
+        {
+            ProjectId = dto.Id,
+            Project = dto.Title,
+            Client = CurrentCraftsman,
+            Status = dto.Status.ToString(),
+            DueDate = dto.EndDate.ToString("yyyy-MM-dd")
+        })
+        .ToList();
     }
 
     private List<ServiceRequestVM> MapToViewModel(List<CustomerProjectResponseDTO> dtos)
@@ -128,18 +160,5 @@ else
     {
         ActiveProjects = 5, NewServiceRequests = 3, UnreadMessages = 8,
         MonthlyEarnings = "$2,500", TotalEarningsLast3Months = 7200M
-    };
-
-    private List<ProjectItemVM> GetMockProjects() => new()
-    {
-        new() { Project = "Custom Bookshelf", Client = "John Doe", Status = "In Progress", DueDate = "2023-12-15" },
-        new() { Project = "Kitchen Remodel", Client = "Jane Smith", Status = "Completed", DueDate = "2023-11-20" },
-        new() { Project = "Handcrafted Dining Table", Client = "Peter Jones", Status = "Pending Approval", DueDate = "2024-01-10" }
-    };
-
-    private List<ServiceRequestVM> GetMockRequests() => new()
-    {
-        new() { Title = "Alex Johnson - Custom Cabinetry", Description = "Looking for a set of custom kitchen cabinets. My kitchen is an unusual shape..." },
-        new() { Title = "Maria Garcia - Bookshelf Installation", Description = "I have a pre-built bookshelf that needs to be securely mounted to my living room wall." }
     };
 }

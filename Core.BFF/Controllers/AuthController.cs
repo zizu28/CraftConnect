@@ -52,13 +52,12 @@ namespace Core.BFF.Controllers
 				authProperties
 			);
 
-			// Append Refresh Token as a separate HTTP-only cookie for the UsersController to use
 			Response.Cookies.Append("X-Refresh-Token", loginResponse.RefreshToken, new CookieOptions
 			{
 				HttpOnly = true,
-				Secure = true, // Force secure in standard environments
+				Secure = true,
 				SameSite = SameSiteMode.None,
-				Expires = DateTime.UtcNow.AddDays(7), // Adjust expiry as needed
+				Expires = DateTime.UtcNow.AddDays(7),
 				Path = "/"
 			});
 

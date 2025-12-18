@@ -2,7 +2,7 @@
 <div class="proposal-card">
     <div class="proposal-header">
         <div class="craftsman-info">
-            <img class="craftsman-avatar" src="@(string.IsNullOrEmpty(Proposal.CraftsmanAvatarUrl) ? "/images/user-avatar.jpg" : Proposal.CraftsmanAvatarUrl)" alt="@Proposal.CraftsmanName" />
+            <img class="craftsman-avatar" src="@Proposal.CraftsmanAvatarUrl" alt="@Proposal.CraftsmanName" />
             <div>
                 <span class="craftsman-name">@Proposal.CraftsmanName</span>
                 <div class="craftsman-rating">
@@ -17,8 +17,8 @@
     <p class="proposal-excerpt">@Proposal.Excerpt</p>
 
     <div class="proposal-actions">
-        <a href=@($"https://localhost:7222/proposals/{ProposalId}") class="action-btn btn-primary">View Proposal</a>
-        <a href=@($"https://localhost:7222/craftsman/{Proposal.ProfileUrl}") class="action-btn btn-secondary">View Profile</a>
+        <a href=@($"/proposals/{ProposalId}") class="action-btn btn-primary">View Proposal</a>
+        <a href=@($"/craftsman/{Proposal.ProfileUrl}") class="action-btn btn-secondary">View Profile</a>
     </div>
 </div>
 

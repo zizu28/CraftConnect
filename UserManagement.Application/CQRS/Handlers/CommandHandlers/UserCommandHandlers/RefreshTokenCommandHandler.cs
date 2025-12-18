@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.Validators.UserValidators;
-using UserManagement.Domain.Entities;
 
 namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHandlers
 {
@@ -20,43 +19,25 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 			{
 				throw new ApplicationException("Invalid refresh token request.");
 			}
-			RefreshToken? refreshToken = await dbContext.RefreshTokens
-				.Include(rt => rt.User)
-				.FirstOrDefaultAsync(rt => rt.Token == request.RefreshToken, cancellationToken);
-			if (refreshToken == null || refreshToken.ExpiresOnUtc < DateTime.UtcNow)
+			var user = await dbContext.Users
+				.Include(u => u.RefreshTokens)
+				.FirstOrDefaultAsync(u => u.RefreshTokens
+					.Any(rt => rt.Token == request.RefreshToken), cancellationToken) 
+				?? throw new ApplicationException("Invalid token.");
+			var existingToken = user.RefreshTokens.First(rt => rt.Token == request.RefreshToken);
+			if (existingToken.ExpiresOnUtc < DateTime.UtcNow || existingToken.IsRevoked)
 			{
-				throw new ApplicationException("Invalid or expired refresh token.");
-			}
-			if (refreshToken.User == null)
-			{
-				throw new ApplicationException("User associated with the refresh token not found.");
-			}
-			if (!refreshToken.User.IsEmailConfirmed)
-			{
-				throw new ApplicationException("User's email is not confirmed.");
-			}
-			if (refreshToken.User.RefreshTokens.Count >= 5)
-			{
-				throw new ApplicationException("User has reached the maximum number of refresh tokens.");
-			}
-			// Remove old refresh tokens
-			var oldTokens = refreshToken.User.RefreshTokens
-				.Where(rt => rt.Token != request.RefreshToken && rt.ExpiresOnUtc < DateTime.UtcNow)
-				.ToList();
-			if (oldTokens.Count != 0)
-			{
-				dbContext.RefreshTokens.RemoveRange(oldTokens);
+				foreach (var t in user.RefreshTokens) { t.IsRevoked = true; }
 				await dbContext.SaveChangesAsync(cancellationToken);
+				throw new ApplicationException("Invalid or expired token.");
 			}
-			// Generate new tokens
-			var newAccessToken = tokenProvider.GenerateAccessToken(refreshToken.User.Id, refreshToken.User.Email.Address, refreshToken.User.Role.ToString());
-			var newRefreshToken = await tokenProvider.GenerateRefreshToken(refreshToken.User);
-			// Update the refresh token in the database
-			refreshToken.Token = newRefreshToken;
-			refreshToken.ExpiresOnUtc = DateTime.UtcNow.AddDays(7);
-			dbContext.RefreshTokens.Update(refreshToken);
+			existingToken.IsRevoked = true;
+			existingToken.RevokedOnUtc = DateTime.UtcNow;
+			existingToken.RevokedReason = "Rotated";
+			var newRefreshTokenString = tokenProvider.GenerateRefreshToken(user);
+			var newAccessToken = tokenProvider.GenerateAccessToken(user.Id, user.Email.Address, user.Role.ToString());
 			await dbContext.SaveChangesAsync(cancellationToken);
-			return (newAccessToken, newRefreshToken);
+			return (newAccessToken, newRefreshTokenString);
 		}
 	}
 }

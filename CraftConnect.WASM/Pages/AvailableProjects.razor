@@ -1,5 +1,6 @@
 ﻿@page "/projects/available"
 @using Core.SharedKernel.DTOs
+@using Core.SharedKernel.Enums
 @using CraftConnect.WASM.Components.AvailableProjectsPageComponents
 @using CraftConnect.WASM.Components.SharedComponents
 @using CraftConnect.WASM.ViewModels
@@ -52,6 +53,10 @@
                         TotalPages="@TotalPages"
                         OnPageChange="HandlePageChange" />
         }
+        else if(Projects.Any(p => p.Status == "InProgress"))
+        {
+            <p class="no-results">No projects match your current filters.</p>
+        }
         else
         {
             <p class="no-results">No projects match your current filters.</p>
@@ -64,6 +69,7 @@
     public Task<AuthenticationState> AuthenticationState { get; set; }
 
     private List<ProjectViewModel> Projects { get; set; } = new();
+    private List<ProjectViewModel> FilteredProjects => Projects.Where(p => p.Status == "InProgress").ToList();
     private ProjectSearchParameters SearchParameters { get; set; } = new();
     private bool IsLoading { get; set; } = true;
     private ILogger Logger => LoggerFactory.CreateLogger<AvailableProjects>();
@@ -95,7 +101,7 @@
         try
         {
             var client = HttpClientFactory.CreateClient("BFF");
-            var query = $"/customerprojects";
+            var query = $"/customerprojects/search"; 
             var response = await client.GetAsync(query);
 
             if (response.IsSuccessStatusCode)
@@ -103,9 +109,14 @@
                 var dtos = await response.Content.ReadFromJsonAsync<List<CustomerProjectResponseDTO>>();
                 if (dtos != null)
                 {
-                    TotalItems = dtos.Count < PageSize ? dtos.Count : 100;
-                    var projectViewModelTasks = dtos.Select(dto => MapToViewModel(dto, client)).ToList();
-                    Projects = (await Task.WhenAll(projectViewModelTasks)).ToList();
+                    var openProjects = dtos
+                    .Where(p => p.Status == ServiceRequestStatus.Open)
+                    .ToList();
+                    TotalItems = openProjects.Count;
+                    var customerIds = openProjects.Select(p => p.CustomerId).Distinct().ToList();
+                    var avatars = await FetchCustomerAvatars(client, customerIds);
+
+                    Projects = openProjects.Select(dto => MapToViewModel(dto, avatars)).ToList();
                 }
             }
             else
@@ -123,16 +134,32 @@
         }
     }
 
-    private async Task<ProjectViewModel> MapToViewModel(CustomerProjectResponseDTO dto, HttpClient client)
+    private async Task<Dictionary<Guid, string>> FetchCustomerAvatars(HttpClient client, List<Guid> ids)
     {
-        var userAvatarUrl = await GetUserAvatarUrl(dto.CustomerId, client);
+        try
+        {
+            var response = await client.PostAsJsonAsync("/users/customer/batch-summaries", ids);
+            if (response.IsSuccessStatusCode)
+            {
+                var summaries = await response.Content.ReadFromJsonAsync<Dictionary<Guid, CustomerSummaryDto>>();
+                return summaries?.ToDictionary(k => k.Key, v => v.Value.AvatarUrl) ?? new();
+            }
+        }
+        catch { /* Ignore */ }
+        return new();
+    }
+
+    private ProjectViewModel MapToViewModel(CustomerProjectResponseDTO dto, Dictionary<Guid, string> avatars)
+    {
+        var avatarUrl = avatars.GetValueOrDefault(dto.CustomerId);
         return new ProjectViewModel
             {
                 Id = dto.Id,
                 CustomerId = dto.CustomerId,
                 Title = dto.Title,
                 Description = dto.Description,
-                UserAvatarUrl = GetOptimizedUrl(userAvatarUrl), // Need to add to DTO
+                Status = dto.Status.ToString(),
+                UserAvatarUrl = GetOptimizedUrl(avatarUrl!), // Need to add to DTO
                 BudgetRange = $"${dto.Budget.Amount} {dto.Budget.Currency}",
                 Deadline = dto.Timeline.End.ToString("MMM dd, yyyy"),
                 Location = dto.Location,

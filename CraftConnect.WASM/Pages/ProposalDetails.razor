@@ -1,6 +1,7 @@
 ﻿@page "/proposals/{ProposalId:guid}"
 @using Core.SharedKernel.DTOs
 @using Core.SharedKernel.Enums
+@using CraftConnect.WASM.Components.AvailableProjectsPageComponents
 @using CraftConnect.WASM.Components.ProjectDetailsPageComponents
 @using CraftConnect.WASM.Components.SubmittedProposalsListPageComponents
 @using CraftConnect.WASM.ViewModels
@@ -11,7 +12,18 @@
 @inject IHttpClientFactory HttpClientFactory
 @inject ILogger<ProposalDetails> Logger
 
-<SubmittedPropsalsListNavbar />
+@* <SubmittedPropsalsListNavbar /> *@
+
+@if (isCustomer)
+{
+    // Use Customer layout/navbar or generic one
+    <DashboardNavbar /> 
+}
+else
+{
+    <SubmittedPropsalsListNavbar />
+}
+
 
 @if (isLoading)
 {
@@ -56,42 +68,72 @@ else if (proposal != null)
                         </div>
                     </div>
 
-                    <!-- TODO: Attachments implementation -->
                     @if (proposal.Document != null && !string.IsNullOrEmpty(proposal.Document.FileName))
                     {
                         <h3 class="attached-title">Attached Documents</h3>
                         <DocumentRow Document="@proposal.Document" />
                     }
-                    else
-                    {
-                        <p class="text-muted mt-3">No documents attached.</p>
-                    }
-                </div>
-
-                <!-- Messages Placeholder -->
-                <div class="card">
-                    <h2 class="card-header">Message History</h2>
-                    <p class="text-muted">No messages yet.</p>
                 </div>
             </div>
 
             <!-- Sidebar -->
             <aside class="sidebar">
-                <ProjectDetailsCard Project="@proposal.ProjectDetails" />
+                <!-- Only show Project Details if viewing as Craftsman -->
+                @if (!isCustomer)
+                {
+                    <ProjectDetailsCard Project="@proposal.ProjectDetails" />
+                }
+                else
+                {
+                     <!-- If Customer, maybe show Craftsman Profile Summary instead? -->
+                     <div class="card mb-3">
+                         <h3>Craftsman</h3>
+                         <div class="d-flex align-items-center gap-2">
+                             <div class="avatar-circle px-2">@proposal.ProjectDetails.Client.AvatarInitials</div>
+                             <div>
+                                 <strong>@proposal.ProjectDetails.Client.Name</strong>
+                                 <br/>
+                                 <small class="text-muted">Member since @proposal.ProjectDetails.Client.MemberSince.Year</small>
+                             </div>
+                         </div>
+                     </div>
+                }
 
-                <!-- Actions -->
+                <!-- Actions Card -->
                 <div class="actions-card card">
                     <h3>Actions</h3>
-                    @if (proposal.Status == ProposalStatus.Pending)
+                    
+                    @if (isCustomer) 
                     {
-                        <button class="btn btn-outline-danger w-100 mb-2" @onclick="WithdrawProposal" disabled="@isProcessing">
-                            @(isProcessing ? "Withdrawing..." : "Withdraw Proposal")
-                        </button>
-                        <button class="btn btn-secondary w-100">Edit Proposal</button>
+                        <!-- CUSTOMER ACTIONS -->
+                        @if(proposal.Status == ProposalStatus.Pending)
+                        {
+                            <button class="btn btn-primary w-100 mb-2" @onclick="AcceptProposal" disabled="@isProcessing">
+                                @(isProcessing ? "Processing..." : "Accept Proposal")
+                            </button>
+                            <button class="btn btn-outline-danger w-100" @onclick="RejectProposal" disabled="@isProcessing">
+                                Reject
+                            </button>
+                        }
+                        else
+                        {
+                            <p class="text-muted">This proposal has been @proposal.Status.</p>
+                        }
                     }
-                    else
+                    else 
                     {
-                        <p class="text-muted">This proposal is @proposal.Status and cannot be modified.</p>
+                        <!-- CRAFTSMAN ACTIONS -->
+                        @if (proposal.Status == ProposalStatus.Pending)
+                        {
+                            <button class="btn btn-outline-danger w-100 mb-2" @onclick="WithdrawProposal" disabled="@isProcessing">
+                                @(isProcessing ? "Withdrawing..." : "Withdraw Proposal")
+                            </button>
+                            <button class="btn btn-secondary w-100">Edit Proposal</button>
+                        }
+                        else
+                        {
+                            <p class="text-muted">This proposal is @proposal.Status and cannot be modified.</p>
+                        }
                     }
                 </div>
             </aside>
@@ -106,10 +148,12 @@ else if (proposal != null)
     [Parameter]
     public Guid ProposalId { get; set; }
 
-    public Guid CraftsmanId { get; set; }
+    public Guid CurrentUserId { get; set; }
+    private CraftsmanProposalResponseDTO? CraftsmanProposal { get; set; } = new();
     private ProposalVM? proposal;
     private bool isLoading = true;
     private bool isProcessing = false;
+    private bool isCustomer = false;
     private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
@@ -124,9 +168,11 @@ else if (proposal != null)
         }
 
         var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var roleClaim = user.FindFirst(ClaimTypes.Role)?.Value;
         if (Guid.TryParse(userIdClaim, out var id))
         {
-            CraftsmanId = id;
+            CurrentUserId = id;
+            isCustomer = roleClaim == "Customer";
             await LoadProposalAsync();
         }
     }
@@ -136,11 +182,11 @@ else if (proposal != null)
         try
         {
             var client = HttpClientFactory.CreateClient("BFF");
-            var dto = await client.GetFromJsonAsync<CraftsmanProposalResponseDTO>($"/craftsmanproposals/{ProposalId}");
+            CraftsmanProposal = await client.GetFromJsonAsync<CraftsmanProposalResponseDTO>($"/craftsmanproposals/{ProposalId}");
 
-            if (dto != null)
+            if (CraftsmanProposal != null)
             {
-                proposal = await MapToVM(dto);
+                proposal = await MapToVM(CraftsmanProposal);
             }
             else
             {
@@ -184,10 +230,38 @@ else if (proposal != null)
         }
     }
 
+    private async Task AcceptProposal()
+    {
+        if (isProcessing) return;
+        isProcessing = true;
+        try
+        {
+            var client = HttpClientFactory.CreateClient("BFF");
+            var url = $"/customerprojects/{CraftsmanProposal!.ProjectId}/proposals/{ProposalId}/accept";
+            var response = await client.PostAsync(url, null);
+            if (response.IsSuccessStatusCode) await LoadProposalAsync();
+        }
+        finally { isProcessing = false; }
+    }
+
+    private async Task RejectProposal()
+    {
+        if (isProcessing) return;
+        isProcessing = true;
+        try
+        {
+            var client = HttpClientFactory.CreateClient("BFF");
+            var url = $"/customerprojects/{CraftsmanProposal!.ProjectId}/proposals/{ProposalId}/reject";
+            var response = await client.PostAsync(url, null);
+            if (response.IsSuccessStatusCode) await LoadProposalAsync();
+        }
+        finally { isProcessing = false; }
+    }
+
     private async Task<ProposalVM> MapToVM(CraftsmanProposalResponseDTO dto)
     {
         var client = HttpClientFactory.CreateClient("BFF");
-        var user = await client.GetFromJsonAsync<CraftmanResponseDTO>($"/users/craftsman/{CraftsmanId}");
+        var user = await client.GetFromJsonAsync<CraftmanResponseDTO>($"/users/craftsman/{dto.CraftsmanId}");
         return new ProposalVM
         {
             Id = dto.Id,
@@ -215,6 +289,13 @@ else if (proposal != null)
 
     private void GoBack()
     {
-        NavigationManager.NavigateTo($"/craftsman/{CraftsmanId}/proposals");
+        if (isCustomer)
+        {
+            NavigationManager.NavigateTo($"/customer/{CurrentUserId}/dashboard");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/craftsman/{CurrentUserId}/proposals");
+        }
     }
 }

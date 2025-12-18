@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,10 +13,9 @@ using UserManagement.Domain.Entities;
 
 namespace UserManagement.Infrastructure.RepositoryImplementations
 {
-	public class TokenProvider(
-		ApplicationDbContext dBContext, 
+	public class TokenProvider( 
 		IConfiguration _configuration,
-		IUnitOfWork unitOfWork) : ITokenProvider
+		ApplicationDbContext dbContext) : ITokenProvider
 	{
 		public string GenerateAccessToken(Guid userId, string emailAddress, string role)
 		{
@@ -156,34 +156,29 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			}
 		}
 
-		public async Task<string> GenerateRefreshToken(User user)
+		public string GenerateRefreshToken(User user)
 		{
-			var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+			var tokensToRemove = dbContext.RefreshTokens
+				.Where(t => t.IsRevoked || t.RevokedOnUtc <= DateTime.UtcNow)
+				.ToList();
+			foreach (var token in tokensToRemove)
+			{
+				user.RefreshTokens.Remove(token);
+				dbContext.Entry(token).State = EntityState.Deleted;
+			}
+			var refreshTokenString = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
 			var refreshTokenEntity = new RefreshToken
 			{
 				Id = Guid.NewGuid(),
-				Token = refreshToken,
+				Token = refreshTokenString,
 				UserId = user.Id,
-				ExpiresOnUtc = DateTime.UtcNow.AddDays(7)
+				ExpiresOnUtc = DateTime.UtcNow.AddDays(7),
+				IsRevoked = false
 			};
-			await unitOfWork.ExecuteInTransactionAsync(async () =>
-			{
-				user.RefreshTokens.Add(refreshTokenEntity);			
-				await dBContext.RefreshTokens.AddAsync(refreshTokenEntity);
-				//dBContext.Users.Update(user);
-			});
-			return refreshToken;
-		}
 
-		public async Task RemoveOldRefreshTokens(Guid userId)
-		{
-			await unitOfWork.ExecuteInTransactionAsync(async () =>
-			{
-				var tokens = dBContext.RefreshTokens
-				.Where(rt => rt.UserId == userId && rt.ExpiresOnUtc <= DateTime.UtcNow);
+			dbContext.RefreshTokens.Add(refreshTokenEntity);
 
-				dBContext.RefreshTokens.RemoveRange(tokens);
-			});
+			return refreshTokenString;
 		}
 	}
 }

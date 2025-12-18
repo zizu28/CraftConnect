@@ -44,9 +44,16 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("craftsman/batch-summaries")]
-		public async Task<IActionResult> GetBatchSummaries([FromBody] List<Guid> ids)
+		public async Task<IActionResult> GetBatchCraftsmanSummaries([FromBody] List<Guid> ids)
 		{
 			var summaries = await mediator.Send(new GetBatchCraftsmanSummariesQuery { Ids = ids });
+			return Ok(summaries);
+		}
+
+		[HttpPost("customer/batch-summaries")]
+		public async Task<IActionResult> GetBatchCustomerSummaries([FromBody] List<Guid> ids)
+		{
+			var summaries = await mediator.Send(new GetBatchCustomerSummariesQuery { Ids = ids });
 			return Ok(summaries);
 		}
 

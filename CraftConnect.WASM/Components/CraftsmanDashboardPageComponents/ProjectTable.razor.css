@@ -40,11 +40,45 @@
     }
 
 .status-tag {
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: white;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* 1. Open / Awaiting Proposals (Blue/Info) */
+.status-awaiting,
+.status-default {
+    background-color: #e0f2fe; /* Sky-100 */
+    color: #0369a1; /* Sky-700 */
+    border: 1px solid #bae6fd;
+}
+
+/* 2. In Progress (Yellow/Warning - Active work) */
+.status-progress {
+    background-color: #fef9c3; /* Yellow-100 */
+    color: #a16207; /* Yellow-700 */
+    border: 1px solid #fde047;
+}
+
+/* 3. Completed (Green/Success) */
+.status-completed {
+    background-color: #dcfce7; /* Green-100 */
+    color: #15803d; /* Green-700 */
+    border: 1px solid #bbf7d0;
+}
+
+/* 4. Closed (Gray/Neutral) */
+.status-closed {
+    background-color: #f3f4f6; /* Gray-100 */
+    color: #4b5563; /* Gray-600 */
+    border: 1px solid #e5e7eb;
 }
 
 .in-progress {
