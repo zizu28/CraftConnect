@@ -9,6 +9,8 @@ using UserManagement.Application.CQRS.Queries.UserQueries;
 using UserManagement.Application.Responses;
 using UserManagement.Presentation.Controllers;
 using System.Reflection;
+using Core.Logging;
+using System.Security.Claims;
 
 namespace CraftConnect.Tests
 {
@@ -431,26 +433,27 @@ namespace CraftConnect.Tests
 		}
 
 		[Fact]
-	public async Task DeleteUserAsync_ReturnsNoContent_WhenUserDeletesOwnAccount()
-	{
-		// Arrange - User deleting their own account
-		var userId = Guid.NewGuid();
+		public async Task DeleteUserAsync_ReturnsNoContent_WhenUserDeletesOwnAccount()
+		{
+			// Arrange - User deleting their own account
+			var userId = Guid.NewGuid();
 		
-		// Mock User.FindFirst to return the same userId
-		var claimsPrincipalMock = new Mock<System.Security.Claims.ClaimsPrincipal>();
-		var claim = new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, userId.ToString());
-		claimsPrincipalMock.Setup(x => x.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)).Returns(claim);
-		_usersController.ControllerContext.HttpContext.User = claimsPrincipalMock.Object;
+			// Mock User.FindFirst to return the same userId
+			var claimsPrincipalMock = new Mock<ClaimsPrincipal>();
+			var claim = new Claim(ClaimTypes.NameIdentifier, userId.ToString());
+			claimsPrincipalMock.Setup(x => x.FindFirst(ClaimTypes.NameIdentifier)).Returns(claim);
+			claimsPrincipalMock.Setup(x => x.IsInRole("Admin")).Returns(false); // Not admin, just regular user
+			_usersController.ControllerContext.HttpContext.User = claimsPrincipalMock.Object;
 		
-		_mediatorMock.Setup(m => m.Send(It.IsAny<DeleteUserCommand>(), default))
-			.ReturnsAsync(Unit.Value);
+			_mediatorMock.Setup(m => m.Send(It.IsAny<DeleteUserCommand>(), default))
+				.ReturnsAsync(Unit.Value);
 
-		// Act
-		var result = await _usersController.DeleteUserAsync(userId);
+			// Act
+			var result = await _usersController.DeleteUserAsync(userId);
 
-		// Assert
-		Assert.IsType<NoContentResult>(result);
-	}
+			// Assert
+			Assert.IsType<NoContentResult>(result);
+		}
 
 		[Fact]
 		public async Task GetCraftsmanName_ReturnsOkResult_WhenCraftsmanExists()

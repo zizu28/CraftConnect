@@ -1,18 +1,12 @@
-using FluentValidation;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Moq;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHandlers;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Domain.Entities;
-using UserManagement.Domain;
 using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
-using Xunit;
 using Core.Logging;
-
 
 using Core.SharedKernel.ValueObjects;
 using Core.SharedKernel.Enums;

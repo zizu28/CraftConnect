@@ -1,17 +1,15 @@
-﻿using Infrastructure.Persistence.Data;
+﻿using Core.Logging;
+using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
-using UserManagement.Domain.Entities;
 
 namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHandlers
 {
 	public class DeleteUserCommandHandler(
 		ApplicationDbContext dbContext,
-		ILogger<DeleteUserCommandHandler> logger, 
+		ILoggingService<DeleteUserCommandHandler> logger, 
 		IUnitOfWork unitOfWork) : IRequestHandler<DeleteUserCommand, Unit>
 	{
 		public async Task<Unit> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
