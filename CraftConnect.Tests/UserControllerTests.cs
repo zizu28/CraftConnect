@@ -1,4 +1,4 @@
-﻿using Core.SharedKernel.Contracts;
+using Core.SharedKernel.Contracts;
 using Core.SharedKernel.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

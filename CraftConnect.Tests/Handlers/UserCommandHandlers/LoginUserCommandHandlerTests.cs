@@ -57,13 +57,18 @@ namespace CraftConnect.Tests.Handlers.UserCommandHandlers
         }
 
         [Fact]
-        public async Task Handle_ShouldThrowKeyNotFoundException_WhenUserNotFound()
+        public async Task Handle_ShouldReturnEmptyResponse_WhenUserNotFound()
         {
-            // Arrange
+            // Arrange - No user in database
             var command = new LoginUserCommand { Email = "nonexistent@example.com", Password = "Password123!" };
 
-            // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert - Returns empty response (timing-attack prevention)
+            Assert.Null(result.AccessToken);
+            Assert.Null(result.RefreshToken);
+            _loggerMock.Verify(x => x.LogWarning(It.Is<string>(s => s.Contains("Failed login")), It.IsAny<object[]>()), Times.Once);
         }
 
         [Fact]
@@ -90,10 +95,10 @@ namespace CraftConnect.Tests.Handlers.UserCommandHandlers
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
+            // Assert - Returns empty response with generic error message
             Assert.Null(result.AccessToken);
             Assert.Null(result.RefreshToken);
-             _loggerMock.Verify(x => x.LogWarning(It.Is<string>(s => s.Contains("Invalid login attempt")), It.Is<object[]>(o => o.Contains(emailStr))), Times.AtLeastOnce);
+            _loggerMock.Verify(x => x.LogWarning(It.Is<string>(s => s.Contains("Failed login")), It.IsAny<object[]>()), Times.Once);
         }
 
         [Fact]
@@ -119,10 +124,10 @@ namespace CraftConnect.Tests.Handlers.UserCommandHandlers
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
+            // Assert - Returns empty response (same as invalid password for security)
             Assert.Null(result.AccessToken);
             Assert.Null(result.RefreshToken);
-            _loggerMock.Verify(x => x.LogWarning(It.Is<string>(s => s.Contains("Invalid login attempt")), It.Is<object[]>(o => o.Contains(emailStr))), Times.AtLeastOnce);
+            _loggerMock.Verify(x => x.LogWarning(It.Is<string>(s => s.Contains("unconfirmed email")), It.IsAny<object[]>()), Times.Once);
         }
 
         [Fact]
