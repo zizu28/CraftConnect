@@ -158,9 +158,12 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 
 		public string GenerateRefreshToken(User user)
 		{
+			// Clean up old/expired tokens for THIS user only
 			var tokensToRemove = dbContext.RefreshTokens
-				.Where(t => t.IsRevoked || t.RevokedOnUtc <= DateTime.UtcNow)
+				.Where(t => t.UserId == user.Id && 
+				            (t.IsRevoked || t.ExpiresOnUtc <= DateTime.UtcNow))
 				.ToList();
+				
 			foreach (var token in tokensToRemove)
 			{
 				user.RefreshTokens.Remove(token);

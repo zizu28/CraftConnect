@@ -5,9 +5,11 @@ using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Threading.RateLimiting;
 using UserManagement.Application.Extensions;
 using UserManagement.Infrastructure.Extensions;
 using UserManagement.Presentation;
@@ -75,6 +77,87 @@ builder.Services.AddCors(opt =>
 	});
 });
 
+// Rate Limiting - Built-in .NET Rate Limiter (no external package needed)
+builder.Services.AddRateLimiter(options =>
+{
+	// Policy for login endpoint - 5 requests per minute per IP
+	options.AddPolicy("login", context =>
+		RateLimitPartition.GetFixedWindowLimiter(
+			context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+			_ => new FixedWindowRateLimiterOptions
+			{
+				Window = TimeSpan.FromMinutes(1),
+				PermitLimit = 5,
+				QueueLimit = 0
+			}));
+
+	// Policy for password reset - 3 requests per hour per IP
+	options.AddPolicy("password-reset", context =>
+		RateLimitPartition.GetFixedWindowLimiter(
+			context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+			_ => new FixedWindowRateLimiterOptions
+			{
+				Window = TimeSpan.FromHours(1),
+				PermitLimit = 3,
+				QueueLimit = 0
+			}));
+
+	// Policy for forgot password - 3 requests per hour per IP
+	options.AddPolicy("forgot-password", context =>
+		RateLimitPartition.GetFixedWindowLimiter(
+			context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+			_ => new FixedWindowRateLimiterOptions
+			{
+				Window = TimeSpan.FromHours(1),
+				PermitLimit = 3,
+				QueueLimit = 0
+			}));
+
+	// Policy for registration - 3 requests per hour per IP
+	options.AddPolicy("registration", context =>
+		RateLimitPartition.GetFixedWindowLimiter(
+			context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+			_ => new FixedWindowRateLimiterOptions
+			{
+				Window = TimeSpan.FromHours(1),
+				PermitLimit = 3,
+				QueueLimit = 0
+			}));
+
+	// Global rate limit - 10 req/sec per IP
+	options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+	{
+		var ipAddress = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+		
+		// Allow localhost unlimited for development
+		if (ipAddress == "127.0.0.1" || ipAddress == "::1")
+		{
+			return RateLimitPartition.GetNoLimiter("localhost");
+		}
+
+		return RateLimitPartition.GetFixedWindowLimiter(ipAddress, _ =>
+			new FixedWindowRateLimiterOptions
+			{
+				Window = TimeSpan.FromSeconds(1),
+				PermitLimit = 10,
+				QueueLimit = 0
+			});
+	});
+
+	// Customize the response when rate limit is exceeded
+	options.OnRejected = async (context, cancellationToken) =>
+	{
+		context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+		await context.HttpContext.Response.WriteAsJsonAsync(new
+		{
+			error = "Too many requests. Please try again later.",
+			retryAfter = context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter) 
+				? (double?)retryAfter.TotalSeconds 
+				: null
+		}, cancellationToken);
+	};
+});
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
@@ -85,6 +168,10 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseCors("AllowBlazorOrigin");
+
+// Apply rate limiting BEFORE authentication
+app.UseRateLimiter();
+
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -25,10 +25,16 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 					.Any(rt => rt.Token == request.RefreshToken), cancellationToken) 
 				?? throw new ApplicationException("Invalid token.");
 			var existingToken = user.RefreshTokens.First(rt => rt.Token == request.RefreshToken);
+		
+			// TOKEN REUSE DETECTION: Security measure to detect token theft
+			// If a revoked/expired token is used, it indicates potential compromise
+			// We revoke ALL user's tokens to protect the account
 			if (existingToken.ExpiresOnUtc < DateTime.UtcNow || existingToken.IsRevoked)
 			{
+				// Revoke all tokens - force re-login on all devices
 				foreach (var t in user.RefreshTokens) { t.IsRevoked = true; }
 				await dbContext.SaveChangesAsync(cancellationToken);
+				// TODO: Consider sending security alert email to user
 				throw new ApplicationException("Invalid or expired token.");
 			}
 			existingToken.IsRevoked = true;

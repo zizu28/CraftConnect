@@ -9,6 +9,7 @@
     <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.0.2" />
     <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="13.0.0" />
     <PackageVersion Include="Aspire.RabbitMQ.Client.v7" Version="9.5.2" />
+    <PackageVersion Include="AspNetCoreRateLimit" Version="5.0.0" />
     <PackageVersion Include="AutoMapper" Version="15.0.1" />
     <PackageVersion Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageVersion Include="Blazored.FluentValidation" Version="2.2.0" />

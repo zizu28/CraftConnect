@@ -56,7 +56,9 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 			await dbContext.ResetPasswordTokens.AddAsync(resetPasswordToken, cancellationToken);
 			await unitOfWork.SaveChangesAsync(cancellationToken);
 
-			string link = $"https://localhost:7284/reset-password?email={request.Email}&token={hashedToken}";
+			// Send PLAIN token in email link - database stores HASHED version for verification
+			string link = $"https://localhost:7284/reset-password?email={request.Email}&token={resetPasswordValue}";
+
 
 			backgroundJob.Enqueue<IGmailService>(
 			"default",

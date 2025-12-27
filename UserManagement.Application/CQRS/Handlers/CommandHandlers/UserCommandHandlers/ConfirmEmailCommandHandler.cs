@@ -15,26 +15,25 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 		{
 			try
 			{
-				var verificationRecord = await dbContext.EmailVerificationTokens
+				// Fetch all non-expired verification tokens (can't query BCrypt hashes in SQL)
+				var allTokens = await dbContext.EmailVerificationTokens
 					.Include(vt => vt.User)
-					.FirstOrDefaultAsync(vt => vt.TokenValue == request.token, cancellationToken);
+					.Where(vt => vt.ExpiresOnUtc > DateTime.UtcNow)
+					.ToListAsync(cancellationToken);
+
+				// Find the token that matches using BCrypt verification (plain token vs hashed token)
+				var verificationRecord = allTokens
+					.FirstOrDefault(vt => BCrypt.Net.BCrypt.Verify(request.token, vt.TokenValue));
+
 				if(verificationRecord == null)
 				{
-					logger.LogWarning("Invalid or expired verification token used: {TokenHash}", request.token);
-					throw new Exception($"Invalid or expired verification token used: {request.token}");
+					logger.LogWarning("Invalid or expired verification token attempt");
+					return false;
 				}
 
 				if (verificationRecord.User.IsEmailConfirmed)
 				{
-					logger.LogWarning("Verification token already used: {TokenHash}", request.token);
-					dbContext.EmailVerificationTokens.Remove(verificationRecord);
-					await dbContext.SaveChangesAsync(cancellationToken);
-					return true;
-				}
-
-				if (verificationRecord.ExpiresOnUtc < DateTime.UtcNow)
-				{
-					logger.LogWarning("Expired verification token used: {TokenHash}", request.token);
+					logger.LogWarning("Verification token already used for user {UserId}", verificationRecord.UserId);
 					dbContext.EmailVerificationTokens.Remove(verificationRecord);
 					await dbContext.SaveChangesAsync(cancellationToken);
 					return true;

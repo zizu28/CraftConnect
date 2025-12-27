@@ -2,7 +2,10 @@
 
 namespace UserManagement.Application.CQRS.Commands.UserCommands
 {
-	public class ChangePasswordCommand : IRequest<Unit>
+	/// <summary>
+	/// Command for resetting password via email token (forgot password flow)
+	/// </summary>
+	public class ResetPasswordCommand : IRequest<Unit>
 	{
 		public string Email { get; set; } = string.Empty;
 		public string Token { get; set; } = string.Empty;

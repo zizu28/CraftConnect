@@ -1,5 +1,9 @@
-﻿@using CraftConnect.WASM.ViewModels
+﻿@using Core.SharedKernel.DTOs
+@using CraftConnect.WASM.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager NavManager
+@inject IHttpClientFactory HttpClientFactory
+@inject ILoggerFactory LoggerFactory
 
 <nav class="sidebar">
     <div class="sidebar-top">
@@ -12,7 +16,14 @@
         <!-- User Profile Section -->
         <div class="user-profile">
             <div class="user-avatar">
-                <span>@User.AvatarInitials</span>
+                @if (!string.IsNullOrEmpty(User.AvatarUrl))
+                {
+                    <img src="@GetOptimizedImage(User.AvatarUrl)" alt="User avatar" />
+                }
+                else
+                {
+                    <span>@User.AvatarInitials</span>
+                }                
             </div>
             <div class="user-info">
                 <span class="welcome-text">Welcome back,</span>
@@ -57,13 +68,43 @@
 </nav>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
+    private ILogger logger => LoggerFactory.CreateLogger<CustomerSidebar>();
+
     [Parameter]
     public Guid CustomerId { get; set; }
     [Parameter]
     public UserProfileVM User { get; set; } = new UserProfileVM { Name = "Jane Doe" }; // Default for design
 
+    protected override async Task OnInitializedAsync()
+    {
+        var client = HttpClientFactory.CreateClient("BFF");
+        try
+        {
+            var currentUser = await client.GetFromJsonAsync<CustomerResponseDTO>($"/users/customer/{CustomerId}");
+            User = new UserProfileVM
+            {
+                AvatarInitials = $"{currentUser!.FirstName.Substring(0, 1).ToUpper()}.{currentUser!.LastName.Substring(0, 1).ToUpper()}",
+                AvatarUrl = GetOptimizedImage(currentUser.ProfileImageUrl),
+            };
+        }
+        catch(Exception ex)
+        {
+            
+        }
+    }
+
     private void PostNewProject()
     {
         NavManager.NavigateTo($"/customer/{CustomerId}/post-project");
+    }
+
+    private string GetOptimizedImage(string? url)
+    {
+        if (string.IsNullOrEmpty(url)) return "/images/user-avatar.jpg"; // Fix relative path
+                                                                         // Cloudinary standard
+        return url.Replace("/upload/", "/upload/w_40,h_30,c_fill,q_auto,f_auto/");
     }
 }

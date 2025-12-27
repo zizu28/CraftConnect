@@ -8,13 +8,13 @@ using UserManagement.Application.CQRS.Commands.UserCommands;
 
 namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHandlers
 {
-	public class ChangePasswordCommandHandler(
+	public class ResetPasswordCommandHandler(
 		IBackgroundJobService background,
-		ILogger<ChangePasswordCommandHandler> logger,
+		ILogger<ResetPasswordCommandHandler> logger,
 		ApplicationDbContext dbContext) 
-		: IRequestHandler<ChangePasswordCommand, Unit>
+		: IRequestHandler<ResetPasswordCommand, Unit>
 	{
-		public async Task<Unit> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
+		public async Task<Unit> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
 		{
 			var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email.Address == request.Email, cancellationToken);
 			if (user == null)
@@ -27,13 +27,24 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				logger.LogWarning("User with email {Username} has not confirmed their email.", request.Email);
 				throw new InvalidOperationException("User has not confirmed their email.");
 			}
-			var resetToken = await dbContext.ResetPasswordTokens
-				.Include(u => u.User)
-				.FirstOrDefaultAsync(rt => rt.TokenValue == request.Token, cancellationToken);
-			if(resetToken != null)
+			// Fetch all non-expired reset tokens for this user (can't query BCrypt hashes in SQL)
+			var allTokens = await dbContext.ResetPasswordTokens
+				.Include(rt => rt.User)
+				.Where(rt => rt.UserId == user.Id && rt.ExpiresOnUtc > DateTime.UtcNow)
+				.ToListAsync(cancellationToken);
+
+			// Find the token that matches using BCrypt verification (plain token vs hashed token)
+			var resetToken = allTokens
+				.FirstOrDefault(rt => BCrypt.Net.BCrypt.Verify(request.Token, rt.TokenValue));
+
+			if(resetToken == null)
 			{
-				dbContext.ResetPasswordTokens.Remove(resetToken);
+				logger.LogWarning("Invalid or expired reset token for user {Email}", request.Email);
+				throw new UnauthorizedAccessException("Invalid or expired password reset token.");
 			}
+
+			// Remove the used token
+			dbContext.ResetPasswordTokens.Remove(resetToken);
 
 			logger.LogInformation("Changing password for user with email {Username}.", request.Email);
 			var salt = BCrypt.Net.BCrypt.GenerateSalt(12);

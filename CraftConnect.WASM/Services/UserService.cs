@@ -38,7 +38,8 @@ namespace CraftConnect.WASM.Services
 
 		public async Task<HttpResponseMessage> ChangePasswordAsync(ChangePasswordCommand model)
 		{
-			return await _httpClient.PostAsJsonAsync("/users/change-password", model);
+			// This is for password RESET (via email token), not authenticated password change
+			return await _httpClient.PostAsJsonAsync("/users/reset-password", model);
 		}
 
 		public async Task<HttpResponseMessage> ResendEmailAsync(ResendEmailCommand model)

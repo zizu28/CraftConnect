@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.CQRS.Queries.CraftmanQueries;
@@ -57,7 +58,11 @@ namespace UserManagement.Presentation.Controllers
 			return Ok(summaries);
 		}
 
+		/// <summary>
+		/// Get all users - Admin only
+		/// </summary>
 		[HttpGet]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetAllUsersAsync()
 		{
 			var query = new GetAllUsersQuery();
@@ -69,7 +74,11 @@ namespace UserManagement.Presentation.Controllers
 			return Ok(users);
 		}
 
+		/// <summary>
+		/// Get user by ID - Requires authentication
+		/// </summary>
 		[HttpGet("{id:guid}")]
+		[Authorize]
 		public async Task<IActionResult> GetUserByIdAsync(Guid id)
 		{
 			var query = new GetUserByIdQuery { UserId = id };
@@ -144,6 +153,8 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("register/craftman")]
+		[AllowAnonymous]
+		[EnableRateLimiting("registration")]
 		public async Task<IActionResult> RegisterNewCraftmanAsync([FromBody] CraftmanCreateDTO craftman)
 		{
 			var command = new RegisterCraftmanCommand { Craftman = craftman };
@@ -156,6 +167,8 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("register/customer")]
+		[AllowAnonymous]
+		[EnableRateLimiting("registration")]
 		public async Task<IActionResult> RegisterNewCustomerAsync([FromBody] CustomerCreateDTO customer)
 		{
 			var command = new RegisterCustomerCommand { Customer = customer };
@@ -178,7 +191,11 @@ namespace UserManagement.Presentation.Controllers
 			return Ok();
 		}
 
+		/// <summary>
+		/// Get user by email - Admin only (prevents email enumeration)
+		/// </summary>
 		[HttpGet("by-email/{email}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetUserByEmailAsync([FromRoute] string email)
 		{
 			var query = new GetUserByEmailQuery { Email = email };
@@ -192,6 +209,7 @@ namespace UserManagement.Presentation.Controllers
 
 		[HttpPost("signin")]
 		[AllowAnonymous]
+		[EnableRateLimiting("login")]
 		public async Task<IActionResult> LoginUserAsync([FromBody] LoginUserCommand command)
 		{
 			if (!ModelState.IsValid)
@@ -261,6 +279,8 @@ namespace UserManagement.Presentation.Controllers
 		}
 
 		[HttpPost("forgot-password")]
+		[AllowAnonymous]
+		[EnableRateLimiting("forgot-password")]
 		public async Task<IActionResult> ForgotPasswordAsync([FromBody] ForgotPasswordCommand command)
 		{
 			ArgumentNullException.ThrowIfNull(command, nameof(command));
@@ -268,25 +288,94 @@ namespace UserManagement.Presentation.Controllers
 			return Ok();
 		}
 
-		[HttpPost("change-password")]
-		public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordCommand command)
+
+		/// <summary>
+		/// Reset password via email token (forgot password flow)
+		/// </summary>
+		[HttpPost("reset-password")]
+		[AllowAnonymous]
+		[EnableRateLimiting("password-reset")]
+		public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordCommand command)
 		{
 			if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
 			}
 			ArgumentNullException.ThrowIfNull(command);
-			var result = await mediator.Send(command);
-			if (result == Unit.Value)
+			
+			try
 			{
-				return Ok("Password changed successfully.");
+				var result = await mediator.Send(command);
+				return Ok("Password has been reset successfully.");
 			}
-			return BadRequest("Password change failed.");
+			catch (UnauthorizedAccessException ex)
+			{
+				return Unauthorized(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
 		}
 
+		/// <summary>
+		/// Change password while authenticated (requires old password)
+		/// </summary>
+		[HttpPost("change-password")]
+		[Authorize]
+		public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordWhileAuthenticatedCommand command)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
+			// Get user ID from JWT token claims
+			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+			if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
+			{
+				return Unauthorized("Invalid authentication token.");
+			}
+
+			// Ensure user can only change their own password
+			command.UserId = userId;
+
+			try
+			{
+				var result = await mediator.Send(command);
+				return Ok("Password changed successfully.");
+			}
+			catch (UnauthorizedAccessException ex)
+			{
+				return Unauthorized(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		/// <summary>
+		/// Delete user - User can delete own account, Admin can delete any account
+		/// </summary>
 		[HttpDelete("{id:guid}")]
+		[Authorize]
 		public async Task<IActionResult> DeleteUserAsync(Guid id)
 		{
+			// Get user ID from JWT token claims
+			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+			if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
+			{
+				return Unauthorized("Invalid authentication token.");
+			}
+
+			// Check if user is admin or deleting their own account
+			var isAdmin = User.IsInRole("Admin");
+			if (!isAdmin && userId != id)
+			{
+				return Forbid(); // 403 Forbidden - authenticated but not authorized
+			}
+
 			var command = new DeleteUserCommand { UserId = id };
 			await mediator.Send(command);
 			return NoContent();
