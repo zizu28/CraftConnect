@@ -438,12 +438,16 @@ namespace CraftConnect.Tests
 			// Arrange - User deleting their own account
 			var userId = Guid.NewGuid();
 		
-			// Mock User.FindFirst to return the same userId
-			var claimsPrincipalMock = new Mock<ClaimsPrincipal>();
-			var claim = new Claim(ClaimTypes.NameIdentifier, userId.ToString());
-			claimsPrincipalMock.Setup(x => x.FindFirst(ClaimTypes.NameIdentifier)).Returns(claim);
-			claimsPrincipalMock.Setup(x => x.IsInRole("Admin")).Returns(false); // Not admin, just regular user
-			_usersController.ControllerContext.HttpContext.User = claimsPrincipalMock.Object;
+		// Use real ClaimsPrincipal (mocking doesn't work with FindFirst)
+		var claims = new[] { new Claim(ClaimTypes.NameIdentifier, userId.ToString()) };
+		var identity = new ClaimsIdentity(claims, "TestAuth");
+		var claimsPrincipal = new ClaimsPrincipal(identity);
+		
+		// Use real DefaultHttpContext to properly set User
+		_usersController.ControllerContext = new ControllerContext 
+		{
+			HttpContext = new DefaultHttpContext { User = claimsPrincipal }
+		};
 		
 			_mediatorMock.Setup(m => m.Send(It.IsAny<DeleteUserCommand>(), default))
 				.ReturnsAsync(Unit.Value);

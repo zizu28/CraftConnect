@@ -1,0 +1,21 @@
+[Fact]
+public async Task DeleteUserAsync_ReturnsNoContent_WhenUserDeletesOwnAccount()
+{
+	// Arrange - User deleting their own account
+	var userId = Guid.NewGuid();
+
+	// Use real ClaimsPrincipal (mocking doesn't work with FindFirst)
+	var claims = new[] { new Claim(ClaimTypes.NameIdentifier, userId.ToString()) };
+	var identity = new ClaimsIdentity(claims, "TestAuth");
+	var claimsPrincipal = new ClaimsPrincipal(identity);
+	_usersController.ControllerContext.HttpContext.User = claimsPrincipal;
+
+	_mediatorMock.Setup(m => m.Send(It.IsAny<DeleteUserCommand>(), default))
+		.ReturnsAsync(Unit.Value);
+
+	// Act
+	var result = await _usersController.DeleteUserAsync(userId);
+
+	// Assert
+	Assert.IsType<NoContentResult>(result);
+}
