@@ -113,8 +113,8 @@ namespace CraftConnect.Tests
 			_usersController.ModelState.Clear();
 			var registerCommand = new UserCreateDTO() { 
 				Email = "example@gmail.com",
-				Password = "password123",
-				ConfirmPassword = "password123",
+				Password = "SecureP@ssw0rd123",
+				ConfirmPassword = "SecureP@ssw0rd123",
 				Role = "User",
 				AgreeToTerms = true,
 			};
@@ -136,8 +136,8 @@ namespace CraftConnect.Tests
 			var registerCommand = new UserCreateDTO()
 			{
 				Email = "test@gmail.com",
-				Password = "password123",
-				ConfirmPassword = "password123",
+				Password = "SecureP@ssw0rd456",
+				ConfirmPassword = "SecureP@ssw0rd456",
 				Role = "User",
 				AgreeToTerms = true,
 			};
@@ -173,8 +173,8 @@ namespace CraftConnect.Tests
 			var registerCommand = new UserCreateDTO()
 			{
 				Email = "example@email.com",
-				Password = "password123",
-				ConfirmPassword = "password123",
+				Password = "SecureP@ssw0rd789",
+				ConfirmPassword = "SecureP@ssw0rd789",
 				Role = "User",
 				AgreeToTerms = true				
 			};
@@ -232,33 +232,33 @@ namespace CraftConnect.Tests
 		}
 
 		[Fact]
-		public async Task ChangePasswordAsync_ReturnsOk_WhenPasswordIsChanged()
-		{
-			// Arrange
-			_usersController.ModelState.Clear();
-			var changeCommand = new ChangePasswordCommand();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<ChangePasswordCommand>(), default))
-				.ReturnsAsync(Unit.Value);
+	public async Task ResetPasswordAsync_ReturnsOk_WhenPasswordIsReset()
+	{
+		// Arrange
+		_usersController.ModelState.Clear();
+		var resetCommand = new ResetPasswordCommand();
+		_mediatorMock.Setup(m => m.Send(It.IsAny<ResetPasswordCommand>(), default))
+			.ReturnsAsync(Unit.Value);
 
-			// Act
-			var result = await _usersController.ChangePasswordAsync(changeCommand);
+		// Act
+		var result = await _usersController.ResetPasswordAsync(resetCommand);
 
-			// Assert
-			Assert.IsType<OkObjectResult>(result);
-		}
+		// Assert
+		Assert.IsType<OkObjectResult>(result);
+	}
 
 		[Fact]
-		public async Task ChangePasswordAsync_ReturnsBadRequest_WhenModelStateIsInvalid()
-		{
-			// Arrange
-			_usersController.ModelState.AddModelError("UserId", "UserId is required");
+	public async Task ResetPasswordAsync_ReturnsBadRequest_WhenModelStateIsInvalid()
+	{
+		// Arrange
+		_usersController.ModelState.AddModelError("Email", "Email is required");
 
-			// Act
-			var result = await _usersController.ChangePasswordAsync(new ChangePasswordCommand());
+		// Act
+		var result = await _usersController.ResetPasswordAsync(new ResetPasswordCommand());
 
-			// Assert
-			Assert.IsType<BadRequestObjectResult>(result);
-		}
+		// Assert
+		Assert.IsType<BadRequestObjectResult>(result);
+	}
 
 		[Fact]
 		public async Task RefreshTokenAsync_ReturnsOk_WhenTokenIsRefreshed()
@@ -431,19 +431,26 @@ namespace CraftConnect.Tests
 		}
 
 		[Fact]
-		public async Task DeleteUserAsync_ReturnsNoContent_WhenUserIsDeleted()
-		{
-			// Arrange
-			var userId = Guid.NewGuid();
-			_mediatorMock.Setup(m => m.Send(It.IsAny<DeleteUserCommand>(), default))
-				.ReturnsAsync(Unit.Value);
+	public async Task DeleteUserAsync_ReturnsNoContent_WhenUserDeletesOwnAccount()
+	{
+		// Arrange - User deleting their own account
+		var userId = Guid.NewGuid();
+		
+		// Mock User.FindFirst to return the same userId
+		var claimsPrincipalMock = new Mock<System.Security.Claims.ClaimsPrincipal>();
+		var claim = new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, userId.ToString());
+		claimsPrincipalMock.Setup(x => x.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)).Returns(claim);
+		_usersController.ControllerContext.HttpContext.User = claimsPrincipalMock.Object;
+		
+		_mediatorMock.Setup(m => m.Send(It.IsAny<DeleteUserCommand>(), default))
+			.ReturnsAsync(Unit.Value);
 
-			// Act
-			var result = await _usersController.DeleteUserAsync(userId);
+		// Act
+		var result = await _usersController.DeleteUserAsync(userId);
 
-			// Assert
-			Assert.IsType<NoContentResult>(result);
-		}
+		// Assert
+		Assert.IsType<NoContentResult>(result);
+	}
 
 		[Fact]
 		public async Task GetCraftsmanName_ReturnsOkResult_WhenCraftsmanExists()
