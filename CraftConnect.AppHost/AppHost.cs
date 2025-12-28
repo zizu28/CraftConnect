@@ -31,4 +31,12 @@ var blazor = builder.AddProject<Projects.CraftConnect_WASM>("blazor")
 //	options.ValidateOnBuild = true;
 //});
 
+builder.AddProject<Projects.NotificationManagement_Presentation>("notificationmanagement-presentation");
+
+//builder.Host.UseDefaultServiceProvider(options =>
+//{
+//	options.ValidateScopes = true; // Forces validation on startup
+//	options.ValidateOnBuild = true;
+//});
+
 builder.Build().Run();

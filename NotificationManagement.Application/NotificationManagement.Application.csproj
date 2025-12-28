@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Core.EventServices\Core.EventServices.csproj" />
+    <ProjectReference Include="..\Core.Logging\Core.Logging.csproj" />
+    <ProjectReference Include="..\Core.SharedKernel\Core.SharedKernel.csproj" />
+    <ProjectReference Include="..\Infrastructure.BackgroundJobs\Infrastructure.BackgroundJobs.csproj" />
+    <ProjectReference Include="..\NotificationManagement.Domain\NotificationManagement.Domain.csproj" />
+  </ItemGroup>
+</Project>

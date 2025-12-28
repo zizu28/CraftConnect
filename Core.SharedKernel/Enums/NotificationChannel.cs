@@ -1,5 +1,11 @@
 ﻿namespace Core.SharedKernel.Enums
 {
-	public enum NotificationChannel { Email, InApp, Push }
+	public enum NotificationChannel 
+	{
+		Email,
+		SMS,
+		Push,
+		InApp
+	}
 
 }

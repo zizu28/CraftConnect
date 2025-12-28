@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Core.BFF\Core.BFF.csproj" />
     <ProjectReference Include="..\CraftConnect.WASM\CraftConnect.WASM.csproj" />
     <ProjectReference Include="..\CraftConnect.WebUI\CraftConnect.WebUI.csproj" />
+    <ProjectReference Include="..\NotificationManagement.Presentation\NotificationManagement.Presentation.csproj" />
     <ProjectReference Include="..\PaymentManagement.Presentation\PaymentManagement.Presentation.csproj" />
     <ProjectReference Include="..\ProductInventoryManagement.Presentation\ProductInventoryManagement.Presentation.csproj" />
     <ProjectReference Include="..\UserManagement.Presentation\UserManagement.Presentation.csproj" />

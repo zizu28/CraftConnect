@@ -26,6 +26,8 @@
     <ProjectReference Include="..\PaymentManagement.Presentation\PaymentManagement.Presentation.csproj" />
     <ProjectReference Include="..\PaymentManagement.Application\PaymentManagement.Application.csproj" />
     <ProjectReference Include="..\PaymentManagement.Domain\PaymentManagement.Domain.csproj" />
+    <ProjectReference Include="..\NotificationManagement.Presentation\NotificationManagement.Presentation.csproj" />
+    <ProjectReference Include="..\NotificationManagement.Application\NotificationManagement.Application.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />

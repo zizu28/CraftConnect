@@ -3,6 +3,7 @@ using BookingManagement.Domain.Entities;
 using Core.SharedKernel.ValueObjects;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using NotificationManagement.Domain.Entities;
 using PaymentManagement.Domain.Entities;
 using ProductInventoryManagement.Domain.Entities;
 using UserManagement.Domain.Entities;
@@ -26,6 +27,9 @@ namespace Infrastructure.Persistence.Data
 		public DbSet<AuditLog> AuditLogs { get; set; }
 		public DbSet<CustomerProject> CustomerProjects { get; set; }
 		public DbSet<CraftsmanProposal> CraftsmanProposals { get; set; }
+		public DbSet<Notification> Notifications { get; set; }
+		public DbSet<NotificationTemplate> NotificationTemplates { get; set; }
+		public DbSet<NotificationPreference> NotificationPreferences { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -61,7 +65,8 @@ namespace Infrastructure.Persistence.Data
 						a.FullName.StartsWith("BookingManagement.Infrastructure.EntityTypeConfigurations") || 
 						a.FullName.StartsWith("ProductInventoryManagement.Infrastructure.EntityTypeConfigurations") ||
 						a.FullName.StartsWith("PaymentManagement.Infrastructure.EntityTypeConfigurations") ||
-						a.FullName.StartsWith("AuditManagement.Infrastructure.EntityTypeConfigurations") 
+						a.FullName.StartsWith("AuditManagement.Infrastructure.EntityTypeConfigurations") ||
+						a.FullName.StartsWith("NotificationManagement.Infrastructure.EntityTypeConfigurations")
 						)
 				);
 
