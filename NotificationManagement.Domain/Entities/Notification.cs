@@ -2,6 +2,7 @@
 using Core.SharedKernel.Enums;
 using Core.SharedKernel.IntegrationEvents.NotificationIntegrationEvents;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace NotificationManagement.Domain.Entities
@@ -24,6 +25,7 @@ namespace NotificationManagement.Domain.Entities
 		// Content
 		public string Subject { get; private set; }
 		public string Body { get; private set; }
+		[NotMapped]
 		public Dictionary<string, string>? Metadata { get; private set; }
 
 		// Delivery Status

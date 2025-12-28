@@ -13,6 +13,5 @@
     <ProjectReference Include="..\Infrastructure.EmailService\Infrastructure.EmailService.csproj" />
     <ProjectReference Include="..\Infrastructure.Persistence\Infrastructure.Persistence.csproj" />
     <ProjectReference Include="..\NotificationManagement.Application\NotificationManagement.Application.csproj" />
-    <ProjectReference Include="..\NotificationManagement.Domain\NotificationManagement.Domain.csproj" />
   </ItemGroup>
 </Project>

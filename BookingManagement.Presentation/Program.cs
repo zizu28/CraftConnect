@@ -75,7 +75,6 @@ var app = builder.Build();
 
 app.MapDefaultEndpoints();
 app.UseExceptionHandler(opt => { });
-app.UseExceptionHandler(opt => { });
 app.AddHangfireDashBoard();
 // Configure the HTTP request pipeline.
 

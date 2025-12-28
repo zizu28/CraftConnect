@@ -1,6 +1,12 @@
+using Core.EventServices;
+using Core.Logging;
 using CraftConnect.ServiceDefaults;
+using Infrastructure.BackgroundJobs;
+using Infrastructure.EmailService;
+using Infrastructure.Persistence.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NotificationManagement.Application.Extensions;
 using NotificationManagement.Infrastructure.Extensions;
@@ -14,6 +20,13 @@ System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeM
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+builder.Host.ConfigureSerilog();
+builder.Services.AddFluentEmailService(builder.Configuration);
+builder.Services.AddBackgroundJobs(builder.Configuration);
+builder.Services.RegisterSerilog();
+builder.Services.AddMessageBroker(builder.Configuration);
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Application layer services (MediatR, AutoMapper, FluentValidation)
 builder.Services.AddNotificationApplicationExtensions(builder.Configuration);
@@ -121,9 +134,16 @@ builder.Services.AddRateLimiter(options =>
 	};
 });
 
-// Add OpenAPI/Swagger
-builder.Services.AddEndpointsApiExplorer();
-
+builder.Services.AddCors(opt =>
+{
+	opt.AddPolicy("AllowBlazorOrigin", policy =>
+	{
+		policy.WithOrigins("https://localhost:7222")
+			.AllowAnyMethod()
+			.AllowAnyHeader()
+			.AllowCredentials();
+	});
+});
 
 var app = builder.Build();
 
@@ -131,6 +151,7 @@ app.MapDefaultEndpoints();
 
 // Configure exception handling
 app.UseExceptionHandler();
+app.AddHangfireDashBoard();
 
 // Configure rate limiting
 app.UseRateLimiter();
@@ -147,6 +168,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowBlazorOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -1,12 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>f59f6c3f-975f-44fa-8470-1186ec7958a3</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <!--<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />-->
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <ProjectReference Include="..\CraftConnect.ServiceDefaults\CraftConnect.ServiceDefaults.csproj" />
     <ProjectReference Include="..\NotificationManagement.Application\NotificationManagement.Application.csproj" />
     <ProjectReference Include="..\NotificationManagement.Infrastructure\NotificationManagement.Infrastructure.csproj" />

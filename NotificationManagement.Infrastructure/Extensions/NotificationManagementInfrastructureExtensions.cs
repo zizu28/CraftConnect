@@ -1,3 +1,5 @@
+using Infrastructure.Persistence.Repository;
+using Infrastructure.Persistence.UnitOfWork;
 using Microsoft.Extensions.DependencyInjection;
 using NotificationManagement.Application.Contracts;
 using NotificationManagement.Infrastructure.Providers;
@@ -10,6 +12,9 @@ public static class NotificationManagementInfrastructureExtensions
 	public static IServiceCollection AddNotificationInfrastructureExtensions(
 		this IServiceCollection services)
 	{
+		// Register UnitOfWork
+		services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 		// Register Repositories
 		services.AddScoped<INotificationRepository, NotificationRepository>();
 		services.AddScoped<INotificationTemplateRepository, NotificationTemplateRepository>();

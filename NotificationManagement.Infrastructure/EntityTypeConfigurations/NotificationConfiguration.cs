@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NotificationManagement.Domain.Entities;
+using NotificationManagement.Infrastructure.Converters;
 
 namespace NotificationManagement.Infrastructure.EntityTypeConfigurations;
 
@@ -48,8 +49,8 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
 		builder.Property(n => n.Body)
 			.IsRequired();
 
-		builder.Property(n => n.Metadata)
-			.HasColumnType("jsonb");
+		// Ignore Metadata - will be handled separately as a JSON column
+		builder.Ignore(n => n.Metadata);
 
 		builder.Property(n => n.ErrorMessage)
 			.HasMaxLength(1000);
