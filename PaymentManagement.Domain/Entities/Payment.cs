@@ -40,6 +40,9 @@ namespace PaymentManagement.Domain.Entities
 		public IReadOnlyCollection<PaymentTransaction> Transactions => _transactions.AsReadOnly();
 		private readonly List<Refund> _refunds = [];
 		public IReadOnlyCollection<Refund> Refunds => _refunds.AsReadOnly();
+		public bool IsDeleted { get; private set; }
+		public DateTime? DeletedAt { get; private set; }
+		public string? DeletedBy { get; private set; }
 
 		private Payment() { }
 
@@ -182,7 +185,7 @@ namespace PaymentManagement.Domain.Entities
 			if (refundAmount.Amount <= 0)
 				throw new ArgumentException("Refund amount must be greater than zero");
 
-			var totalRefunded = _refunds.Where(r => r.Status == RefundStatus.Completed)
+			var totalRefunded = _refunds.Where(r => r.Status == RefundStatus.Processed)
 									  .Sum(r => r.Amount.Amount);
 
 			if (totalRefunded + refundAmount.Amount > Amount.Amount)
@@ -210,7 +213,7 @@ namespace PaymentManagement.Domain.Entities
 
 		public void Cancel(string reason)
 		{
-			if (Status != PaymentStatus.Pending && Status != PaymentStatus.Authorized)
+			if (Status != PaymentStatus.Pending || Status != PaymentStatus.Authorized)
 				throw new InvalidOperationException($"Cannot cancel payment in {Status} status");
 
 			Status = PaymentStatus.Cancelled;
@@ -221,6 +224,16 @@ namespace PaymentManagement.Domain.Entities
 
 			AddIntegrationEvent(new PaymentCancelledIntegrationEvent(
 				Id, BookingId, OrderId, InvoiceId, reason, PayerId, RecipientId));
+		}
+
+		public void SoftDelete(string deletedBy, string reason)
+		{
+			if (Status == PaymentStatus.Completed || Status == PaymentStatus.Refunded)
+				throw new InvalidOperationException("Cannot delete completed or refunded payments");
+			Cancel(reason);
+			IsDeleted = true;
+			DeletedAt = DateTime.UtcNow;
+			DeletedBy = deletedBy;
 		}
 
 		private void AddTransaction(PaymentTransactionType type, Money amount, string description)

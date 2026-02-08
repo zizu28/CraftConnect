@@ -597,7 +597,7 @@ namespace CraftConnect.Tests
         #region CreatePaymentAsync Tests
 
         [Fact]
-        public async Task CreatePaymentAsync_ReturnsOkResult_WhenPaymentIsCreated()
+        public async Task CreatePaymentAsync_ReturnsRedirectResult_WhenPaymentIsCreated()
         {
             // Arrange
             var command = new CreatePaymentCommand 
@@ -625,8 +625,7 @@ namespace CraftConnect.Tests
             var result = await _controller.CreatePaymentAsync(command);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.IsAssignableFrom<PaymentResponseDTO>(okResult.Value);
+            Assert.IsType<RedirectResult>(result);
         }
 
         [Fact]
@@ -856,7 +855,7 @@ namespace CraftConnect.Tests
             { 
                 PaymentId = Guid.NewGuid(),
                 RecipientEmail = "test@example.com",
-                externalTransactionId = "ext_123"
+                ExternalTransactionId = "ext_123"
             };
             _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
                          .ReturnsAsync(Unit.Value);
@@ -905,7 +904,7 @@ namespace CraftConnect.Tests
             { 
                 PaymentId = Guid.NewGuid(),
                 RecipientEmail = "test@example.com",
-                externalTransactionId = "ext_123"
+                ExternalTransactionId = "ext_123"
             };
             _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
                          .ReturnsAsync(Unit.Value);

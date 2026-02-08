@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
 using PaymentManagement.Application.CQRS.Queries.PaymentQueries;
@@ -7,6 +8,7 @@ namespace PaymentManagement.Presentation.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
+	[Authorize]
 	public class PaymentsController(IMediator mediator) : ControllerBase
 	{
 		[HttpGet]
@@ -50,7 +52,7 @@ namespace PaymentManagement.Presentation.Controllers
 			return Ok(transactions);
 		}
 
-		[HttpGet("availabe-refund-amount")]
+		[HttpGet("available-refund-amount")]
 		public async Task<IActionResult> GetAvailableRefundAmountAsync([FromRoute] Guid paymentId)
 		{
 			if (paymentId == Guid.Empty)
@@ -95,7 +97,7 @@ namespace PaymentManagement.Presentation.Controllers
 				return BadRequest(ModelState);
 			}
 			var createdPayment = await mediator.Send(command);
-			return Ok(createdPayment);
+			return Redirect(createdPayment.AuthorizationUrl);
 		}
 
 		[HttpPut("update-payment/{id:guid}")]

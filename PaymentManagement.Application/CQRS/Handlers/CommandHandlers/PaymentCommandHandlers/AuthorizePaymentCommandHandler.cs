@@ -24,16 +24,24 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 		public async Task Handle(AuthorizePaymentCommand request, CancellationToken cancellationToken)
 		{
 			ArgumentNullException.ThrowIfNull(request, nameof(request));
-			logger.LogInformation("Starting authorization for payment {PaymentId}", request.PaymentId);
+			logger.LogInformation("Starting authorization for payment with ID {PaymentId}", request.PaymentId);
 			var paymentId = request.PaymentId;
 			var payment = await paymentRepository.GetByIdAsync(paymentId, cancellationToken);
 			if (payment == null)
 			{
-				logger.LogWarning("Payment {PaymentId} not found", paymentId);
+				logger.LogWarning("Payment with ID {PaymentId} not found", paymentId);
+				throw new InvalidOperationException($"Payment with ID {paymentId} not found");
 			}
+
 			try
 			{
-				//payStackApi.Transactions.CheckAuthorization(request.AuthorizationCode, request.Email, request.AmountInKobo);
+				CheckAuthorizationResponse authResponse = payStackApi.Transactions.CheckAuthorization(request.AuthorizationCode, request.RecipientEmail, (int)request.Amount);
+				if (!authResponse.Status || authResponse.Data == null)
+				{
+					logger.LogWarning("Authorization failed for payment {PaymentId}: {Message}", paymentId, authResponse.Message);
+					throw new InvalidOperationException($"Authorization failed: {authResponse.Message}");
+				}
+
 				payment!.Authorize(request.ExternalTransactionId, request.PaymentIntentId);
 				var domainEvents = payment.DomainEvents.ToList();
 				var authorizedEvent = domainEvents
@@ -46,10 +54,11 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 					await messageBroker.PublishAsync(authorizedEvent!, cancellationToken);
 					payment.ClearEvents();
 				}, cancellationToken);
+
 				logger.LogInformation("Payment {PaymentId} authorized successfully", paymentId);
 				backgroundJob.Enqueue<IGmailService>(
-					"AuthorizePayment",
-					payment => payment.SendEmailAsync(
+					"default",
+					paymentEmail => paymentEmail.SendEmailAsync(
 						request.RecipientEmail,
 						"PAYMENT AUTHORIZATION",
 						$"Payment with ID {paymentId} has been authorized",
@@ -59,6 +68,7 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 			catch (Exception ex)
 			{
 				logger.LogError(ex, "Error authorizing payment {PaymentId}: {ErrorMessage}", paymentId, ex.Message);
+				throw;
 			}
 		}
 	}

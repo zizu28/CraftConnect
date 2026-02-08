@@ -24,15 +24,15 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 			var payment = await paymentRepository.GetByIdAsync(request.PaymentDTO.PaymentId, cancellationToken);
 			if ( payment == null)
 			{
-				logger.LogWarning($"Payment with Id {request.PaymentDTO.PaymentId} not found.");
+				logger.LogWarning("Payment with Id {PaymentId} not found.", request.PaymentDTO.PaymentId);
 				throw new KeyNotFoundException($"Payment with Id {request.PaymentDTO.PaymentId} not found.");
 			}
 
 			TransactionVerifyResponse response = payStackApi.Transactions.Verify(request.Reference);
 			try
 			{
-				logger.LogInformation($"Reference:: {request.Reference}");
-				if (response.Status)
+				logger.LogInformation("Reference:: {Reference}", request.Reference);
+				if (response.Data.Status == payment.Status.ToString())
 				{
 					logger.LogInformation($"Response from PayStack:: {JsonConvert.SerializeObject(response)}");
 					request.PaymentDTO.Status = response.Data.Status;
@@ -43,7 +43,6 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 						await paymentRepository.UpdateAsync(payment);
 					}, cancellationToken);
 				}
-				logger.LogInformation($"Response from PayStack:: {JsonConvert.SerializeObject(response)}");
 				logger.LogInformation($"Response from PayStack:: {JsonConvert.SerializeObject(response)}");
 				request.PaymentDTO.Status = response.Data.Status;
 				request.PaymentDTO.ModifiedAt = response.Data.TransactionDate;

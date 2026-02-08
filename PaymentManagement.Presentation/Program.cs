@@ -22,6 +22,22 @@ builder.Services.RegisterSerilog();
 builder.Services.AddMessageBroker(builder.Configuration);
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
+builder.Services.AddHttpClient("PaystackClient", client =>
+{
+	client.BaseAddress = new Uri(builder.Configuration["Paystack:BaseUrl"] ?? "https://api.paystack.co/");
+	client.DefaultRequestHeaders.Add("Authorization", $"Bearer {builder.Configuration["Paystack:SecretKey"]}");
+});
+
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("PaystackCors", policy =>
+	{
+		policy.WithOrigins("https://paystack.com")
+			  .AllowAnyHeader()
+			  .AllowAnyMethod();
+	}	
+);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

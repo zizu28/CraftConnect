@@ -36,10 +36,33 @@ namespace PaymentManagement.Domain.Entities
 			if (Status != RefundStatus.Pending)
 				throw new InvalidOperationException($"Cannot complete refund in {Status} status");
 
-			Status = RefundStatus.Completed;
+			Status = RefundStatus.Processed;
 			ExternalRefundId = externalRefundId;
 			ProcessedAt = DateTime.UtcNow;
 		}
+
+		public void SetExternalRefundId(string externalRefundId)
+		{
+			if (Status != RefundStatus.Pending)
+				throw new InvalidOperationException($"Cannot set external ID for refund in {Status} status");
+
+			ExternalRefundId = externalRefundId;
+		}
+
+		//public static Refund RetryRefund(Guid paymentId, Refund fund)
+		//{
+		//	if (fund.Status != RefundStatus.NeedsAttention)
+		//		throw new InvalidOperationException($"Invalid retry fund status.");
+		//	return new Refund
+		//	{
+		//		Id = paymentId,
+		//		Amount = fund.Amount,
+		//		Reason = fund.Reason,
+		//		InitiatedBy = fund.InitiatedBy,
+		//		Status = RefundStatus.Pending,
+		//		CreatedAt = DateTime.UtcNow
+		//	};
+		//}
 
 		public void Fail(string reason)
 		{

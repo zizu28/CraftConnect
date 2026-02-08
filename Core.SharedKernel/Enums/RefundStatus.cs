@@ -3,8 +3,9 @@
 	public enum RefundStatus
 	{
 		Pending,
-		Completed,
-		Failed,
-		Canceled
+		Processing,
+		Processed,
+		NeedsAttention,
+		Failed
 	}
 }

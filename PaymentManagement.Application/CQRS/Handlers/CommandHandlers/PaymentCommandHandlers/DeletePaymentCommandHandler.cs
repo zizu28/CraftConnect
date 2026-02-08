@@ -19,15 +19,20 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 	{
 		public async Task<Unit> Handle(DeletePaymentCommand request, CancellationToken cancellationToken)
 		{
+			ArgumentNullException.ThrowIfNull(request);
+			ArgumentException.ThrowIfNullOrWhiteSpace(request.Reason, nameof(request.Reason));
+			ArgumentException.ThrowIfNullOrWhiteSpace(request.DeletedBy, nameof(request.DeletedBy));
+
 			var existingPayment = await paymentRepository.GetByIdAsync(request.Id, cancellationToken);
 			if (existingPayment == null)
 			{
 				logger.LogWarning("Payment with ID {PaymentId} not found.", request.Id);
 				throw new KeyNotFoundException($"Payment with ID {request.Id} not found.");
 			}
+
 			try
 			{
-				existingPayment.Cancel(request.Reason);
+				existingPayment.SoftDelete(request.DeletedBy, request.Reason);
 				var domainEvents = existingPayment.DomainEvents.ToList();
 				var cancelledEvent = domainEvents
 					.OfType<PaymentCancelledIntegrationEvent>()
@@ -35,18 +40,21 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 
 				await unitOfWork.ExecuteInTransactionAsync(async () =>
 				{
-					await paymentRepository.DeleteAsync(existingPayment.Id, cancellationToken);
-					await messageBroker.PublishAsync(cancelledEvent!, cancellationToken);
+					await paymentRepository.UpdateAsync(existingPayment, cancellationToken);
+					if(cancelledEvent != null)
+						await messageBroker.PublishAsync(cancelledEvent!, cancellationToken);
 					existingPayment.ClearEvents();
 				}, cancellationToken);
+
 				backgroundJob.Enqueue<IGmailService>(
-					"PaymentDeleted",
+					"default",
 					emailService => emailService.SendEmailAsync(
 						request.Email,
 						"PAYMENT DELETED",
 						$"Payment with ID {request.Id} has been deleted.",
 						false,
 						CancellationToken.None));
+
 				logger.LogInformation("Payment with ID {PaymentId} deleted successfully.", request.Id);
 				return Unit.Value;
 			}

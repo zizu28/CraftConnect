@@ -6,6 +6,6 @@ namespace PaymentManagement.Application.CQRS.Commands.PaymentCommands
 	{
 		public Guid PaymentId { get; set; }
 		public string RecipientEmail { get; set; }
-		public string externalTransactionId { get; set; }
+		public string? ExternalTransactionId { get; set; }
 	}
 }

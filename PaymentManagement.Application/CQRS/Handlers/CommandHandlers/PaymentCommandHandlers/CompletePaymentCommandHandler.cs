@@ -5,10 +5,8 @@ using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using PaymentManagement.Application.Contracts;
 using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
-using PayStack.Net;
 
 namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCommandHandlers
 {
@@ -21,15 +19,19 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 	{
 		public async Task<Unit> Handle(CompletePaymentCommand request, CancellationToken cancellationToken)
 		{
+			ArgumentNullException.ThrowIfNull(request);
+			ArgumentException.ThrowIfNullOrWhiteSpace(request.ExternalTransactionId, nameof(request.ExternalTransactionId));
+
 			var payment = await paymentRepository.GetByIdAsync(request.PaymentId, cancellationToken);
 			if (payment == null)
 			{
 				logger.LogWarning("Payment with ID {PaymentId} not found.", request.PaymentId);
 				throw new KeyNotFoundException($"Payment with ID {request.PaymentId} not found.");
 			}
+
 			try
 			{
-				payment.Complete(request.externalTransactionId);
+				payment.Complete(request.ExternalTransactionId);
 				var domainEvents = payment.DomainEvents.ToList();
 				var completedEvent = domainEvents
 					.OfType<PaymentCompletedIntegrationEvent>()
@@ -37,12 +39,13 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 				await unitOfWork.ExecuteInTransactionAsync(async () =>
 				{
 					await paymentRepository.UpdateAsync(payment, cancellationToken);
-					await messageBroker.PublishAsync(completedEvent!, cancellationToken);
+					if(completedEvent != null)
+						await messageBroker.PublishAsync(completedEvent!, cancellationToken);
 					payment.ClearEvents();
 				}, cancellationToken);
 				backgroundJob.Enqueue<IGmailService>(
-					"CompletePayment",
-					payment => payment.SendEmailAsync(
+					"default",
+					paymentEmail => paymentEmail.SendEmailAsync(
 						request.RecipientEmail,
 						"PAYMENT COMPLETE",
 						$"Payment with ID {request.PaymentId} to recipient with email {request.RecipientEmail} has been completed.",

@@ -23,6 +23,7 @@ namespace Infrastructure.Persistence.Data
 		public DbSet<Product> Products { get; set; }
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Payment> Payments { get; set; }
+		public DbSet<Refund> Refunds { get; set; }
 		public DbSet<Invoice> Invoices { get; set; }
 		public DbSet<AuditLog> AuditLogs { get; set; }
 		public DbSet<CustomerProject> CustomerProjects { get; set; }

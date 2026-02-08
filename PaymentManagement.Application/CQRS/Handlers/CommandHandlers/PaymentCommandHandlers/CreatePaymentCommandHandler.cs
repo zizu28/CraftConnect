@@ -16,6 +16,7 @@ using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
 using PaymentManagement.Application.Validators.PaymentValidators;
 using PaymentManagement.Domain.Entities;
 using PayStack.Net;
+using System.Security.Cryptography;
 
 namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCommandHandlers
 {
@@ -26,13 +27,11 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 		IMessageBroker messageBroker,
 		IBackgroundJobService backgroundJob,
 		IUnitOfWork unitOfWork,
-		IConfiguration configuration,
-		IHttpClientFactory? httpClient) : IRequestHandler<CreatePaymentCommand, PaymentResponseDTO>
+		IConfiguration configuration) : IRequestHandler<CreatePaymentCommand, PaymentResponseDTO>
 	{
 		private readonly PayStackApi payStack = new(configuration["Paystack:SecretKey"]);
 		public async Task<PaymentResponseDTO> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
 		{
-			var paystackHttpClient = httpClient?.CreateClient("PaystackClient");
 			var response = new PaymentResponseDTO();
 			var validator = new PaymentCreateDTOValidator();
 			var validationResult = await validator.ValidateAsync(request.PaymentDTO, cancellationToken);
@@ -41,7 +40,9 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 				response.IsSuccess = false;
 				response.Message = "Validation errors occurred.";
 				response.Errors = [..validationResult.Errors.Select(e => e.ErrorMessage)];
+				return response;
 			}
+
 			try
 			{
 				TransactionInitializeRequest paystackRequest = new()
@@ -50,10 +51,12 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 					Email = request.RecipientEmail,
 					Currency = request.PaymentDTO.Currency,
 					TransactionCharge = (int)(request.TransactionCharge * 100),
+					Reference = GenerateReference(),
+					CallbackUrl = request.CallbackUrl,
 				};
 
 				logger.LogInformation($"Request to PayStack:: {JsonConvert.SerializeObject(paystackRequest)}");
-				TransactionInitializeResponse paystackResponse = payStack.Transactions.Initialize(paystackRequest);
+				TransactionInitializeResponse paystackResponse = payStack.Transactions.Initialize(paystackRequest, true);
 				logger.LogInformation($"Response from PayStack:: {JsonConvert.SerializeObject(paystackResponse)}");
 				if (paystackResponse.Status)
 				{
@@ -88,15 +91,14 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 
 					await unitOfWork.ExecuteInTransactionAsync(async () =>
 					{
-						var httpResponse = await paystackHttpClient!.GetAsync(paystackResponse.Data.AuthorizationUrl,HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-
 						await paymentRepository.AddAsync(paymentEntity, cancellationToken);
-						await messageBroker.PublishAsync(initiatedEvent!, cancellationToken);
+						if (initiatedEvent != null)
+							await messageBroker.PublishAsync(initiatedEvent!, cancellationToken);
 						paymentEntity.ClearEvents();
 					}, cancellationToken);
 
 					backgroundJob.Enqueue<IGmailService>(
-						"PaymentInitiated",
+						"default",
 						payment => payment.SendEmailAsync(
 							request.RecipientEmail,
 							"PAYMENT INITIATED",
@@ -110,6 +112,14 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 					response.AuthorizationUrl = paystackResponse.Data.AuthorizationUrl;
 					response.Reference = paystackResponse.Data.Reference;
 				}
+				else
+				{
+					logger.LogWarning("Paystack initialization failed: {Message}", paystackResponse.Message);
+					response.IsSuccess = false;
+					response.Message = "Payment gateway initialization failed.";
+					response.Errors = [paystackResponse.Message ?? "Unknown error from payment gateway"];
+					return response;
+				}
 			}
 			catch (Exception ex)
 			{
@@ -117,8 +127,15 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 				response.IsSuccess = false;
 				response.Message = "An error occurred while processing your request.";
 				response.Errors = [ex.Message];
+				throw;
 			}
 			return response;
+		}
+
+		private static string GenerateReference()
+		{
+			var random = RandomNumberGenerator.GetHexString(16);
+			return $"PAY-{random.ToUpper()}";
 		}
 	}
 }

@@ -20,17 +20,17 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 	{
 		public async Task<bool> Handle(FailedPaymentCommand request, CancellationToken cancellationToken)
 		{
+			ArgumentNullException.ThrowIfNull(request);
+			ArgumentException.ThrowIfNullOrEmpty(request.RecipientEmail, nameof(request.RecipientEmail));
+			ArgumentException.ThrowIfNullOrEmpty(request.FailureReason, nameof(request.FailureReason));
+
 			var payment = await paymentRepository.GetByIdAsync(request.PaymentId, cancellationToken);
 			if (payment == null)
 			{
 				logger.LogWarning("Payment with ID {PaymentId} not found.", request.PaymentId);
-				return false;
+				throw new KeyNotFoundException($"Payment with ID {request.PaymentId} not found.");
 			}
-			if (payment.Status != PaymentStatus.Pending && payment.Status != PaymentStatus.Authorized)
-			{
-				logger.LogWarning("Cannot fail payment with ID {PaymentId} in {Status} status.", request.PaymentId, payment.Status);
-				return false;
-			}
+
 			try
 			{
 				payment.Fail(request.FailureReason);
@@ -42,25 +42,32 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 				await unitOfWork.ExecuteInTransactionAsync(async () =>
 				{
 					await paymentRepository.UpdateAsync(payment, cancellationToken);
-					await messageBroker.PublishAsync(paymentFailedEvent!, cancellationToken);
+					if(paymentFailedEvent != null)
+						await messageBroker.PublishAsync(paymentFailedEvent!, cancellationToken);
 					payment.ClearEvents();
 				}, cancellationToken);
 
 				backgroundJob.Enqueue<IGmailService>(
-					"FailedPayment", 
+					"default", 
 					failed => failed.SendEmailAsync(
 						request.RecipientEmail,
 						"PAYMENT FAILED",
-						$"Payment with ID {request.PaymentId} has failed.",
+						$"Payment with ID {request.PaymentId} failed. Reason: {request.FailureReason}",
 						false,
 						CancellationToken.None));
 				logger.LogInformation("Payment with ID {PaymentId} failed successfully.", request.PaymentId);
 				return true;
 			}
+			catch (InvalidOperationException ex)
+			{
+				// Business rule violation - return false
+				logger.LogWarning("Cannot fail payment {PaymentId}", request.PaymentId);
+				return false;
+			}
 			catch (Exception ex)
 			{
 				logger.LogError(ex, "Error failing payment with ID {PaymentId}.", request.PaymentId);
-				return false;
+				throw;
 			}
 		}
 	}
