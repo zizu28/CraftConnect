@@ -1,22 +1,39 @@
-﻿using Core.Logging;
-using Core.SharedKernel.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
 using PaymentManagement.Application.DTOs;
 using PaymentManagement.Application.Services;
-using System.Security.Cryptography;
 using System.Text;
 
-namespace PaymentManagement.Presentation.Controllers
+namespace PaymentManagement.API.Controllers
 {
+	/// <summary>
+	/// Controller for receiving and processing Paystack webhook notifications
+	/// </summary>
 	[ApiController]
 	[Route("api/webhooks/paystack")]
-	public class PaystackWebhookController(
-		IMediator mediator,
-		IPaystackWebhookVerifier webhookVerifier,
-		ILoggingService<PaystackWebhookController> logger) : ControllerBase
+	public class PaystackWebhookController : ControllerBase
 	{
+		private readonly IMediator _mediator;
+		private readonly IPaystackWebhookVerifier _webhookVerifier;
+		private readonly ILogger<PaystackWebhookController> _logger;
+
+		public PaystackWebhookController(
+			IMediator mediator,
+			IPaystackWebhookVerifier webhookVerifier,
+			ILogger<PaystackWebhookController> logger)
+		{
+			_mediator = mediator;
+			_webhookVerifier = webhookVerifier;
+			_logger = logger;
+		}
+
+		/// <summary>
+		/// Receives webhook notifications from Paystack
+		/// </summary>
+		/// <param name="payload">The webhook payload from Paystack</param>
+		/// <returns>200 OK if processed successfully, 401 if signature invalid</returns>
 		[HttpPost]
 		public async Task<IActionResult> ProcessWebhook([FromBody] PaystackWebhookPayload payload)
 		{
@@ -29,12 +46,14 @@ namespace PaymentManagement.Presentation.Controllers
 			var rawBody = await reader.ReadToEndAsync();
 
 			// Verify the webhook signature
-			if (!webhookVerifier.VerifySignature(signature, rawBody))
+			if (!_webhookVerifier.VerifySignature(signature, rawBody))
 			{
-				logger.LogWarning("Invalid Paystack webhook signature received for event: {Event}", payload.Event);
+				_logger.LogWarning("Invalid Paystack webhook signature received for event: {Event}", payload.Event);
 				return Unauthorized(new { error = "Invalid signature" });
 			}
-			logger.LogInformation("Received Paystack webhook event: {Event}, Data ID: {DataId}, Status: {Status}", payload.Event, payload.Data.Id, payload.Data.Status);
+
+			_logger.LogInformation("Received Paystack webhook event: {Event}, Data ID: {DataId}, Status: {Status}",
+				payload.Event, payload.Data.Id, payload.Data.Status);
 
 			try
 			{
@@ -48,17 +67,17 @@ namespace PaymentManagement.Presentation.Controllers
 
 					case "charge.success":
 						// TODO: Handle successful charge
-						logger.LogInformation("Charge success webhook received but not yet handled");
+						_logger.LogInformation("Charge success webhook received but not yet handled");
 						break;
 
 					case "transfer.success":
 					case "transfer.failed":
 						// TODO: Handle transfer events
-						logger.LogInformation("Transfer webhook received but not yet handled");
+						_logger.LogInformation("Transfer webhook received but not yet handled");
 						break;
 
 					default:
-						logger.LogInformation("Unhandled webhook event type: {Event}", payload.Event);
+						_logger.LogInformation("Unhandled webhook event type: {Event}", payload.Event);
 						break;
 				}
 
@@ -66,8 +85,9 @@ namespace PaymentManagement.Presentation.Controllers
 			}
 			catch (Exception ex)
 			{
-				logger.LogError(ex, "Error processing Paystack webhook for event: {Event}", payload.Event);
-
+				_logger.LogError(ex, "Error processing Paystack webhook for event: {Event}", payload.Event);
+				
+				// Return 500 so Paystack will retry
 				return StatusCode(500, new { error = "Internal server error" });
 			}
 		}
@@ -88,7 +108,7 @@ namespace PaymentManagement.Presentation.Controllers
 				}
 			};
 
-			await mediator.Send(command);
+			await _mediator.Send(command);
 		}
 
 		/// <summary>
@@ -104,22 +124,22 @@ namespace PaymentManagement.Presentation.Controllers
 				return payload.Data.Transaction.Customer.Email;
 
 			// Fallback - this should be configured or handled differently in production
-			logger.LogWarning("Could not extract recipient email from webhook payload, using default");
+			_logger.LogWarning("Could not extract recipient email from webhook payload, using default");
 			return "support@example.com"; // TODO: Configure fallback email
 		}
 
 		/// <summary>
 		/// Maps Paystack status strings to internal RefundStatus enum
 		/// </summary>
-		private static RefundStatus MapPaystackStatusToRefundStatus(string paystackStatus)
+		private Core.SharedKernel.Enums.RefundStatus MapPaystackStatusToRefundStatus(string paystackStatus)
 		{
 			return paystackStatus.ToLower() switch
 			{
-				"success" => RefundStatus.Processed,
-				"failed" => RefundStatus.Failed,
-				"pending" => RefundStatus.Pending,
-				"processing" => RefundStatus.Pending,
-				_ => RefundStatus.Pending
+				"success" => Core.SharedKernel.Enums.RefundStatus.Processed,
+				"failed" => Core.SharedKernel.Enums.RefundStatus.Failed,
+				"pending" => Core.SharedKernel.Enums.RefundStatus.Pending,
+				"processing" => Core.SharedKernel.Enums.RefundStatus.Pending,
+				_ => Core.SharedKernel.Enums.RefundStatus.Pending
 			};
 		}
 	}

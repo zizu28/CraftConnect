@@ -28,15 +28,14 @@ builder.Services.AddHttpClient("PaystackClient", client =>
 	client.DefaultRequestHeaders.Add("Authorization", $"Bearer {builder.Configuration["Paystack:SecretKey"]}");
 });
 
-builder.Services.AddCors(options =>
+builder.Services.AddCors(cors =>
 {
-	options.AddPolicy("PaystackCors", policy =>
+	cors.AddPolicy("PaystackCors", policy =>
 	{
-		policy.WithOrigins("https://paystack.com")
-			  .AllowAnyHeader()
-			  .AllowAnyMethod();
-	}	
-);
+		policy.AllowAnyHeader()
+			.AllowAnyMethod();
+	});
+});
 
 var app = builder.Build();
 
