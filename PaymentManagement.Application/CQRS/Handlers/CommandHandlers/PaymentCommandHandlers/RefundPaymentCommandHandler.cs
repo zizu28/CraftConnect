@@ -6,10 +6,8 @@ using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using PaymentManagement.Application.Contracts;
 using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
-using PayStack.Net;
 using System.Net.Http.Json;
 
 namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCommandHandlers
@@ -20,9 +18,9 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 		ILoggingService<RefundPaymentCommandHandler> logger,
 		IMessageBroker messageBroker,
 		IBackgroundJobService backgroundJob,
-		IHttpClientFactory httpClientFactory) : IRequestHandler<RefundPaymentCommand, Unit>
+		IHttpClientFactory httpClientFactory) : IRequestHandler<RefundPaymentCommand, bool>
 	{
-		public async Task<Unit> Handle(RefundPaymentCommand request, CancellationToken cancellationToken)
+		public async Task<bool> Handle(RefundPaymentCommand request, CancellationToken cancellationToken)
 		{
 			ArgumentNullException.ThrowIfNull(request, nameof(request));
 			ArgumentException.ThrowIfNullOrEmpty(request.RecipientEmail, nameof(request.RecipientEmail));
@@ -77,8 +75,8 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 					   false,
 					   CancellationToken.None));
 
-				logger.LogInformation("Refund initiated for Payment {PaymentId}, awaiting Paystack processing", request.PaymentId);
-				return Unit.Value;
+				logger.LogInformation("Refund initiated for Payment with ID {PaymentId}, awaiting Paystack processing", request.PaymentId);
+				return true;
 			}
 			catch (Exception ex)
 			{
@@ -104,7 +102,7 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 			}
 			var result = await response.Content.ReadFromJsonAsync<PaystackRefundResponse>(cancellationToken);
 
-			if (result?.Status != true)
+			if (!result!.Status)
 			{
 				throw new InvalidOperationException($"Paystack refund failed: {result?.Message}");
 			}

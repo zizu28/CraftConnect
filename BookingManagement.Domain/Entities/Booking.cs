@@ -101,7 +101,7 @@ namespace BookingManagement.Domain.Entities
 				throw new InvalidOperationException("Cannot cancel a booking that is already completed or cancelled.");
 			}
 			Status = BookingStatus.Cancelled;
-			AddIntegrationEvent(new BookingCancelledIntegrationEvent(Id, reason));
+			AddIntegrationEvent(new BookingCancelledIntegrationEvent(Id, reason.ToString()));
 		}
 
 		public decimal CalculateTotalPrice()

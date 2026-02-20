@@ -10,14 +10,15 @@
 		public required string PaymentStatus { get; set; } = "Pending";
 		public required string PaymentType { get; set; }
 		public required Guid PayerId { get; set; }
-
 		public required Guid RecipientId { get; set; }
-
+		public string Reference { get; set; } = string.Empty;
+		public string Email { get; set; } = string.Empty;
 		public Guid BookingId { get; set; }
 		public Guid OrderId { get; set; }
 		public Guid InvoiceId { get; set; }
 
 		public string? Description { get; set; }
+		public string? CallbackUrl { get; set; }
 
 		public required string BillingStreet { get; set; } = string.Empty;
 

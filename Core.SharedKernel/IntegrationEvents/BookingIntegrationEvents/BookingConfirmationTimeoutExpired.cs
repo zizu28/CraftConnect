@@ -2,12 +2,11 @@
 
 namespace Core.SharedKernel.IntegrationEvents.BookingIntegrationEvents
 {
-	public record BookingCancelledIntegrationEvent(
-		Guid BookingId,
-		string? ReasonForCancellation) : IIntegrationEvent
+	public record BookingConfirmationTimeoutExpired : IIntegrationEvent
 	{
+		public Guid CorrelationId { get; init; }
+		public Guid BookingId { get; init; }
 		public Guid EventId => Guid.NewGuid();
-
 		public DateTime OccuredOn => DateTime.UtcNow;
-	}	
+	}
 }

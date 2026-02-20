@@ -219,6 +219,7 @@ namespace PaymentManagement.Domain.Entities
 			Status = PaymentStatus.Cancelled;
 			FailureReason = reason;
 			ProcessedAt = DateTime.UtcNow;
+			ModifiedAt = DateTime.UtcNow;
 
 			AddTransaction(PaymentTransactionType.Cancellation, new Money(0, Currency), reason);
 
@@ -271,7 +272,7 @@ namespace PaymentManagement.Domain.Entities
 		{
 			if (!CanBeRefunded()) return new Money(0, Currency);
 
-			var totalRefunded = _refunds.Where(r => r.Status == RefundStatus.Completed)
+			var totalRefunded = _refunds.Where(r => r.Status == RefundStatus.Processed)
 									  .Sum(r => r.Amount.Amount);
 
 			return new Money(Amount.Amount - totalRefunded, Currency);

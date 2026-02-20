@@ -5,6 +5,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookingManagement.Application\BookingManagement.Application.csproj" />
+    <ProjectReference Include="..\NotificationManagement.Application\NotificationManagement.Application.csproj" />
+    <ProjectReference Include="..\PaymentManagement.Application\PaymentManagement.Application.csproj" />
   </ItemGroup>
 
 </Project>

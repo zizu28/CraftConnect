@@ -23,7 +23,7 @@ builder.AddServiceDefaults();
 builder.Services.AddControllers();
 builder.Services.AddBookingApplicationExtensions(builder.Configuration);
 builder.Host.ConfigureSerilog();
-builder.Services.AddBookingManagementConfiguration(builder.Configuration);
+builder.Services.AddBookingManagementConfiguration(builder.Configuration, builder.Environment);
 builder.Services.AddFluentEmailService(builder.Configuration);
 //builder.Services.AddHybridCacheService(builder.Configuration);
 builder.Services.AddBackgroundJobs(builder.Configuration);

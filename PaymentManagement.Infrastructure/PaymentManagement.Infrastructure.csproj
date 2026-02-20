@@ -4,6 +4,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Core.EventServices\Core.EventServices.csproj" />
     <ProjectReference Include="..\PaymentManagement.Application\PaymentManagement.Application.csproj" />
   </ItemGroup>
 

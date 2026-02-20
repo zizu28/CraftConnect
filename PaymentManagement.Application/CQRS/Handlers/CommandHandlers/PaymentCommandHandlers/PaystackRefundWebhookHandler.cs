@@ -6,7 +6,6 @@ using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using PaymentManagement.Application.Contracts;
 using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
-using PaymentManagement.Domain.Entities;
 
 namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCommandHandlers
 {
@@ -24,7 +23,7 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 			try
 			{
 				var refund = await refundRepository.GetByExternalIdAsync(request.Data.Id.ToString());
-				if (refund.Status != RefundStatus.Pending)
+				if (refund!.Status != RefundStatus.Pending)
 				{
 					logger.LogWarning("Refund {RefundId} already processed with status {Status}", refund.Id, refund.Status);
 					return Unit.Value;
@@ -41,7 +40,7 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 							emailService => emailService.SendEmailAsync(
 								request.RecipientEmail,
 								"REFUND COMPLETED",
-								$"Your refund of {refund.Amount.Amount} {refund.Amount.Currency} has been successfully processed.",
+								$"Your refund of {refund.Amount.Currency}{refund.Amount.Amount} has been processed successfully.",
 								false,
 								CancellationToken.None));
 					}

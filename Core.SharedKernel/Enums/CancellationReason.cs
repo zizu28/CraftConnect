@@ -5,6 +5,7 @@
 		CustomerRequest,
 		CraftmanUnavailable,
 		WeatherConditions,
+		PaymentFailed,
 		Other
 	}
 }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
   </PropertyGroup>
   <ItemGroup>
@@ -22,6 +22,6 @@
     <ProjectReference Include="..\Infrastructure.BackgroundJobs\Infrastructure.BackgroundJobs.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Consumers\" />
+    <Folder Include="Events\" />
   </ItemGroup>
 </Project>

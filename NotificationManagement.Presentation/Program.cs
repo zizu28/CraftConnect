@@ -5,7 +5,6 @@ using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NotificationManagement.Application.Extensions;
@@ -32,7 +31,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddNotificationApplicationExtensions(builder.Configuration);
 
 // Add Infrastructure layer services (Repositories, Providers)
-builder.Services.AddNotificationInfrastructureExtensions();
+builder.Services.AddNotificationInfrastructureExtensions(builder.Configuration);
 
 // Add controllers
 builder.Services.AddControllers();

@@ -8,6 +8,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\Core.EventServices\Core.EventServices.csproj" />
     <ProjectReference Include="..\Core.Logging\Core.Logging.csproj" />
     <ProjectReference Include="..\Core.SharedKernel\Core.SharedKernel.csproj" />
     <ProjectReference Include="..\Infrastructure.EmailService\Infrastructure.EmailService.csproj" />

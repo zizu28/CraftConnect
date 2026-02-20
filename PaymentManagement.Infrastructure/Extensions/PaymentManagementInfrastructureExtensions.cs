@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

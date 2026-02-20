@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using PaymentManagement.Application.CQRS.Commands.PaymentCommands;
 using PaymentManagement.Application.DTOs;
 using PaymentManagement.Application.Services;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace PaymentManagement.Presentation.Controllers
@@ -48,12 +47,14 @@ namespace PaymentManagement.Presentation.Controllers
 
 					case "charge.success":
 						// TODO: Handle successful charge
+						await ProcessChargeWebhook(payload);
 						logger.LogInformation("Charge success webhook received but not yet handled");
 						break;
 
 					case "transfer.success":
 					case "transfer.failed":
 						// TODO: Handle transfer events
+						await ProcessTransferWebhook(payload);
 						logger.LogInformation("Transfer webhook received but not yet handled");
 						break;
 
@@ -70,6 +71,16 @@ namespace PaymentManagement.Presentation.Controllers
 
 				return StatusCode(500, new { error = "Internal server error" });
 			}
+		}
+
+		private async Task ProcessTransferWebhook(PaystackWebhookPayload payload)
+		{
+			throw new NotImplementedException();
+		}
+
+		private async Task ProcessChargeWebhook(PaystackWebhookPayload payload)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>

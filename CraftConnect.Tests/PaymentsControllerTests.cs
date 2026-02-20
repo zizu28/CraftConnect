@@ -617,7 +617,11 @@ namespace CraftConnect.Tests
                     BillingPostalCode = "10001"
                 } 
             };
-            var paymentResponse = new PaymentResponseDTO { Id = Guid.NewGuid() };
+            var paymentResponse = new PaymentResponseDTO 
+            { 
+                Id = Guid.NewGuid(),
+                AuthorizationUrl = "https://paystack.com/pay/test123" 
+            };
             _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
                          .ReturnsAsync(paymentResponse);
 
@@ -676,9 +680,12 @@ namespace CraftConnect.Tests
                     BillingStreet = "123 Main St",
                     BillingCity = "New York",
                     BillingPostalCode = "10001"
-                } 
+                }
             };
-            var paymentResponse = new PaymentResponseDTO();
+            var paymentResponse = new PaymentResponseDTO
+            {
+                AuthorizationUrl = "https://paystack.com/pay/test456"
+            };
             _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
                          .ReturnsAsync(paymentResponse);
 
@@ -1005,7 +1012,7 @@ namespace CraftConnect.Tests
                 InitiatedBy = Guid.NewGuid()
             };
             _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
-                         .ReturnsAsync(Unit.Value);
+                         .ReturnsAsync(true);
 
             // Act
             var result = await _controller.RefundPaymentAsync(command);
@@ -1057,7 +1064,7 @@ namespace CraftConnect.Tests
                 InitiatedBy = Guid.NewGuid()
             };
             _mediatorMock.Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
-                         .ReturnsAsync(Unit.Value);
+                         .ReturnsAsync(true);
 
             // Act
             await _controller.RefundPaymentAsync(command);

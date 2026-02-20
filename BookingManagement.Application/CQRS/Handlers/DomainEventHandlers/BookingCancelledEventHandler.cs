@@ -14,7 +14,7 @@ namespace BookingManagement.Application.CQRS.Handlers.DomainEventHandlers
 		{
 			var booking = await bookingRepository.GetByIdAsync(domainEvent.BookingId, cancellationToken)
 				?? throw new ArgumentNullException(nameof(domainEvent));
-			var bookingCancelledIntegrationEvent = new BookingCancelledIntegrationEvent(booking.Id, CancellationReason.Other);
+			var bookingCancelledIntegrationEvent = new BookingCancelledIntegrationEvent(booking.Id, CancellationReason.Other.ToString());
 			await messageBroker.PublishAsync(bookingCancelledIntegrationEvent, cancellationToken);
 		}
 	}
