@@ -9,5 +9,6 @@ namespace PaymentManagement.Application.CQRS.Commands.PaymentCommands
 		public string CallbackUrl { get; set; } = "https://localhost:7222/";
 		public PaymentCreateDTO PaymentDTO { get; set; }
 		public decimal TransactionCharge { get; set; }
+		public Guid CorrelationId { get; set; }
 	}
 }

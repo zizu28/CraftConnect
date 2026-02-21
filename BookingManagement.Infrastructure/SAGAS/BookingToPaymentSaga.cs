@@ -1,10 +1,11 @@
-﻿using BookingManagement.Application.CQRS.Commands.BookingCommands;
-using BookingManagement.Application.SAGA;
+﻿using BookingManagement.Application.SAGA;
+using Core.SharedKernel.Commands.BookingCommands;
 using Core.SharedKernel.Commands.NotificationCommands;
 using Core.SharedKernel.Commands.PaymentCommands;
 using Core.SharedKernel.IntegrationEvents.BookingIntegrationEvents;
 using Core.SharedKernel.IntegrationEvents.NotificationIntegrationEvents;
 using Core.SharedKernel.IntegrationEvents.PaymentsIntegrationEvents;
+using Core.SharedKernel.IntegrationEvents.RefundIntegrationEvents;
 using MassTransit;
 
 namespace BookingManagement.Infrastructure.SAGAS
@@ -15,13 +16,14 @@ namespace BookingManagement.Infrastructure.SAGAS
 		{
 			InstanceState(x => x.CurrentState);
 
-			Event(() => BookingRequested, x => x.CorrelateBy((state, ctx) => state.BookingId == ctx.Message.BookingId));
-			Event(() => PaymentInitiated, x => x.CorrelateBy((state, ctx) => state.PaymentId == ctx.Message.PaymentId));
-			Event(() => PaymentCompleted, x => x.CorrelateBy((state, ctx) => state.PaymentId == ctx.Message.PaymentId || state.BookingId == ctx.Message.BookingId));
-			Event(() => PaymentFailed, x => x.CorrelateBy((state, ctx) => state.PaymentId == ctx.Message.PaymentId || state.BookingId == ctx.Message.BookingId));
-			Event(() => BookingConfirmed, x => x.CorrelateBy((state, ctx) => state.BookingId == ctx.Message.BookingId));
-			Event(() => BookingCancelled, x => x.CorrelateBy((state, ctx) => state.BookingId == ctx.Message.BookingId));
-			//Event(() => NotificationSent, x => x.CorrelateBy((state, ctx) => state.Notifi == ctx.Message.BookingId));
+			Event(() => BookingRequested, x => x.CorrelateById(ctx => ctx.Message.CorrelationId));
+			Event(() => PaymentInitiated, x => x.CorrelateById(ctx => ctx.Message.CorrelationId));
+			Event(() => PaymentCompleted, x => x.CorrelateById(ctx => ctx.Message.CorrelationId));
+			Event(() => PaymentFailed, x => x.CorrelateById(ctx => ctx.Message.CorrelationId));
+			Event(() => PaymentRefunded, x => x.CorrelateById(ctx => ctx.Message.CorrelationId));
+			Event(() => BookingConfirmed, x => x.CorrelateById(ctx => ctx.Message.CorrelationId));
+			Event(() => BookingCancelled, x => x.CorrelateById(ctx => ctx.Message.CorrelationId));
+			Event(() => NotificationSent, x => x.CorrelateById(ctx => ctx.Message.CorrelationId));
 			Schedule(() => PaymentTimeout, m => m.PaymentTimeoutTokenId, s =>
 			{
 				s.Delay = TimeSpan.FromMinutes(15);
@@ -39,17 +41,24 @@ namespace BookingManagement.Infrastructure.SAGAS
 				{
 					context.Saga.BookingId = context.Message.BookingId;
 					context.Saga.CraftsmanId = context.Message.CraftspersonId;
+					context.Saga.CustomerId = context.Message.CustomerId;
+					context.Saga.Amount = context.Message.Amount;
+					context.Saga.Currency = context.Message.Currency;
+					context.Saga.CustomerEmail = context.Message.CustomerEmail;
 					context.Saga.ServiceDescription = context.Message.Description;
 					context.Saga.CreatedAt = DateTime.UtcNow;
 					context.Saga.UpdatedAt = DateTime.UtcNow;
 				})
-				.Publish(ctx => ctx.Init<InitiatePaymentCommand>(new
+				.PublishAsync(ctx => ctx.Init<InitiatePaymentCommand>(new
 				{
 					ctx.Saga.CorrelationId,
 					ctx.Saga.BookingId,
+					RecipientId = ctx.Saga.CraftsmanId,
+					ctx.Saga.CustomerId,
 					ctx.Saga.Amount,
 					ctx.Saga.Currency,
-					ctx.Saga.CustomerId
+					CustomerEmail = ctx.Saga.CustomerEmail ?? string.Empty,
+					Description = ctx.Saga.ServiceDescription ?? string.Empty,
 				}))
 				.TransitionTo(WaitingForPaymentInitiation)
 			);
@@ -74,8 +83,21 @@ namespace BookingManagement.Infrastructure.SAGAS
 					context.Saga.CorrelationId,
 					context.Saga.BookingId,
 					context.Saga.PaymentId
+				}), context => TimeSpan.FromMinutes(15))
+				.TransitionTo(WaitingForPaymentCompletion),
+				
+				When(PaymentFailed)
+				.Then(context =>
+				{
+					context.Saga.FailureReason = context.Message.Reason;
+				})
+				.PublishAsync(ctx => ctx.Init<CancelBookingCommand>(new
+				{
+					ctx.Saga.CorrelationId,
+					ctx.Saga.BookingId,
+					Reason = ctx.Saga.FailureReason ?? "Payment failed or booking confirmation timeout"
 				}))
-				.TransitionTo(WaitingForPaymentCompletion)
+				.TransitionTo(CompensatingBooking)
 			);
 
 			During(WaitingForPaymentCompletion,
@@ -85,12 +107,17 @@ namespace BookingManagement.Infrastructure.SAGAS
 					context.Saga.PaymentCompletedAt = DateTime.UtcNow;
 					context.Saga.UpdatedAt = DateTime.UtcNow;
 				})
-				.Unschedule(PaymentTimeout)
-				.PublishAsync(context => context.Init<ConfirmBookingCommand>(new
+			.Unschedule(PaymentTimeout)
+				.ThenAsync(context => context.Publish(new ConfirmBookingCommand
+				{
+					CorrelationId = context.Saga.CorrelationId,
+					BookingId = context.Saga.BookingId,
+					PaymentId = context.Saga.PaymentId,
+				}))
+				.Schedule(BookingConfirmationTimeout, context => context.Init<BookingConfirmationTimeoutExpired>(new
 				{
 					context.Saga.CorrelationId,
-					context.Saga.BookingId,
-					context.Saga.PaymentId,
+					context.Saga.BookingId
 				}))
 				.TransitionTo(WaitingForBookingConfirmation),
 
@@ -101,6 +128,12 @@ namespace BookingManagement.Infrastructure.SAGAS
 					context.Saga.UpdatedAt = DateTime.UtcNow;
 				})
 				.Unschedule(PaymentTimeout)
+				.PublishAsync(ctx => ctx.Init<CancelBookingCommand>(new
+				{
+					ctx.Saga.CorrelationId,
+					ctx.Saga.BookingId,
+					Reason = ctx.Saga.FailureReason ?? "Payment failed or booking confirmation timeout"
+				}))
 				.TransitionTo(CompensatingBooking),
 
 				When(PaymentTimeout!.Received)
@@ -109,6 +142,12 @@ namespace BookingManagement.Infrastructure.SAGAS
 						context.Saga.FailureReason = "Payment timeout - 15 minutes expired";
 						context.Saga.UpdatedAt = DateTime.UtcNow;
 					})
+					.PublishAsync(ctx => ctx.Init<CancelBookingCommand>(new
+					{
+						ctx.Saga.CorrelationId,
+						ctx.Saga.BookingId,
+						Reason = ctx.Saga.FailureReason ?? "Payment failed or booking confirmation timeout"
+					}))
 					.TransitionTo(CompensatingBooking)
 			);
 
@@ -120,15 +159,16 @@ namespace BookingManagement.Infrastructure.SAGAS
 					context.Saga.UpdatedAt = DateTime.UtcNow;
 				})
 				.Unschedule(BookingConfirmationTimeout)
-				.PublishAsync(context => context.Init<SendBookingConfirmationNotificationCommand>(new
+				.ThenAsync(ctx => ctx.Publish(new SendBookingConfirmationNotificationCommand
 				{
-					context.Saga.CorrelationId,
-					context.Saga.BookingId,
-					context.Saga.CustomerEmail,
-					context.Saga.ServiceDescription,
-					context.Saga.Amount,
-					context.Saga.Currency,
-					context.Saga.PaymentReference
+					CorrelationId = ctx.Saga.CorrelationId,
+					RecipientId = ctx.Saga.CustomerId,
+					BookingId = ctx.Saga.BookingId,
+					CustomerEmail = ctx.Saga.CustomerEmail ?? string.Empty,
+					ServiceDescription = ctx.Saga.ServiceDescription ?? string.Empty,
+					Amount = ctx.Saga.Amount,
+					Currency = ctx.Saga.Currency ?? "USD",
+					PaymentReference = ctx.Saga.PaymentReference
 				}))
 				.TransitionTo(WaitingForNotification),
 				
@@ -139,8 +179,28 @@ namespace BookingManagement.Infrastructure.SAGAS
 					context.Saga.FailureReason = "Booking confirmation timeout";
 					context.Saga.UpdatedAt = DateTime.UtcNow;
 				})
+				.PublishAsync(ctx => ctx.Init<InitiateRefundCommand>(new
+				{
+					ctx.Saga.CorrelationId,
+					PaymentId = ctx.Saga.PaymentId,
+					Amount = ctx.Saga.Amount,
+					Currency = ctx.Saga.Currency ?? "USD",
+					RecipientEmail = ctx.Saga.CustomerEmail ?? string.Empty,
+					Reason = ctx.Saga.FailureReason ?? "Booking confirmation timeout"
+				}))
 				.TransitionTo(CompensatingPayment)
 			);
+
+			During(WaitingForNotification,
+				When(NotificationSent)
+				.Then(context =>
+				{
+					context.Saga.CompletedAt = DateTime.UtcNow;
+					Console.WriteLine($"SAGA saga-789: COMPLETE! ✅");
+				})
+				.Finalize()
+			);
+
 
 			During(CompensatingBooking,
 				When(BookingCancelled)
@@ -154,11 +214,30 @@ namespace BookingManagement.Infrastructure.SAGAS
 			);
 
 			During(CompensatingPayment,
+				When(PaymentRefunded)
+				.Then(context =>
+				{
+					context.Saga.UpdatedAt = DateTime.UtcNow;
+				})
+				.PublishAsync(context => context.Init<CancelBookingCommand>(new
+				{
+					context.Saga.CorrelationId,
+					context.Saga.BookingId,
+					Reason = context.Saga.FailureReason ?? "Payment failed or booking confirmation timeout"
+				}))
+				.TransitionTo(CompensatingBooking),
+
 				When(PaymentFailed)
 				.Then(context =>
 				{
 					context.Saga.UpdatedAt = DateTime.UtcNow;
 				})
+				.PublishAsync(context => context.Init<CancelBookingCommand>(new
+				{
+					context.Saga.CorrelationId,
+					context.Saga.BookingId,
+					Reason = context.Saga.FailureReason ?? "Refund processed, cancelling booking"
+				}))
 				.TransitionTo(CompensatingBooking)
 			);
 
@@ -176,6 +255,7 @@ namespace BookingManagement.Infrastructure.SAGAS
 		public Event<PaymentInitiatedIntegrationEvent> PaymentInitiated { get; private set; }
 		public Event<PaymentCompletedIntegrationEvent> PaymentCompleted { get; private set; }
 		public Event<PaymentFailedIntegrationEvent> PaymentFailed { get; private set; }
+		public Event<RefundProcessedIntegrationEvent> PaymentRefunded { get; private set; }
 		public Event<BookingConfirmedIntegrationEvent> BookingConfirmed { get; private set; }
 		public Event<BookingCancelledIntegrationEvent> BookingCancelled { get; private set; }
 		public Event<NotificationSentIntegrationEvent> NotificationSent { get; private set; }

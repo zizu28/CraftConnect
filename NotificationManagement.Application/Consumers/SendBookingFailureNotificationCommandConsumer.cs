@@ -51,6 +51,7 @@ namespace NotificationManagement.Application.Consumers
 				await publishEndpoint.Publish(new NotificationSentIntegrationEvent(
 					Guid.NewGuid(),
 					Guid.Empty,
+					command.RecipientId,
 					NotificationType.BookingCancelled,
 					NotificationChannel.Email,
 					DateTime.UtcNow), context.CancellationToken);

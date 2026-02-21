@@ -33,13 +33,14 @@ namespace BookingManagement.Application.Consumers
 					logger.LogWarning("Booking {BookingId} not found for cancellation", command.BookingId);
 					// Still publish cancelled event (idempotent)
 					await publishEndpoint.PublishAsync(new BookingCancelledIntegrationEvent(
+						command.CorrelationId,
 						command.BookingId,
 						command.Reason), context.CancellationToken);
 					return;
 				}
 
 				// Cancel the booking
-				booking.CancelBooking(CancellationReason.PaymentFailed);
+				booking.CancelBooking(command.CorrelationId, CancellationReason.PaymentFailed);
 				
 				await unitOfWork.ExecuteInTransactionAsync(async () =>
 				{
@@ -47,10 +48,11 @@ namespace BookingManagement.Application.Consumers
 
 					// Publish cancelled event back to SAGA
 					await publishEndpoint.PublishAsync(new BookingCancelledIntegrationEvent(
+						command.CorrelationId,
 						booking.Id,
 						command.Reason), context.CancellationToken);
 
-					logger.LogInformation("Booking {BookingId} cancelled successfully. Reason: {Reason}", 
+					logger.LogInformation("Booking with ID {BookingId} cancelled successfully. Reason: {Reason}", 
 						command.BookingId, command.Reason);
 				}, context.CancellationToken);
 			}
@@ -62,6 +64,7 @@ namespace BookingManagement.Application.Consumers
 				try
 				{
 					await publishEndpoint.PublishAsync(new BookingCancelledIntegrationEvent(
+						command.CorrelationId,
 						command.BookingId,
 						command.Reason), context.CancellationToken);
 				}

@@ -177,7 +177,7 @@ namespace NotificationManagement.Domain.Entities
 
 			// Raise domain event
 			AddIntegrationEvent(new NotificationSentIntegrationEvent(
-				Id, RecipientId, Type, Channel, SentAt.Value));
+				Guid.NewGuid(), Id, RecipientId, Type, Channel, SentAt.Value));
 		}
 
 		/// <summary>
@@ -213,7 +213,7 @@ namespace NotificationManagement.Domain.Entities
 
 				// Raise failure event
 				AddIntegrationEvent(new NotificationFailedIntegrationEvent(
-					Id, RecipientId, Type, errorMessage, FailedAt.Value));
+					Guid.NewGuid(), Id, RecipientId, Type, errorMessage, FailedAt.Value));
 
 				return false; // No more retries
 			}

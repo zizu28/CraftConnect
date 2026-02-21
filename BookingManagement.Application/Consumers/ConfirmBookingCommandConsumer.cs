@@ -31,7 +31,10 @@ namespace BookingManagement.Application.Consumers
 				{
 					logger.LogError(new Exception(), "Booking {BookingId} not found", command.BookingId);
 					// Publish failure event
-					await publishEndpoint.PublishAsync(new BookingCancelledIntegrationEvent(command.BookingId, command.Reason), context.CancellationToken);
+					await publishEndpoint.PublishAsync(new BookingCancelledIntegrationEvent(
+						command.CorrelationId,
+						command.BookingId, 
+						command.Reason), context.CancellationToken);
 					return;
 				}
 
@@ -44,6 +47,7 @@ namespace BookingManagement.Application.Consumers
 
 					// Publish success event back to SAGA
 					await publishEndpoint.PublishAsync(new BookingConfirmedIntegrationEvent(
+						command.CorrelationId,
 						booking.Id,
 						booking.CustomerId,
 						booking.CraftmanId,
@@ -59,6 +63,7 @@ namespace BookingManagement.Application.Consumers
 				
 				// Publish failure event
 				await publishEndpoint.PublishAsync(new BookingCancelledIntegrationEvent(
+					command.CorrelationId,
 					command.BookingId,
 					command.Reason), context.CancellationToken);
 			}

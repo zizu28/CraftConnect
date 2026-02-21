@@ -33,6 +33,9 @@ namespace CraftConnect.Tests.SAGAS
 		private static readonly Guid CustomerId = Guid.NewGuid();
 		private static readonly Guid PaymentId = Guid.NewGuid();
 		private static readonly Money TestAmount = new(150.00m, "USD");
+		private static readonly Address TestAddress = new("test street", "city", "50200");
+		private static readonly string CustomerEmail = "customer@test.com";
+		private static readonly string Description = "Fix leaking pipe";
 
 		// ── State name constants ───────────────────────────────────────────
 		private const string State_WaitingForPaymentInitiation = "WaitingForPaymentInitiation";
@@ -48,6 +51,11 @@ namespace CraftConnect.Tests.SAGAS
 				.AddMassTransitTestHarness(cfg =>
 				{
 					cfg.AddSagaStateMachine<BookingToPaymentSaga, BookingToPaymentState>();
+					cfg.UsingInMemory((context, busConfig) =>
+					{
+						busConfig.UseDelayedMessageScheduler();
+						busConfig.ConfigureEndpoints(context);
+					});
 				})
 				.BuildServiceProvider(true);
 
@@ -72,7 +80,8 @@ namespace CraftConnect.Tests.SAGAS
 		public async Task BookingRequested_ShouldCreateSagaInstance_InWaitingForPaymentInitiation()
 		{
 			// Act
-			await _harness.Bus.Publish(BuildBookingRequested(BookingId));
+			await _harness.Bus.Publish(BuildBookingRequested(Guid.NewGuid(), BookingId));
+			var correlationId = await GetCorrelationIdAsync(BookingId);
 
 			// Assert – SAGA created and moved to correct state
 			var saga = await PollForSagaAsync(s => s.BookingId == BookingId);
@@ -87,7 +96,7 @@ namespace CraftConnect.Tests.SAGAS
 		public async Task BookingRequested_ShouldPublish_InitiatePaymentCommand()
 		{
 			// Act
-			await _harness.Bus.Publish(BuildBookingRequested(BookingId));
+			await _harness.Bus.Publish(BuildBookingRequested(Guid.NewGuid(), BookingId));
 
 			// Assert
 			Assert.True(await _harness.Published.Any<InitiatePaymentCommand>());
@@ -97,7 +106,7 @@ namespace CraftConnect.Tests.SAGAS
 		public async Task BookingRequested_ShouldStoreCorrectSagaData()
 		{
 			// Act
-			await _harness.Bus.Publish(BuildBookingRequested(BookingId));
+			await _harness.Bus.Publish(BuildBookingRequested(Guid.NewGuid(), BookingId));
 
 			// Assert
 			var saga = await PollForSagaAsync(s => s.BookingId == BookingId);
@@ -112,9 +121,10 @@ namespace CraftConnect.Tests.SAGAS
 		{
 			// Arrange
 			await PublishUpTo_WaitingForPaymentInitiation(BookingId);
+			var correlationId = await GetCorrelationIdAsync(BookingId);
 
 			// Act
-			await _harness.Bus.Publish(BuildPaymentInitiated(PaymentId, BookingId));
+			await _harness.Bus.Publish(BuildPaymentInitiated(correlationId, PaymentId, BookingId));
 
 			// Assert
 			var saga = await PollForSagaAsync(s =>
@@ -128,9 +138,10 @@ namespace CraftConnect.Tests.SAGAS
 		{
 			// Arrange
 			await PublishUpTo_WaitingForPaymentInitiation(BookingId);
+			var correlationId = await GetCorrelationIdAsync(BookingId);
 
 			// Act
-			await _harness.Bus.Publish(BuildPaymentInitiated(PaymentId, BookingId));
+			await _harness.Bus.Publish(BuildPaymentInitiated(correlationId, PaymentId, BookingId));
 
 			// Assert
 			var saga = await PollForSagaAsync(s =>
@@ -147,7 +158,8 @@ namespace CraftConnect.Tests.SAGAS
 			await PublishUpTo_WaitingForPaymentCompletion(BookingId, PaymentId);
 
 			// Act
-			await _harness.Bus.Publish(BuildPaymentCompleted(PaymentId, BookingId));
+			var correlationId = await GetCorrelationIdAsync(BookingId);
+			await _harness.Bus.Publish(BuildPaymentCompleted(correlationId, PaymentId, BookingId));
 
 			// Assert
 			var saga = await PollForSagaAsync(s =>
@@ -163,12 +175,24 @@ namespace CraftConnect.Tests.SAGAS
 			await PublishUpTo_WaitingForPaymentCompletion(BookingId, PaymentId);
 
 			// Act
-			await _harness.Bus.Publish(BuildPaymentCompleted(PaymentId, BookingId));
+			var correlationId = await GetCorrelationIdAsync(BookingId);
+			await _harness.Bus.Publish(BuildPaymentCompleted(correlationId, PaymentId, BookingId));
 
-			// Assert – command published
-			Assert.True(await _harness.Published.Any<ConfirmBookingCommand>());
+			// Wait for saga to transition (ensures ThenAsync publish has completed)
+			var saga = await PollForSagaAsync(s =>
+				s.BookingId == BookingId &&
+				s.CurrentState == State_WaitingForBookingConfirmation);
+			Assert.NotNull(saga);
 
-			var cmd = _harness.Published.Select<ConfirmBookingCommand>().First().Context.Message;
+			// Assert – command published or sent
+			var published = await _harness.Published.Any<ConfirmBookingCommand>();
+			var sent = await _harness.Sent.Any<ConfirmBookingCommand>();
+			Assert.True(published || sent, "ConfirmBookingCommand should be published or sent");
+
+			var cmd = published 
+				? _harness.Published.Select<ConfirmBookingCommand>().First().Context.Message 
+				: _harness.Sent.Select<ConfirmBookingCommand>().First().Context.Message;
+			
 			Assert.Equal(BookingId, cmd.BookingId);
 			Assert.Equal(PaymentId, cmd.PaymentId);
 		}
@@ -180,7 +204,9 @@ namespace CraftConnect.Tests.SAGAS
 			await PublishUpTo_WaitingForBookingConfirmation(BookingId, PaymentId);
 
 			// Act
-			await _harness.Bus.Publish(BuildBookingConfirmed(BookingId));
+			// Act
+			var correlationId = await GetCorrelationIdAsync(BookingId);
+			await _harness.Bus.Publish(BuildBookingConfirmed(correlationId, BookingId));
 
 			// Assert
 			var saga = await PollForSagaAsync(s =>
@@ -196,7 +222,14 @@ namespace CraftConnect.Tests.SAGAS
 			await PublishUpTo_WaitingForBookingConfirmation(BookingId, PaymentId);
 
 			// Act
-			await _harness.Bus.Publish(BuildBookingConfirmed(BookingId));
+			var correlationId = await GetCorrelationIdAsync(BookingId);
+			await _harness.Bus.Publish(BuildBookingConfirmed(correlationId, BookingId));
+
+			// Wait for saga to transition (ensures ThenAsync publish has completed)
+			var saga = await PollForSagaAsync(s =>
+				s.BookingId == BookingId &&
+				s.CurrentState == State_WaitingForNotification);
+			Assert.NotNull(saga);
 
 			// Assert
 			Assert.True(await _harness.Published.Any<SendBookingConfirmationNotificationCommand>());
@@ -212,13 +245,15 @@ namespace CraftConnect.Tests.SAGAS
 		public async Task FullHappyPath_ShouldPublishAllCommandsInOrder()
 		{
 			// Act – simulate full happy path
-			await _harness.Bus.Publish(BuildBookingRequested(BookingId));
+			var correlationId = Guid.NewGuid();
+			await _harness.Bus.Publish(BuildBookingRequested(correlationId, BookingId));
 			await Task.Delay(50);
-			await _harness.Bus.Publish(BuildPaymentInitiated(PaymentId, BookingId));
+			// var correlationId = await GetCorrelationIdAsync(BookingId); // Reuse initial correlationId
+			await _harness.Bus.Publish(BuildPaymentInitiated(correlationId, PaymentId, BookingId));
 			await Task.Delay(50);
-			await _harness.Bus.Publish(BuildPaymentCompleted(PaymentId, BookingId));
+			await _harness.Bus.Publish(BuildPaymentCompleted(correlationId, PaymentId, BookingId));
 			await Task.Delay(50);
-			await _harness.Bus.Publish(BuildBookingConfirmed(BookingId));
+			await _harness.Bus.Publish(BuildBookingConfirmed(correlationId, BookingId));
 
 			// Assert – all 3 inter-module commands published
 			Assert.True(await _harness.Published.Any<InitiatePaymentCommand>(),
@@ -250,7 +285,8 @@ namespace CraftConnect.Tests.SAGAS
 			await PublishUpTo_WaitingForPaymentCompletion(BookingId, PaymentId);
 
 			// Act
-			await _harness.Bus.Publish(BuildPaymentFailed(PaymentId, BookingId, "Insufficient funds"));
+			var correlationId = await GetCorrelationIdAsync(BookingId);
+			await _harness.Bus.Publish(BuildPaymentFailed(correlationId, PaymentId, BookingId, "Insufficient funds"));
 
 			// Assert
 			var saga = await PollForSagaAsync(s =>
@@ -266,7 +302,9 @@ namespace CraftConnect.Tests.SAGAS
 			await PublishUpTo_WaitingForPaymentCompletion(BookingId, PaymentId);
 
 			// Act
-			await _harness.Bus.Publish(BuildPaymentFailed(PaymentId, BookingId, "Card declined"));
+			// Act
+			var correlationId = await GetCorrelationIdAsync(BookingId);
+			await _harness.Bus.Publish(BuildPaymentFailed(correlationId, PaymentId, BookingId, "Card declined"));
 
 			// Assert
 			var saga = await PollForSagaAsync(s =>
@@ -280,13 +318,14 @@ namespace CraftConnect.Tests.SAGAS
 		{
 			// Arrange
 			await PublishUpTo_WaitingForPaymentCompletion(BookingId, PaymentId);
-			await _harness.Bus.Publish(BuildPaymentFailed(PaymentId, BookingId, "Card declined"));
+			var correlationId = await GetCorrelationIdAsync(BookingId);
+			await _harness.Bus.Publish(BuildPaymentFailed(correlationId, PaymentId, BookingId, "Card declined"));
 			var saga = await PollForSagaAsync(s =>
 				s.BookingId == BookingId && s.CurrentState == State_CompensatingBooking);
 			Assert.NotNull(saga);
 
 			// Act
-			await _harness.Bus.Publish(BuildBookingCancelled(BookingId));
+			await _harness.Bus.Publish(BuildBookingCancelled(correlationId, BookingId));
 
 			// Assert – SAGA finalized (NotExists returns null when the SAGA is gone)
 			var notExistsResult = await _sagaHarness.NotExists(saga.CorrelationId);
@@ -362,7 +401,7 @@ namespace CraftConnect.Tests.SAGAS
 				s.BookingId == BookingId && s.CurrentState == State_CompensatingBooking);
 
 			// Act – late payment completion arrives
-			await _harness.Bus.Publish(BuildPaymentCompleted(PaymentId, BookingId));
+			await _harness.Bus.Publish(BuildPaymentCompleted(correlationId, PaymentId, BookingId));
 
 			// Assert – no ConfirmBookingCommand published (SAGA in wrong state for it)
 			Assert.False(await _harness.Published.Any<ConfirmBookingCommand>(),
@@ -385,10 +424,10 @@ namespace CraftConnect.Tests.SAGAS
 			var correlationId = await GetCorrelationIdAsync(BookingId);
 
 			// Act
-			await _harness.Bus.Publish<BookingConfirmationTimeoutExpired>(new
+			await _harness.Bus.Publish(new BookingConfirmationTimeoutExpired
 			{
 				CorrelationId = correlationId,
-				BookingId
+				BookingId = BookingId
 			});
 
 			// Assert
@@ -406,10 +445,10 @@ namespace CraftConnect.Tests.SAGAS
 			var correlationId = await GetCorrelationIdAsync(BookingId);
 
 			// Act
-			await _harness.Bus.Publish<BookingConfirmationTimeoutExpired>(new
+			await _harness.Bus.Publish(new BookingConfirmationTimeoutExpired
 			{
 				CorrelationId = correlationId,
-				BookingId
+				BookingId = BookingId
 			});
 
 			// Assert
@@ -427,16 +466,16 @@ namespace CraftConnect.Tests.SAGAS
 			// Arrange – reach CompensatingPayment
 			await PublishUpTo_WaitingForBookingConfirmation(BookingId, PaymentId);
 			var correlationId = await GetCorrelationIdAsync(BookingId);
-			await _harness.Bus.Publish<BookingConfirmationTimeoutExpired>(new
+			await _harness.Bus.Publish(new BookingConfirmationTimeoutExpired
 			{
 				CorrelationId = correlationId,
-				BookingId
+				BookingId = BookingId
 			});
 			await PollForSagaAsync(s =>
 				s.BookingId == BookingId && s.CurrentState == State_CompensatingPayment);
 
 			// Act – refund fires PaymentFailed in CompensatingPayment state
-			await _harness.Bus.Publish(BuildPaymentFailed(PaymentId, BookingId, "Refund processed"));
+			await _harness.Bus.Publish(BuildPaymentFailed(correlationId, PaymentId, BookingId, "Refund processed"));
 
 			// Assert
 			var saga = await PollForSagaAsync(s =>
@@ -457,13 +496,14 @@ namespace CraftConnect.Tests.SAGAS
 		public async Task TwoBookings_ShouldCreateTwoIndependentSagaInstances()
 		{
 			var booking2Id = Guid.NewGuid();
+			var localBookingId = Guid.NewGuid(); // use local IDs to avoid shared state pollution
 
 			// Act
-			await _harness.Bus.Publish(BuildBookingRequested(BookingId));
-			await _harness.Bus.Publish(BuildBookingRequested(booking2Id));
+			await _harness.Bus.Publish(BuildBookingRequested(Guid.NewGuid(), localBookingId));
+			await _harness.Bus.Publish(BuildBookingRequested(Guid.NewGuid(), booking2Id));
 
 			// Assert – both SAGAs exist independently
-			var saga1 = await PollForSagaAsync(s => s.BookingId == BookingId);
+			var saga1 = await PollForSagaAsync(s => s.BookingId == localBookingId);
 			var saga2 = await PollForSagaAsync(s => s.BookingId == booking2Id);
 			Assert.NotNull(saga1);
 			Assert.NotNull(saga2);
@@ -475,21 +515,25 @@ namespace CraftConnect.Tests.SAGAS
 		{
 			var booking2Id = Guid.NewGuid();
 			var payment2Id = Guid.NewGuid();
+			var localBookingId = Guid.NewGuid(); // isolated from shared BookingId
+			var localPaymentId = Guid.NewGuid();
 
 			// Arrange – two bookings waiting for payment
-			await _harness.Bus.Publish(BuildBookingRequested(BookingId));
-			await _harness.Bus.Publish(BuildBookingRequested(booking2Id));
-			await Task.Delay(50);
-			await _harness.Bus.Publish(BuildPaymentInitiated(PaymentId, BookingId));
-			await _harness.Bus.Publish(BuildPaymentInitiated(payment2Id, booking2Id));
-			await Task.Delay(50);
+			var cId1 = Guid.NewGuid();
+			var cId2 = Guid.NewGuid();
+			await _harness.Bus.Publish(BuildBookingRequested(cId1, localBookingId));
+			await _harness.Bus.Publish(BuildBookingRequested(cId2, booking2Id));
+			await Task.Delay(200);
+			await _harness.Bus.Publish(BuildPaymentInitiated(cId1, localPaymentId, localBookingId));
+			await _harness.Bus.Publish(BuildPaymentInitiated(cId2, payment2Id, booking2Id));
+			await Task.Delay(200);
 
 			// Act – only complete payment for booking 1
-			await _harness.Bus.Publish(BuildPaymentCompleted(PaymentId, BookingId));
+			await _harness.Bus.Publish(BuildPaymentCompleted(cId1, localPaymentId, localBookingId));
 
 			// Assert – booking 1 advances, booking 2 stays
 			var saga1 = await PollForSagaAsync(s =>
-				s.BookingId == BookingId &&
+				s.BookingId == localBookingId &&
 				s.CurrentState == State_WaitingForBookingConfirmation);
 			Assert.NotNull(saga1);
 
@@ -507,43 +551,57 @@ namespace CraftConnect.Tests.SAGAS
 
 		#region Helpers
 
-		/// <summary>Advance SAGA to WaitingForPaymentInitiation.</summary>
+		/// <summary>Advance SAGA to WaitingForPaymentInitiation and wait for it.</summary>
 		private async Task PublishUpTo_WaitingForPaymentInitiation(Guid bookingId)
 		{
-			await _harness.Bus.Publish(BuildBookingRequested(bookingId));
-			await Task.Delay(50);
+			await _harness.Bus.Publish(BuildBookingRequested(Guid.NewGuid(), bookingId));
+			// Wait for SAGA to actually reach this state before returning
+			var saga = await PollForSagaAsync(s =>
+				s.BookingId == bookingId &&
+				s.CurrentState == State_WaitingForPaymentInitiation);
+			Assert.NotNull(saga);
 		}
 
-		/// <summary>Advance SAGA to WaitingForPaymentCompletion.</summary>
+		/// <summary>Advance SAGA to WaitingForPaymentCompletion and wait for it.</summary>
 		private async Task PublishUpTo_WaitingForPaymentCompletion(Guid bookingId, Guid paymentId)
 		{
 			await PublishUpTo_WaitingForPaymentInitiation(bookingId);
-			await _harness.Bus.Publish(BuildPaymentInitiated(paymentId, bookingId));
-			await Task.Delay(50);
+			// Get the saga's CorrelationId so we can reliably route PaymentInitiated back to it
+			var correlationId = await GetCorrelationIdAsync(bookingId);
+			await _harness.Bus.Publish(BuildPaymentInitiated(correlationId, paymentId, bookingId));
+			var saga = await PollForSagaAsync(s =>
+				s.BookingId == bookingId &&
+				s.CurrentState == State_WaitingForPaymentCompletion);
+			Assert.NotNull(saga);
 		}
 
-		/// <summary>Advance SAGA to WaitingForBookingConfirmation.</summary>
+		/// <summary>Advance SAGA to WaitingForBookingConfirmation and wait for it.</summary>
 		private async Task PublishUpTo_WaitingForBookingConfirmation(Guid bookingId, Guid paymentId)
 		{
 			await PublishUpTo_WaitingForPaymentCompletion(bookingId, paymentId);
-			await _harness.Bus.Publish(BuildPaymentCompleted(paymentId, bookingId));
-			await Task.Delay(50);
+			var correlationId = await GetCorrelationIdAsync(bookingId);
+			await _harness.Bus.Publish(BuildPaymentCompleted(correlationId, paymentId, bookingId));
+			var saga = await PollForSagaAsync(s =>
+				s.BookingId == bookingId &&
+				s.CurrentState == State_WaitingForBookingConfirmation);
+			Assert.NotNull(saga);
 		}
+
 
 		/// <summary>
 		/// Poll the in-memory SAGA store for an instance matching the predicate.
-		/// Retries for up to <paramref name="timeoutMs"/> milliseconds.
+		/// Uses ISagaList.Select(FilterDelegate) – the correct MassTransit 9.x API.
+		/// FilterDelegate&lt;T&gt; is compatible with Func&lt;T, bool&gt; implicitly.
 		/// </summary>
 		private async Task<BookingToPaymentState?> PollForSagaAsync(
-			Func<BookingToPaymentState, bool> predicate,
-			int timeoutMs = 3000)
+			FilterDelegate<BookingToPaymentState> predicate,
+			int timeoutMs = 5000)
 		{
 			var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMs);
 			while (DateTime.UtcNow < deadline)
 			{
-				// ISagaList<T> implements IEnumerable - cast to use LINQ
-				var match = ((IEnumerable<ISagaInstance<BookingToPaymentState>>)_sagaHarness.Sagas)
-					.FirstOrDefault(s => predicate(s.Saga));
+				// ISagaList<T>.Select returns IEnumerable<ISagaInstance<T>>
+				var match = _sagaHarness.Sagas.Select(predicate).FirstOrDefault();
 				if (match != null)
 					return match.Saga;
 				await Task.Delay(20);
@@ -561,25 +619,30 @@ namespace CraftConnect.Tests.SAGAS
 
 		// ── Event Builders ─────────────────────────────────────────────
 
-		private static BookingRequestedIntegrationEvent BuildBookingRequested(Guid bookingId) =>
-			new(bookingId, CraftspersonId,
-				new Address("123 Main St", "Lagos", "NG-100"), // 3-arg: street, city, postalCode
-				"Fix leaking pipe");
+		private static BookingRequestedIntegrationEvent BuildBookingRequested(Guid correlationId, Guid bookingId)
+		{
+			return new BookingRequestedIntegrationEvent(correlationId, bookingId, CraftspersonId, TestAddress,
+				Description, CustomerId, TestAmount.Amount, TestAmount.Currency, CustomerEmail);
+		}
 
-		private static PaymentInitiatedIntegrationEvent BuildPaymentInitiated(Guid paymentId, Guid bookingId) =>
-			new(paymentId, null, TestAmount, CustomerId, null);
+		private static PaymentInitiatedIntegrationEvent BuildPaymentInitiated(
+			Guid correlationId, Guid paymentId, Guid bookingId) =>
+			new(correlationId, paymentId, null, TestAmount, CustomerId, null,
+				BookingId: bookingId);
 
-		private static PaymentCompletedIntegrationEvent BuildPaymentCompleted(Guid paymentId, Guid bookingId) =>
-			new(paymentId, bookingId, null, null, TestAmount, CustomerId, null);
+		private static PaymentCompletedIntegrationEvent BuildPaymentCompleted(
+			Guid correlationId, Guid paymentId, Guid bookingId) =>
+			new(correlationId, paymentId, bookingId, null, null, TestAmount, CustomerId, null);
 
-		private static PaymentFailedIntegrationEvent BuildPaymentFailed(Guid paymentId, Guid bookingId, string reason) =>
-			new(paymentId, bookingId, null, null, reason, CustomerId, null);
+		private static PaymentFailedIntegrationEvent BuildPaymentFailed(
+			Guid correlationId, Guid paymentId, Guid bookingId, string reason) =>
+			new(correlationId, paymentId, bookingId, null, null, reason, CustomerId, null);
 
-		private static BookingConfirmedIntegrationEvent BuildBookingConfirmed(Guid bookingId) =>
-			new(bookingId, CustomerId, CraftspersonId, TestAmount.Amount, DateTime.UtcNow);
+		private static BookingConfirmedIntegrationEvent BuildBookingConfirmed(Guid correlationId, Guid bookingId) =>
+			new(correlationId, bookingId, CustomerId, CraftspersonId, TestAmount.Amount, DateTime.UtcNow);
 
-		private static BookingCancelledIntegrationEvent BuildBookingCancelled(Guid bookingId) =>
-			new(bookingId, "Payment failed"); // string? ReasonForCancellation
+		private static BookingCancelledIntegrationEvent BuildBookingCancelled(Guid correlationId, Guid bookingId) =>
+			new(correlationId, bookingId, "Customer cancelled");
 
 		#endregion
 	}

@@ -23,7 +23,7 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 			{
 				var booking = await bookingRepository.GetByIdAsync(request.BookingId, cancellationToken)
 				?? throw new KeyNotFoundException($"Booking with ID {request.BookingId} not found.");
-				booking.CancelBooking(request.Reason);
+				booking.CancelBooking(request.CorrelationId, request.Reason);
 
 				await bookingRepository.DeleteAsync(booking.Id, cancellationToken);
 				var domainEvents = booking.DomainEvents.ToList();

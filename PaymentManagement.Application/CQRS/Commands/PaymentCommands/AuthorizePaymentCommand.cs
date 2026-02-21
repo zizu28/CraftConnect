@@ -10,5 +10,6 @@ namespace PaymentManagement.Application.CQRS.Commands.PaymentCommands
 		public string? PaymentIntentId { get; set; }
 		public string? AuthorizationCode { get; set; }
 		public decimal Amount { get; set; }
+		public Guid CorrelationId { get; set; }
 	}
 }

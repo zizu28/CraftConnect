@@ -21,10 +21,16 @@ namespace BookingManagement.Application.CQRS.Handlers.DomainEventHandlers
 			{
 				throw new InvalidOperationException($"Booking with ID {domainEvent.BookingId} already exists.");
 			}
-			var newBooking = Booking.Create(booking!.CustomerId, booking!.CraftmanId,
+			var newBooking = Booking.Create(domainEvent.CorrelationId, booking!.CustomerId, booking!.CraftmanId,
 				booking!.ServiceAddress,domainEvent.Description, booking.StartDate, booking.EndDate);
-			var bookingCreatedIntegrationEvent = new BookingRequestedIntegrationEvent(newBooking.Id, newBooking.CraftmanId,
-				newBooking.ServiceAddress, domainEvent.Description);
+			var bookingCreatedIntegrationEvent = new BookingRequestedIntegrationEvent(
+				domainEvent.CorrelationId,
+				newBooking.Id, newBooking.CraftmanId,
+				newBooking.ServiceAddress, domainEvent.Description,
+				CustomerId: newBooking.CustomerId,
+				Amount: 0m,
+				Currency: "NGN",
+				CustomerEmail: string.Empty);
 			await messageBroker.PublishAsync(bookingCreatedIntegrationEvent, cancellationToken);
 		}
 	}

@@ -8,5 +8,6 @@ namespace PaymentManagement.Application.CQRS.Commands.PaymentCommands
 		public string DeletedBy { get; set; }
 		public string Reason { get; set; }
 		public Guid Id { get; set; }
+		public Guid CorrelationId { get; set; }
 	}
 }

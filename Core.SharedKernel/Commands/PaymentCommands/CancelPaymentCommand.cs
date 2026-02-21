@@ -14,5 +14,6 @@ namespace Core.SharedKernel.Commands.PaymentCommands
 		/// Reason for cancellation
 		/// </summary>
 		public required string Reason { get; init; }
+		public Guid CorrelationId { get; init; }
 	}
 }

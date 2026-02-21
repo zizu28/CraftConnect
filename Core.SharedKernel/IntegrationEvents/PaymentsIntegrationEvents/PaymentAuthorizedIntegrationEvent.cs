@@ -4,6 +4,7 @@ using Core.SharedKernel.ValueObjects;
 namespace Core.SharedKernel.IntegrationEvents.PaymentsIntegrationEvents
 {
 	public record PaymentAuthorizedIntegrationEvent(
+		Guid CorrelationId,
 		Guid PaymentId,
 		Money Amount,
 		Guid? PayerId,

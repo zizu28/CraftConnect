@@ -63,21 +63,21 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 					var paymentEntity = request.PaymentDTO.PaymentType.ToLower() switch
 					{
 						"booking" => Payment.CreateForBooking(
-							request.PaymentDTO.BookingId, new Money(request.PaymentDTO.Amount, request.PaymentDTO.Currency),
+							request.CorrelationId, request.PaymentDTO.BookingId, new Money(request.PaymentDTO.Amount, request.PaymentDTO.Currency),
 							request.PaymentDTO.PayerId, request.PaymentDTO.RecipientId,
 							Enum.Parse<PaymentMethod>(request.PaymentDTO.PaymentMethod, true), new Address(request.PaymentDTO.BillingStreet,
 								request.PaymentDTO.BillingCity, request.PaymentDTO.BillingPostalCode),
 							paystackResponse.Data.Reference, request.PaymentDTO.PaymentType, request.PaymentDTO.Description),
 
 						"invoice" => Payment.CreateForInvoice(
-							request.PaymentDTO.InvoiceId, new Money(request.PaymentDTO.Amount, request.PaymentDTO.Currency),
+							request.CorrelationId, request.PaymentDTO.InvoiceId, new Money(request.PaymentDTO.Amount, request.PaymentDTO.Currency),
 							request.PaymentDTO.PayerId, request.PaymentDTO.RecipientId,
 							Enum.Parse<PaymentMethod>(request.PaymentDTO.PaymentMethod, true), new Address(request.PaymentDTO.BillingStreet,
 								request.PaymentDTO.BillingCity, request.PaymentDTO.BillingPostalCode),
 							paystackResponse.Data.Reference, request.PaymentDTO.PaymentType, request.PaymentDTO.Description),
 
 						_ => Payment.CreateForOrder(
-							request.PaymentDTO.OrderId, new Money(request.PaymentDTO.Amount, request.PaymentDTO.Currency),
+							request.CorrelationId, request.PaymentDTO.OrderId, new Money(request.PaymentDTO.Amount, request.PaymentDTO.Currency),
 							request.PaymentDTO.PayerId, request.PaymentDTO.RecipientId,
 							Enum.Parse<PaymentMethod>(request.PaymentDTO.PaymentMethod, true), new Address(request.PaymentDTO.BillingStreet,
 								request.PaymentDTO.BillingCity, request.PaymentDTO.BillingPostalCode),

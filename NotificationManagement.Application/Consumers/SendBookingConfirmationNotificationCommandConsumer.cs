@@ -21,7 +21,7 @@ namespace NotificationManagement.Application.Consumers
 		public async Task Consume(ConsumeContext<SendBookingConfirmationNotificationCommand> context)
 		{
 			var command = context.Message;
-			logger.LogInformation("Sending booking confirmation notification for booking {BookingId}, SAGA {CorrelationId}", 
+			logger.LogInformation("Sending booking confirmation notification for booking with ID {BookingId}, SAGA {CorrelationId}", 
 				command.BookingId, command.CorrelationId);
 
 			try
@@ -53,7 +53,8 @@ namespace NotificationManagement.Application.Consumers
 				// Publish success event back to SAGA
 				await publishEndpoint.PublishAsync(new NotificationSentIntegrationEvent(
 					Guid.NewGuid(),
-					Guid.Empty, // Recipient ID (would need to be passed in command)
+					Guid.NewGuid(),
+					command.RecipientId, // Recipient ID (would need to be passed in command)
 					NotificationType.BookingConfirmed,
 					NotificationChannel.Email,
 					DateTime.UtcNow), context.CancellationToken);
@@ -68,6 +69,7 @@ namespace NotificationManagement.Application.Consumers
 				await publishEndpoint.PublishAsync(new NotificationFailedIntegrationEvent(
 					Guid.NewGuid(),
 					Guid.Empty,
+					command.RecipientId,
 					NotificationType.BookingConfirmed,
 					$"Failed to send email: {ex.Message}",
 					DateTime.UtcNow), context.CancellationToken);

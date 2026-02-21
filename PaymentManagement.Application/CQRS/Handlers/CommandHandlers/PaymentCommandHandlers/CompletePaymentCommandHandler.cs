@@ -31,7 +31,7 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 
 			try
 			{
-				payment.Complete(request.ExternalTransactionId);
+				payment.Complete(request.CorrelationId, request.ExternalTransactionId);
 				var domainEvents = payment.DomainEvents.ToList();
 				var completedEvent = domainEvents
 					.OfType<PaymentCompletedIntegrationEvent>()

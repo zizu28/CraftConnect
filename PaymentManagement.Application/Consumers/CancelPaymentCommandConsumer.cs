@@ -34,7 +34,7 @@ namespace PaymentManagement.Application.Consumers
 				// Only cancel if still in pending state
 				if (payment.Status == PaymentStatus.Pending)
 				{
-					payment.Cancel(command.Reason);
+					payment.Cancel(command.CorrelationId, command.Reason);
 					await unitOfWork.ExecuteInTransactionAsync(async () =>
 					{
 						await paymentRepository.UpdateAsync(payment, context.CancellationToken);

@@ -42,7 +42,7 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 					throw new InvalidOperationException($"Authorization failed: {authResponse.Message}");
 				}
 
-				payment!.Authorize(request.ExternalTransactionId, request.PaymentIntentId);
+				payment!.Authorize(request.CorrelationId, request.ExternalTransactionId, request.PaymentIntentId);
 				var domainEvents = payment.DomainEvents.ToList();
 				var authorizedEvent = domainEvents
 					.OfType<PaymentAuthorizedIntegrationEvent>()

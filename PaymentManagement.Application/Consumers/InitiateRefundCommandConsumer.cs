@@ -38,12 +38,10 @@ namespace PaymentManagement.Application.Consumers
 				if (refundResponse)
 				{
 					logger.LogInformation("Refund initiated successfully for payment {PaymentId}", command.PaymentId);
-					// RefundPaymentCommandHandler already publishes PaymentRefundIntegrationEvent
 				}
 				else
 				{
 					logger.LogError(new Exception(), "Failed to initiate refund for payment with ID {PaymentId}", command.PaymentId);
-					// Even if refund fails, SAGA should continue with cancellation
 				}
 			}
 			catch (Exception ex)

@@ -28,8 +28,9 @@ namespace BookingManagement.Domain.Entities
 			
 		}
 
-		public static Booking Create(Guid customerId, Guid craftmanId, 
-			Address address, string description, DateTime startDate, DateTime endDate)
+		public static Booking Create(Guid correlationId, Guid customerId, Guid craftmanId, 
+			Address address, string description, DateTime startDate, DateTime endDate,
+			string customerEmail = "")
 		{
 			if (customerId == Guid.Empty || craftmanId == Guid.Empty || address == null)
 			{
@@ -47,8 +48,13 @@ namespace BookingManagement.Domain.Entities
 			};
 			booking.Details = new JobDetails(booking.Id, description);
 			
-			booking.AddIntegrationEvent(new BookingRequestedIntegrationEvent(booking.Id, booking.CraftmanId,
-				booking.ServiceAddress, booking.Details.Description));
+			booking.AddIntegrationEvent(new BookingRequestedIntegrationEvent(
+				correlationId, booking.Id, booking.CraftmanId,
+				booking.ServiceAddress, booking.Details.Description,
+				CustomerId: booking.CustomerId,
+				Amount: 0m,
+				Currency: "NGN",
+				CustomerEmail: customerEmail));
 			return booking;
 		}
 
@@ -94,14 +100,14 @@ namespace BookingManagement.Domain.Entities
 			Status = BookingStatus.Completed;
 		}
 
-		public void CancelBooking(CancellationReason reason)
+		public void CancelBooking(Guid correlationId, CancellationReason reason)
 		{
 			if(Status == BookingStatus.Completed || Status == BookingStatus.Cancelled)
 			{
 				throw new InvalidOperationException("Cannot cancel a booking that is already completed or cancelled.");
 			}
 			Status = BookingStatus.Cancelled;
-			AddIntegrationEvent(new BookingCancelledIntegrationEvent(Id, reason.ToString()));
+			AddIntegrationEvent(new BookingCancelledIntegrationEvent(correlationId, Id, reason.ToString()));
 		}
 
 		public decimal CalculateTotalPrice()

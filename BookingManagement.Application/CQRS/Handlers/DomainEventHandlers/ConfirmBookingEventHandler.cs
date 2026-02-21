@@ -14,8 +14,9 @@ namespace BookingManagement.Application.CQRS.Handlers.DomainEventHandlers
 			var booking = await bookingRepository.GetByIdAsync(domainEvent.BookingId, cancellationToken)
 				?? throw new ArgumentNullException(nameof(domainEvent), "Booking not found.");
 			var confirmBooking = new BookingConfirmedIntegrationEvent(
+				domainEvent.CorrelationId,
 				domainEvent.BookingId,
-				domainEvent.CustomerId, domainEvent.CustomerId, booking.CalculateTotalPrice(),
+				domainEvent.CustomerId, booking.CraftmanId, booking.CalculateTotalPrice(),
 				domainEvent.ConfirmedAt);
 			
 			await messageBroker.PublishAsync(confirmBooking, cancellationToken);

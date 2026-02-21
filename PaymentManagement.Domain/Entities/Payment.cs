@@ -47,7 +47,7 @@ namespace PaymentManagement.Domain.Entities
 		private Payment() { }
 
 		public static Payment CreateForBooking(
-			Guid bookingId, Money amount, Guid payerId,
+			Guid correlationId, Guid bookingId, Money amount, Guid payerId,
 			Guid recipientId, PaymentMethod paymentMethod, Address billingAddress,
 			string reference, string paymentType = "Booking", string? description = null)
 		{
@@ -68,12 +68,12 @@ namespace PaymentManagement.Domain.Entities
 				CreatedAt = DateTime.UtcNow
 			};
 			payment.AddIntegrationEvent(new PaymentInitiatedIntegrationEvent(
-				payment.Id, bookingId, amount, payerId, recipientId));
+				correlationId, payment.Id, bookingId, amount, payerId, recipientId));
 			return payment;
 		}
 
 		public static Payment CreateForOrder(
-			Guid orderId, Money amount, Guid payerId,
+			Guid correlationId, Guid orderId, Money amount, Guid payerId,
 			Guid recipientId, PaymentMethod paymentMethod, Address billingAddress,
 			string reference, string paymentType = "Order", string? description = null)
 		{
@@ -94,12 +94,12 @@ namespace PaymentManagement.Domain.Entities
 				CreatedAt = DateTime.UtcNow
 			};
 			payment.AddIntegrationEvent(new PaymentInitiatedIntegrationEvent(
-				payment.Id, orderId, amount, payerId, recipientId));
+				correlationId, payment.Id, orderId, amount, payerId, recipientId));
 			return payment;
 		}
 
 		public static Payment CreateForInvoice(
-			Guid invoiceId, Money amount, Guid payerId,
+			Guid correlationId, Guid invoiceId, Money amount, Guid payerId,
 			Guid recipientId, PaymentMethod paymentMethod, Address billingAddress,
 			string reference, string paymentType = "Invoice", string? description = null)
 		{
@@ -120,11 +120,11 @@ namespace PaymentManagement.Domain.Entities
 				CreatedAt = DateTime.UtcNow
 			};
 			payment.AddIntegrationEvent(new PaymentInitiatedIntegrationEvent(
-				payment.Id, invoiceId, amount, payerId, recipientId));
+				correlationId, payment.Id, invoiceId, amount, payerId, recipientId));
 			return payment;
 		}
 
-		public void Authorize(string externalTransactionId, string? paymentIntentId)
+		public void Authorize(Guid correlationId, string externalTransactionId, string? paymentIntentId)
 		{
 			if (Status != PaymentStatus.Pending)
 				throw new InvalidOperationException("Only pending payments can be authorized.");
@@ -133,11 +133,11 @@ namespace PaymentManagement.Domain.Entities
 			Status = PaymentStatus.Authorized;
 			AuthorizedAt = DateTime.UtcNow;
 			AddIntegrationEvent(new PaymentAuthorizedIntegrationEvent(
-				Id, Amount, PayerId, RecipientId));
+				correlationId, Id, Amount, PayerId, RecipientId));
 			AddTransaction(PaymentTransactionType.Authorization, Amount, "Payment authorized");
 		}
 
-		public void Capture()
+		public void Capture(Guid correlationId)
 		{
 			if (Status != PaymentStatus.Authorized)
 				throw new InvalidOperationException("Only authorized payments can be captured.");
@@ -145,11 +145,11 @@ namespace PaymentManagement.Domain.Entities
 			CapturedAt = DateTime.UtcNow;
 			ProcessedAt = DateTime.UtcNow;
 			AddIntegrationEvent(new PaymentCompletedIntegrationEvent(
-				Id, BookingId, OrderId, InvoiceId, Amount, PayerId, RecipientId));
+				correlationId, Id, BookingId, OrderId, InvoiceId, Amount, PayerId, RecipientId));
 			AddTransaction(PaymentTransactionType.Capture, Amount, "Payment captured");
 		}
 
-		public void Complete(string externalTransactionId)
+		public void Complete(Guid correlationId, string externalTransactionId)
 		{
 			if(Status != PaymentStatus.Pending && Status != PaymentStatus.Authorized)
 				throw new InvalidOperationException("Only pending or authorized payments can be completed.");
@@ -161,10 +161,10 @@ namespace PaymentManagement.Domain.Entities
 			AddTransaction(PaymentTransactionType.Payment, Amount, "Payment completed");
 
 			AddIntegrationEvent(new PaymentCompletedIntegrationEvent(
-				Id, BookingId, OrderId, InvoiceId, Amount, PayerId, RecipientId));
+				correlationId, Id, BookingId, OrderId, InvoiceId, Amount, PayerId, RecipientId));
 		}
 
-		public void Fail(string reason)
+		public void Fail(Guid correlationId, string reason)
 		{
 			if (Status == PaymentStatus.Completed || Status == PaymentStatus.Refunded)
 				throw new InvalidOperationException($"Cannot fail payment in {Status} status.");
@@ -173,7 +173,7 @@ namespace PaymentManagement.Domain.Entities
 			ProcessedAt = DateTime.UtcNow;
 
 			AddIntegrationEvent(new PaymentFailedIntegrationEvent(
-				Id, BookingId, OrderId, InvoiceId, reason, PayerId, RecipientId));
+				correlationId, Id, BookingId, OrderId, InvoiceId, reason, PayerId, RecipientId));
 			AddTransaction(PaymentTransactionType.Failure, new Money(0, Currency), reason);
 		}
 
@@ -206,12 +206,12 @@ namespace PaymentManagement.Domain.Entities
 			}
 
 			AddIntegrationEvent(new RefundProcessedIntegrationEvent(
-				refund.Id, Id, refundAmount, reason, initiatedBy));
+				Guid.NewGuid(), refund.Id, Id, refundAmount, reason, initiatedBy));
 
 			return refund;
 		}
 
-		public void Cancel(string reason)
+		public void Cancel(Guid correlationId, string reason)
 		{
 			if (Status != PaymentStatus.Pending || Status != PaymentStatus.Authorized)
 				throw new InvalidOperationException($"Cannot cancel payment in {Status} status");
@@ -224,14 +224,14 @@ namespace PaymentManagement.Domain.Entities
 			AddTransaction(PaymentTransactionType.Cancellation, new Money(0, Currency), reason);
 
 			AddIntegrationEvent(new PaymentCancelledIntegrationEvent(
-				Id, BookingId, OrderId, InvoiceId, reason, PayerId, RecipientId));
+				correlationId, Id, BookingId, OrderId, InvoiceId, reason, PayerId, RecipientId));
 		}
 
-		public void SoftDelete(string deletedBy, string reason)
+		public void SoftDelete(Guid correlationId, string deletedBy, string reason)
 		{
 			if (Status == PaymentStatus.Completed || Status == PaymentStatus.Refunded)
 				throw new InvalidOperationException("Cannot delete completed or refunded payments");
-			Cancel(reason);
+			Cancel(correlationId, reason);
 			IsDeleted = true;
 			DeletedAt = DateTime.UtcNow;
 			DeletedBy = deletedBy;

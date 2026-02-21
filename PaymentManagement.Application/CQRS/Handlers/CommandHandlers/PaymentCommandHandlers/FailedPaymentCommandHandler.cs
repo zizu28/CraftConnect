@@ -33,7 +33,7 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 
 			try
 			{
-				payment.Fail(request.FailureReason);
+				payment.Fail(request.CorrelationId, request.FailureReason);
 				var domainEvents = payment.DomainEvents.ToList();
 				var paymentFailedEvent = domainEvents
 					.OfType<PaymentFailedIntegrationEvent>()

@@ -3,6 +3,7 @@
 namespace Core.SharedKernel.IntegrationEvents.BookingIntegrationEvents
 {
 	public record BookingConfirmedIntegrationEvent(
+		Guid CorrelationId,
 		Guid BookingId,
 		Guid CustomerId,
 		Guid CraftspersonId,

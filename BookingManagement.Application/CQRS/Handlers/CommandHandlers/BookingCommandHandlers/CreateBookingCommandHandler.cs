@@ -36,7 +36,7 @@ namespace BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCom
 			}
 			logger.LogInformation("Booking creation metadata successfully validated.");
 
-			var booking = Booking.Create(request.BookingDTO.CustomerId, request.BookingDTO.CraftmanId,
+			var booking = Booking.Create(request.CorrelationId, request.BookingDTO.CustomerId, request.BookingDTO.CraftmanId,
 				new Address(request.BookingDTO.Street, request.BookingDTO.City, request.BookingDTO.PostalCode),
 				request.BookingDTO.InitialDescription, request.BookingDTO.StartDate, request.BookingDTO.EndDate);
 			var domainEvents = booking.DomainEvents.ToList();

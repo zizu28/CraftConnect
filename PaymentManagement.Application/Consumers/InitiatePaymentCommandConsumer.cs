@@ -44,7 +44,8 @@ namespace PaymentManagement.Application.Consumers
 						Email = command.CustomerEmail,
 						CallbackUrl = command.CallbackUrl ?? $"/api/bookings/{command.BookingId}/payment-callback",
 						Description = command.Description
-					}
+					},
+					CorrelationId = command.CorrelationId
 				};
 
 				var paymentResponse = await mediator.Send(createPaymentCommand, context.CancellationToken);
@@ -52,12 +53,16 @@ namespace PaymentManagement.Application.Consumers
 				if (paymentResponse.IsSuccess && paymentResponse.Id != Guid.Empty)
 				{
 					// Publish success event back to SAGA
+					// Publish success event back to SAGA
 					await publishEndpoint.PublishAsync(new PaymentInitiatedIntegrationEvent(
+						command.CorrelationId,
 						paymentResponse.Id,
-						null, // No invoice for booking payments
-						new Money(command.Amount, command.Currency),
-						command.CustomerId,
-						command.RecipientId), context.CancellationToken);
+						InvoiceId: null,
+						Amount: new Money(command.Amount, command.Currency),
+						PayerId: command.CustomerId,
+						RecipientId: command.RecipientId,
+						BookingId: command.BookingId,
+						SagaCorrelationId: command.CorrelationId), context.CancellationToken);
 
 					logger.LogInformation("Payment with ID {PaymentId} initiated successfully for booking with ID {BookingId}", 
 						paymentResponse.Id, command.BookingId);
@@ -69,6 +74,7 @@ namespace PaymentManagement.Application.Consumers
 						command.BookingId, string.Join(", ", paymentResponse.Errors ?? []));
 
 					await publishEndpoint.PublishAsync(new PaymentFailedIntegrationEvent(
+						command.CorrelationId,
 						Guid.Empty,
 						command.BookingId,
 						null,
@@ -84,6 +90,7 @@ namespace PaymentManagement.Application.Consumers
 				
 				// Publish failure event
 				await publishEndpoint.PublishAsync(new PaymentFailedIntegrationEvent(
+					command.CorrelationId,
 					Guid.Empty,
 					command.BookingId,
 					null,

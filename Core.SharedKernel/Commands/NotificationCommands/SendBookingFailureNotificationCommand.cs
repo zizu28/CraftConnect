@@ -11,6 +11,11 @@ namespace Core.SharedKernel.Commands.NotificationCommands
 		public required Guid CorrelationId { get; init; }
 
 		/// <summary>
+		/// Recipient ID for the SAGA instance
+		/// </summary>
+		public required Guid RecipientId { get; init; }
+
+		/// <summary>
 		/// Booking that failed
 		/// </summary>
 		public required Guid BookingId { get; init; }

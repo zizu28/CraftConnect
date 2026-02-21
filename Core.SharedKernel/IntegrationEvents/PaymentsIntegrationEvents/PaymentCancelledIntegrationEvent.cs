@@ -3,6 +3,7 @@
 namespace Core.SharedKernel.IntegrationEvents.PaymentsIntegrationEvents
 {
 	public record PaymentCancelledIntegrationEvent(
+		Guid CorrelationId,
 		Guid PaymentId,
 		Guid? BookingId,
 		Guid? OrderId,

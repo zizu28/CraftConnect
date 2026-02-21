@@ -32,7 +32,7 @@ namespace PaymentManagement.Application.CQRS.Handlers.CommandHandlers.PaymentCom
 
 			try
 			{
-				existingPayment.SoftDelete(request.DeletedBy, request.Reason);
+				existingPayment.SoftDelete(request.CorrelationId, request.DeletedBy, request.Reason);
 				var domainEvents = existingPayment.DomainEvents.ToList();
 				var cancelledEvent = domainEvents
 					.OfType<PaymentCancelledIntegrationEvent>()

@@ -8,5 +8,6 @@ namespace BookingManagement.Application.CQRS.Commands.BookingCommands
 	{
 		public BookingCreateDTO BookingDTO { get; set; }
 		public GeoLocation Location { get; set; }
+		public Guid CorrelationId { get; set; }
 	}
 }

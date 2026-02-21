@@ -4,6 +4,7 @@ using Core.SharedKernel.ValueObjects;
 namespace Core.SharedKernel.IntegrationEvents.RefundIntegrationEvents
 {
 	public record RefundProcessedIntegrationEvent(
+		Guid CorrelationId,
 		Guid RefundId,
 		Guid PaymentId,
 		Money RefundAmount,

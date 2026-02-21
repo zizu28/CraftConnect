@@ -16,6 +16,11 @@ namespace Core.SharedKernel.Commands.NotificationCommands
 		public required Guid BookingId { get; init; }
 
 		/// <summary>
+		/// Booking that was confirmed
+		/// </summary>
+		public required Guid RecipientId { get; init; }
+
+		/// <summary>
 		/// Customer email
 		/// </summary>
 		public required string CustomerEmail { get; init; }
