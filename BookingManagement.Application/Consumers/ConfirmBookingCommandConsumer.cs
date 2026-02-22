@@ -1,71 +1,50 @@
-﻿using BookingManagement.Application.Contracts;
-using Core.EventServices;
+﻿using Core.EventServices;
 using Core.Logging;
 using Core.SharedKernel.Commands.BookingCommands;
 using Core.SharedKernel.IntegrationEvents.BookingIntegrationEvents;
-using Infrastructure.Persistence.UnitOfWork;
 using MassTransit;
+using MediatR;
 
 namespace BookingManagement.Application.Consumers
 {
 	/// <summary>
-	/// Consumes ConfirmBookingCommand from SAGA to confirm a booking after payment
+	/// Consumes ConfirmBookingCommand from SAGA to confirm a booking after payment.
+	/// Maps the MassTransit message to the MediatR Application command and delegates all
+	/// domain logic to <see cref="BookingManagement.Application.CQRS.Handlers.CommandHandlers.BookingCommandHandlers.ConfirmBookingCommandHandler"/>.
 	/// </summary>
 	public class ConfirmBookingCommandConsumer(
-		IBookingRepository bookingRepository,
-		IUnitOfWork unitOfWork,
 		IMessageBroker publishEndpoint,
+		IMediator mediator,
 		ILoggingService<ConfirmBookingCommandConsumer> logger) : IConsumer<ConfirmBookingCommand>
 	{
 		public async Task Consume(ConsumeContext<ConfirmBookingCommand> context)
 		{
-			var command = context.Message;
-			logger.LogInformation("Confirming booking {BookingId} for SAGA {CorrelationId}", 
-				command.BookingId, command.CorrelationId);
+			var message = context.Message;
+			logger.LogInformation("Confirming booking {BookingId} for SAGA {CorrelationId}",
+				message.BookingId, message.CorrelationId);
 
 			try
 			{
-				// Get the booking
-				var booking = await bookingRepository.GetByIdAsync(command.BookingId, context.CancellationToken);
-				if (booking == null)
+				// Map the SharedKernel MassTransit message to the Application CQRS command.
+				// The handler owns all domain logic (fetch → guard → confirm → publish event).
+				var appCommand = new ConfirmBookingCommand
 				{
-					logger.LogError(new Exception(), "Booking {BookingId} not found", command.BookingId);
-					// Publish failure event
-					await publishEndpoint.PublishAsync(new BookingCancelledIntegrationEvent(
-						command.CorrelationId,
-						command.BookingId, 
-						command.Reason), context.CancellationToken);
-					return;
-				}
+					CorrelationId = message.CorrelationId,
+					BookingId = message.BookingId,
+					ConfirmedAt = DateTime.UtcNow
+				};
 
-				// Confirm the booking (update status)
-				booking.ConfirmBooking();
-
-				await unitOfWork.ExecuteInTransactionAsync(async () =>
-				{
-					await bookingRepository.UpdateAsync(booking, context.CancellationToken);
-
-					// Publish success event back to SAGA
-					await publishEndpoint.PublishAsync(new BookingConfirmedIntegrationEvent(
-						command.CorrelationId,
-						booking.Id,
-						booking.CustomerId,
-						booking.CraftmanId,
-						booking.CalculateTotalPrice(),
-						DateTime.UtcNow), context.CancellationToken);
-
-					logger.LogInformation("Booking {BookingId} confirmed successfully", command.BookingId);
-				}, context.CancellationToken);
+				await mediator.Send(appCommand, context.CancellationToken);
 			}
 			catch (Exception ex)
 			{
-				logger.LogError(ex, "Error confirming booking {BookingId}", command.BookingId);
-				
-				// Publish failure event
+				logger.LogError(ex, "Error confirming booking {BookingId}", message.BookingId);
+
+				// Publish failure event so the SAGA can compensate
 				await publishEndpoint.PublishAsync(new BookingCancelledIntegrationEvent(
-					command.CorrelationId,
-					command.BookingId,
-					command.Reason), context.CancellationToken);
+					message.CorrelationId,
+					message.BookingId,
+					ex.Message), context.CancellationToken);
 			}
 		}
 	}

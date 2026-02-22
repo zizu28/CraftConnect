@@ -1,69 +1,44 @@
 using Core.Logging;
 using Core.SharedKernel.Commands.NotificationCommands;
-using Core.SharedKernel.Enums;
-using Core.SharedKernel.IntegrationEvents.NotificationIntegrationEvents;
-using Infrastructure.BackgroundJobs;
-using Infrastructure.EmailService;
-using Infrastructure.EmailService.GmailService;
 using MassTransit;
+using MediatR;
 
 namespace NotificationManagement.Application.Consumers
 {
 	/// <summary>
-	/// Consumes SendBookingFailureNotificationCommand from SAGA to send booking failure notification
+	/// Consumes SendBookingFailureNotificationCommand from SAGA to send booking failure notification.
+	/// Delegates all email-building and notification logic to
+	/// <see cref="NotificationManagement.Application.CQRS.Handlers.CommandHandlers.NotificationCommandHandlers.SendBookingFailureNotificationCommandHandler"/>.
 	/// </summary>
 	public class SendBookingFailureNotificationCommandConsumer(
-		IBackgroundJobService backgroundJob,
-		IPublishEndpoint publishEndpoint,
-		ILoggingService<SendBookingFailureNotificationCommandConsumer> logger) : IConsumer<SendBookingFailureNotificationCommand>
+		IMediator mediator,
+		ILoggingService<SendBookingFailureNotificationCommandConsumer> logger)
+		: IConsumer<SendBookingFailureNotificationCommand>
 	{
 		public async Task Consume(ConsumeContext<SendBookingFailureNotificationCommand> context)
 		{
-			var command = context.Message;
-			logger.LogInformation("Sending booking failure notification for booking {BookingId}, SAGA {CorrelationId}", 
-				command.BookingId, command.CorrelationId);
+			var message = context.Message;
+			logger.LogInformation(
+				"Sending booking failure notification for booking {BookingId}, SAGA {CorrelationId}",
+				message.BookingId, message.CorrelationId);
 
 			try
 			{
-				// Build email content
-				var subject = "Booking Failed - CraftConnect";
-				var body = $@"
-					<h2>Booking Could Not Be Completed</h2>
-					<p>Dear Customer,</p>
-					<p>Unfortunately, we were unable to complete your booking.</p>
-					{(!string.IsNullOrWhiteSpace(command.Reason) ? $"<p><strong>Reason:</strong> {command.Reason}</p>" : "")}
-					<p>No charges have been made to your account. If you were charged, a refund will be processed shortly.</p>
-					<p>Please try again or contact our support team if you need assistance.</p>
-					<p>We apologize for the inconvenience.</p>
-					<p>Best regards,<br/>CraftConnect Team</p>
-				";
+				var appCommand = new CQRS.Commands.NotificationCommands.SendBookingFailureNotificationCommand
+				{
+					CorrelationId = message.CorrelationId,
+					BookingId = message.BookingId,
+					RecipientId = message.RecipientId,
+					CustomerEmail = message.CustomerEmail,
+					Reason = message.Reason
+				};
 
-				backgroundJob.Enqueue<IGmailService>(
-					"default", 
-					email => email.SendEmailAsync(
-						command.CustomerEmail,
-						subject,
-						body,
-						true,
-						CancellationToken.None));
-
-				// Publish success event (SAGA may finalize)
-				await publishEndpoint.Publish(new NotificationSentIntegrationEvent(
-					Guid.NewGuid(),
-					Guid.Empty,
-					command.RecipientId,
-					NotificationType.BookingCancelled,
-					NotificationChannel.Email,
-					DateTime.UtcNow), context.CancellationToken);
-
-				logger.LogInformation("Booking failure email sent successfully to {Email}", command.CustomerEmail);
+				await mediator.Send(appCommand, context.CancellationToken);
 			}
 			catch (Exception ex)
 			{
-				logger.LogError(ex, "Error sending booking failure email to {Email}", command.CustomerEmail);
-				
-				// Don't fail SAGA if notification fails
-				// Just log - SAGA will complete anyway
+				logger.LogError(ex, "Error sending booking failure email to {Email}", message.CustomerEmail);
+				// Notification failure is non-critical — SAGA continues regardless. Just log.
 			}
 		}
 	}

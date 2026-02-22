@@ -4,6 +4,7 @@ namespace BookingManagement.Application.CQRS.Commands.BookingCommands
 {
 	public class ConfirmBookingCommand : IRequest<Unit>
 	{
+		public Guid CorrelationId { get; set; }
 		public Guid BookingId { get; set; }
 		public Guid CraftmanId { get; set; }
 		public Guid CustomerId { get; set; }

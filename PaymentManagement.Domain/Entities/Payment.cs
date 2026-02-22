@@ -213,7 +213,7 @@ namespace PaymentManagement.Domain.Entities
 
 		public void Cancel(Guid correlationId, string reason)
 		{
-			if (Status != PaymentStatus.Pending || Status != PaymentStatus.Authorized)
+			if (Status != PaymentStatus.Pending && Status != PaymentStatus.Authorized)
 				throw new InvalidOperationException($"Cannot cancel payment in {Status} status");
 
 			Status = PaymentStatus.Cancelled;

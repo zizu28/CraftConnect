@@ -29,5 +29,6 @@ namespace Core.SharedKernel.Commands.BookingCommands
 		/// Payment cancellation reason
 		/// </summary>
 		public string? Reason { get; init; }
+		public DateTime ConfirmedAt { get; set; } = DateTime.UtcNow;
 	}
 }

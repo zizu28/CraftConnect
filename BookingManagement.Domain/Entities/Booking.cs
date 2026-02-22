@@ -78,7 +78,7 @@ namespace BookingManagement.Domain.Entities
 			));
 		}
 
-		public void ConfirmBooking()
+		public void ConfirmBooking(Guid correlationId)
 		{
 			if(Status != BookingStatus.Pending)
 			{
@@ -89,6 +89,13 @@ namespace BookingManagement.Domain.Entities
 				throw new InvalidOperationException("Cannot confirm booking without line items.");
 			}
 			Status = BookingStatus.Confirmed;
+			AddIntegrationEvent(new BookingConfirmedIntegrationEvent(
+				correlationId,
+				Id,
+				CustomerId,
+				CraftmanId,
+				CalculateTotalPrice(),
+				DateTime.UtcNow));
 		}
 
 		public void CompleteBooking()

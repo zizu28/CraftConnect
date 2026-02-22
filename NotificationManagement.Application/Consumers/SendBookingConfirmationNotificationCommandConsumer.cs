@@ -1,75 +1,56 @@
-using Core.EventServices;
 using Core.Logging;
 using Core.SharedKernel.Commands.NotificationCommands;
-using Core.SharedKernel.Enums;
 using Core.SharedKernel.IntegrationEvents.NotificationIntegrationEvents;
-using Infrastructure.BackgroundJobs;
-using Infrastructure.EmailService;
-using Infrastructure.EmailService.GmailService;
+using Core.EventServices;
 using MassTransit;
+using MediatR;
+using Core.SharedKernel.Enums;
 
 namespace NotificationManagement.Application.Consumers
 {
 	/// <summary>
-	/// Consumes SendBookingConfirmationNotificationCommand from SAGA to send booking confirmation email
+	/// Consumes SendBookingConfirmationNotificationCommand from SAGA to send booking confirmation email.
+	/// Delegates all email-building and notification logic to
+	/// <see cref="NotificationManagement.Application.CQRS.Handlers.CommandHandlers.NotificationCommandHandlers.SendBookingConfirmationNotificationCommandHandler"/>.
 	/// </summary>
 	public class SendBookingConfirmationNotificationCommandConsumer(
-		IBackgroundJobService backgroundJob,
+		IMediator mediator,
 		IMessageBroker publishEndpoint,
-		ILoggingService<SendBookingConfirmationNotificationCommandConsumer> logger) : IConsumer<SendBookingConfirmationNotificationCommand>
+		ILoggingService<SendBookingConfirmationNotificationCommandConsumer> logger)
+		: IConsumer<SendBookingConfirmationNotificationCommand>
 	{
 		public async Task Consume(ConsumeContext<SendBookingConfirmationNotificationCommand> context)
 		{
-			var command = context.Message;
-			logger.LogInformation("Sending booking confirmation notification for booking with ID {BookingId}, SAGA {CorrelationId}", 
-				command.BookingId, command.CorrelationId);
+			var message = context.Message;
+			logger.LogInformation(
+				"Sending booking confirmation notification for booking {BookingId}, SAGA {CorrelationId}",
+				message.BookingId, message.CorrelationId);
 
 			try
 			{
-				// Build email content
-				var subject = "Booking Confirmation - CraftConnect";
-				var body = $@"
-					<h2>Booking Confirmed!</h2>
-					<p>Dear Customer,</p>
-					<p>Your booking has been confirmed successfully.</p>
-					<h3>Booking Details:</h3>
-					<ul>
-						<li><strong>Service:</strong> {command.ServiceDescription}</li>
-						<li><strong>Amount Paid:</strong> {command.Currency} {command.Amount:N2}</li>
-						<li><strong>Payment Reference:</strong> {command.PaymentReference ?? "N/A"}</li>
-						{(command.ScheduledDate.HasValue ? $"<li><strong>Scheduled Date:</strong> {command.ScheduledDate.Value:MMMM dd, yyyy}</li>" : "")}
-					</ul>
-					<p>Thank you for choosing CraftConnect!</p>
-				";
+				var appCommand = new SendBookingConfirmationNotificationCommand
+				{
+					CorrelationId = message.CorrelationId,
+					BookingId = message.BookingId,
+					RecipientId = message.RecipientId,
+					CustomerEmail = message.CustomerEmail,
+					ServiceDescription = message.ServiceDescription,
+					ScheduledDate = message.ScheduledDate,
+					Amount = message.Amount,
+					Currency = message.Currency,
+					PaymentReference = message.PaymentReference
+				};
 
-				backgroundJob.Enqueue<IGmailService>(
-					"default", gmail => gmail.SendEmailAsync(
-						command.CustomerEmail,
-						subject,
-						body,
-						true,
-						CancellationToken.None));
-
-				// Publish success event back to SAGA
-				await publishEndpoint.PublishAsync(new NotificationSentIntegrationEvent(
-					Guid.NewGuid(),
-					Guid.NewGuid(),
-					command.RecipientId, // Recipient ID (would need to be passed in command)
-					NotificationType.BookingConfirmed,
-					NotificationChannel.Email,
-					DateTime.UtcNow), context.CancellationToken);
-
-				logger.LogInformation("Booking confirmation email sent successfully to {Email}", command.CustomerEmail);
+				await mediator.Send(appCommand, context.CancellationToken);
 			}
 			catch (Exception ex)
 			{
-				logger.LogError(ex, "Error sending booking confirmation email to {Email}", command.CustomerEmail);
-				
-				// Publish failure event (optional - SAGA may complete anyway)
+				logger.LogError(ex, "Error sending booking confirmation email to {Email}", message.CustomerEmail);
+
 				await publishEndpoint.PublishAsync(new NotificationFailedIntegrationEvent(
-					Guid.NewGuid(),
-					Guid.Empty,
-					command.RecipientId,
+					message.CorrelationId,
+					message.BookingId,
+					message.RecipientId,
 					NotificationType.BookingConfirmed,
 					$"Failed to send email: {ex.Message}",
 					DateTime.UtcNow), context.CancellationToken);
