@@ -1,4 +1,5 @@
 ﻿using Core.Logging;
+using Infrastructure.Cache;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
@@ -9,7 +10,8 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.P
 	public class DeleteProductCommandHandler(
 		IProductRepository productRepository,
 		ILoggingService<DeleteProductCommandHandler> logger,
-		IUnitOfWork unitOfWork) : IRequestHandler<DeleteProductCommand, bool>
+		IUnitOfWork unitOfWork,
+		ICacheService cacheService) : IRequestHandler<DeleteProductCommand, bool>
 	{
 		public async Task<bool> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
 		{
@@ -26,6 +28,10 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.P
 					await productRepository.DeleteAsync(existingProduct.Id, cancellationToken);
 				}, cancellationToken);
 				logger.LogInformation("Product deleted successfully with ID: {ProductId}", existingProduct.Id);
+
+				// Evict both the per-product key and the all-products list.
+				await cacheService.RemoveSync(CacheKeys.ProductById(existingProduct.Id), cancellationToken);
+				await cacheService.RemoveSync(CacheKeys.AllProducts, cancellationToken);
 			}
 			catch (Exception ex)
 			{

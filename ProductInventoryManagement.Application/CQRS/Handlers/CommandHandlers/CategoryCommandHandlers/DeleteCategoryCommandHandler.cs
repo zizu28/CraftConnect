@@ -1,4 +1,5 @@
 ﻿using Core.Logging;
+using Infrastructure.Cache;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
@@ -9,7 +10,8 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.C
 	public class DeleteCategoryCommandHandler(
 		ICategoryRepository categoryRepository,
 		ILoggingService<DeleteCategoryCommandHandler> logger,
-		IUnitOfWork unitOfWork) : IRequestHandler<DeleteCategoryCommand, bool>
+		IUnitOfWork unitOfWork,
+		ICacheService cacheService) : IRequestHandler<DeleteCategoryCommand, bool>
 	{
 		public async Task<bool> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
 		{
@@ -25,6 +27,11 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.C
 				await categoryRepository.DeleteAsync(category.Id, cancellationToken);
 				await unitOfWork.SaveChangesAsync(cancellationToken);
 				logger.LogInformation("Category with ID: {CategoryId} deleted successfully.", request.CategoryId);
+
+				// Evict both the list and the per-category entry.
+				await cacheService.RemoveSync(CacheKeys.CategoryById(request.CategoryId), cancellationToken);
+				await cacheService.RemoveSync(CacheKeys.AllCategories, cancellationToken);
+
 				return true;
 			}
 			catch (Exception ex)

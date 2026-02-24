@@ -4,6 +4,7 @@ using Core.Logging;
 using Core.SharedKernel.DTOs;
 using Core.SharedKernel.IntegrationEvents.ProductIntegrationEvents;
 using Infrastructure.BackgroundJobs;
+using Infrastructure.Cache;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
@@ -20,7 +21,8 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.P
 		ILoggingService<ProductCreateCommandHandler> logger,
 		IBackgroundJobService backgroundJob,
 		IMessageBroker messageBroker,
-		IUnitOfWork unitOfWork) : IRequestHandler<CreateProductCommand, ProductResponseDTO>
+		IUnitOfWork unitOfWork,
+		ICacheService cacheService) : IRequestHandler<CreateProductCommand, ProductResponseDTO>
 	{
 		public async Task<ProductResponseDTO> Handle(CreateProductCommand request, CancellationToken cancellationToken)
 		{
@@ -63,6 +65,10 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.P
 				response.IsSuccess = true;
 				response.Message = "Product created successfully.";
 				logger.LogInformation("Product created successfully with ID: {ProductId}", productEntity.Id);
+
+				// Evict the product list cache so the next GetAll reflects this new product.
+				await cacheService.RemoveSync(CacheKeys.AllProducts, cancellationToken);
+
 				backgroundJob.Enqueue<IEmailService>(
 					"Product-Added",
 					product => product.SendEmailAsync(request.CraftmanEmail,

@@ -1,25 +1,36 @@
 ﻿using AutoMapper;
 using Core.SharedKernel.DTOs;
+using Infrastructure.Cache;
 using MassTransit.Initializers;
 using MediatR;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Queries.CraftmanQueries;
 using UserManagement.Application.Exceptions;
+using UserManagement.Domain.Entities;
 
 namespace UserManagement.Application.CQRS.Handlers.QueryHandlers.CraftmanQueryHandlers
 {
 	public class GetCraftmanByProfessionQueryHandler(
-		ICraftsmanRepository craftsmanRepository, IMapper mapper)
+		ICraftsmanRepository craftsmanRepository,
+		IMapper mapper,
+		ICacheService cacheService)
 		: IRequestHandler<GetCraftmanByProfessionQuery, CraftmanResponseDTO>
 	{
 		public async Task<CraftmanResponseDTO> Handle(GetCraftmanByProfessionQuery request, CancellationToken cancellationToken)
 		{
-			var craftmenProfessions = await craftsmanRepository.GetAllAsync(cancellationToken)
-				.Select(craftman => craftman.Where(profession => profession.Profession.Equals(request.Profession)))
+			// Leverage the already-cached all-craftsmen list and filter in-memory,
+			// avoiding a second DB round-trip for a filtered sub-set.
+			var allCraftsmen = await cacheService.GetOrCreateManyAsync<Craftman>(
+				CacheKeys.AllCraftsmen,
+				c => true,
+				cancellationToken)
 				?? throw new NotFoundException($"Craftmen with profession {request.Profession} not found.");
-			
-			var craftman = craftmenProfessions.FirstOrDefault(c => c.Id == request.CraftmanId)
+
+			var craftman = allCraftsmen
+				.Where(c => c.Profession.Equals(request.Profession))
+				.FirstOrDefault(c => c.Id == request.CraftmanId)
 				?? throw new NotFoundException($"Craftman with ID {request.CraftmanId} not found.");
+
 			return mapper.Map<CraftmanResponseDTO>(craftman);
 		}
 	}

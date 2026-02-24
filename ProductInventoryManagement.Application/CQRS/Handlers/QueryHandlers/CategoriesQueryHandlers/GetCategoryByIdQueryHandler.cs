@@ -1,21 +1,29 @@
 ﻿using AutoMapper;
 using Core.Logging;
 using Core.SharedKernel.DTOs;
+using Infrastructure.Cache;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
 using ProductInventoryManagement.Application.CQRS.Queries.CategoryQueries;
+using ProductInventoryManagement.Domain.Entities;
 
 namespace ProductInventoryManagement.Application.CQRS.Handlers.QueryHandlers.CategoriesQueryHandlers
 {
 	public class GetCategoryByIdQueryHandler(
 		ICategoryRepository categoryRepository,
 		ILoggingService<GetCategoryByIdQueryHandler> logger,
-		IMapper mapper) : IRequestHandler<GetCategoryByIdQuery, CategoryResponseDTO>
+		IMapper mapper,
+		ICacheService cacheService) : IRequestHandler<GetCategoryByIdQuery, CategoryResponseDTO>
 	{
 		public async Task<CategoryResponseDTO> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
 		{
 			logger.LogInformation("Handling GetCategoryByIdQuery for CategoryId: {CategoryId}", request.Id);
-			var category = await categoryRepository.GetByIdAsync(request.Id, cancellationToken);
+
+			var category = await cacheService.GetOrCreateAsync<Category>(
+				CacheKeys.CategoryById(request.Id),
+				c => c.Id == request.Id,
+				cancellationToken);
+
 			if (category == null)
 			{
 				logger.LogWarning("Category with ID {CategoryId} not found", request.Id);
@@ -26,6 +34,7 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.QueryHandlers.Cat
 					Errors = [$"No category found with ID {request.Id}"]
 				};
 			}
+
 			var categoryDTO = mapper.Map<CategoryResponseDTO>(category);
 			categoryDTO.IsSuccess = true;
 			categoryDTO.Message = "Category retrieved successfully.";

@@ -1,4 +1,5 @@
 ﻿using Core.Logging;
+using Infrastructure.Cache;
 using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
@@ -10,7 +11,8 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 	public class DeleteUserCommandHandler(
 		ApplicationDbContext dbContext,
 		ILoggingService<DeleteUserCommandHandler> logger, 
-		IUnitOfWork unitOfWork) : IRequestHandler<DeleteUserCommand, Unit>
+		IUnitOfWork unitOfWork,
+		ICacheService cacheService) : IRequestHandler<DeleteUserCommand, Unit>
 	{
 		public async Task<Unit> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
 		{
@@ -41,6 +43,11 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 			dbContext.Users.Remove(userEntity);
 			await unitOfWork.SaveChangesAsync(cancellationToken);
 			logger.LogInformation("User {Username} deleted successfully.", request.UserId);
+
+			// Evict both the per-user key and the all-users list.
+			await cacheService.RemoveSync(CacheKeys.UserById(request.UserId), cancellationToken);
+			await cacheService.RemoveSync(CacheKeys.AllUsers, cancellationToken);
+
 			return Unit.Value;
 		}
 	}

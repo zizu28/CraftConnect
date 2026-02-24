@@ -1,21 +1,29 @@
 ﻿using AutoMapper;
 using Core.Logging;
 using Core.SharedKernel.DTOs;
+using Infrastructure.Cache;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
 using ProductInventoryManagement.Application.CQRS.Queries.CategoryQueries;
+using ProductInventoryManagement.Domain.Entities;
 
 namespace ProductInventoryManagement.Application.CQRS.Handlers.QueryHandlers.CategoriesQueryHandlers
 {
 	public class GetAllCategoriesQueryHandler(
 		ICategoryRepository categoryRepository,
 		ILoggingService<GetAllCategoriesQueryHandler> logger,
-		IMapper mapper) : IRequestHandler<GetAllCategoriesQuery, IEnumerable<CategoryResponseDTO>>
+		IMapper mapper,
+		ICacheService cacheService) : IRequestHandler<GetAllCategoriesQuery, IEnumerable<CategoryResponseDTO>>
 	{
 		public async Task<IEnumerable<CategoryResponseDTO>> Handle(GetAllCategoriesQuery request, CancellationToken cancellationToken)
 		{
 			logger.LogInformation("Handling GetAllCategoriesQuery");
-			var categories = await categoryRepository.GetAllAsync(cancellationToken);
+
+			var categories = await cacheService.GetOrCreateManyAsync<Category>(
+				CacheKeys.AllCategories,
+				c => true,
+				cancellationToken);
+
 			if (categories == null || !categories.Any())
 			{
 				logger.LogWarning("No categories found");
@@ -27,6 +35,7 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.QueryHandlers.Cat
 					}
 				];
 			}
+
 			var categoryDTOs = mapper.Map<IEnumerable<CategoryResponseDTO>>(categories);
 			logger.LogInformation("Successfully retrieved {Count} categories", categoryDTOs.Count());
 			foreach (var dto in categoryDTOs)

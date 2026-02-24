@@ -1,22 +1,30 @@
 ﻿using AutoMapper;
 using Core.Logging;
 using Core.SharedKernel.DTOs;
+using Infrastructure.Cache;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
 using ProductInventoryManagement.Application.CQRS.Queries.ProductQueries;
+using ProductInventoryManagement.Domain.Entities;
 
 namespace ProductInventoryManagement.Application.CQRS.Handlers.QueryHandlers.ProductsQueryHandlers
 {
 	public class GetProductByIdQueryHandler(
 		IProductRepository productRepository,
 		IMapper mapper,
-		ILoggingService<GetProductByIdQueryHandler> logger) : IRequestHandler<GetProductByIdQuery, ProductResponseDTO>
+		ILoggingService<GetProductByIdQueryHandler> logger,
+		ICacheService cacheService) : IRequestHandler<GetProductByIdQuery, ProductResponseDTO>
 	{
 		public async Task<ProductResponseDTO> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
 		{
 			var response = new ProductResponseDTO();
 			logger.LogInformation("Handling GetProductByIdQuery");
-			var product = await productRepository.GetByIdAsync(request.ProductId, cancellationToken);
+
+			var product = await cacheService.GetOrCreateAsync<Product>(
+				CacheKeys.ProductById(request.ProductId),
+				p => p.Id == request.ProductId,
+				cancellationToken);
+
 			if (product == null)
 			{
 				logger.LogWarning("Product with ID {ProductId} not found", request.ProductId);
@@ -25,6 +33,7 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.QueryHandlers.Pro
 				response.Errors = ["Product with the specified ID does not exist."];
 				return response;
 			}
+
 			response = mapper.Map<ProductResponseDTO>(product);
 			response.Message = "Product retrieved successfully";
 			response.IsSuccess = true;

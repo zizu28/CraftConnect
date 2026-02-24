@@ -1,8 +1,2 @@
-﻿//using UserManagement.Domain.Entities;
-
-//namespace Infrastructure.Cache.UsersCache
-//{
-//	public interface IUsersCacheService : ICacheService<User>
-//	{
-//	}
-//}
+﻿// This file has been intentionally left empty.
+// The generic ICacheService covers all entity caching needs.

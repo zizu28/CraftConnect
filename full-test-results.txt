@@ -1,0 +1,41 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  CraftConnect.ServiceDefaults -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\CraftConnect.ServiceDefaults\bin\Debug\net10.0\CraftConnect.ServiceDefaults.dll
+  Core.Logging -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\Core.Logging\bin\Debug\net10.0\Core.Logging.dll
+  Infrastructure.EmailService -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\Infrastructure.EmailService\bin\Debug\net10.0\Infrastructure.EmailService.dll
+  Infrastructure.BackgroundJobs -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\Infrastructure.BackgroundJobs\bin\Debug\net10.0\Infrastructure.BackgroundJobs.dll
+  Core.SharedKernel -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\Core.SharedKernel\bin\Debug\net10.0\Core.SharedKernel.dll
+  AuditManagement.Domain -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\AuditManagement.Domain\bin\Debug\net10.0\AuditManagement.Domain.dll
+  ProductInventoryManagement.Domain -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\ProductInventoryManagement.Domain\bin\Debug\net10.0\ProductInventoryManagement.Domain.dll
+  UserManagement.Domain -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\UserManagement.Domain\bin\Debug\net10.0\UserManagement.Domain.dll
+  BookingManagement.Domain -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\BookingManagement.Domain\bin\Debug\net10.0\BookingManagement.Domain.dll
+  NotificationManagement.Domain -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\NotificationManagement.Domain\bin\Debug\net10.0\NotificationManagement.Domain.dll
+  PaymentManagement.Domain -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\PaymentManagement.Domain\bin\Debug\net10.0\PaymentManagement.Domain.dll
+  PromotionManagement.Domain -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\PromotionManagement.Domain\bin\Debug\net10.0\PromotionManagement.Domain.dll
+  Infrastructure.Persistence -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\Infrastructure.Persistence\bin\Debug\net10.0\Infrastructure.Persistence.dll
+  Core.APIGateway -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\Core.APIGateway\bin\Debug\net10.0\Core.APIGateway.dll
+  Infrastructure.Cache -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\Infrastructure.Cache\bin\Debug\net10.0\Infrastructure.Cache.dll
+  Core.EventServices -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\Core.EventServices\bin\Debug\net10.0\Core.EventServices.dll
+  NotificationManagement.Application -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\NotificationManagement.Application\bin\Debug\net10.0\NotificationManagement.Application.dll
+  NotificationManagement.Infrastructure -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\NotificationManagement.Infrastructure\bin\Debug\net10.0\NotificationManagement.Infrastructure.dll
+  PaymentManagement.Application -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\PaymentManagement.Application\bin\Debug\net10.0\PaymentManagement.Application.dll
+  UserManagement.Application -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\UserManagement.Application\bin\Debug\net10.0\UserManagement.Application.dll
+  ProductInventoryManagement.Application -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\ProductInventoryManagement.Application\bin\Debug\net10.0\ProductInventoryManagement.Application.dll
+  BookingManagement.Application -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\BookingManagement.Application\bin\Debug\net10.0\BookingManagement.Application.dll
+  NotificationManagement.Presentation -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\NotificationManagement.Presentation\bin\Debug\net10.0\NotificationManagement.Presentation.dll
+  PaymentManagement.Infrastructure -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\PaymentManagement.Infrastructure\bin\Debug\net10.0\PaymentManagement.Infrastructure.dll
+  UserManagement.Infrastructure -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\UserManagement.Infrastructure\bin\Debug\net10.0\UserManagement.Infrastructure.dll
+  ProductInventoryManagement.Infrastructure -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\ProductInventoryManagement.Infrastructure\bin\Debug\net10.0\ProductInventoryManagement.Infrastructure.dll
+  BookingManagement.Infrastructure -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\BookingManagement.Infrastructure\bin\Debug\net10.0\BookingManagement.Infrastructure.dll
+  PaymentManagement.Presentation -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\PaymentManagement.Presentation\bin\Debug\net10.0\PaymentManagement.Presentation.dll
+  UserManagement.Presentation -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\UserManagement.Presentation\bin\Debug\net10.0\UserManagement.Presentation.dll
+  ProductInventoryManagement.Presentation -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\ProductInventoryManagement.Presentation\bin\Debug\net10.0\ProductInventoryManagement.Presentation.dll
+  BookingManagement.Presentation -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\BookingManagement.Presentation\bin\Debug\net10.0\BookingManagement.Presentation.dll
+  CraftConnect.Tests -> C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\CraftConnect.Tests\bin\Debug\net10.0\CraftConnect.Tests.dll
+Test run for C:\Users\buddytoppc\Desktop\ModularMonoliths\zizu28\CraftConnect\CraftConnect.Tests\bin\Debug\net10.0\CraftConnect.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   295, Skipped:     0, Total:   295, Duration: 32 s - CraftConnect.Tests.dll (net10.0)

@@ -22,6 +22,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BookingManagement.Presentation\BookingManagement.Presentation.csproj" />
+    <ProjectReference Include="..\Infrastructure.Cache\Infrastructure.Cache.csproj" />
     <ProjectReference Include="..\ProductInventoryManagement.Presentation\ProductInventoryManagement.Presentation.csproj" />
     <ProjectReference Include="..\UserManagement.Presentation\UserManagement.Presentation.csproj" />
     <ProjectReference Include="..\PaymentManagement.Presentation\PaymentManagement.Presentation.csproj" />

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.Logging;
 using Core.SharedKernel.DTOs;
+using Infrastructure.Cache;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
@@ -13,7 +14,8 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.C
 		ICategoryRepository categoryRepository,
 		ILoggingService<UpdateCategoryCommandHandler> logger,
 		IMapper mapper,
-		IUnitOfWork unitOfWork) : IRequestHandler<UpdateCategoryCommand, CategoryResponseDTO>
+		IUnitOfWork unitOfWork,
+		ICacheService cacheService) : IRequestHandler<UpdateCategoryCommand, CategoryResponseDTO>
 	{
 		public async Task<CategoryResponseDTO> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
 		{
@@ -47,6 +49,11 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.C
 				response.IsSuccess = true;
 				response.Message = "Category updated successfully.";
 				logger.LogInformation("Category with ID: {CategoryId} updated successfully.", response.CategoryId);
+
+				// Evict stale entries for this category.
+				await cacheService.RemoveSync(CacheKeys.CategoryById(request.CategoryUpdateDTO.CategoryId), cancellationToken);
+				await cacheService.RemoveSync(CacheKeys.AllCategories, cancellationToken);
+
 				return response;
 			}
 			catch (Exception ex)

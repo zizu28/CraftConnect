@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.Logging;
 using Core.SharedKernel.DTOs;
+using Infrastructure.Cache;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
@@ -14,7 +15,8 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.P
 		IProductRepository productRepository,
 		IMapper mapper,
 		ILoggingService<UpdateProductCommandHandler> logger,
-		IUnitOfWork unitOfWork) : IRequestHandler<UpdateProductCommand, ProductResponseDTO>
+		IUnitOfWork unitOfWork,
+		ICacheService cacheService) : IRequestHandler<UpdateProductCommand, ProductResponseDTO>
 	{
 		public async Task<ProductResponseDTO> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
 		{
@@ -50,6 +52,10 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.P
 				response.IsSuccess = true;
 				response.Message = "Product updated successfully.";
 				logger.LogInformation("Product updated successfully with ID: {ProductId}", existingProduct.Id);
+
+				// Evict stale entries for this product.
+				await cacheService.RemoveSync(CacheKeys.ProductById(existingProduct.Id), cancellationToken);
+				await cacheService.RemoveSync(CacheKeys.AllProducts, cancellationToken);
 			}
 			catch (Exception ex)
 			{

@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Core.EventServices\Core.EventServices.csproj" />
     <ProjectReference Include="..\Core.Logging\Core.Logging.csproj" />
     <ProjectReference Include="..\Infrastructure.BackgroundJobs\Infrastructure.BackgroundJobs.csproj" />
+    <ProjectReference Include="..\Infrastructure.Cache\Infrastructure.Cache.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Events\" />

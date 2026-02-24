@@ -8,7 +8,7 @@ namespace Infrastructure.Cache
 	public class HybridCacheService(
 		HybridCache cache, ApplicationDbContext dbContext) : ICacheService
 	{
-		private readonly HybridCacheEntryOptions defaultCacheOptions = new HybridCacheEntryOptions
+		private readonly HybridCacheEntryOptions defaultCacheOptions = new()
 		{
 			LocalCacheExpiration = TimeSpan.FromMinutes(5),
 			Expiration = TimeSpan.FromMinutes(10)

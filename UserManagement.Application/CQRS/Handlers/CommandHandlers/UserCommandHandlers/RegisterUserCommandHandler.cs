@@ -4,6 +4,7 @@ using Core.Logging;
 using Core.SharedKernel.DTOs;
 using Core.SharedKernel.IntegrationEvents.AllUserActivitiesIntegrationEvents;
 using Infrastructure.BackgroundJobs;
+using Infrastructure.Cache;
 using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
@@ -23,7 +24,8 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 		IMessageBroker eventBus, 
 		IBackgroundJobService backgroundJob,
 		IUnitOfWork unitOfWork,
-		ApplicationDbContext dbContext) : IRequestHandler<RegisterUserCommand, UserResponseDTO>
+		ApplicationDbContext dbContext,
+		ICacheService cacheService) : IRequestHandler<RegisterUserCommand, UserResponseDTO>
 	{
 		public async Task<UserResponseDTO> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
 		{
@@ -75,6 +77,9 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 					userResponse.CreatedAt = DateTime.UtcNow;
 					userResponse.Message = "User registration successful.";
 				}, cancellationToken);
+
+				// Evict the all-users cache so the next read reflects the new registration.
+				await cacheService.RemoveSync(CacheKeys.AllUsers, cancellationToken);
 
 				string? verificationLink = $"https://localhost:7235/api/users/confirm-email?token={verificationTokenValue}";
 
