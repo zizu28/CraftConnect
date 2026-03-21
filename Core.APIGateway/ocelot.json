@@ -2,7 +2,9 @@
   "Routes": [
     {
       "UpstreamPathTemplate": "/users/signin",
-      "UpstreamHttpMethod": [ "POST" ],
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
       "DownstreamPathTemplate": "/api/users/signin",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -10,47 +12,59 @@
           "Host": "localhost",
           "Port": 7235
         }
-      ]
+      ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": false
+      }
     },
     {
       "UpstreamPathTemplate": "/users/craftsman/{Id}",
-      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
       "DownstreamPathTemplate": "/api/users/craftsman/{Id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
           "Port": 7235
-          //"Host": "userManagement",
-          //"Port": 8080
         }
-      ]
+      ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": false
+      }
     },
     {
       "UpstreamPathTemplate": "/users/customer/{Id}",
-      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
       "DownstreamPathTemplate": "/api/users/customer/{Id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
           "Port": 7235
-          //"Host": "userManagement",
-          //"Port": 8080
         }
-      ]
+      ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": false
+      }
     },
     {
       "UpstreamPathTemplate": "/users/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
       "DownstreamPathTemplate": "/api/users/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
           "Port": 7235
-          //"Host": "userManagement",
-          //"Port": 8080
         }
       ],
       "AuthenticationOptions": {
@@ -65,29 +79,34 @@
     },
     {
       "UpstreamPathTemplate": "/craftmen/get-craftsmen",
-      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
       "DownstreamPathTemplate": "/api/craftmen/get-craftsmen",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
           "Port": 7235
-          //"Host": "userManagement",
-          //"Port": 8080
         }
-      ]
+      ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": false
+      }
     },
     {
       "UpstreamPathTemplate": "/craftmen/{everything}",
-      "UpstreamHttpMethod": [ "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
       "DownstreamPathTemplate": "/api/craftmen/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
           "Port": 7235
-          //"Host": "userManagement",
-          //"Port": 8080
         }
       ],
       "AuthenticationOptions": {
@@ -102,15 +121,17 @@
     },
     {
       "UpstreamPathTemplate": "/customers/{everything}",
-      "UpstreamHttpMethod": [ "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
       "DownstreamPathTemplate": "/api/customers/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
           "Port": 7235
-          //"Host": "userManagement",
-          //"Port": 8080
         }
       ],
       "AuthenticationOptions": {
@@ -125,15 +146,18 @@
     },
     {
       "UpstreamPathTemplate": "/bookings/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
       "DownstreamPathTemplate": "/api/bookings/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
           "Port": 7285
-          //"Host": "bookingManagement",
-          //"Port": 8080
         }
       ],
       "AuthenticationOptions": {
@@ -148,15 +172,18 @@
     },
     {
       "UpstreamPathTemplate": "/customerprojects/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
       "DownstreamPathTemplate": "/api/customerprojects/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "host": "localhost",
-          "port": 7285
-          //"Host": "bookingManagement",
-          //"Port": 8080
+          "Host": "localhost",
+          "Port": 7285
         }
       ],
       "AuthenticationOptions": {
@@ -171,15 +198,18 @@
     },
     {
       "UpstreamPathTemplate": "/craftsmanproposals/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
       "DownstreamPathTemplate": "/api/craftsmanproposals/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
           "Port": 7285
-          //"Host": "bookingManagement",
-          //"Port": 8080
         }
       ],
       "AuthenticationOptions": {
@@ -194,7 +224,12 @@
     },
     {
       "UpstreamPathTemplate": "/products/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
       "DownstreamPathTemplate": "/api/products/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -215,7 +250,12 @@
     },
     {
       "UpstreamPathTemplate": "/categories/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
       "DownstreamPathTemplate": "/api/categories/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -236,7 +276,12 @@
     },
     {
       "UpstreamPathTemplate": "/payments/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
       "DownstreamPathTemplate": "/api/payments/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -257,7 +302,12 @@
     },
     {
       "UpstreamPathTemplate": "/invoices/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
       "DownstreamPathTemplate": "/api/invoices/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -278,6 +328,12 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7272"
+    "BaseUrl": "https://localhost:7272",
+    "RateLimitOptions": {
+      "DisableRateLimitHeaders": false,
+      "QuotaExceededMessage": "Too many requests. Please slow down.",
+      "HttpStatusCode": 429,
+      "ClientIdHeader": "X-Client-Id"
+    }
   }
 }

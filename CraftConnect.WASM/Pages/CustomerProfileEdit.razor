@@ -1,4 +1,4 @@
-﻿@page "/customer/{CustomerId:guid}/profile/edit"
+@page "/customer/{CustomerId:guid}/profile/edit"
 @using Blazored.FluentValidation
 @using Core.SharedKernel.DTOs
 @using CraftConnect.WASM.Validators
@@ -108,6 +108,18 @@
                 </div>
             </div>
 
+            @if (serverErrors.Any())
+            {
+                <div class="alert alert-danger mt-2">
+                    <ul class="mb-0">
+                        @foreach (var err in serverErrors)
+                        {
+                            <li>@err</li>
+                        }
+                    </ul>
+                </div>
+            }
+
             <!-- Actions -->
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
@@ -121,24 +133,28 @@
 </div>
 
 @code {
-    [Parameter] public Guid CustomerId { get; set; }
-    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; } = default!;
+    [Parameter] 
+    public Guid CustomerId { get; set; }
+
+    [CascadingParameter] 
+    public Task<AuthenticationState> AuthStateTask { get; set; } = default!;
 
     private ILogger<CustomerProfileEdit> Logger => LoggerFactory.CreateLogger<CustomerProfileEdit>();
 
     private CustomerProfileUpdateValidator CustomerValidator { get; set; } = new();
 
-    private CustomerUpdateDTO customerData = new();
+    private CustomerUpdateDTO customerData { get; set; } = new();
     private bool isLoading = true;
     private bool isSubmitting = false;
     private bool isUploadingImage = false;
+    private List<string> serverErrors { get; set; } = [];
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateTask;
         var user = authState.User;
 
-        if (user.Identity?.IsAuthenticated != true)
+        if (!user.Identity!.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/login");
             return;
@@ -151,19 +167,35 @@
             return;
         }
 
+        var roleClaim = user.FindFirst(ClaimTypes.Role)?.Value;
+        if (!string.Equals(roleClaim, "Customer", StringComparison.OrdinalIgnoreCase))
+        {
+            Logger.LogWarning("Non-customer role '{Role}' attempted to access CustomerProfileEdit.", roleClaim);
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
         try
         {
             var client = HttpClientFactory.CreateClient("BFF");
-            var dto = await client.GetFromJsonAsync<CustomerResponseDTO>($"/users/customer/{CustomerId}");
+            var response = await client.GetAsync($"/users/customer/{CustomerId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                Logger.LogError($"Failed to load profile data. Status code: {response.StatusCode}");
+                return;
+            }
+
+            var dto = await response.Content.ReadFromJsonAsync<CustomerResponseDTO>();
 
             if (dto != null)
             {
                 customerData = new CustomerUpdateDTO
                 {
-                    CustomerId = dto.CustomerId,
+                    CustomerId = CustomerId != Guid.Empty ? CustomerId : dto.CustomerId,
                     FirstName = dto.FirstName,
                     LastName = dto.LastName,
-                    Email = dto.Email ?? "",
+                    // Keep null if no email so server-side NotEmpty() guard is skipped
+                    Email = string.IsNullOrEmpty(dto.Email) ? null : dto.Email,
                     Phone = dto.Phone,
                     Bio = dto.Bio,
                     ProfileImageUrl = dto.ProfileImageUrl,
@@ -171,6 +203,7 @@
                     Street = dto.Street,
                     PostalCode = dto.PostalCode,
                 };
+                StateHasChanged();
             }
         }
         catch (Exception ex)
@@ -186,6 +219,7 @@
     private async Task HandleValidSubmit()
     {
         isSubmitting = true;
+        serverErrors.Clear();
         try
         {
             var client = HttpClientFactory.CreateClient("BFF");
@@ -198,7 +232,10 @@
             }
             else
             {
-                Logger.LogError($"Update failed with status code: {response.StatusCode}");
+                var errors = await response.Content.ReadFromJsonAsync<List<string>>();
+                serverErrors = errors ?? ["An unexpected error occurred. Please try again."];
+                Logger.LogError("Update failed with status code: {Code}, errors: {Errors}", response.StatusCode, serverErrors);
+                StateHasChanged();
             }
         }
         finally

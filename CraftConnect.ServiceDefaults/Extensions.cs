@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Polly;
 
 namespace CraftConnect.ServiceDefaults
 {
@@ -29,7 +31,34 @@ namespace CraftConnect.ServiceDefaults
 			builder.Services.ConfigureHttpClientDefaults(http =>
 			{
 				// Turn on resilience by default
-				http.AddStandardResilienceHandler();
+				http.AddStandardResilienceHandler(opt =>
+				{
+					// Only retry on genuine transient failures — NOT on 2xx or 429
+					opt.Retry.ShouldHandle = args => args.Outcome switch
+					{
+						// Exceptions (network failures, timeouts) — always retry
+						{ Exception: not null } => PredicateResult.True(),
+						// Transient server errors: 5xx and 408 Request Timeout
+						{ Result: HttpResponseMessage r }
+							when (int)r.StatusCode >= 500
+							  || r.StatusCode == System.Net.HttpStatusCode.RequestTimeout
+							=> PredicateResult.True(),
+						// Everything else (200 OK, 401, 429, etc.) — do NOT retry
+						_ => PredicateResult.False()
+					};
+#if DEBUG
+					opt.AttemptTimeout.Timeout = TimeSpan.FromMinutes(5);
+					opt.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(10);
+					// SamplingDuration must be >= 2x AttemptTimeout (5min * 2 = 10min)
+					opt.CircuitBreaker.SamplingDuration = TimeSpan.FromMinutes(11);
+					// Disable retries — re-execution behind a breakpoint is confusing
+					opt.Retry.MaxRetryAttempts = 3;
+#else
+					// Sensible production values
+					opt.AttemptTimeout.Timeout = TimeSpan.FromSeconds(10);
+					opt.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(30);
+#endif
+				});
 
 				// Turn on service discovery by default
 				http.AddServiceDiscovery();

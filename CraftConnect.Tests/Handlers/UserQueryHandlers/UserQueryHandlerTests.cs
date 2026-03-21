@@ -11,6 +11,7 @@ using UserManagement.Application.CQRS.Handlers.QueryHandlers.UserQueryHandlers;
 using UserManagement.Application.CQRS.Queries.CraftmanQueries;
 using UserManagement.Application.CQRS.Queries.UserQueries;
 using UserManagement.Application.Exceptions;
+using UserManagement.Application.Contracts;
 using UserManagement.Domain.Entities;
 
 namespace CraftConnect.Tests.Handlers.UserQueryHandlers
@@ -21,27 +22,25 @@ namespace CraftConnect.Tests.Handlers.UserQueryHandlers
     public class GetAllUsersQueryHandlerTests
     {
         private readonly Mock<IMapper> _mapperMock = new();
-        private readonly Mock<ICacheService> _cacheMock = new();
+        private readonly Mock<IUserRepository> _repoMock = new();
         private readonly GetAllUsersQueryHandler _handler;
 
         public GetAllUsersQueryHandlerTests()
         {
             _handler = new GetAllUsersQueryHandler(
                 _mapperMock.Object,
-                null!,               // IUserRepository — not reached on cache hit
-                _cacheMock.Object);
+                _repoMock.Object);
         }
 
         [Fact]
-        public async Task Handle_ReturnsMappedUsers_OnCacheHit()
+        public async Task Handle_ReturnsMappedUsers()
         {
             // Arrange
             var users = new List<User> { CreateUser("a@a.com"), CreateUser("b@b.com") };
             var dtos = users.Select(_ => new UserResponseDTO()).ToList();
 
-            _cacheMock
-                .Setup(c => c.GetOrCreateManyAsync<User>(
-                    CacheKeys.AllUsers, It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
+            _repoMock
+                .Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(users);
 
             _mapperMock
@@ -53,18 +52,15 @@ namespace CraftConnect.Tests.Handlers.UserQueryHandlers
 
             // Assert
             Assert.Equal(2, result.Count());
-            _cacheMock.Verify(c => c.GetOrCreateManyAsync<User>(
-                CacheKeys.AllUsers, It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()),
-                Times.Once);
+            _repoMock.Verify(r => r.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
-        public async Task Handle_ThrowsNotFoundException_WhenCacheAndDbReturnNull()
+        public async Task Handle_ThrowsNotFoundException_WhenDbReturnsNull()
         {
-            _cacheMock
-                .Setup(c => c.GetOrCreateManyAsync<User>(
-                    CacheKeys.AllUsers, It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((IEnumerable<User>?)null);
+            _repoMock
+                .Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync((IEnumerable<User>)null!);
 
             await Assert.ThrowsAsync<NotFoundException>(
                 () => _handler.Handle(new GetAllUsersQuery(), CancellationToken.None));
@@ -80,27 +76,25 @@ namespace CraftConnect.Tests.Handlers.UserQueryHandlers
     public class GetUserByIdQueryHandlerTests
     {
         private readonly Mock<IMapper> _mapperMock = new();
-        private readonly Mock<ICacheService> _cacheMock = new();
+        private readonly Mock<IUserRepository> _repoMock = new();
         private readonly GetUserByIdQueryHandler _handler;
 
         public GetUserByIdQueryHandlerTests()
         {
             _handler = new GetUserByIdQueryHandler(
                 _mapperMock.Object,
-                null!,
-                _cacheMock.Object);
+                _repoMock.Object);
         }
 
         [Fact]
-        public async Task Handle_ReturnsMappedUser_WhenFoundInCache()
+        public async Task Handle_ReturnsMappedUser()
         {
             var userId = Guid.NewGuid();
             var user = new User(new Email("c@c.com"), UserRole.Customer) { RowVersion = [] };
             var dto = new UserResponseDTO();
 
-            _cacheMock
-                .Setup(c => c.GetOrCreateAsync<User>(
-                    CacheKeys.UserById(userId), It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
+            _repoMock
+                .Setup(r => r.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
             _mapperMock.Setup(m => m.Map<UserResponseDTO>(user)).Returns(dto);
@@ -108,19 +102,16 @@ namespace CraftConnect.Tests.Handlers.UserQueryHandlers
             var result = await _handler.Handle(new GetUserByIdQuery { UserId = userId }, CancellationToken.None);
 
             Assert.Same(dto, result);
-            _cacheMock.Verify(c => c.GetOrCreateAsync<User>(
-                CacheKeys.UserById(userId), It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()),
-                Times.Once);
+            _repoMock.Verify(r => r.GetByIdAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
         public async Task Handle_ThrowsNotFoundException_WhenUserNotFound()
         {
             var userId = Guid.NewGuid();
-            _cacheMock
-                .Setup(c => c.GetOrCreateAsync<User>(
-                    CacheKeys.UserById(userId), It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((User?)null);
+            _repoMock
+                .Setup(r => r.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((User)null!);
 
             await Assert.ThrowsAsync<NotFoundException>(
                 () => _handler.Handle(new GetUserByIdQuery { UserId = userId }, CancellationToken.None));
@@ -133,27 +124,25 @@ namespace CraftConnect.Tests.Handlers.UserQueryHandlers
     public class GetUserByEmailQueryHandlerTests
     {
         private readonly Mock<IMapper> _mapperMock = new();
-        private readonly Mock<ICacheService> _cacheMock = new();
+        private readonly Mock<IUserRepository> _repoMock = new();
         private readonly GetUserByEmailQueryHandler _handler;
 
         public GetUserByEmailQueryHandlerTests()
         {
             _handler = new GetUserByEmailQueryHandler(
                 _mapperMock.Object,
-                null!,
-                _cacheMock.Object);
+                _repoMock.Object);
         }
 
         [Fact]
-        public async Task Handle_UsesEmailCacheKey_AndReturnsMappedUser()
+        public async Task Handle_ReturnsMappedUser()
         {
             var email = "test@example.com";
             var user = new User(new Email(email), UserRole.Customer) { RowVersion = [] };
             var dto = new UserResponseDTO();
 
-            _cacheMock
-                .Setup(c => c.GetOrCreateAsync<User>(
-                    CacheKeys.UserByEmail(email), It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
+            _repoMock
+                .Setup(r => r.GetByEmailAsync(email, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
             _mapperMock.Setup(m => m.Map<UserResponseDTO>(user)).Returns(dto);
@@ -162,19 +151,16 @@ namespace CraftConnect.Tests.Handlers.UserQueryHandlers
                 new GetUserByEmailQuery { Email = email }, CancellationToken.None);
 
             Assert.Same(dto, result);
-            _cacheMock.Verify(c => c.GetOrCreateAsync<User>(
-                CacheKeys.UserByEmail(email), It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()),
-                Times.Once);
+            _repoMock.Verify(r => r.GetByEmailAsync(email, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
         public async Task Handle_ThrowsNotFoundException_WhenUserNotFound()
         {
             var email = "unknown@example.com";
-            _cacheMock
-                .Setup(c => c.GetOrCreateAsync<User>(
-                    CacheKeys.UserByEmail(email), It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((User?)null);
+            _repoMock
+                .Setup(r => r.GetByEmailAsync(email, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((User)null!);
 
             await Assert.ThrowsAsync<NotFoundException>(
                 () => _handler.Handle(new GetUserByEmailQuery { Email = email }, CancellationToken.None));
@@ -187,26 +173,24 @@ namespace CraftConnect.Tests.Handlers.UserQueryHandlers
     public class GetAllCraftmenQueryHandlerTests
     {
         private readonly Mock<IMapper> _mapperMock = new();
-        private readonly Mock<ICacheService> _cacheMock = new();
+        private readonly Mock<ICraftsmanRepository> _repoMock = new();
         private readonly GetAllCraftmenQueryHandler _handler;
 
         public GetAllCraftmenQueryHandlerTests()
         {
             _handler = new GetAllCraftmenQueryHandler(
                 _mapperMock.Object,
-                null!,
-                _cacheMock.Object);
+                _repoMock.Object);
         }
 
         [Fact]
-        public async Task Handle_ReturnsMappedCraftmen_OnCacheHit()
+        public async Task Handle_ReturnsMappedCraftmen()
         {
             var craftmen = new List<Craftman> { new(new Email("d@d.com"), Profession.Plumber) };
             var dtos = craftmen.Select(_ => new CraftmanResponseDTO()).ToList();
 
-            _cacheMock
-                .Setup(c => c.GetOrCreateManyAsync<Craftman>(
-                    CacheKeys.AllCraftsmen, It.IsAny<Expression<Func<Craftman, bool>>>(), It.IsAny<CancellationToken>()))
+            _repoMock
+                .Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(craftmen);
 
             _mapperMock.Setup(m => m.Map<IEnumerable<CraftmanResponseDTO>>(craftmen)).Returns(dtos);
@@ -214,18 +198,15 @@ namespace CraftConnect.Tests.Handlers.UserQueryHandlers
             var result = await _handler.Handle(new GetAllCraftmenQuery(), CancellationToken.None);
 
             Assert.Single(result);
-            _cacheMock.Verify(c => c.GetOrCreateManyAsync<Craftman>(
-                CacheKeys.AllCraftsmen, It.IsAny<Expression<Func<Craftman, bool>>>(), It.IsAny<CancellationToken>()),
-                Times.Once);
+            _repoMock.Verify(r => r.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
         public async Task Handle_ThrowsNotFoundException_WhenNoneFound()
         {
-            _cacheMock
-                .Setup(c => c.GetOrCreateManyAsync<Craftman>(
-                    CacheKeys.AllCraftsmen, It.IsAny<Expression<Func<Craftman, bool>>>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((IEnumerable<Craftman>?)null);
+            _repoMock
+                .Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync((IEnumerable<Craftman>)null!);
 
             await Assert.ThrowsAsync<NotFoundException>(
                 () => _handler.Handle(new GetAllCraftmenQuery(), CancellationToken.None));
@@ -238,27 +219,25 @@ namespace CraftConnect.Tests.Handlers.UserQueryHandlers
     public class GetCraftmanByIdQueryHandlerTests
     {
         private readonly Mock<IMapper> _mapperMock = new();
-        private readonly Mock<ICacheService> _cacheMock = new();
+        private readonly Mock<ICraftsmanRepository> _repoMock = new();
         private readonly GetCraftmanByIdQueryHandler _handler;
 
         public GetCraftmanByIdQueryHandlerTests()
         {
             _handler = new GetCraftmanByIdQueryHandler(
                 _mapperMock.Object,
-                null!,
-                _cacheMock.Object);
+                _repoMock.Object);
         }
 
         [Fact]
-        public async Task Handle_UsesCraftsmanByIdKey_AndReturnsMappedDto()
+        public async Task Handle_ReturnsMappedDto()
         {
             var id = Guid.NewGuid();
             var craftman = new Craftman(new Email("e@e.com"), Profession.Electrician);
             var dto = new CraftmanResponseDTO();
 
-            _cacheMock
-                .Setup(c => c.GetOrCreateAsync<Craftman>(
-                    CacheKeys.CraftsmanById(id), It.IsAny<Expression<Func<Craftman, bool>>>(), It.IsAny<CancellationToken>()))
+            _repoMock
+                .Setup(r => r.GetByIdAsync(id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(craftman);
 
             _mapperMock.Setup(m => m.Map<CraftmanResponseDTO>(craftman)).Returns(dto);
@@ -273,10 +252,9 @@ namespace CraftConnect.Tests.Handlers.UserQueryHandlers
         public async Task Handle_ThrowsNotFoundException_WhenCraftmanNotFound()
         {
             var id = Guid.NewGuid();
-            _cacheMock
-                .Setup(c => c.GetOrCreateAsync<Craftman>(
-                    CacheKeys.CraftsmanById(id), It.IsAny<Expression<Func<Craftman, bool>>>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((Craftman?)null);
+            _repoMock
+                .Setup(r => r.GetByIdAsync(id, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((Craftman)null!);
 
             await Assert.ThrowsAsync<NotFoundException>(
                 () => _handler.Handle(new GetCraftmanByIdQuery { CraftmanId = id }, CancellationToken.None));

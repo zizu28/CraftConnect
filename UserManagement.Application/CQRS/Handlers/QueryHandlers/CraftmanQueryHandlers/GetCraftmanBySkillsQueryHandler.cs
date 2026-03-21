@@ -1,6 +1,5 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core.SharedKernel.DTOs;
-using Infrastructure.Cache;
 using MassTransit.Initializers;
 using MediatR;
 using UserManagement.Application.Contracts;
@@ -12,18 +11,12 @@ namespace UserManagement.Application.CQRS.Handlers.QueryHandlers.CraftmanQueryHa
 {
 	public class GetCraftmanBySkillsQueryHandler(
 		ICraftsmanRepository craftsmanRepository,
-		IMapper mapper,
-		ICacheService cacheService)
+		IMapper mapper)
 		: IRequestHandler<GetCraftmanBySkillsQuery, CraftmanResponseDTO>
 	{
 		public async Task<CraftmanResponseDTO> Handle(GetCraftmanBySkillsQuery request, CancellationToken cancellationToken)
 		{
-			// Re-use the shared AllCraftsmen cache entry and filter in-memory,
-			// the same pattern as GetCraftmanByProfession.
-			var allCraftsmen = await cacheService.GetOrCreateManyAsync<Craftman>(
-				CacheKeys.AllCraftsmen,
-				c => true,
-				cancellationToken)
+			var allCraftsmen = await craftsmanRepository.GetAllAsync(cancellationToken)
 				?? throw new NotFoundException($"Craftmen with skills {string.Join(", ", request.Skills.Select(s => s.Name))} not found.");
 
 			var craftman = allCraftsmen

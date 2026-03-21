@@ -91,6 +91,7 @@ namespace UserManagement.Presentation.Controllers
 		public async Task<IActionResult> UploadAvatar(IFormFile file)
 		{
 			if (file == null || file.Length == 0) return BadRequest("No file uploaded.");
+			if(file.Length > 5 * 1024 * 1024) return BadRequest("File size exceeds the 5MB limit.");
 			if (!file.ContentType.StartsWith("image/")) return BadRequest("Invalid file type.");
 			using var stream = file.OpenReadStream();
 			var url = await fileStorageService.UploadFileAsync(stream, file.FileName, file.ContentType);

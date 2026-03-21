@@ -7,8 +7,6 @@ using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using System.Net;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.Validators.CustomerValidators;
@@ -22,7 +20,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 		ILoggingService<RegisterCustomerCommandHandler> logger,
 		IBackgroundJobService backgroundJob,
 		ICustomerRepository customerRepository, 
-		ApplicationDbContext dbContext,
+		IEmailVerification emailVerification,
 		IMessageBroker publisher,
 		IUnitOfWork unitOfWork) : IRequestHandler<RegisterCustomerCommand, CustomerResponseDTO>
 	{
@@ -56,7 +54,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 			var newUser = mapper.Map<Customer>(request.Customer);
 			newUser.PasswordHash = request.Customer.Password;
 			var verificationTokenValue = EmailVerificationToken.GenerateToken();
-			var hashedToken = BCrypt.Net.BCrypt.HashPassword(verificationTokenValue);
+			var hashedToken = BCrypt.Net.BCrypt.EnhancedHashPassword(verificationTokenValue);
 
 			await unitOfWork.ExecuteInTransactionAsync(async () =>
 			{
@@ -74,10 +72,10 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 					CreatedOnUtc = utcNow,
 					ExpiresOnUtc = utcNow.AddDays(1)
 				};
-				dbContext.EmailVerificationTokens.Add(emailVerificationToken);
+				await emailVerification.AddAsync(emailVerificationToken, cancellationToken);
 			}, cancellationToken);
 
-			string? verificationLink = $"https://localhost:7235/api/users/confirm-email?token={hashedToken}";
+			string verificationLink = $"https://localhost:7235/api/users/confirm-email?token={Uri.EscapeDataString(verificationTokenValue)}";
 
 			if (string.IsNullOrEmpty(verificationLink))
 			{

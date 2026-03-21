@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.CQRS.Queries.CraftmanQueries;
@@ -154,7 +153,7 @@ namespace UserManagement.Presentation.Controllers
 
 		[HttpPost("register/craftman")]
 		[AllowAnonymous]
-		[EnableRateLimiting("registration")]
+		//[EnableRateLimiting("registration")]
 		public async Task<IActionResult> RegisterNewCraftmanAsync([FromBody] CraftmanCreateDTO craftman)
 		{
 			var command = new RegisterCraftmanCommand { Craftman = craftman };
@@ -168,7 +167,7 @@ namespace UserManagement.Presentation.Controllers
 
 		[HttpPost("register/customer")]
 		[AllowAnonymous]
-		[EnableRateLimiting("registration")]
+		//[EnableRateLimiting("registration")]
 		public async Task<IActionResult> RegisterNewCustomerAsync([FromBody] CustomerCreateDTO customer)
 		{
 			var command = new RegisterCustomerCommand { Customer = customer };
@@ -209,7 +208,7 @@ namespace UserManagement.Presentation.Controllers
 
 		[HttpPost("signin")]
 		[AllowAnonymous]
-		[EnableRateLimiting("login")]
+		//[EnableRateLimiting("login")]
 		public async Task<IActionResult> LoginUserAsync([FromBody] LoginUserCommand command)
 		{
 			if (!ModelState.IsValid)
@@ -280,7 +279,7 @@ namespace UserManagement.Presentation.Controllers
 
 		[HttpPost("forgot-password")]
 		[AllowAnonymous]
-		[EnableRateLimiting("forgot-password")]
+		//[EnableRateLimiting("forgot-password")]
 		public async Task<IActionResult> ForgotPasswordAsync([FromBody] ForgotPasswordCommand command)
 		{
 			ArgumentNullException.ThrowIfNull(command, nameof(command));
@@ -294,7 +293,7 @@ namespace UserManagement.Presentation.Controllers
 		/// </summary>
 		[HttpPost("reset-password")]
 		[AllowAnonymous]
-		[EnableRateLimiting("password-reset")]
+		//[EnableRateLimiting("password-reset")]
 		public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordCommand command)
 		{
 			if (!ModelState.IsValid)

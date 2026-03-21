@@ -1,7 +1,6 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core.Logging;
 using Core.SharedKernel.DTOs;
-using Infrastructure.Cache;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
 using ProductInventoryManagement.Application.CQRS.Queries.ProductQueries;
@@ -12,18 +11,14 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.QueryHandlers.Pro
 	public class GetProductByIdQueryHandler(
 		IProductRepository productRepository,
 		IMapper mapper,
-		ILoggingService<GetProductByIdQueryHandler> logger,
-		ICacheService cacheService) : IRequestHandler<GetProductByIdQuery, ProductResponseDTO>
+		ILoggingService<GetProductByIdQueryHandler> logger) : IRequestHandler<GetProductByIdQuery, ProductResponseDTO>
 	{
 		public async Task<ProductResponseDTO> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
 		{
 			var response = new ProductResponseDTO();
 			logger.LogInformation("Handling GetProductByIdQuery");
 
-			var product = await cacheService.GetOrCreateAsync<Product>(
-				CacheKeys.ProductById(request.ProductId),
-				p => p.Id == request.ProductId,
-				cancellationToken);
+			var product = await productRepository.GetByIdAsync(request.ProductId, cancellationToken);
 
 			if (product == null)
 			{

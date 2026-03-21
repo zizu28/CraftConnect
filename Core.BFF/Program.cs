@@ -1,4 +1,4 @@
-﻿using CraftConnect.ServiceDefaults;
+using CraftConnect.ServiceDefaults;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Yarp.ReverseProxy.Configuration;
@@ -17,6 +17,7 @@ builder.Services.AddControllers(); // For the local AuthController
 builder.Services.AddHttpClient("Gateway", client =>
 {
 	client.BaseAddress = new Uri("https://localhost:7272");
+	client.DefaultRequestHeaders.Add("X-Client-Id", "BFF");
 });
 builder.Services.AddAuthentication(options =>
 {
@@ -31,6 +32,8 @@ builder.Services.AddAuthentication(options =>
 	options.Cookie.SameSite = SameSiteMode.None;
 	options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 	options.Cookie.Path = "/";
+	options.ExpireTimeSpan = TimeSpan.FromHours(1);
+	options.SlidingExpiration = true;
 	options.Events = new CookieAuthenticationEvents
 	{
 		OnSigningOut = ctx =>
@@ -56,12 +59,12 @@ builder.Services.AddReverseProxy()
 	{
 		builderContext.AddRequestTransform(async transformContext =>
 		{
-			if (!transformContext.HttpContext.User.Identity!.IsAuthenticated)
-			{
-				Console.WriteLine($"[BFF YARP] ❌ Incoming request unauthenticated: {transformContext.HttpContext.Request.Path}");
-				return;
-			}
+			// Always identify this proxy as the BFF for rate limiting
+			transformContext.ProxyRequest.Headers.Remove("X-Client-Id");
+			transformContext.ProxyRequest.Headers.Add("X-Client-Id", "BFF");
 
+			// Always attempt to read the token — IsAuthenticated may be false
+			// for YARP-proxied routes if no RequireAuthorization is set on the route
 			var accessToken = await transformContext.HttpContext.GetTokenAsync("access-token");
 
 			if (!string.IsNullOrEmpty(accessToken))
@@ -72,7 +75,7 @@ builder.Services.AddReverseProxy()
 			}
 			else
 			{
-				Console.WriteLine($"[BFF YARP] ⚠️ User is logged in, but 'access-token' is NULL.");
+				Console.WriteLine($"[BFF YARP] ⚠️ No access-token for: {transformContext.HttpContext.Request.Path} (authenticated={transformContext.HttpContext.User.Identity?.IsAuthenticated})");
 			}
 		});
 	});
@@ -123,7 +126,7 @@ static ClusterConfig[] GetClusters()
 						Address = "https://localhost:7272"
 					}
 				}
-			},
+			}			
 			//HttpRequest = new ForwarderRequestConfig
 			//{
 			//	Version = new Version(1, 1),

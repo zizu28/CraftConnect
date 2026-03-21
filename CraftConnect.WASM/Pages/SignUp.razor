@@ -117,7 +117,8 @@
 </div>
 
 @code {
-    [Inject] public SignupVMValidator Validator { get; set; } = default!;
+    [Inject] 
+    public SignupVMValidator Validator { get; set; } = default!;
 
     // 1. Use ONE model for the form
     private UserCreateDTO model { get; set; } = new()
@@ -150,36 +151,26 @@
         try
         {
             var httpClient = HttpClientFactory.CreateClient("UserManagement");
-            HttpResponseMessage response;
-
-            if (model.Role == "Craftman")
+            HttpResponseMessage response = model.Role switch
             {
-                var craftmanDto = new CraftmanCreateDTO
+                "Craftman" => await httpClient.PostAsJsonAsync("/api/users/register/craftman", new CraftmanCreateDTO
                 {
                     Email = model.Email,
                     Password = model.Password,
                     ConfirmPassword = model.ConfirmPassword,
                     AgreeToTerms = model.AgreeToTerms,
                     Role = "Craftman"
-                };
-                response = await httpClient.PostAsJsonAsync("/api/users/register/craftman", craftmanDto);
-            }
-            else if (model.Role == "Customer")
-            {
-                var customerDto = new CustomerCreateDTO
+                }),
+                "Customer" => await httpClient.PostAsJsonAsync("/api/users/register/customer", new CustomerCreateDTO
                 {
                     Email = model.Email,
                     Password = model.Password,
                     ConfirmPassword = model.ConfirmPassword,
                     AgreeToTerms = model.AgreeToTerms,
                     Role = "Customer"
-                };
-                response = await httpClient.PostAsJsonAsync("/api/users/register/customer", customerDto);
-            }
-            else
-            {
-                response = await httpClient.PostAsJsonAsync("/api/users/register/customer", model);
-            }
+                }),
+                _ => await httpClient.PostAsJsonAsync("/api/users/register", model)
+            };
 
             if (response.IsSuccessStatusCode)
             {

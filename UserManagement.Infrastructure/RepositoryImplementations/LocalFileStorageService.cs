@@ -11,7 +11,7 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 		private readonly IWebHostEnvironment _env = env;
 		private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
-		public Task DeleteFileAsync(string fileUrl)
+		public Task DeleteFileAsync(string fileUrl, CancellationToken cancellationToken = default)
 		{
 			var fileName = Path.GetFileName(fileUrl);
 			var filePath = Path.Combine(_env.WebRootPath, "uploads", fileName);
@@ -19,11 +19,12 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			return Task.CompletedTask;
 		}
 
-		public async Task<string> UploadFileAsync(Stream fileStream, string fileName, string contentType)
+		public async Task<string> UploadFileAsync(Stream fileStream, string fileName, string contentType, CancellationToken cancellationToken = default)
 		{
 			var uniqueFileName = $"{Guid.NewGuid()}_{fileName}";
 			var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
-			if(!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+			if(!Directory.Exists(uploadsFolder)) 
+				Directory.CreateDirectory(uploadsFolder);
 			var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 			using var fileStreamOutput = new FileStream(filePath, FileMode.Create);
 			await fileStream.CopyToAsync(fileStreamOutput);

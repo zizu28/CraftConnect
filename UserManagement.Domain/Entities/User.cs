@@ -24,7 +24,9 @@ namespace UserManagement.Domain.Entities
 		public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 		[Timestamp]
 		public byte[] RowVersion { get; set; }
+		[JsonIgnore]
 		public List<RefreshToken> RefreshTokens { get; set; } = [];
+		[JsonIgnore]
 		public List<EmailVerificationToken> EmailVerificationTokens { get; set; } = [];
 
 		public User() {}

@@ -1,7 +1,6 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core.Logging;
 using Core.SharedKernel.DTOs;
-using Infrastructure.Cache;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
@@ -15,8 +14,7 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.C
 		ICategoryRepository categoryRepository,
 		IUnitOfWork unitOfWork,
 		ILoggingService<CategoryCreateCommandHandler> logger,
-		IMapper mapper,
-		ICacheService cacheService) : IRequestHandler<CategoryCreateCommand, CategoryResponseDTO>
+		IMapper mapper) : IRequestHandler<CategoryCreateCommand, CategoryResponseDTO>
 	{
 		public async Task<CategoryResponseDTO> Handle(CategoryCreateCommand request, CancellationToken cancellationToken)
 		{
@@ -42,9 +40,6 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.CommandHandlers.C
 				response.Message = "Category created successfully.";
 				logger.LogInformation("Category created successfully with ID: {CategoryId}", response.CategoryId);
 				await unitOfWork.CommitTransactionAsync(cancellationToken);
-
-				// Evict list cache so the next read includes the new category.
-				await cacheService.RemoveSync(CacheKeys.AllCategories, cancellationToken);
 
 				return response;
 			}

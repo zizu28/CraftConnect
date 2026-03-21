@@ -1,7 +1,6 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core.Logging;
 using Core.SharedKernel.DTOs;
-using Infrastructure.Cache;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
 using ProductInventoryManagement.Application.CQRS.Queries.CategoryQueries;
@@ -12,17 +11,13 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.QueryHandlers.Cat
 	public class GetAllCategoriesQueryHandler(
 		ICategoryRepository categoryRepository,
 		ILoggingService<GetAllCategoriesQueryHandler> logger,
-		IMapper mapper,
-		ICacheService cacheService) : IRequestHandler<GetAllCategoriesQuery, IEnumerable<CategoryResponseDTO>>
+		IMapper mapper) : IRequestHandler<GetAllCategoriesQuery, IEnumerable<CategoryResponseDTO>>
 	{
 		public async Task<IEnumerable<CategoryResponseDTO>> Handle(GetAllCategoriesQuery request, CancellationToken cancellationToken)
 		{
 			logger.LogInformation("Handling GetAllCategoriesQuery");
 
-			var categories = await cacheService.GetOrCreateManyAsync<Category>(
-				CacheKeys.AllCategories,
-				c => true,
-				cancellationToken);
+			var categories = await categoryRepository.GetAllAsync(cancellationToken);
 
 			if (categories == null || !categories.Any())
 			{

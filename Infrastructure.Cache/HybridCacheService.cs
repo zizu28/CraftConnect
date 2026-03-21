@@ -17,7 +17,7 @@ namespace Infrastructure.Cache
 		{
 			return await cache.GetOrCreateAsync(
 				key,
-				async entry => await dbContext.Set<T>().FirstOrDefaultAsync(predicate, entry),
+				async entry => await dbContext.Set<T>().AsNoTracking().FirstOrDefaultAsync(predicate, entry),
 				defaultCacheOptions, cancellationToken: token);
 		}
 

@@ -47,8 +47,7 @@ internal class Program
 
 		builder.Services.AddScoped<BffAuthenticationStateProvider>();
 
-		builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
-			sp.GetRequiredService<BffAuthenticationStateProvider>());
+		builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<BffAuthenticationStateProvider>());
 
 		builder.Services.AddLogging();
 		builder.Services.AddSingleton<ThemeService>();

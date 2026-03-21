@@ -27,7 +27,7 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			return await dbContext.Customers.AnyAsync(c => c.Id == id, cancellationToken);
 		}
 
-		public async Task<Customer> FindBy(Expression<Func<Customer, bool>> predicate, CancellationToken cancellationToken = default)
+		public async Task<Customer?> FindBy(Expression<Func<Customer, bool>> predicate, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(predicate);
 			var customer = await dbContext.Customers.FirstOrDefaultAsync(predicate, cancellationToken);
@@ -39,13 +39,13 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			return await dbContext.Customers.AsNoTracking().ToListAsync(cancellationToken);
 		}
 
-		public Task<Customer> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
+		public Task<Customer?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
 		{
 			ArgumentNullException.ThrowIfNull(email);
 			return FindBy(c => c.Email.Address == email, cancellationToken);
 		}
 
-		public async Task<Customer> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+		public async Task<Customer?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
 		{
 			var customer = await FindBy(c => c.Id == id, cancellationToken);
 			return customer;

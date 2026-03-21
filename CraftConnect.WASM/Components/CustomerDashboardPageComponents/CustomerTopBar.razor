@@ -1,4 +1,6 @@
 ﻿@using CraftConnect.WASM.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @inject NavigationManager NavigationManager
 @inject IHttpClientFactory HttpClientFactory
 
@@ -36,7 +38,33 @@
 </header>
 
 @code {
-    [Parameter] public UserProfileVM User { get; set; } = new();
+    [CascadingParameter] 
+    public Task<AuthenticationState> AuthState { get; set; } = default!;
+
+    [Parameter] 
+    public UserProfileVM User { get; set; } = new();
+
+    override protected async Task OnInitializedAsync()
+    {
+        var authState = await AuthState;
+        var user = authState.User;
+        if (!user.Identity!.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+        User.Name = user.Identity.Name ?? "User";
+        User.Email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "";
+        User.AvatarInitials = GetAvatarInitials(User.Name);
+    }
+
+    private string GetAvatarInitials(string name)
+    {
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0) return "U";
+        if (parts.Length == 1) return parts[0][0].ToString().ToUpper();
+        return $"{parts[0][0]}{parts[1][0]}".ToUpper();
+    }
 
     private async Task HandleLogout()
     {

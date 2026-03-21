@@ -3,6 +3,7 @@ using BookingManagement.Application.Contracts;
 using BookingManagement.Application.SAGA;
 using BookingManagement.Infrastructure.RepositoryImplementations;
 using BookingManagement.Infrastructure.SAGAS;
+using Core.EventServices;
 using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
 using MassTransit;
@@ -23,6 +24,15 @@ namespace BookingManagement.Infrastructure.Extensions
 		{
 			services.AddMassTransit(mt =>
 			{
+				// Outbox (transactional messaging)
+				mt.AddEntityFrameworkOutbox<ApplicationDbContext>(config =>
+				{
+					config.QueryDelay = TimeSpan.FromSeconds(1);
+					config.UseSqlServer().UseBusOutbox();
+				});
+
+				mt.SetKebabCaseEndpointNameFormatter();
+
 				mt.AddSagaStateMachine<BookingToPaymentSaga, BookingToPaymentState>()
 				.EntityFrameworkRepository(r =>
 				{
@@ -45,22 +55,24 @@ namespace BookingManagement.Infrastructure.Extensions
 				{
 					mt.UsingAmazonSqs((context, cfg) =>
 					{
-						cfg.Host(configuration["AWS:ServiceURL"]!, h =>
+						cfg.Host("us-east-1", h =>
 						{
 							h.AccessKey(configuration["AWS:AccessKey"]!);
 							h.SecretKey(configuration["AWS:SecretKey"]!);
+							h.Scope("CraftConnect", true);
 						});
-						cfg.ConfigureEndpoints(context);
+						cfg.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter("dev", false));
 						cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
 					});
-				}				
-
-				services.AddScoped<IBookingRepository, BookingRepository>();
-				services.AddScoped<IBookingLineItemRepository, BookingLineItemRepository>();
-				services.AddScoped<ICustomerProjectRepository, CustomerProjectRepository>();
-				services.AddScoped<ICraftsmanProposalRepository, CraftsmanProposalRepository>();
-				services.AddScoped<IUnitOfWork, UnitOfWork>();				
+				}
 			});
+
+			services.AddScoped<IMessageBroker, MassTransitMessageBroker>();
+			services.AddScoped<IBookingRepository, BookingRepository>();
+			services.AddScoped<IBookingLineItemRepository, BookingLineItemRepository>();
+			services.AddScoped<ICustomerProjectRepository, CustomerProjectRepository>();
+			services.AddScoped<ICraftsmanProposalRepository, CraftsmanProposalRepository>();
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			return services;
 		}
 	}

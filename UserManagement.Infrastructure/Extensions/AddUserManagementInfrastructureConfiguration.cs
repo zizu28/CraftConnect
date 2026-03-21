@@ -11,13 +11,17 @@ namespace UserManagement.Infrastructure.Extensions
 		public static IServiceCollection AddUserManagementConfiguration(this IServiceCollection services, IConfiguration configuration)
 		{
 			services.AddScoped<ITokenProvider, TokenProvider>();
+			services.AddScoped<IEmailVerification, EmailVerification>();
 			services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<ICustomerRepository, CustomerRepository>();
 			services.AddScoped<ICraftsmanRepository, CraftmanRepository>();			
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			services.AddKeyedScoped<IFileStorageService, LocalFileStorageService>("localStorage");
 			services.AddKeyedScoped<IFileStorageService, S3FileStorageService>("S3Storage");
-			services.AddKeyedScoped<IFileStorageService, CloudinaryStorageService>("Cloudinary");
+			//services.AddKeyedScoped<IFileStorageService, CloudinaryStorageService>("Cloudinary");
+			services.AddSingleton<CloudinaryStorageService>();     // Singleton for connection reuse
+			services.AddScoped<IFileStorageService>(sp => sp.GetRequiredService<CloudinaryStorageService>());
+
 			var useCloudinary = configuration.GetValue<bool>("Storage:UseCloudinary");
 
 			if (useCloudinary)

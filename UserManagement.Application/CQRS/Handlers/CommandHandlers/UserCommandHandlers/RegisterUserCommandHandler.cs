@@ -1,15 +1,13 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core.EventServices;
 using Core.Logging;
 using Core.SharedKernel.DTOs;
 using Core.SharedKernel.IntegrationEvents.AllUserActivitiesIntegrationEvents;
 using Infrastructure.BackgroundJobs;
-using Infrastructure.Cache;
 using Infrastructure.EmailService.GmailService;
 using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
 using MediatR;
-using System.Net;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Commands.UserCommands;
 using UserManagement.Application.Validators.UserValidators;
@@ -20,12 +18,11 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 	public class RegisterUserCommandHandler(
 		IMapper mapper, 
 		ILoggingService<RegisterUserCommandHandler> logger, 
-		IUserRepository user,
+		IUserRepository user, 
 		IMessageBroker eventBus, 
 		IBackgroundJobService backgroundJob,
 		IUnitOfWork unitOfWork,
-		ApplicationDbContext dbContext,
-		ICacheService cacheService) : IRequestHandler<RegisterUserCommand, UserResponseDTO>
+		ApplicationDbContext dbContext) : IRequestHandler<RegisterUserCommand, UserResponseDTO>
 	{
 		public async Task<UserResponseDTO> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
 		{
@@ -50,7 +47,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 
 				newUser.PasswordHash = request.User.Password;
 				var verificationTokenValue = EmailVerificationToken.GenerateToken();
-				var hashedToken = BCrypt.Net.BCrypt.HashPassword(verificationTokenValue);
+				var hashedToken = BCrypt.Net.BCrypt.EnhancedHashPassword(verificationTokenValue);
 				await unitOfWork.ExecuteInTransactionAsync(async () =>
 				{
 					logger.LogInformation("Creating new user with email {Email}.", request.User!.Email);					
@@ -76,10 +73,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 					userResponse.Role = newUser.Role.ToString();
 					userResponse.CreatedAt = DateTime.UtcNow;
 					userResponse.Message = "User registration successful.";
-				}, cancellationToken);
-
-				// Evict the all-users cache so the next read reflects the new registration.
-				await cacheService.RemoveSync(CacheKeys.AllUsers, cancellationToken);
+				}, cancellationToken);						
 
 				string? verificationLink = $"https://localhost:7235/api/users/confirm-email?token={verificationTokenValue}";
 

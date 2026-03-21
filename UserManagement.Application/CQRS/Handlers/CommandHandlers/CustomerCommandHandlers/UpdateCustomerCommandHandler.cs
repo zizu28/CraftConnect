@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core.SharedKernel.DTOs;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.EmailService.GmailService;
@@ -33,6 +33,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.CustomerComma
 			if (!validationResult.IsValid)
 			{
 				_logger.LogWarning("Validation failed for UpdateCustomerCommand: {Errors}", validationResult.Errors);
+				response.IsSuccess = false;
 				response.Message = "Validation failed";
 				response.Errors = [.. validationResult.Errors.Select(e => e.ErrorMessage)];
 				return response;
@@ -67,7 +68,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.CustomerComma
 			}
 			catch (DbUpdateConcurrencyException)
 			{
-				_logger.LogError("Concurrency conflict for Customer {Id}", request.CustomerID);
+				_logger.LogError("Concurrency conflict for Customer with ID {Id}", request.CustomerID);
 				return new CustomerResponseDTO
 				{
 					IsSuccess = false,

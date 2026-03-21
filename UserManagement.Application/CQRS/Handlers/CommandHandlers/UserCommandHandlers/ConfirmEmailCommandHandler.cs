@@ -23,7 +23,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 
 				// Find the token that matches using BCrypt verification (plain token vs hashed token)
 				var verificationRecord = allTokens
-					.FirstOrDefault(vt => BCrypt.Net.BCrypt.Verify(request.token, vt.TokenValue));
+					.FirstOrDefault(vt => BCrypt.Net.BCrypt.EnhancedVerify(request.token, vt.TokenValue));
 
 				if(verificationRecord == null)
 				{

@@ -150,20 +150,13 @@
 
     private void NavigateUser(UserResponseDTO user)
     {
-        switch (user.Role)
+        var endpoint = user.Role switch
         {
-            case "Customer":
-                NavigationManager.NavigateTo($"/customer/{user.UserId}/dashboard");
-                break;
-            case "Craftman":
-                NavigationManager.NavigateTo($"/dashboard/{user.UserId}");
-                break;
-            case "Admin":
-                NavigationManager.NavigateTo("/admin/dashboard");
-                break;
-            default:
-                NavigationManager.NavigateTo("/");
-                break;
-        }
-    }
+            "Customer" => $"/customer/{user.UserId}/dashboard",
+            "Craftman" => $"/dashboard/{user.UserId}",
+            "Admin" => "/admin/dashboard",
+            _ => "/"
+        };
+        NavigationManager.NavigateTo(endpoint);
+    }     
 }

@@ -38,7 +38,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 			}			
 
 			var verificationTokenValue = EmailVerificationToken.GenerateToken();
-			var hashedToken = BCrypt.Net.BCrypt.HashPassword(verificationTokenValue);
+			var hashedToken = BCrypt.Net.BCrypt.EnhancedHashPassword(verificationTokenValue);
 
 			var emailVerificationToken = new EmailVerificationToken
 			{
@@ -52,7 +52,7 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 			await dbContext.EmailVerificationTokens.AddAsync(emailVerificationToken, cancellationToken);
 			await dbContext.SaveChangesAsync(cancellationToken);
 
-			string? verificationLink = $"https://localhost:7235/api/users/confirm-email?token={hashedToken}";
+			string verificationLink = $"https://localhost:7235/api/users/confirm-email?token={Uri.EscapeDataString(verificationTokenValue)}";
 			backgroundJob.Enqueue<IGmailService>(
 				"default",
 				resend => resend.SendEmailAsync(

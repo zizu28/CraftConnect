@@ -18,7 +18,7 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			};
 			cloudinary = new Cloudinary(account);
 		}
-		public async Task DeleteFileAsync(string fileUrl)
+		public async Task DeleteFileAsync(string fileUrl, CancellationToken cancellationToken = default)
 		{
 			string publicId = ExtractPublicIdFromUrl(fileUrl);
 			var deleteParams = new DeletionParams(publicId);
@@ -54,7 +54,7 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			}
 		}
 
-		public async Task<string> UploadFileAsync(Stream fileStream, string fileName, string contentType)
+		public async Task<string> UploadFileAsync(Stream fileStream, string fileName, string contentType, CancellationToken cancellationToken = default)
 		{
 			if (fileStream.Length == 0) return string.Empty;
 			fileStream.Position = 0;
@@ -62,11 +62,11 @@ namespace UserManagement.Infrastructure.RepositoryImplementations
 			{
 				File = new FileDescription(fileName, fileStream),
 				Folder = "craftconnect/avatars",
-				Overwrite = false,
+				Overwrite = true,
 				PublicId = Path.GetFileNameWithoutExtension(fileName),
-				
+				Transformation = new Transformation().Width(400).Height(400).Crop("thumb").Gravity("face")
 			};
-			var uploadResult = await cloudinary.UploadAsync(imageUploadParams);
+			var uploadResult = await cloudinary.UploadAsync(imageUploadParams, cancellationToken);
 			if (uploadResult.Error != null)
 			{
 				throw new Exception($"Cloudinary Upload Error: {uploadResult.Error.Message}");

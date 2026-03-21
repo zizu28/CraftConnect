@@ -16,6 +16,12 @@
 {
     <p>Loading...</p>
 }
+else if (dashboardData is null)
+{
+    <div class="dashboard-container">
+        <p>Unable to load dashboard data. Please try refreshing the page.</p>
+    </div>
+}
 else
 {
     <div class="dashboard-container">
@@ -98,7 +104,7 @@ else
 
     private CustomerDashboardVM? dashboardData { get; set; }
 
-    private bool isLoading = false;
+    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {

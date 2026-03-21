@@ -1,4 +1,4 @@
-﻿using Core.BFF.RequestsEntities;
+using Core.BFF.RequestsEntities;
 using Core.BFF.ResponseEntities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -37,7 +37,6 @@ namespace Core.BFF.Controllers
 			var authProperties = new AuthenticationProperties
 			{
 				IsPersistent = command.RememberMe,
-				ExpiresUtc = DateTime.UtcNow.AddMinutes(15),
 				IssuedUtc = DateTime.UtcNow,
 				RedirectUri = command.RedirectUri,
 			};

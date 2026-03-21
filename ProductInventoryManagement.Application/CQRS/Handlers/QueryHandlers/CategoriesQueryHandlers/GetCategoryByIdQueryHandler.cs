@@ -1,7 +1,6 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core.Logging;
 using Core.SharedKernel.DTOs;
-using Infrastructure.Cache;
 using MediatR;
 using ProductInventoryManagement.Application.Contracts;
 using ProductInventoryManagement.Application.CQRS.Queries.CategoryQueries;
@@ -12,17 +11,13 @@ namespace ProductInventoryManagement.Application.CQRS.Handlers.QueryHandlers.Cat
 	public class GetCategoryByIdQueryHandler(
 		ICategoryRepository categoryRepository,
 		ILoggingService<GetCategoryByIdQueryHandler> logger,
-		IMapper mapper,
-		ICacheService cacheService) : IRequestHandler<GetCategoryByIdQuery, CategoryResponseDTO>
+		IMapper mapper) : IRequestHandler<GetCategoryByIdQuery, CategoryResponseDTO>
 	{
 		public async Task<CategoryResponseDTO> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
 		{
 			logger.LogInformation("Handling GetCategoryByIdQuery for CategoryId: {CategoryId}", request.Id);
 
-			var category = await cacheService.GetOrCreateAsync<Category>(
-				CacheKeys.CategoryById(request.Id),
-				c => c.Id == request.Id,
-				cancellationToken);
+			var category = await categoryRepository.GetByIdAsync(request.Id, cancellationToken);
 
 			if (category == null)
 			{

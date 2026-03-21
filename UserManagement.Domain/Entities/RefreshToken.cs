@@ -1,4 +1,6 @@
-﻿namespace UserManagement.Domain.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace UserManagement.Domain.Entities
 {
 	public class RefreshToken
 	{
@@ -9,6 +11,9 @@
 		public DateTime ExpiresOnUtc { get; set; }
 		public DateTime RevokedOnUtc { get; set; }
 		public Guid UserId { get; set; }
+
+		[JsonIgnore]
 		public User User { get; set; }
 	}
 }
+

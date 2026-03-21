@@ -29,7 +29,6 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				return response;
 			}
 
-			// Fetch user - don't throw exception to prevent email enumeration
 			var user = await dBContext.Users
 				.Include(u => u.RefreshTokens)
 				.FirstOrDefaultAsync(u => u.Email.Address == request.Email, cancellationToken);
@@ -39,21 +38,18 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 			var hashToVerify = user?.PasswordHash ?? "$2a$12$dummyhashtopreventtimingattacksonemailenumeration";
 			var isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, hashToVerify);
 
-			// If user doesn't exist or password is invalid, return generic error
 			if (user == null || !isPasswordValid)
 			{
 				_logger.LogWarning("Failed login attempt for email: {Email}", request.Email);
-				return response; // Empty response - generic error to frontend
+				return response;
 			}
 
-			// Check email confirmation
 			if (!user.IsEmailConfirmed)
 			{
 				_logger.LogWarning("Login attempt with unconfirmed email: {Email}", request.Email);
-				return response; // Same generic error
+				return response;
 			}
 
-			// Revoke all existing refresh tokens for this user (security measure)
 			var refreshTokens = user.RefreshTokens;
 			if (refreshTokens != null)
 			{
@@ -65,7 +61,6 @@ namespace UserManagement.Application.CQRS.Handlers.CommandHandlers.UserCommandHa
 				}
 			}
 
-			// Successful login - generate new tokens
 			response.UserId = user.Id;
 			response.AccessToken = _refreshToken.GenerateAccessToken(user.Id, user.Email.Address, user.Role.ToString());
 			response.RefreshToken = _refreshToken.GenerateRefreshToken(user);

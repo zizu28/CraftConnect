@@ -2,11 +2,11 @@ using BookingManagement.Application.Extensions;
 using BookingManagement.Application.Services;
 using BookingManagement.Infrastructure.Extensions;
 using BookingManagement.Presentation;
-using Core.EventServices;
 using Core.Logging;
 using Core.SharedKernel.Contracts;
 using CraftConnect.ServiceDefaults;
 using Infrastructure.BackgroundJobs;
+using Infrastructure.Cache;
 using Infrastructure.EmailService;
 using Infrastructure.Persistence.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -25,10 +25,9 @@ builder.Services.AddBookingApplicationExtensions(builder.Configuration);
 builder.Host.ConfigureSerilog();
 builder.Services.AddBookingManagementConfiguration(builder.Configuration, builder.Environment);
 builder.Services.AddFluentEmailService(builder.Configuration);
-//builder.Services.AddHybridCacheService(builder.Configuration);
+builder.Services.AddHybridCacheService(builder.Configuration);
 builder.Services.AddBackgroundJobs(builder.Configuration);
 builder.Services.RegisterSerilog();
-builder.Services.AddMessageBroker(builder.Configuration);
 //builder.AddSqlServerDbContext<ApplicationDbContext>("CraftConnectDB"); // For Aspire orchestration
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

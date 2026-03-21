@@ -1,6 +1,5 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core.SharedKernel.DTOs;
-using Infrastructure.Cache;
 using MediatR;
 using UserManagement.Application.Contracts;
 using UserManagement.Application.CQRS.Queries.CraftmanQueries;
@@ -11,17 +10,13 @@ namespace UserManagement.Application.CQRS.Handlers.QueryHandlers.CraftmanQueryHa
 {
 	public class GetAllCraftmenQueryHandler(
 		IMapper mapper,
-		ICraftsmanRepository craftsmanRepository,
-		ICacheService cacheService)
+		ICraftsmanRepository craftsmanRepository)
 		: IRequestHandler<GetAllCraftmenQuery, IEnumerable<CraftmanResponseDTO>>
 	{
 		public async Task<IEnumerable<CraftmanResponseDTO>> Handle(GetAllCraftmenQuery request, CancellationToken cancellationToken)
 		{
-			var craftmen = await cacheService.GetOrCreateManyAsync<Craftman>(
-				CacheKeys.AllCraftsmen,
-				c => true,
-				cancellationToken)
-				?? throw new NotFoundException("Craftmen not found in database or cache.");
+			var craftmen = await craftsmanRepository.GetAllAsync(cancellationToken)
+				?? throw new NotFoundException("Craftmen not found in database.");
 
 			return mapper.Map<IEnumerable<CraftmanResponseDTO>>(craftmen);
 		}
