@@ -1,35 +1,69 @@
-﻿.feature-card {
+/* FeatureCard.razor.css — Premium Feature Card */
+
+.feature-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-7) var(--space-6);
     text-align: center;
-    padding: 24px;
+    transition: all var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
 }
 
-.icon-wrapper {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background-color: #EFF6FF; /* Blue-50 */
-    display: flex;
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    opacity: 0;
+    transition: opacity var(--transition-smooth);
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-lg);
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+.feature-icon {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 16px auto;
+    width: 56px;
+    height: 56px;
+    background: var(--accent-primary-subtle);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-5);
+    font-size: 1.5rem;
+    color: var(--accent-primary);
+    transition: all var(--transition-smooth);
 }
 
-    .icon-wrapper svg {
-        width: 28px;
-        height: 28px;
-        color: #3B82F6; /* Blue-500 */
-    }
+.feature-card:hover .feature-icon {
+    background: linear-gradient(135deg, var(--accent-primary), #9b7bfc);
+    color: #ffffff;
+    transform: scale(1.05);
+}
 
 .feature-card h3 {
-    font-size: 1.125rem; /* 18px */
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
     font-weight: 600;
-    color: #111827; /* Gray-900 */
-    margin: 0 0 8px 0;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-3) 0;
 }
 
 .feature-card p {
-    font-size: 0.9rem;
-    color: #4B5563; /* Gray-600 */
+    font-size: 0.875rem;
+    color: var(--text-secondary);
     line-height: 1.6;
     margin: 0;
 }

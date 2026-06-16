@@ -1,105 +1,118 @@
-﻿.admin-dashboard-container {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+/* AdminDashboard.razor.css — Premium Admin Dashboard */
+
+.admin-dashboard-container {
+    padding: var(--space-7);
+    max-width: 1400px;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease both;
 }
 
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: var(--space-7);
+    flex-wrap: wrap;
+    gap: var(--space-4);
 }
 
 .header-title h1 {
-    font-size: 2.25rem; /* 36px */
-    font-weight: 800;
-    color: #1E293B; /* Slate-800 */
-    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+    letter-spacing: -0.02em;
 }
 
 .last-updated {
-    font-size: 0.9rem;
-    color: #64748B; /* Slate-500 */
-    margin-top: 4px;
+    font-size: 0.775rem;
+    color: var(--text-muted);
 }
 
 .admin-search-bar {
-    position: relative;
-    width: 320px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: var(--bg-input);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    padding: 8px 14px;
+    min-width: 300px;
+    transition: border-color var(--transition-default), box-shadow var(--transition-default);
 }
 
-    .admin-search-bar svg {
-        position: absolute;
-        left: 14px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 20px;
-        height: 20px;
-        color: #9CA3AF; /* Gray-400 */
-    }
+.admin-search-bar:focus-within {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-primary-glow);
+}
 
-    .admin-search-bar input {
-        width: 100%;
-        padding: 12px 12px 12px 44px;
-        border: 1px solid #E2E8F0; /* Slate-200 */
-        border-radius: 8px;
-        font-size: 0.9rem;
-        background-color: #FFFFFF;
-    }
+.admin-search-bar i {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
 
-/* Stat Cards */
+.admin-search-bar input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+}
+
+.admin-search-bar input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Stat Cards Grid */
 .stat-cards-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    margin-bottom: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-5);
+    margin-bottom: var(--space-7);
 }
 
-/* Main Content Grid */
+/* Dashboard Grid */
 .dashboard-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 24px;
-    align-items: flex-start;
+    gap: var(--space-6);
 }
 
 .chart-card-large {
-    grid-column: span 1;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    transition: background-color var(--transition-theme), border-color var(--transition-theme);
 }
 
 .sidebar-cards {
-    grid-column: span 1;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: var(--space-5);
 }
 
-/* Responsive */
-@media (max-width: 1200px) {
+@media (max-width: 1024px) {
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 992px) {
-    .stat-cards-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
+@media (max-width: 640px) {
+    .admin-dashboard-container {
+        padding: var(--space-4);
     }
 
     .admin-search-bar {
+        min-width: auto;
         width: 100%;
     }
-}
 
-@media (max-width: 576px) {
-    .stat-cards-grid {
-        grid-template-columns: 1fr;
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
     }
 }

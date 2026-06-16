@@ -1,64 +1,10 @@
-﻿.btn-view-details {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-}
-
-.btn-decline {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-}
-
-/* Components/ServiceRequests.razor.css */
-
-.dashboard-section {
-    background-color: #ffffff;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    /* No bottom margin needed here as it's the last element in the left panel */
-}
-
-    .dashboard-section h3 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: 25px;
-        color: #333333;
-    }
-
-.request-card {
-    background-color: #fafafa; /* Lighter background than the container */
-    padding: 18px;
-    border-radius: 8px;
-    margin-bottom: 15px; /* Clear vertical spacing between cards */
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    border: 1px solid #f0f0f0;
-}
-
-    .request-card:last-child {
-        margin-bottom: 0;
-    }
-
-.request-title {
-    font-weight: 600;
-    margin-bottom: 5px;
-    color: #007bff;
-}
-
-.request-description {
-    font-size: 0.9rem;
-    color: #6c757d;
-}
-
-.request-actions {
-    display: flex;
-    gap: 10px;
-    flex-shrink: 0;
-}
+/* ServiceRequests.razor.css */
+.service-requests-list { display: flex; flex-direction: column; }
+.request-item { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); padding: var(--space-4) 0; border-bottom: 1px solid var(--border-subtle); }
+.request-item:last-child { border-bottom: none; }
+.request-info { flex: 1; min-width: 0; }
+.request-title { font-size: 0.9rem; font-weight: 600; color: var(--accent-primary); margin-bottom: 4px; }
+.request-description { font-size: 0.825rem; color: var(--text-muted); line-height: 1.5; }
+.request-actions { display: flex; gap: var(--space-2); flex-shrink: 0; }
+.request-actions button, .request-actions a { padding: 6px 14px; font-size: 0.8rem; font-weight: 500; border-radius: var(--radius-md); border: 1px solid var(--border-default); background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; text-decoration: none; transition: all var(--transition-default); }
+.request-actions button:hover, .request-actions a:hover { background: var(--accent-primary-subtle); border-color: var(--accent-primary); color: var(--accent-primary); }

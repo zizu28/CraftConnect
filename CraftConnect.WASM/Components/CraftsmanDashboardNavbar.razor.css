@@ -1,185 +1,170 @@
-﻿/* Components/CraftsmanDashboardNavbar.razor.css */
+/* CraftsmanDashboardNavbar.razor.css */
 
-.navbar-container.dashboard-nav {
-    background-color: #ffffff;
-    padding: 0 32px; /* Adjusted padding */
-    height: 72px;    /* Fixed height */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+.navbar-container {
     position: fixed;
-    width: 100%;
     top: 0;
     left: 0;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
+    right: 0;
+    z-index: 100;
+    background: var(--navbar-bg);
+    backdrop-filter: blur(var(--navbar-blur));
+    -webkit-backdrop-filter: blur(var(--navbar-blur));
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background-color var(--transition-theme), border-color var(--transition-theme);
 }
 
 .navbar-content {
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 var(--space-7);
+    height: 64px;
 }
 
-/* --- Brand Logo --- */
+/* Brand Logo */
 .brand-logo {
     display: flex;
     align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    color: #333333;
+    gap: 10px;
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
     font-weight: 700;
-    font-size: 1.5rem;
-    letter-spacing: -0.5px;
-    flex-shrink: 0;
+    color: var(--text-primary);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+    transition: color var(--transition-fast);
+}
+
+.brand-logo:hover {
+    color: var(--accent-primary);
 }
 
 .brand-logo img {
-    height: 36px;
-    width: auto;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
     object-fit: contain;
-    display: block;
 }
 
-/* --- Nav Links Area --- */
+/* Nav Links Group */
 .nav-links {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: var(--space-3);
 }
 
-/* --- User Actions Group --- */
-.user-actions {
-    display: flex;
+/* Proposal Button */
+.btn-proposal {
+    display: inline-flex;
     align-items: center;
-    gap: 15px;
-    padding-left: 15px;
-    border-left: 1px solid #eee; /* Visual separator */
-}
-
-/* Greeting Text */
-.user-greeting {
-    font-size: 0.9rem;
-    color: #555;
+    gap: 6px;
+    padding: 8px 18px;
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--accent-primary), #9b7bfc);
+    border: none;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-smooth);
+    box-shadow: 0 2px 8px rgba(124, 92, 252, 0.3);
     white-space: nowrap;
 }
 
+.btn-proposal:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(124, 92, 252, 0.45);
+    color: #ffffff;
+}
+
+.btn-proposal .btn-text {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .btn-proposal .btn-text {
+        display: inline;
+    }
+}
+
+/* User Actions */
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.user-greeting {
+    font-size: 0.825rem;
+    color: var(--text-secondary);
+    display: none;
+}
+
 .user-greeting strong {
-    color: #333;
+    color: var(--text-primary);
     font-weight: 600;
 }
 
-/* Logout Button */
-.btn-logout {
-    background: transparent;
-    border: 1px solid #fee2e2;
-    color: #dc2626; /* Red */
-    border-radius: 6px;
-    padding: 6px 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 1.1rem;
+@media (min-width: 992px) {
+    .user-greeting {
+        display: inline;
+    }
+}
+
+/* Icon Buttons */
+.btn-logout,
+.nav-icon-link {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all var(--transition-default);
+    text-decoration: none;
 }
 
 .btn-logout:hover {
-    background-color: #fef2f2;
-    border-color: #fca5a5;
+    color: var(--color-danger);
+    background: var(--color-danger-subtle);
+    border-color: rgba(248, 113, 113, 0.3);
 }
 
-/* Create Proposal Button */
-.btn-primary.btn-proposal {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-weight: 600;
-    text-decoration: none;
+.nav-icon-link:hover {
+    color: var(--accent-primary);
+    background: var(--accent-primary-subtle);
+    border-color: rgba(124, 92, 252, 0.3);
+}
+
+/* Profile Avatar */
+.profile-avatar-link {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.9rem;
 }
-
-.btn-primary.btn-proposal:hover {
-    background-color: #0056b3;
-}
-
-/* Icons and Avatar */
-.nav-icon-link i {
-    font-size: 1.3rem;
-    color: #666;
-    transition: color 0.2s;
-}
-.nav-icon-link:hover i { color: #007bff; }
 
 .profile-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--border-default);
     object-fit: cover;
-    border: 2px solid #fff;
-    box-shadow: 0 0 0 1px #e5e7eb;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-.profile-avatar:hover { transform: scale(1.05); }
-
-/* Theme Toggle */
-.theme-toggle-btn {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    color: #666;
-    cursor: pointer;
-    padding: 4px;
+    transition: border-color var(--transition-default);
 }
 
-/* =========================================
-   Responsive Breakpoints
-   ========================================= */
-
-@media (max-width: 992px) {
-    /* Hide Greeting on smaller desktops/tablets */
-    .user-greeting {
-        display: none;
-    }
+.profile-avatar:hover {
+    border-color: var(--accent-primary);
 }
 
-@media (max-width: 768px) {
-    .navbar-container.dashboard-nav {
-        padding: 0 16px;
+/* Responsive */
+@media (max-width: 640px) {
+    .navbar-content {
+        padding: 0 var(--space-4);
     }
-
-    .brand-logo { font-size: 1.3rem; }
-    .brand-logo img { height: 30px; }
-
-    /* Hide text inside "Create Proposal", show only + icon */
-    .btn-proposal .btn-text {
-        display: none;
-    }
-    
-    .nav-links {
-        gap: 10px;
-    }
-    
-    .user-actions {
-        gap: 10px;
-        padding-left: 10px;
-    }
-}
-
-@media (max-width: 576px) {
-    /* Hide Brand Text on mobile */
-    .brand-logo { 
-        gap: 0;
-        font-size: 0; /* Hides text */
-    }
-    .brand-logo img { height: 32px; } /* Keep icon */
 }

@@ -1,169 +1,161 @@
-﻿/* =========================================
-   1. Page Layout & Typography
-   ========================================= */
+/* EarningsAndPayments.razor.css — Premium Redesign */
+
 .earnings-page {
     max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 24px;
-    font-family: system-ui, -apple-system, sans-serif;
-    color: #1e293b; /* Slate-800 */
+    margin: 0 auto;
+    padding: var(--space-7);
+    animation: fadeIn 0.5s ease both;
 }
 
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 32px;
+    margin-bottom: var(--space-7);
     flex-wrap: wrap;
-    gap: 16px;
+    gap: var(--space-4);
 }
 
-h1 {
-    font-size: 2rem;
+.page-header h1 {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
     font-weight: 700;
+    color: var(--text-primary);
     margin: 0;
-    color: #0f172a; /* Slate-900 */
+    letter-spacing: -0.02em;
 }
 
-/* =========================================
-   2. Buttons & Inputs
-   ========================================= */
 .btn-export {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 20px;
-    background-color: #0284c7; /* Sky-600 */
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
+    padding: 9px 18px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all var(--transition-default);
 }
 
-    .btn-export:hover {
-        background-color: #0369a1; /* Sky-700 */
-    }
-
-.form-select {
-    padding: 10px 36px 10px 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    background-color: white;
-    font-size: 0.9rem;
-    color: #334155;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 16px;
-    min-width: 160px;
+.btn-export:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
 }
 
-/* =========================================
-   3. Stats Grid
-   ========================================= */
+/* Stat Grid */
 .stat-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-    margin-bottom: 32px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-5);
+    margin-bottom: var(--space-7);
 }
 
-/* =========================================
-   4. Filter Bar
-   ========================================= */
+/* Filter Bar */
 .filter-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    background-color: white;
-    padding: 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    margin-bottom: 24px;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
     flex-wrap: wrap;
 }
 
 .search-container {
-    position: relative;
-    flex: 1;
-    min-width: 250px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: var(--bg-input);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    padding: 8px 14px;
+    min-width: 260px;
+    transition: border-color var(--transition-default), box-shadow var(--transition-default);
+}
+
+.search-container:focus-within {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-primary-glow);
 }
 
 .search-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #94a3b8;
+    color: var(--text-muted);
+    font-size: 0.9rem;
 }
 
 .search-input {
-    width: 100%;
-    padding: 10px 12px 10px 36px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    background-color: #f8fafc;
-    box-sizing: border-box;
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
 }
 
-    .search-input:focus {
-        outline: none;
-        border-color: #0284c7;
-        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
-        background-color: white;
-    }
+.search-input::placeholder {
+    color: var(--text-muted);
+}
 
 .filter-group {
     display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+    gap: var(--space-3);
 }
 
-/* =========================================
-   5. Table Container & Pagination
-   ========================================= */
+.form-select {
+    padding: 8px 32px 8px 12px;
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition-default);
+    cursor: pointer;
+}
+
+.form-select:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-primary-glow);
+    outline: none;
+}
+
+/* Table Card */
 .table-card {
-    background-color: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    overflow: hidden; /* Rounds corners of table */
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    transition: background-color var(--transition-theme), border-color var(--transition-theme);
 }
 
+/* Pagination Footer */
 .pagination-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 24px;
-    border-top: 1px solid #e2e8f0;
-    background-color: #f8fafc;
+    margin-top: var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-subtle);
     flex-wrap: wrap;
-    gap: 16px;
+    gap: var(--space-3);
 }
 
 .pagination-info {
-    font-size: 0.85rem;
-    color: #64748b;
+    font-size: 0.825rem;
+    color: var(--text-muted);
 }
 
-    .pagination-info strong {
-        color: #0f172a;
-    }
+.pagination-info strong {
+    color: var(--text-primary);
+}
 
-/* =========================================
-   6. Responsiveness
-   ========================================= */
 @media (max-width: 768px) {
     .earnings-page {
-        padding: 0 16px;
-        margin-top: 24px;
+        padding: var(--space-4);
     }
 
     .filter-bar {
@@ -171,16 +163,11 @@ h1 {
         align-items: stretch;
     }
 
+    .search-container {
+        min-width: auto;
+    }
+
     .filter-group {
         flex-direction: column;
-    }
-
-    .form-select {
-        width: 100%;
-    }
-
-    .pagination-footer {
-        flex-direction: column;
-        align-items: flex-start;
     }
 }

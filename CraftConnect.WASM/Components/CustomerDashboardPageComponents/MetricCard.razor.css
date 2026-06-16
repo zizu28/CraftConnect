@@ -1,32 +1,9 @@
-﻿.metric-card {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Clear shadow for lifting effect */
-    border: 1px solid #f0f0f0; /* Subtle border */
-}
-
-.metric-title {
-    font-weight: 500;
-    color: #555555;
-    margin-bottom: 10px;
-}
-
-.metric-value-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.metric-value {
-    font-size: 2.2rem;
-    font-weight: 700;
-}
-
-.indicator {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    display: inline-block;
-}
-/* No explicit margins here, as the grid container manages separation */
+/* MetricCard.razor.css */
+.metric-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--space-6); position: relative; overflow: hidden; transition: all var(--transition-smooth); }
+.metric-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; opacity: 0; transition: opacity var(--transition-smooth); }
+.metric-card:hover { transform: translateY(-2px); border-color: var(--border-strong); box-shadow: var(--shadow-md); }
+.metric-card:hover::before { opacity: 1; }
+.metric-title { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: var(--space-2); }
+.metric-value-row { display: flex; align-items: center; gap: var(--space-3); }
+.metric-value { font-family: var(--font-heading); font-size: 2rem; font-weight: 700; color: var(--text-primary); }
+.metric-indicator { font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-full); background: var(--color-success-subtle); color: var(--color-success); }

@@ -1,178 +1,140 @@
-﻿.admin-sidebar {
-    width: 256px; /* 16rem */
+/* AdminSidebar.razor.css — Premium Admin Sidebar */
+
+.admin-sidebar {
+    width: 260px;
     flex-shrink: 0;
-    background-color: #FFFFFF;
-    border-right: 1px solid #E5E7EB; /* Gray-200 */
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 24px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: #111827;
+    height: 100vh;
     position: sticky;
     top: 0;
-    height: 100vh;
+    padding: var(--space-6) var(--space-4);
+    font-family: var(--font-body);
+    transition: background-color var(--transition-theme), border-color var(--transition-theme);
+    overflow-y: auto;
 }
 
-.sidebar-top {
+.admin-sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 0 var(--space-3) var(--space-5);
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: var(--space-5);
+}
+
+.admin-sidebar-header .logo {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+}
+
+.admin-sidebar-header .admin-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    background: var(--accent-primary-subtle);
+    color: var(--accent-primary);
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.admin-nav-section {
+    margin-bottom: var(--space-5);
+}
+
+.admin-nav-section-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0 var(--space-3);
+    margin-bottom: var(--space-2);
+}
+
+.admin-nav-links {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 2px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.user-profile {
+.admin-nav-item {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
+    padding: 9px var(--space-3);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: all var(--transition-default);
+    position: relative;
 }
 
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: #DBEAFE; /* Blue-100 */
-    color: #1E40AF; /* Blue-800 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 0.9rem;
+.admin-nav-item:hover {
+    background: var(--sidebar-item-hover);
+    color: var(--text-primary);
+}
+
+.admin-nav-item i {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+    color: var(--text-muted);
+    transition: color var(--transition-default);
     flex-shrink: 0;
 }
 
-.user-info {
-    display: flex;
-    flex-direction: column;
+.admin-nav-item:hover i {
+    color: var(--text-secondary);
 }
 
-.user-name {
-    font-size: 0.9rem;
+.admin-nav-item.active {
+    background: var(--sidebar-item-active);
+    color: var(--accent-primary);
     font-weight: 600;
-    color: #111827;
 }
 
-.user-title {
-    font-size: 0.875rem; /* 14px */
-    color: #6B7280; /* Gray-500 */
+.admin-nav-item.active i {
+    color: var(--accent-primary);
 }
 
-/* Navigation Links */
-.nav-links {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.admin-nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    background: var(--accent-primary);
+    border-radius: var(--radius-full);
 }
 
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
-    border-radius: 6px; /* Slightly rounded corners */
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #374151; /* Gray-700 */
-    transition: all 0.1s ease-in-out;
-}
-
-    .nav-item:hover {
-        background-color: #F3F4F6; /* Light gray on hover */
-        color: #111827;
-    }
-
-    .nav-item svg {
-        width: 20px;
-        height: 20px;
-        color: #6B7280; /* Default icon color */
-        flex-shrink: 0;
-    }
-
-    /* Active Nav Item State */
-    .nav-item.active {
-        background-color: #E0F2FE; /* Light Sky-100 from images */
-        color: #0369A1; /* Sky-700 from images */
-        font-weight: 600;
-    }
-
-        .nav-item.active svg {
-            color: #0369A1; /* Active icon color matches text */
-        }
-
-/* Bottom Links */
-.sidebar-bottom {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    border-top: 1px solid #F3F4F6; /* Slate-100 */
-    padding-top: 16px;
-}
-
-.btn-logout {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #374151; /* Gray-700 */
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-align: left;
-    transition: all 0.1s ease-in-out;
-}
-
-    .btn-logout:hover {
-        background-color: #F3F4F6;
-        color: #111827;
-    }
-
-    .btn-logout svg {
-        width: 20px;
-        height: 20px;
-        color: #6B7280;
-        flex-shrink: 0;
-    }
-
-    .btn-logout:hover svg {
-        color: #111827;
-    }
-
-/* Some images show a red logout, some blue. Using a neutral default. */
-/* For a specific color, add a class like .btn-logout-red */
-.btn-logout-red {
-    background-color: #FEF2F2; /* Red-50 */
-    color: #DC2626; /* Red-600 */
-}
-
-    .btn-logout-red:hover {
-        background-color: #FEE2E2; /* Red-100 */
-    }
-
-    .btn-logout-red svg {
-        color: #DC2626;
-    }
-
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .admin-sidebar {
-        width: 100%;
-        height: auto;
-        flex-direction: column;
-        padding: 16px;
-        position: static;
+        width: 64px;
+        padding: var(--space-4) var(--space-2);
     }
-
-    .sidebar-top {
-        gap: 16px;
+    .admin-sidebar-header .logo span,
+    .admin-nav-section-title,
+    .admin-nav-item span,
+    .admin-sidebar-header .admin-badge {
+        display: none;
     }
-
-    .sidebar-bottom {
-        padding-top: 16px;
-        margin-top: 16px;
+    .admin-nav-item {
+        justify-content: center;
+        padding: var(--space-3);
     }
 }

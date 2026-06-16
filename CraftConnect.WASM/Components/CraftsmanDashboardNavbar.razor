@@ -1,4 +1,4 @@
-﻿@using Core.SharedKernel.DTOs
+@using Core.SharedKernel.DTOs
 @using CraftConnect.WASM.Services
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
@@ -14,9 +14,9 @@
         </a>
         <div class="nav-links">
             <!-- Theme Toggle -->
-            @* <button class="btn theme-toggle-btn" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
-                <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon" : "bi-sun")"></i>
-            </button> *@
+            <button class="theme-toggle" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+                <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon-fill" : "bi-sun-fill")"></i>
+            </button>
 
             <!-- Create Proposal -->
             <a href="/proposal/create/@ProjectId" class="btn btn-primary btn-proposal">

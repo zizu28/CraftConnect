@@ -1,27 +1,7 @@
-﻿.status-label {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-.status-blue {
-    background-color: #DBEAFE; /* Blue-100 */
-    color: #1E40AF; /* Blue-800 */
-}
-
-.status-yellow {
-    background-color: #FEF9C3; /* Yellow-100 */
-    color: #854D0E; /* Amber-800 */
-}
-
-.status-green {
-    background-color: #DCFCE7; /* Green-100 */
-    color: #166534; /* Green-800 */
-}
-
-.status-gray {
-    background-color: #F3F4F6; /* Gray-100 */
-    color: #4B5563; /* Gray-600 */
-}
+/* StatusLabel.razor.css */
+.status-label { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; font-size: 0.75rem; font-weight: 600; border-radius: var(--radius-full); white-space: nowrap; }
+.status-open { background: var(--color-info-subtle); color: var(--color-info); }
+.status-in-progress { background: var(--color-warning-subtle); color: var(--color-warning); }
+.status-completed { background: var(--color-success-subtle); color: var(--color-success); }
+.status-cancelled { background: var(--color-danger-subtle); color: var(--color-danger); }
+.status-pending { background: var(--accent-primary-subtle); color: var(--accent-primary); }

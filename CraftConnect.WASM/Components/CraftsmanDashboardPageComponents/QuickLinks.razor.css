@@ -1,49 +1,7 @@
-﻿/* Components/QuickLinks.razor.css */
-
-.dashboard-section {
-    background-color: #ffffff;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    /* KEY: Margin to separate from the Earnings chart below */
-    margin-bottom: 30px;
-}
-
-    .dashboard-section h3 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: 25px;
-        color: #333333;
-    }
-
-.quick-links-list {
-    list-style: none;
-    padding: 0;
-}
-
-    .quick-links-list li {
-        margin-bottom: 15px; /* Clear spacing between links */
-    }
-
-        .quick-links-list li:last-child {
-            margin-bottom: 0;
-        }
-
-    .quick-links-list a {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: #333333;
-        text-decoration: none;
-        transition: color 0.2s;
-        font-weight: 500;
-    }
-
-        .quick-links-list a:hover {
-            color: #007bff;
-        }
-
-    .quick-links-list i {
-        font-size: 1.2rem;
-        color: #007bff;
-    }
+/* QuickLinks.razor.css */
+.quick-links-section { background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--space-5); }
+.quick-links-section h3 { font-family: var(--font-heading); font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-4); }
+.quick-links-list { display: flex; flex-direction: column; gap: var(--space-1); list-style: none; padding: 0; margin: 0; }
+.quick-links-list a { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-radius: var(--radius-md); color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: all var(--transition-default); }
+.quick-links-list a:hover { background: var(--sidebar-item-hover); color: var(--accent-primary); }
+.quick-links-list i { font-size: 1rem; color: var(--accent-primary); width: 20px; text-align: center; }

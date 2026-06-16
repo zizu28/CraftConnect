@@ -1,84 +1,9 @@
-﻿.inbox-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 16px;
-    background-color: #FFFFFF;
-    border: 1px solid #E5E7EB; /* Gray-200 */
-    border-radius: 8px;
-    transition: box-shadow 0.1s;
-    cursor: pointer;
-}
-
-    .inbox-item:hover {
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-    }
-
-.sender-avatar {
-    width: 36px;
-    height: 36px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 500;
-    font-size: 0.9rem;
-}
-
-.avatar-user {
-    background-color: #E0F2FE; /* Sky-100 */
-    color: #0369A1; /* Sky-800 */
-}
-
-.avatar-support {
-    background-color: #FEE2E2; /* Red-100 */
-    color: #991B1B; /* Red-800 */
-}
-
-.message-details {
-    flex-grow: 1;
-    overflow: hidden;
-}
-
-.message-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 2px;
-}
-
-.sender-name {
-    font-weight: 600;
-    color: #111827;
-    font-size: 0.9rem;
-}
-
-.message-time {
-    font-size: 0.75rem; /* 12px */
-    color: #6B7280; /* Gray-500 */
-}
-
-.message-excerpt {
-    font-size: 0.875rem;
-    color: #6B7280;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 0;
-}
-
-    .message-excerpt.unread {
-        color: #111827; /* Gray-900 */
-        font-weight: 500;
-    }
-
-.unread-dot {
-    width: 8px;
-    height: 8px;
-    background-color: #F59E0B; /* Amber-500 */
-    border-radius: 50%;
-    flex-shrink: 0;
-    margin-top: 6px;
-    margin-left: auto;
-}
+/* InboxPreview.razor.css */
+.inbox-item { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); transition: all var(--transition-default); cursor: pointer; border: 1px solid transparent; }
+.inbox-item:hover { background: var(--bg-tertiary); border-color: var(--border-subtle); }
+.inbox-item.unread { border-left: 3px solid var(--accent-primary); }
+.inbox-avatar { width: 36px; height: 36px; border-radius: var(--radius-full); background: var(--accent-primary-subtle); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--accent-primary); flex-shrink: 0; }
+.inbox-content { flex: 1; min-width: 0; }
+.inbox-sender { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+.inbox-excerpt { font-size: 0.775rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.inbox-time { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; flex-shrink: 0; }

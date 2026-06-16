@@ -1,15 +1,11 @@
-﻿@using CraftConnect.WASM.Services
+@using CraftConnect.WASM.Services
 @inherits LayoutComponentBase
 @inject ThemeService ThemeService
 @implements IDisposable
 
 <div class="page">
-    @* <div class="sidebar">
-        <NavMenu />
-    </div> *@
-
     <main>
-        <article class="content px-4">
+        <article class="content">
             @Body
         </article>
     </main>
@@ -22,9 +18,10 @@
 </div>
 
 @code {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         ThemeService.OnThemeChanged += OnThemeChangedHandler;
+        await ThemeService.InitializeAsync();
     }
 
     private void OnThemeChangedHandler()
