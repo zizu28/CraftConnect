@@ -1,48 +1,49 @@
-﻿/* ServiceRequests.razor.css */
+/* CustomerServiceRequests.razor.css — Design System Migration */
 
 /* --- Tab Navigation (Modern "Pill" Style) --- */
 .tab-nav {
     display: flex;
-    gap: 8px; /* Tighter gap for pill-style */
-    /* Remove the bottom border for a cleaner look */
-    /* border-bottom: 1px solid #D1D5DB; */
+    gap: 8px;
     margin-bottom: 24px;
 }
 
 .tab-item {
-    padding: 8px 16px; /* More padding for a "button" feel */
+    padding: 8px 16px;
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 500;
-    color: #374151; /* Gray-700 - slightly darker for better contrast */
-    border-radius: 6px; /* Rounded corners for the pill */
-    border-bottom: none; /* Remove the underline */
-    transition: all 0.1s ease-in-out;
+    font-family: var(--font-body);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    border-bottom: none;
+    transition: all var(--transition-fast);
 }
 
     .tab-item:hover {
-        color: #111827; /* Darker text on hover */
-        background-color: #F3F4F6; /* Gray-100 - subtle background on hover */
+        color: var(--text-primary);
+        background-color: var(--bg-tertiary);
     }
 
     .tab-item.active {
-        color: #4F46E5; /* Indigo-600 */
+        color: var(--accent-primary);
         font-weight: 600;
-        background-color: #EEF2FF; /* Indigo-50 - background for active */
-        border-bottom: none; /* Ensure no underline */
+        background-color: var(--accent-primary-subtle);
+        border-bottom: none;
     }
 
 /* --- Page Body --- */
 .page-title {
-    font-size: 1.875rem; /* 30px */
+    font-size: 1.875rem;
     font-weight: 700;
-    color: #111827; /* Gray-900 */
+    font-family: var(--font-heading);
+    color: var(--text-primary);
     margin-bottom: 24px;
+    letter-spacing: -0.02em;
 }
 
 @media (max-width: 768px) {
     .page-title {
-        font-size: 1.5rem; /* 24px */
+        font-size: 1.5rem;
         margin-bottom: 16px;
     }
 
@@ -53,6 +54,6 @@
 
     .tab-item {
         font-size: 0.85rem;
-        padding: 6px 12px; /* Smaller padding for mobile */
+        padding: 6px 12px;
     }
 }

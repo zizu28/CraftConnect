@@ -1,12 +1,14 @@
-﻿/* =========================================
+/* CustomerProfileEdit.razor.css — Design System Migration */
+
+/* =========================================
    1. Layout
    ========================================= */
 .profile-edit-container {
     max-width: 800px;
     margin: 40px auto;
     padding: 0 24px;
-    font-family: system-ui, -apple-system, sans-serif;
-    color: #1f2937;
+    font-family: var(--font-body);
+    color: var(--text-primary);
 }
 
 .header-section {
@@ -16,11 +18,14 @@
     .header-section h1 {
         font-size: 2rem;
         font-weight: 700;
+        font-family: var(--font-heading);
+        color: var(--text-primary);
         margin: 0 0 8px 0;
+        letter-spacing: -0.02em;
     }
 
     .header-section p {
-        color: #6b7280;
+        color: var(--text-muted);
         font-size: 1rem;
     }
 
@@ -28,21 +33,23 @@
    2. Card Sections
    ========================================= */
 .card-section {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-xl);
     padding: 24px;
     margin-bottom: 24px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
+    transition: background-color var(--transition-theme), border-color var(--transition-theme);
 }
 
 .section-title {
     font-size: 1.1rem;
     font-weight: 600;
+    font-family: var(--font-heading);
     margin-bottom: 20px;
     padding-bottom: 12px;
-    border-bottom: 1px solid #f3f4f6;
-    color: #111827;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-primary);
 }
 
 /* =========================================
@@ -60,9 +67,9 @@
     height: 100px;
     border-radius: 50%;
     overflow: hidden;
-    background-color: #f3f4f6;
-    border: 3px solid #ffffff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: var(--bg-tertiary);
+    border: 3px solid var(--bg-elevated);
+    box-shadow: var(--shadow-md);
 }
 
 .profile-avatar {
@@ -77,12 +84,12 @@
     left: 0;
     width: 100%;
     height: 35%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: var(--bg-overlay);
     display: flex;
     justify-content: center;
     align-items: center;
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: opacity var(--transition-default);
 }
 
 .avatar-wrapper:hover .upload-overlay {
@@ -103,12 +110,13 @@
 .photo-info h3 {
     font-size: 1rem;
     font-weight: 600;
+    color: var(--text-primary);
     margin: 0 0 4px 0;
 }
 
 .photo-info p {
     font-size: 0.85rem;
-    color: #6b7280;
+    color: var(--text-muted);
     margin: 0;
 }
 
@@ -126,7 +134,7 @@
 }
 
 .address-grid {
-    grid-template-columns: 1fr 1fr; /* City, State */
+    grid-template-columns: 1fr 1fr;
 }
 
 /* Inputs */
@@ -139,32 +147,39 @@
 label {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #374151;
+    color: var(--text-secondary);
 }
 
 .form-control {
     padding: 10px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
     font-size: 0.95rem;
-    background-color: #fff;
-    transition: all 0.2s;
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    background-color: var(--bg-input);
+    transition: all var(--transition-default);
+    outline: none;
 }
 
+    .form-control::placeholder {
+        color: var(--text-muted);
+    }
+
     .form-control:focus {
-        outline: none;
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px var(--accent-primary-glow);
+        background-color: var(--bg-secondary);
     }
 
     .form-control:disabled {
-        background-color: #f9fafb;
-        color: #6b7280;
+        background-color: var(--bg-tertiary);
+        color: var(--text-muted);
     }
 
 .input-hint {
     font-size: 0.8rem;
-    color: #6b7280;
+    color: var(--text-muted);
     margin-top: 2px;
 }
 
@@ -182,29 +197,34 @@ label {
     padding: 10px 20px;
     font-weight: 600;
     font-size: 0.9rem;
-    border-radius: 6px;
+    font-family: var(--font-body);
+    border-radius: var(--radius-sm);
     border: none;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all var(--transition-smooth);
 }
 
 .btn-secondary {
-    background-color: white;
-    border: 1px solid #d1d5db;
-    color: #374151;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-strong);
+    color: var(--text-primary);
 }
 
     .btn-secondary:hover {
-        background-color: #f9fafb;
+        background-color: var(--bg-tertiary);
+        border-color: var(--accent-primary);
+        color: var(--accent-primary);
     }
 
 .btn-primary {
-    background-color: #2563eb;
-    color: white;
+    background: linear-gradient(135deg, var(--accent-primary), #9b7bfc);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(124, 92, 252, 0.3);
 }
 
     .btn-primary:hover {
-        background-color: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(124, 92, 252, 0.45);
     }
 
 /* =========================================
@@ -212,7 +232,7 @@ label {
    ========================================= */
 @media (max-width: 640px) {
     .form-grid {
-        grid-template-columns: 1fr; /* Stack everything */
+        grid-template-columns: 1fr;
     }
 
     .profile-photo-card {

@@ -1,19 +1,21 @@
-﻿/* Proposals.razor.css */
+/* CustomerProposals.razor.css — Design System Migration */
 
 .header-with-filter {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
-    gap: 16px; /* Space between title and filter */
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
 .page-title {
-    font-size: 1.875rem; /* 30px */
+    font-size: 1.875rem;
     font-weight: 700;
-    color: #111827; /* Gray-900 */
-    margin: 0; /* Reset default margin */
+    font-family: var(--font-heading);
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.02em;
 }
 
 /* --- Filter Dropdown --- */
@@ -21,51 +23,50 @@
     position: relative;
     display: flex;
     align-items: center;
-    gap: 8px; /* Space between label and select */
+    gap: 8px;
 }
 
 .filter-label {
     font-size: 0.9rem;
-    color: #374151; /* Gray-700 */
+    color: var(--text-secondary);
     font-weight: 500;
 }
 
 select {
-    appearance: none; /* Remove default dropdown arrow */
+    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-color: #FFFFFF;
-    border: 1px solid #D1D5DB; /* Gray-300 */
-    border-radius: 6px;
-    padding: 8px 32px 8px 12px; /* Add space for custom arrow */
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    padding: 8px 32px 8px 12px;
     font-size: 0.9rem;
-    color: #111827;
+    font-family: var(--font-body);
+    color: var(--text-primary);
     cursor: pointer;
-    line-height: 1.5; /* Ensure consistent height */
+    line-height: 1.5;
+    transition: all var(--transition-default);
+    outline: none;
 }
 
     select:focus {
-        outline: none;
-        border-color: #4F46E5; /* Indigo-600 */
-        box-shadow: 0 0 0 1px #4F46E5;
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px var(--accent-primary-glow);
     }
 
 .dropdown-arrow-icon {
     position: absolute;
-    right: 12px; /* Position relative to .filter-dropdown, but aligned to select */
+    right: 12px;
     width: 20px;
     height: 20px;
-    color: #9CA3AF; /* Gray-400 */
-    pointer-events: none; /* Make icon unclickable */
+    color: var(--text-muted);
+    pointer-events: none;
 }
 
 /* Adjust arrow position if filter label exists */
 .filter-dropdown select + .dropdown-arrow-icon {
-    right: 12px; /* Default right position */
-    transform: translateX(calc(100% + 8px - 32px)); /* Move left by label and gap width, then position */
-    /* More reliably: Position relative to the select element for simpler calculation */
-    /* This calculation is tricky with dynamic gap and label. Let's just adjust right for the select. */
-    /* A more robust way would be to wrap select and icon in their own relative div */
+    right: 12px;
+    transform: translateX(calc(100% + 8px - 32px));
 }
 
 
@@ -79,20 +80,20 @@ select {
     }
 
     .page-title {
-        font-size: 1.5rem; /* 24px */
+        font-size: 1.5rem;
     }
 
     .filter-dropdown {
-        width: 100%; /* Make dropdown full width */
+        width: 100%;
         justify-content: space-between;
     }
 
     select {
-        flex-grow: 1; /* Allow select to take available space */
+        flex-grow: 1;
     }
 
     .filter-dropdown select + .dropdown-arrow-icon {
-        right: 12px; /* Reset position */
+        right: 12px;
         transform: none;
     }
 }

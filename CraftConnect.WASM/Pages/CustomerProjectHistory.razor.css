@@ -1,4 +1,6 @@
-﻿/* =========================================
+/* CustomerProjectHistory.razor.css — Design System Migration */
+
+/* =========================================
    1. Page Layout & Typography
    ========================================= */
 .project-history-page {
@@ -8,15 +10,17 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
-    font-family: system-ui, -apple-system, sans-serif;
-    color: #111827; /* Gray-900 */
+    font-family: var(--font-body);
+    color: var(--text-primary);
 }
 
 .page-title {
-    font-size: 1.875rem; /* 30px */
+    font-size: 1.875rem;
     font-weight: 700;
+    font-family: var(--font-heading);
     margin: 0;
-    color: #111827;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
 }
 
 /* =========================================
@@ -24,22 +28,23 @@
    ========================================= */
 .filter-bar {
     width: 100%;
-    background-color: #EFF6FF; /* Blue-50 */
-    border: 1px solid #DBEAFE; /* Blue-200 */
-    border-radius: 8px;
+    background-color: var(--accent-primary-subtle);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
     padding: 16px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* Allows wrapping on mobile */
+    flex-wrap: wrap;
     gap: 16px;
     box-sizing: border-box;
+    transition: background-color var(--transition-theme), border-color var(--transition-theme);
 }
 
 /* --- Search Input --- */
 .search-container {
     position: relative;
-    flex-grow: 1; /* Takes available space */
+    flex-grow: 1;
     min-width: 250px;
 }
 
@@ -49,25 +54,31 @@
     top: 50%;
     transform: translateY(-50%);
     font-size: 1rem;
-    color: #9CA3AF; /* Gray-400 */
+    color: var(--text-muted);
     pointer-events: none;
 }
 
 .search-input {
     width: 100%;
-    padding: 10px 10px 10px 40px; /* Left padding for icon */
-    border: 1px solid #D1D5DB; /* Gray-300 */
-    border-radius: 6px;
+    padding: 10px 10px 10px 40px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
     font-size: 0.95rem;
-    background-color: #FFFFFF;
-    transition: all 0.2s;
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    transition: all var(--transition-default);
     box-sizing: border-box;
+    outline: none;
 }
 
+    .search-input::placeholder {
+        color: var(--text-muted);
+    }
+
     .search-input:focus {
-        outline: none;
-        border-color: #0EA5E9; /* Sky-500 */
-        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px var(--accent-primary-glow);
     }
 
 /* --- Dropdowns --- */
@@ -83,22 +94,25 @@
 
 .form-select {
     width: 100%;
-    appearance: none; /* Hide default browser arrow */
+    appearance: none;
     -webkit-appearance: none;
-    background-color: #FFFFFF;
-    border: 1px solid #D1D5DB;
-    border-radius: 6px;
-    padding: 10px 32px 10px 12px; /* Right padding for custom arrow */
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    padding: 10px 32px 10px 12px;
     font-size: 0.9rem;
-    color: #374151;
+    font-family: var(--font-body);
+    color: var(--text-secondary);
     font-weight: 500;
     cursor: pointer;
     box-sizing: border-box;
+    transition: all var(--transition-default);
+    outline: none;
 }
 
     .form-select:focus {
-        outline: none;
-        border-color: #0EA5E9;
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px var(--accent-primary-glow);
     }
 
 .dropdown-arrow {
@@ -107,7 +121,7 @@
     top: 50%;
     transform: translateY(-50%);
     font-size: 0.8rem;
-    color: #9CA3AF;
+    color: var(--text-muted);
     pointer-events: none;
 }
 
@@ -122,9 +136,9 @@
 
 /* Empty State Card */
 .empty-state-card {
-    background-color: #FFFFFF;
-    border: 1px dashed #E5E7EB;
-    border-radius: 12px;
+    background-color: var(--bg-secondary);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-xl);
     padding: 48px 24px;
     display: flex;
     flex-direction: column;
@@ -132,30 +146,32 @@
     text-align: center;
     gap: 16px;
     margin-top: 20px;
+    transition: background-color var(--transition-theme);
 }
 
 .empty-icon-container {
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background-color: #F3F4F6;
-    color: #9CA3AF;
+    background-color: var(--bg-tertiary);
+    color: var(--text-muted);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem; /* Size of the Bootstrap Icon */
+    font-size: 2rem;
 }
 
 .empty-state-card h3 {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #111827;
+    font-family: var(--font-heading);
+    color: var(--text-primary);
     margin: 0;
 }
 
 .empty-state-card p {
     font-size: 0.95rem;
-    color: #6B7280;
+    color: var(--text-muted);
     line-height: 1.5;
     max-width: 400px;
     margin: 0;
@@ -166,17 +182,20 @@
     padding: 10px 20px;
     font-size: 0.9rem;
     font-weight: 600;
-    border-radius: 6px;
+    font-family: var(--font-body);
+    border-radius: var(--radius-md);
     border: none;
     cursor: pointer;
-    background-color: #0EA5E9; /* Sky-500 */
-    color: #FFFFFF;
-    transition: background-color 0.2s;
+    background: linear-gradient(135deg, var(--accent-primary), #9b7bfc);
+    color: #ffffff;
+    transition: all var(--transition-smooth);
     margin-top: 8px;
+    box-shadow: 0 2px 8px rgba(124, 92, 252, 0.3);
 }
 
     .btn-find-craftsman:hover {
-        background-color: #0284C7; /* Sky-600 */
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(124, 92, 252, 0.45);
     }
 
 /* =========================================
@@ -190,7 +209,7 @@
 
     .filter-bar {
         flex-direction: column;
-        align-items: stretch; /* Make children full width */
+        align-items: stretch;
         gap: 12px;
     }
 
