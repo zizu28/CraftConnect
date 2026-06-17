@@ -1,16 +1,16 @@
-﻿.chat-input-container {
+.chat-input-container {
     display: flex;
     align-items: flex-end; /* Align to bottom for textarea growth */
     padding: 16px 24px;
-    background-color: #FFFFFF;
-    border-top: 1px solid #E5E7EB;
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--border-default);
     gap: 12px;
 }
 
 textarea {
     flex-grow: 1;
-    border: 1px solid #D1D5DB;
-    border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
     padding: 10px 12px;
     font-size: 0.9rem;
     font-family: inherit;
@@ -22,8 +22,8 @@ textarea {
 
     textarea:focus {
         outline: none;
-        border-color: #0EA5E9; /* Sky-500 */
-        box-shadow: 0 0 0 1px #0EA5E9;
+        border-color: var(--accent-primary); /* Sky-500 */
+        box-shadow: 0 0 0 1px var(--accent-primary);
     }
 
 .icon-btn {
@@ -31,15 +31,15 @@ textarea {
     border: none;
     padding: 8px;
     border-radius: 50%;
-    color: #6B7280;
+    color: var(--text-muted);
     cursor: pointer;
     flex-shrink: 0;
     margin-bottom: 6px; /* Align with textarea bottom padding */
-    transition: background-color 0.1s;
+    transition: background-color var(--transition-fast);
 }
 
     .icon-btn:hover {
-        background-color: #F3F4F6;
+        background-color: var(--bg-secondary);
     }
 
     .icon-btn svg {
@@ -52,20 +52,20 @@ textarea {
     align-items: center;
     gap: 6px;
     padding: 10px 16px;
-    background-color: #0EA5E9; /* Sky-500 */
-    color: #FFFFFF;
+    background-color: var(--accent-primary); /* Sky-500 */
+    color: var(--text-inverse);
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
     flex-shrink: 0;
     margin-bottom: 1px; /* Align with textarea */
-    transition: background-color 0.1s;
+    transition: background-color var(--transition-fast);
 }
 
     .send-btn:hover {
-        background-color: #0284C7; /* Sky-600 */
+        background-color: var(--accent-primary-hover); /* Sky-600 */
     }
 
     .send-btn svg {

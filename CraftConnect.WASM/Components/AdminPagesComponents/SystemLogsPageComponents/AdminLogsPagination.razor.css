@@ -1,4 +1,4 @@
-﻿.pagination-nav {
+.pagination-nav {
     display: flex;
     gap: 8px;
     align-items: center;
@@ -17,34 +17,34 @@
     min-width: 36px;
     height: 36px;
     padding: 0 12px;
-    border: 1px solid #E2E8F0; /* Slate-200 */
-    background-color: #FFFFFF;
-    color: #475569; /* Slate-600 */
-    border-radius: 6px;
+    border: 1px solid var(--border-default); /* Slate-200 */
+    background-color: var(--bg-primary);
+    color: var(--text-secondary); /* Slate-600 */
+    border-radius: var(--radius-sm);
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast) ease;
 }
 
     .page-link:not(:disabled):hover {
-        background-color: #F8FAFC; /* Slate-50 */
-        color: #1E293B; /* Slate-800 */
+        background-color: var(--bg-secondary); /* Slate-50 */
+        color: var(--text-primary); /* Slate-800 */
     }
 
     .page-link.active {
-        background-color: #4F46E5; /* Indigo-600 */
-        color: #FFFFFF;
-        border-color: #4F46E5;
+        background-color: var(--accent-primary); /* Indigo-600 */
+        color: var(--text-inverse);
+        border-color: var(--accent-primary);
         z-index: 1;
     }
 
     .page-link:disabled {
-        color: #CBD5E1; /* Slate-300 */
+        color: var(--border-strong); /* Slate-300 */
         cursor: not-allowed;
     }
 
 .page-dots {
-    color: #475569; /* Slate-600 */
+    color: var(--text-secondary); /* Slate-600 */
     padding: 0 8px;
 }

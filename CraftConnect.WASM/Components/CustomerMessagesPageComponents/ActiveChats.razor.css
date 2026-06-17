@@ -1,10 +1,10 @@
-﻿.active-chat-wrapper {
+.active-chat-wrapper {
     display: flex;
     flex-direction: column;
     height: 100%;
     width: 100%;
     overflow: hidden; /* Keep content contained */
-    background-color: #F9FAFB; /* Gray-50 */
+    background-color: var(--bg-secondary); /* Gray-50 */
 }
 
 /* --- Chat Header --- */
@@ -13,8 +13,8 @@
     align-items: center;
     gap: 16px;
     padding: 12px 24px;
-    background-color: #FFFFFF;
-    border-bottom: 1px solid #E5E7EB;
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-default);
     flex-shrink: 0;
 }
 
@@ -24,12 +24,12 @@
     border: none;
     padding: 4px;
     border-radius: 50%;
-    color: #6B7280;
+    color: var(--text-muted);
     cursor: pointer;
 }
 
     .back-btn:hover {
-        background-color: #F3F4F6;
+        background-color: var(--bg-secondary);
     }
 
     .back-btn svg {
@@ -46,12 +46,12 @@
 .header-title {
     font-size: 1rem;
     font-weight: 600;
-    color: #111827;
+    color: var(--text-primary);
 }
 
 .header-subtitle {
     font-size: 0.8rem;
-    color: #6B7280;
+    color: var(--text-muted);
 }
 
 .header-actions {
@@ -63,7 +63,7 @@
 .action-link {
     font-size: 0.875rem;
     font-weight: 500;
-    color: #0EA5E9; /* Sky-500 */
+    color: var(--accent-primary); /* Sky-500 */
     text-decoration: none;
 }
 
@@ -76,12 +76,12 @@
     border: none;
     padding: 4px;
     border-radius: 50%;
-    color: #6B7280;
+    color: var(--text-muted);
     cursor: pointer;
 }
 
     .icon-btn:hover {
-        background-color: #F3F4F6;
+        background-color: var(--bg-secondary);
     }
 
     .icon-btn svg {

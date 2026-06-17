@@ -1,4 +1,4 @@
-﻿.project-details-card {
+.project-details-card {
     padding: 24px;
 }
 
@@ -10,14 +10,14 @@
 
 .detail-label {
     font-size: 0.875rem; /* 14px */
-    color: #6B7280; /* Gray-500 */
+    color: var(--text-muted); /* Gray-500 */
     margin-bottom: 4px;
     display: block;
 }
 
 .detail-value {
     font-size: 1rem; /* 16px */
-    color: #111827; /* Gray-900 */
+    color: var(--text-primary); /* Gray-900 */
     margin-bottom: 16px;
     font-weight: 500;
 }
@@ -33,8 +33,8 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #F3F4F6; /* Gray-100 */
-    color: #4B5563; /* Gray-600 */
+    background-color: var(--bg-secondary); /* Gray-100 */
+    color: var(--text-secondary); /* Gray-600 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -44,13 +44,13 @@
 .client-name {
     font-size: 1rem;
     font-weight: 500;
-    color: #111827;
+    color: var(--text-primary);
     display: block;
 }
 
 .client-meta {
     font-size: 0.875rem;
-    color: #6B7280;
+    color: var(--text-muted);
 }
 
 .project-link-button {
@@ -61,21 +61,21 @@
     width: 100%;
     padding: 10px;
     margin-top: 8px;
-    border: 1px solid #D1D5DB; /* Gray-300 */
-    border-radius: 6px;
-    background-color: #FFFFFF;
-    color: #374151; /* Gray-700 */
+    border: 1px solid var(--border-strong); /* Gray-300 */
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-primary);
+    color: var(--text-secondary); /* Gray-700 */
     font-weight: 500;
     text-decoration: none;
-    transition: background-color 0.1s ease-in-out;
+    transition: background-color var(--transition-fast);
 }
 
     .project-link-button:hover {
-        background-color: #F9FAFB; /* Gray-50 */
+        background-color: var(--bg-secondary); /* Gray-50 */
     }
 
     .project-link-button svg {
         width: 16px;
         height: 16px;
-        color: #6B7280;
+        color: var(--text-muted);
     }

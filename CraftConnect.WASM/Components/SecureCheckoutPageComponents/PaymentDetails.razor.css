@@ -1,9 +1,9 @@
-﻿.checkout-card {
-    background-color: #FFFFFF;
-    border: 1px solid #E5E7EB;
-    border-radius: 12px;
+.checkout-card {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
     padding: 24px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -12,7 +12,7 @@
 .card-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #111827;
+    color: var(--text-primary);
     margin: 0;
 }
 
@@ -25,7 +25,7 @@
     .form-group label {
         font-size: 0.875rem;
         font-weight: 500;
-        color: #374151; /* Gray-700 */
+        color: var(--text-secondary); /* Gray-700 */
         display: flex;
         align-items: center;
         gap: 4px;
@@ -34,24 +34,24 @@
 .info-icon {
     width: 14px;
     height: 14px;
-    color: #9CA3AF;
+    color: var(--text-muted);
 }
 
 .form-control {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #D1D5DB; /* Gray-300 */
-    border-radius: 6px;
-    background-color: #FFFFFF;
+    border: 1px solid var(--border-strong); /* Gray-300 */
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-primary);
     font-size: 0.9rem;
-    color: #111827;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
 }
 
     .form-control:focus {
         outline: none;
-        border-color: #0295D8; /* Blue */
-        box-shadow: 0 0 0 1px #0295D8;
+        border-color: var(--accent-primary); /* Blue */
+        box-shadow: 0 0 0 1px var(--accent-primary);
     }
 
 /* For icon in input */
@@ -66,7 +66,7 @@
         transform: translateY(-50%);
         width: 20px;
         height: 20px;
-        color: #9CA3AF;
+        color: var(--text-muted);
     }
 
     .input-icon-wrapper .form-control {

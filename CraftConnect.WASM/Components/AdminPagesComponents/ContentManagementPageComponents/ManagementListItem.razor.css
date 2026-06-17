@@ -1,11 +1,11 @@
-﻿.list-item-container {
+.list-item-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 12px;
-    background-color: #F8FAFC; /* Slate-50 */
-    border-radius: 6px;
-    border: 1px solid #F1F5F9; /* Slate-100 */
+    background-color: var(--bg-secondary); /* Slate-50 */
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-default); /* Slate-100 */
 }
 
 .item-info {
@@ -20,20 +20,20 @@
     justify-content: center;
     width: 36px;
     height: 36px;
-    border-radius: 6px;
-    background-color: #E0F2FE; /* Light Sky-100 */
+    border-radius: var(--radius-sm);
+    background-color: var(--accent-primary-subtle); /* Light Sky-100 */
 }
 
 .item-icon {
     width: 20px;
     height: 20px;
-    color: #0369A1; /* Sky-700 */
+    color: var(--accent-primary); /* Sky-700 */
 }
 
 .item-name {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #334155; /* Slate-700 */
+    color: var(--text-primary); /* Slate-700 */
 }
 
 .action-buttons {
@@ -49,20 +49,20 @@
     height: 32px;
     background: none;
     border: none;
-    border-radius: 6px;
-    color: #64748B; /* Slate-500 */
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary); /* Slate-500 */
     cursor: pointer;
-    transition: all 0.1s ease;
+    transition: all var(--transition-fast) ease;
 }
 
     .btn-icon:hover {
-        background-color: #E2E8F0; /* Slate-200 */
-        color: #1E293B; /* Slate-800 */
+        background-color: var(--bg-tertiary); /* Slate-200 */
+        color: var(--text-primary); /* Slate-800 */
     }
 
     .btn-icon.btn-delete:hover {
-        background-color: #FEE2E2; /* Red-100 */
-        color: #DC2626; /* Red-600 */
+        background-color: var(--color-danger-subtle); /* Red-100 */
+        color: var(--color-danger); /* Red-600 */
     }
 
     .btn-icon svg {

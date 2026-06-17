@@ -1,33 +1,33 @@
-﻿.log-badge {
+.log-badge {
     display: inline-block;
     padding: 3px 10px;
     font-size: 0.8rem;
     font-weight: 500;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     text-align: center;
 }
 
 .badge-blue {
-    background-color: #DBEAFE; /* Blue-100 */
-    color: #2563EB; /* Blue-600 */
+    background-color: var(--color-info-subtle); /* Blue-100 */
+    color: var(--color-info); /* Blue-600 */
 }
 
 .badge-indigo {
-    background-color: #E0E7FF; /* Indigo-100 */
-    color: #4F46E5; /* Indigo-600 */
+    background-color: var(--accent-primary-subtle); /* Indigo-100 */
+    color: var(--accent-primary); /* Indigo-600 */
 }
 
 .badge-red {
-    background-color: #FEE2E2; /* Red-100 */
-    color: #DC2626; /* Red-600 */
+    background-color: var(--color-danger-subtle); /* Red-100 */
+    color: var(--color-danger); /* Red-600 */
 }
 
 .badge-yellow {
-    background-color: #FEF3C7; /* Yellow-100 */
-    color: #D97706; /* Yellow-600 */
+    background-color: var(--color-warning-subtle); /* Yellow-100 */
+    color: var(--color-warning); /* Yellow-600 */
 }
 
 .badge-gray {
-    background-color: #F1F5F9; /* Slate-100 */
-    color: #475569; /* Slate-600 */
+    background-color: var(--bg-secondary); /* Slate-100 */
+    color: var(--text-secondary); /* Slate-600 */
 }

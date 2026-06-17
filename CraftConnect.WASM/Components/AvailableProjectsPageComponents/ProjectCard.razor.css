@@ -1,8 +1,8 @@
-﻿.project-card {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+.project-card {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -27,12 +27,12 @@
 .project-info h4 {
     font-size: 1.2rem;
     margin-bottom: 5px;
-    color: #007bff;
+    color: var(--accent-primary);
 }
 
 .description {
     font-size: 0.9rem;
-    color: #666;
+    color: var(--text-secondary);
     height: 60px; /* Constrain height */
     overflow: inherit;
 }
@@ -44,10 +44,10 @@
 
 .skill-tag {
     display: inline-block;
-    background-color: #f0f8ff;
-    color: #007bff;
+    background-color: var(--accent-primary-subtle);
+    color: var(--accent-primary);
     padding: 4px 8px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     font-size: 0.8rem;
     margin-right: 5px;
     margin-bottom: 5px;
@@ -55,7 +55,7 @@
 
 .project-details {
     margin-bottom: 20px;
-    border-top: 1px dashed #eee;
+    border-top: 1px dashed var(--border-subtle);
     padding-top: 15px;
     flex-grow: 1;
 }
@@ -65,12 +65,12 @@
     align-items: center;
     gap: 10px;
     font-size: 0.9rem;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 
     .detail-row i {
-        color: #007bff;
+        color: var(--accent-primary);
         font-size: 1rem;
     }
 
@@ -82,21 +82,21 @@
 
 .btn-view-details {
     background-color: transparent;
-    color: #007bff;
-    border: 1px solid #007bff;
+    color: var(--accent-primary);
+    border: 1px solid var(--accent-primary);
     padding: 10px 15px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     flex-grow: 1;
     font-weight: 600;
     cursor: pointer;
 }
 
 .btn-submit-proposal {
-    background-color: #ffc107;
-    color: #333;
+    background-color: var(--color-warning);
+    color: var(--text-primary);
     border: none;
     padding: 10px 15px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     flex-grow: 1;
     font-weight: 600;
     cursor: pointer;

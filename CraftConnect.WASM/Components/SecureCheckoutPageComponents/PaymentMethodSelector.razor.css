@@ -1,15 +1,15 @@
-﻿.checkout-card {
-    background-color: #FFFFFF;
-    border: 1px solid #E5E7EB;
-    border-radius: 12px;
+.checkout-card {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
     padding: 24px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
 }
 
 .card-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #111827;
+    color: var(--text-primary);
     margin: 0 0 16px 0;
 }
 
@@ -24,16 +24,16 @@
     align-items: center;
     gap: 12px;
     padding: 16px;
-    border: 1px solid #D1D5DB; /* Gray-300 */
-    border-radius: 8px;
+    border: 1px solid var(--border-strong); /* Gray-300 */
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
 }
 
     .payment-option.selected {
-        border-color: #0295D8; /* Blue */
-        background-color: #F0F9FF; /* Light Blue */
-        box-shadow: 0 0 0 1px #0295D8;
+        border-color: var(--accent-primary); /* Blue */
+        background-color: var(--accent-primary-subtle); /* Light Blue */
+        box-shadow: 0 0 0 1px var(--accent-primary);
     }
 
     .payment-option input[type="radio"] {
@@ -46,7 +46,7 @@
 .radio-display {
     width: 20px;
     height: 20px;
-    border: 2px solid #D1D5DB;
+    border: 2px solid var(--border-strong);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -55,14 +55,14 @@
 }
 
 .payment-option.selected .radio-display {
-    border-color: #0295D8;
+    border-color: var(--accent-primary);
 }
 
 .radio-display:after {
     content: '';
     width: 10px;
     height: 10px;
-    background-color: #0295D8;
+    background-color: var(--accent-primary);
     border-radius: 50%;
     transform: scale(0);
     transition: transform 0.1s;
@@ -76,11 +76,11 @@
     flex-grow: 1;
     font-size: 0.9rem;
     font-weight: 500;
-    color: #374151;
+    color: var(--text-secondary);
 }
 
 .option-icon {
     width: 24px;
     height: 24px;
-    color: #9CA3AF; /* Gray-400 */
+    color: var(--text-muted); /* Gray-400 */
 }

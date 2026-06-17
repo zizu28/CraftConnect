@@ -1,21 +1,21 @@
-﻿.table-card-container {
-    background-color: #FFFFFF;
-    border: 1px solid #E2E8F0; /* Slate-200 */
-    border-radius: 8px;
+.table-card-container {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-default); /* Slate-200 */
+    border-radius: var(--radius-sm);
     padding: 24px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
 }
 
 .chart-title {
     font-size: 1.125rem; /* 18px */
     font-weight: 600;
-    color: #1E293B; /* Slate-800 */
+    color: var(--text-primary); /* Slate-800 */
     margin: 0 0 4px 0;
 }
 
 .table-description {
     font-size: 0.9rem;
-    color: #64748B; /* Slate-500 */
+    color: var(--text-muted); /* Slate-500 */
     margin: 0 0 24px 0;
 }
 
@@ -30,21 +30,21 @@
 
     .craftsmen-table th {
         padding: 12px 16px;
-        background-color: #F8FAFC; /* Slate-50 */
+        background-color: var(--bg-secondary); /* Slate-50 */
         text-align: left;
         font-size: 0.75rem; /* 12px */
         font-weight: 600;
-        color: #64748B; /* Slate-500 */
+        color: var(--text-muted); /* Slate-500 */
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        border-bottom: 1px solid #E2E8F0; /* Slate-200 */
+        border-bottom: 1px solid var(--border-default); /* Slate-200 */
     }
 
     .craftsmen-table td {
         padding: 16px 16px;
-        border-bottom: 1px solid #E2E8F0; /* Slate-200 */
+        border-bottom: 1px solid var(--border-default); /* Slate-200 */
         font-size: 0.9rem;
-        color: #334155; /* Slate-700 */
+        color: var(--text-secondary); /* Slate-700 */
         vertical-align: middle;
     }
 
@@ -57,7 +57,7 @@
     align-items: center;
     gap: 12px;
     font-weight: 600;
-    color: #1E293B; /* Slate-800 */
+    color: var(--text-primary); /* Slate-800 */
 }
 
 .avatar {
@@ -77,12 +77,12 @@
     align-items: center;
     gap: 4px;
     font-weight: 500;
-    color: #475569; /* Slate-600 */
+    color: var(--text-muted); /* Slate-600 */
     font-variant-numeric: tabular-nums;
 }
 
     .cell-rating svg {
         width: 16px;
         height: 16px;
-        color: #F59E0B; /* Amber-500 */
+        color: var(--color-warning); /* Amber-500 */
     }
