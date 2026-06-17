@@ -1,4 +1,4 @@
-﻿/* =========================================
+/* =========================================
    1. Base Layout
    ========================================= */
 .top-bar {
@@ -8,8 +8,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 32px;
-    background-color: #FFFFFF;
-    border-bottom: 1px solid #E5E7EB; /* Gray-200 */
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-default); /* Gray-200 */
     box-sizing: border-box;
 }
 
@@ -28,26 +28,27 @@
     top: 50%;
     transform: translateY(-50%);
     font-size: 1rem;
-    color: #9CA3AF; /* Gray-400 */
+    color: var(--text-muted); /* Gray-400 */
     pointer-events: none;
 }
 
 .search-input {
     width: 100%;
     padding: 10px 12px 10px 40px; /* Left padding for icon */
-    border: 1px solid #D1D5DB; /* Gray-300 */
-    border-radius: 8px;
+    border: 1px solid var(--border-strong); /* Gray-300 */
+    border-radius: var(--radius-sm);
     font-size: 0.95rem;
-    background-color: #F9FAFB; /* Gray-50 (Subtle background) */
-    transition: all 0.2s ease-in-out;
+    background-color: var(--bg-secondary); /* Gray-50 (Subtle background) */
+    transition: all var(--transition-fast);
     box-sizing: border-box;
+    color: var(--text-primary);
 }
 
     .search-input:focus {
         outline: none;
-        border-color: #4F46E5; /* Indigo-600 */
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        background-color: #FFFFFF;
+        border-color: var(--accent-primary); /* Indigo-600 */
+        box-shadow: 0 0 0 3px var(--accent-primary-glow);
+        background-color: var(--bg-primary);
     }
 
 /* =========================================
@@ -62,11 +63,11 @@
 
 .welcome-text {
     font-size: 0.9rem;
-    color: #4B5563; /* Gray-600 */
+    color: var(--text-secondary); /* Gray-600 */
 }
 
     .welcome-text strong {
-        color: #111827; /* Gray-900 */
+        color: var(--text-primary); /* Gray-900 */
         font-weight: 600;
     }
 
@@ -76,19 +77,19 @@
     border: none;
     cursor: pointer;
     font-size: 1.2rem;
-    color: #6B7280;
+    color: var(--text-muted);
     position: relative;
     padding: 6px;
-    border-radius: 6px;
-    transition: background-color 0.2s, color 0.2s;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
     .icon-btn:hover {
-        background-color: #F3F4F6;
-        color: #111827;
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
     }
 
 .notification-dot {
@@ -97,19 +98,19 @@
     right: 6px;
     width: 8px;
     height: 8px;
-    background-color: #EF4444; /* Red */
+    background-color: var(--color-danger); /* Red */
     border-radius: 50%;
-    border: 2px solid #FFFFFF;
+    border: 2px solid var(--bg-primary);
 }
 
 /* Logout Specific */
 .logout-btn {
-    color: #DC2626; /* Red-600 */
+    color: var(--color-danger); /* Red-600 */
 }
 
     .logout-btn:hover {
-        background-color: #FEF2F2;
-        color: #B91C1C;
+        background-color: var(--color-danger-subtle, #FEF2F2);
+        color: var(--color-danger-hover, #B91C1C);
     }
 
 /* =========================================
@@ -127,15 +128,15 @@
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background-color: #FDBA74; /* Orange-300 */
-    color: #7C2D12; /* Orange-900 */
+    background-color: var(--color-warning-subtle, #FDBA74); /* Orange-300 */
+    color: var(--color-warning-dark, #7C2D12); /* Orange-900 */
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
     font-size: 0.95rem;
-    border: 2px solid #FFFFFF;
-    box-shadow: 0 0 0 1px #E5E7EB;
+    border: 2px solid var(--bg-primary);
+    box-shadow: 0 0 0 1px var(--border-default);
 }
 
 /* =========================================

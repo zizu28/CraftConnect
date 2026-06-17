@@ -1,13 +1,13 @@
-﻿.message-card-container {
+.message-card-container {
     padding: 12px 0;
     margin: 0 0 5px 0; /* Space below each message */
-    border-bottom: 1px solid #f0f0f0; /* Clear row separation */
+    border-bottom: 1px solid var(--border-subtle); /* Clear row separation */
     cursor: pointer;
-    transition: background-color 0.1s;
+    transition: background-color var(--transition-fast);
 }
 
     .message-card-container:hover {
-        background-color: #fcfcfc; /* Subtle visual feedback on hover */
+        background-color: var(--bg-secondary); /* Subtle visual feedback on hover */
     }
 
     .message-card-container:last-child {
@@ -40,18 +40,18 @@
 }
 
 .online-indicator {
-    color: #28a745; /* Green dot for online status */
+    color: var(--color-success); /* Green dot for online status */
     font-size: 0.7rem;
 }
 
 .time-ago {
     font-size: 0.8rem;
-    color: #999;
+    color: var(--text-muted);
 }
 
 .snippet {
     font-size: 0.9rem;
-    color: #6c757d;
+    color: var(--text-secondary);
     /* Indent snippet text to align with the main text flow */
     margin-left: 45px;
 }

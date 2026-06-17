@@ -1,10 +1,10 @@
-﻿/* Components/ProposalPreviews.razor.css */
+/* Components/ProposalPreviews.razor.css */
 
 .proposals-section {
-    background-color: #ffffff;
+    background-color: var(--bg-primary);
     padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
     /* Ensure the whole card is clearly defined */
     margin-bottom: 30px;
 }
