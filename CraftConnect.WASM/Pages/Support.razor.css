@@ -1,12 +1,14 @@
-﻿/* =========================================
+/* Support.razor.css — Design System Migration */
+
+/* =========================================
    1. Page Layout
    ========================================= */
 .support-page-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 40px 24px;
-    font-family: system-ui, -apple-system, sans-serif;
-    color: #1f2937; /* Gray-800 */
+    font-family: var(--font-body);
+    color: var(--text-primary);
 }
 
 /* --- Hero Section --- */
@@ -18,13 +20,14 @@
     .hero-section h1 {
         font-size: 2.5rem;
         font-weight: 700;
-        color: #111827;
+        font-family: var(--font-heading);
+        color: var(--text-primary);
         margin: 0 0 12px 0;
     }
 
     .hero-section p {
         font-size: 1.1rem;
-        color: #4b5563; /* Gray-600 */
+        color: var(--text-secondary);
         margin: 0;
     }
 
@@ -47,19 +50,20 @@
 
 /* Search Bar */
 .search-card {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
     padding: 16px 20px;
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-sm);
+    transition: background-color var(--transition-theme), border-color var(--transition-theme);
 }
 
 .search-icon {
     font-size: 1.2rem;
-    color: #9ca3af;
+    color: var(--text-muted);
 }
 
 .search-input {
@@ -67,11 +71,12 @@
     border: none;
     outline: none;
     font-size: 1rem;
-    color: #111827;
+    color: var(--text-primary);
+    background: transparent;
 }
 
     .search-input::placeholder {
-        color: #9ca3af;
+        color: var(--text-muted);
     }
 
 /* Tabs */
@@ -80,7 +85,7 @@
     overflow-x: auto;
     gap: 8px;
     padding-bottom: 8px;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border-default);
     margin-bottom: 16px;
 }
 
@@ -91,21 +96,21 @@
     cursor: pointer;
     font-size: 0.95rem;
     font-weight: 500;
-    color: #4b5563;
+    color: var(--text-secondary);
     border-bottom: 2px solid transparent;
-    transition: all 0.2s;
+    transition: all var(--transition-default);
     white-space: nowrap;
 }
 
     .tab-btn:hover {
-        color: #111827;
-        background-color: #f9fafb;
-        border-radius: 6px 6px 0 0;
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+        border-radius: var(--radius-sm) var(--radius-sm) 0 0;
     }
 
     .tab-btn.active {
-        color: #2563eb; /* Blue-600 */
-        border-bottom-color: #2563eb;
+        color: var(--accent-primary);
+        border-bottom-color: var(--accent-primary);
         font-weight: 600;
     }
 
@@ -118,7 +123,7 @@
 
 .no-results {
     text-align: center;
-    color: #6b7280;
+    color: var(--text-muted);
     margin-top: 20px;
     font-style: italic;
 }

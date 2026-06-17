@@ -1,26 +1,30 @@
-﻿.cookie-modal-overlay {
+/* CookiesConsent.razor.css — Design System Migration */
+
+.cookie-modal-overlay {
     position: fixed;
     inset: 0;
-    background-color: rgba(30, 27, 23, 0.6); /* Dark overlay */
+    background-color: var(--bg-overlay);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 5000;
     padding: 16px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--font-body);
 }
 
 .cookie-modal-card {
     width: 100%;
     max-width: 800px;
-    background-color: #FDFBF8; /* Light cream background */
-    border-radius: 12px;
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-lg);
     padding: 32px 40px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-xl);
     display: flex;
     flex-direction: column;
     gap: 24px;
-    color: #1E1B17; /* Dark text color */
+    color: var(--text-primary);
+    border: 1px solid var(--border-default);
+    transition: background-color var(--transition-theme), border-color var(--transition-theme);
 }
 
 /* --- Header --- */
@@ -33,12 +37,13 @@
     .modal-header h2 {
         font-size: 1.75rem; /* 28px */
         font-weight: 700;
+        font-family: var(--font-heading);
         margin: 0;
     }
 
     .modal-header p {
         font-size: 0.9rem;
-        color: #44403C; /* Muted text (Stone-700) */
+        color: var(--text-secondary);
         line-height: 1.5;
         margin: 0;
     }
@@ -55,9 +60,10 @@
     justify-content: space-between;
     align-items: flex-start;
     padding: 20px 24px;
-    background-color: #FFFFFF;
-    border: 1px solid #F0EAE4; /* Creamy border */
-    border-radius: 8px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-theme);
 }
 
 .cookie-details {
@@ -75,7 +81,7 @@
 
     .cookie-details p {
         font-size: 0.875rem; /* 14px */
-        color: #57534E; /* Stone-600 */
+        color: var(--text-muted);
         line-height: 1.5;
         margin: 0;
     }
@@ -86,7 +92,7 @@
     align-items: center;
     gap: 12px;
     padding-top: 24px;
-    border-top: 1px solid #F0EAE4; /* Creamy border */
+    border-top: 1px solid var(--border-default);
 }
 
 .btn {
@@ -94,49 +100,54 @@
     font-size: 0.875rem;
     font-weight: 500;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: all 0.1s;
+    transition: all var(--transition-fast);
+    font-family: var(--font-body);
 }
 
 .btn-primary {
-    background-color: #92400E; /* Dark Brown (Amber-900) */
-    color: #FFFFFF;
+    background: linear-gradient(135deg, var(--accent-primary), #9b7bfc);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(124, 92, 252, 0.3);
 }
 
     .btn-primary:hover {
-        background-color: #78350F; /* Darker Brown (Amber-950) */
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(124, 92, 252, 0.45);
     }
 
 .btn-secondary {
-    background-color: #E7E5E4; /* Stone-200 */
-    color: #44403C; /* Stone-700 */
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
 }
 
     .btn-secondary:hover {
-        background-color: #D6D3D1; /* Stone-300 */
+        background-color: var(--bg-elevated);
     }
 
 .btn-tertiary {
-    background-color: #FDFBF8; /* Light cream background */
-    color: #57534E; /* Stone-600 */
-    border: 1px solid #E7E5E4; /* Stone-200 */
+    background-color: var(--bg-secondary);
+    color: var(--text-muted);
+    border: 1px solid var(--border-default);
 }
 
     .btn-tertiary:hover {
-        background-color: #F5F5F4; /* Stone-100 */
+        background-color: var(--bg-tertiary);
     }
 
 .privacy-link {
     font-size: 0.875rem;
-    color: #92400E; /* Dark Brown (Amber-900) */
+    color: var(--accent-primary);
     text-decoration: none;
     font-weight: 500;
     margin-left: auto; /* Pushes to the right */
+    transition: color var(--transition-fast);
 }
 
     .privacy-link:hover {
         text-decoration: underline;
+        color: var(--text-link-hover);
     }
 
 /* --- Responsive --- */

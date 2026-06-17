@@ -1,12 +1,14 @@
-﻿/* =========================================
+/* PaymentHistory.razor.css — Design System Migration */
+
+/* =========================================
    1. Layout & Typography
    ========================================= */
 .payment-history-page {
     max-width: 1200px;
     margin: 40px auto;
     padding: 0 24px;
-    font-family: system-ui, -apple-system, sans-serif;
-    color: #1e293b; /* Slate-800 */
+    font-family: var(--font-body);
+    color: var(--text-primary);
 }
 
 .history-header {
@@ -22,12 +24,12 @@
     font-size: 2rem;
     font-weight: 700;
     margin: 0;
-    color: #0f172a;
+    color: var(--text-primary);
 }
 
 .header-text p {
     font-size: 1rem;
-    color: #64748b; /* Slate-500 */
+    color: var(--text-muted);
     margin: 4px 0 0 0;
 }
 
@@ -39,18 +41,18 @@
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
-    background-color: #e0e7ff; /* Indigo-100 */
-    color: #3730a3; /* Indigo-800 */
+    background-color: var(--accent-primary-subtle);
+    color: var(--accent-primary);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color var(--transition-default);
 }
 
     .btn-export:hover {
-        background-color: #c7d2fe; /* Indigo-200 */
+        background-color: var(--accent-primary-glow);
     }
 
 /* =========================================
@@ -61,10 +63,10 @@
     justify-content: space-between;
     align-items: center;
     gap: 16px;
-    background-color: #ffffff;
+    background-color: var(--bg-primary);
     padding: 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
     margin-bottom: 24px;
     flex-wrap: wrap;
 }
@@ -80,22 +82,25 @@
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: #94a3b8;
+    color: var(--text-muted);
 }
 
 .search-input {
     width: 100%;
     padding: 10px 12px 10px 36px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
     font-size: 0.95rem;
     box-sizing: border-box;
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    transition: all var(--transition-default);
 }
 
     .search-input:focus {
         outline: none;
-        border-color: #4f46e5; /* Indigo-600 */
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px var(--accent-primary-glow);
     }
 
 .dropdown-group {
@@ -108,15 +113,15 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--border-strong);
     padding: 0 12px;
-    border-radius: 8px;
-    background-color: #ffffff;
+    border-radius: var(--radius-md);
+    background-color: var(--bg-primary);
     height: 42px; /* Match input height */
 }
 
 .filter-icon {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 1.1rem;
 }
 
@@ -124,7 +129,7 @@
     border: none;
     background: transparent;
     font-size: 0.9rem;
-    color: #334155;
+    color: var(--text-secondary);
     font-weight: 500;
     cursor: pointer;
     padding: 8px 0;
@@ -139,11 +144,11 @@
    4. Table Container
    ========================================= */
 .table-card {
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow-sm);
 }
 
 /* =========================================

@@ -1,4 +1,4 @@
-﻿/* ServiceRequestDetails.razor.css */
+/* ServiceRequestDetails.razor.css — Design System Migration */
 
 /* --- Breadcrumbs --- */
 .breadcrumbs {
@@ -21,7 +21,7 @@
     }
 
     .breadcrumbs a {
-        color: #6B7280; /* Gray-500 */
+        color: var(--text-muted);
         text-decoration: none;
     }
 
@@ -32,11 +32,11 @@
     .breadcrumbs li:not(:last-child)::after {
         content: '/';
         margin-left: 8px;
-        color: #9CA3AF; /* Gray-400 */
+        color: var(--text-muted);
     }
 
     .breadcrumbs [aria-current="page"] {
-        color: #111827; /* Gray-900 */
+        color: var(--text-primary);
         font-weight: 500;
         pointer-events: none;
     }
@@ -74,7 +74,7 @@
 .project-title {
     font-size: 1.875rem; /* 30px */
     font-weight: 700;
-    color: #111827;
+    color: var(--text-primary);
     margin: 0;
     line-height: 1.3;
 }
@@ -82,20 +82,20 @@
 .status-badge {
     display: inline-block;
     padding: 4px 12px;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     font-size: 0.8rem;
     font-weight: 600;
     flex-shrink: 0;
 }
 
 .status-open {
-    background-color: #DCFCE7; /* Green-100 */
-    color: #166534; /* Green-800 */
+    background-color: var(--color-success-subtle);
+    color: var(--color-success);
 }
 
 .status-closed {
-    background-color: #F3F4F6; /* Gray-100 */
-    color: #4B5563; /* Gray-600 */
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
 }
 
 .action-buttons {
@@ -107,38 +107,39 @@
     padding: 10px 16px;
     font-size: 0.875rem;
     font-weight: 500;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     border: 1px solid transparent;
     cursor: pointer;
-    transition: all 0.1s ease-in-out;
+    transition: all var(--transition-fast);
 }
 
 .btn-primary {
-    background-color: #4F46E5; /* Indigo-600 */
-    color: #FFFFFF;
+    background: linear-gradient(135deg, var(--accent-primary), #9b7bfc);
+    color: #ffffff;
 }
 
     .btn-primary:hover {
-        background-color: #4338CA; /* Indigo-700 */
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(124, 92, 252, 0.45);
     }
 
 .btn-secondary {
-    background-color: #FFFFFF;
-    color: #374151; /* Gray-700 */
-    border-color: #D1D5DB; /* Gray-300 */
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    background-color: var(--bg-primary);
+    color: var(--text-secondary);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-sm);
 }
 
     .btn-secondary:hover {
-        background-color: #F9FAFB; /* Gray-50 */
+        background-color: var(--bg-secondary);
     }
 
 .details-card {
-    background-color: #FFFFFF;
-    border: 1px solid #E5E7EB;
-    border-radius: 8px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
     padding: 24px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -159,20 +160,20 @@
 .detail-item label {
     font-size: 0.8rem;
     font-weight: 500;
-    color: #6B7280; /* Gray-500 */
+    color: var(--text-muted);
     text-transform: uppercase;
 }
 
 .detail-item p {
     font-size: 0.9rem;
-    color: #374151; /* Gray-700 */
+    color: var(--text-secondary);
     line-height: 1.6;
     margin: 0;
 }
 
 .detail-item span {
     font-size: 0.9rem;
-    color: #111827; /* Gray-900 */
+    color: var(--text-primary);
     font-weight: 500;
 }
 
@@ -191,7 +192,7 @@
 /* --- Right Column: Sidebar --- */
 .sidebar-tabs {
     display: flex;
-    border-bottom: 2px solid #E5E7EB;
+    border-bottom: 2px solid var(--border-default);
 }
 
 .tab-item {
@@ -202,18 +203,18 @@
     border-bottom: 2px solid transparent;
     font-size: 0.9rem;
     font-weight: 500;
-    color: #6B7280; /* Gray-500 */
+    color: var(--text-muted);
     cursor: pointer;
-    transition: all 0.1s ease-in-out;
+    transition: all var(--transition-fast);
 }
 
     .tab-item:hover {
-        color: #374151;
+        color: var(--text-secondary);
     }
 
     .tab-item.active {
-        color: #4F46E5; /* Indigo-600 */
-        border-bottom-color: #4F46E5;
+        color: var(--accent-primary);
+        border-bottom-color: var(--accent-primary);
     }
 
 .proposals-list {
@@ -223,16 +224,16 @@
 }
 
 .sidebar-cta {
-    background-color: #F9FAFB; /* Gray-50 */
-    border: 1px solid #E5E7EB;
-    border-radius: 8px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
     padding: 20px;
     text-align: center;
 }
 
     .sidebar-cta p {
         font-size: 0.875rem;
-        color: #374151;
+        color: var(--text-secondary);
         line-height: 1.6;
         margin: 0 0 16px 0;
     }
@@ -242,17 +243,17 @@
     padding: 10px 16px;
     font-size: 0.875rem;
     font-weight: 500;
-    border-radius: 6px;
-    background-color: #FFFFFF;
-    color: #374151; /* Gray-700 */
-    border: 1px solid #D1D5DB; /* Gray-300 */
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-primary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-sm);
     cursor: pointer;
-    transition: all 0.1s ease-in-out;
+    transition: all var(--transition-fast);
 }
 
     .btn-secondary-cta:hover {
-        background-color: #F9FAFB; /* Gray-50 */
+        background-color: var(--bg-secondary);
     }
 
 

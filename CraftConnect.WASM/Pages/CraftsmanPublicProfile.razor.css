@@ -1,8 +1,10 @@
-﻿/* --- Container for the Tabs --- */
+/* CraftsmanPublicProfile.razor.css — Design System Migration */
+
+/* --- Container for the Tabs --- */
 .nav-tabs-container {
     width: 100%;
     /* Apply a light border at the bottom of the entire tab area */
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--border-default);
     margin-bottom: 30px;
     padding: 0 20px;
     box-sizing: border-box;
@@ -19,13 +21,10 @@
 
 .bottom-cta-container {
     width: 100%;
-    /* The magical gradient transition:
-    It starts as white/transparent at the top (0%) and fades to a light blue (#f0f8ff)
-    which matches the background color of the footer.
-    */
-    background: linear-gradient( to bottom, rgba(255, 255, 255, 0) 0%, /* Start completely transparent */
-    #f7f9fc 30%, /* Fade to very light grey */
-    #f0f8ff 100% /* Solid light blue at the bottom */
+    /* The gradient transition for CTA area */
+    background: linear-gradient( to bottom, transparent 0%,
+    var(--bg-secondary) 30%,
+    var(--bg-tertiary) 100%
     );
     /* Ensure content is centered and padded */
     padding: 60px 20px 0 20px;
@@ -37,36 +36,38 @@
     .bottom-cta-container .cta-title {
         font-size: 1.5rem;
         font-weight: 500;
-        color: #333;
+        color: var(--text-primary);
         margin-bottom: 5px;
     }
 
     .bottom-cta-container .cta-subtext {
-        color: #6c757d;
+        color: var(--text-muted);
         margin-bottom: 20px;
     }
 
     .bottom-cta-container .btn-contact {
-        background-color: #007bff;
-        color: white;
+        background: linear-gradient(135deg, var(--accent-primary), #9b7bfc);
+        color: #ffffff;
         border: none;
         padding: 12px 25px;
-        border-radius: 4px;
+        border-radius: var(--radius-sm);
         font-weight: 600;
         margin-bottom: 20px;
         cursor: pointer;
+        transition: all var(--transition-smooth);
+        box-shadow: 0 2px 8px rgba(124, 92, 252, 0.3);
     }
 
 .social-links i {
     font-size: 1.2rem;
-    color: #888;
+    color: var(--text-muted);
     margin: 0 10px;
     cursor: pointer;
-    transition: color 0.2s;
+    transition: color var(--transition-default);
 }
 
     .social-links i:hover {
-        color: #007bff;
+        color: var(--accent-primary);
     }
 
 
@@ -77,10 +78,10 @@
 /* Assuming Footer.razor renders a div with class 'site-footer' */
 .site-footer {
     /* Continuation of the gradient color */
-    background-color: #f0f8ff;
+    background-color: var(--bg-tertiary);
     padding: 20px 20px;
     text-align: center;
-    border-top: 1px solid #e0e7ed; /* Subtle separator line */
+    border-top: 1px solid var(--border-default);
 }
 
 .footer-content {
@@ -96,19 +97,19 @@
 }
 
     .footer-content a {
-        color: #555;
+        color: var(--text-secondary);
         text-decoration: none;
-        transition: color 0.2s;
+        transition: color var(--transition-default);
     }
 
         .footer-content a:hover {
-            color: #007bff;
+            color: var(--accent-primary);
         }
 
 .copyright {
     width: 100%; /* Ensure copyright text is centered below links */
     margin-top: 10px;
-    color: #777;
+    color: var(--text-muted);
 }
 
 /* --- Tab Button Styling and UX --- */
@@ -122,29 +123,29 @@
     cursor: pointer;
     font-size: 1.05rem;
     font-weight: 500;
-    color: #555;
+    color: var(--text-secondary);
     padding: 10px 20px 15px 20px;
     margin-right: 30px; /* Space between the tab buttons */
     /* Decoration and Transition */
     border-bottom: 3px solid transparent;
-    transition: color 0.2s, border-bottom 0.2s;
+    transition: color var(--transition-default), border-bottom var(--transition-default);
 }
 
     .tab-btn:hover {
-        color: #000;
+        color: var(--text-primary);
         /* Optional: Show a subtle border on hover */
-        border-bottom: 3px solid #f0f0f0;
+        border-bottom: 3px solid var(--border-subtle);
     }
 
-    /* --- Active Tab Styling (The Blue Indicator) --- */
+    /* --- Active Tab Styling (The Accent Indicator) --- */
     .tab-btn.active {
-        color: #007bff; /* Bright blue text */
+        color: var(--accent-primary);
         font-weight: 600;
-        border-bottom: 3px solid #007bff; /* Thick blue indicator line */
+        border-bottom: 3px solid var(--accent-primary);
     }
 
         .tab-btn.active:hover {
-            color: #007bff;
+            color: var(--accent-primary);
         }
 
 /* --- Responsive Adjustments --- */
@@ -178,11 +179,11 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: #6c757d; /* Muted color */
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 1rem;
     font-weight: 500;
-    transition: color 0.2s;
+    transition: color var(--transition-default);
 }
 
     .back-link i {
@@ -190,7 +191,7 @@
     }
 
     .back-link:hover {
-        color: #007bff; /* Primary color on hover for good UX */
+        color: var(--accent-primary);
     }
 
 /* Ensure the profile container has the necessary margin to accommodate the link */
