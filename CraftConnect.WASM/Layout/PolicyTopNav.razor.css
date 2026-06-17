@@ -1,7 +1,9 @@
-﻿.policy-nav-header {
+/* PolicyTopNav.razor.css — Design System Migration */
+
+.policy-nav-header {
     width: 100%;
-    background-color: #FFFFFF;
-    border-bottom: 1px solid #F3F4F6; /* Gray-100 */
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-default);
     padding: 0 48px;
     height: 64px;
 }
@@ -20,13 +22,13 @@
     align-items: center;
     gap: 8px;
     text-decoration: none;
-    color: #111827; /* Gray-900 */
+    color: var(--text-primary);
 }
 
 .logo-icon {
     width: 28px;
     height: 28px;
-    color: #3B82F6; /* Blue-500 */
+    color: var(--accent-primary);
 }
 
 .logo span {

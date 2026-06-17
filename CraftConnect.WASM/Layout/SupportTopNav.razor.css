@@ -1,7 +1,9 @@
-﻿.support-nav-header {
+/* SupportTopNav.razor.css — Design System Migration */
+
+.support-nav-header {
     width: 100%;
-    background-color: #FFFFFF;
-    border-bottom: 1px solid #E5E7EB; /* Gray-200 */
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-default);
     padding: 0 48px;
     height: 64px;
 }
@@ -21,13 +23,13 @@
     align-items: center;
     gap: 8px;
     text-decoration: none;
-    color: #111827; /* Gray-900 */
+    color: var(--text-primary);
 }
 
 .logo-icon {
     width: 28px;
     height: 28px;
-    color: #3B82F6; /* Blue-500 */
+    color: var(--accent-primary);
 }
 
 .logo span {
@@ -44,12 +46,12 @@
         text-decoration: none;
         font-size: 0.9rem;
         font-weight: 500;
-        color: #4B5563; /* Gray-600 */
-        transition: color 0.1s;
+        color: var(--text-secondary);
+        transition: color var(--transition-fast);
     }
 
         .nav-links a:hover {
-            color: #111827;
+            color: var(--text-primary);
         }
 
 .nav-spacer {
@@ -67,29 +69,32 @@
     font-size: 0.875rem;
     font-weight: 500;
     border: 1px solid transparent;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     text-decoration: none;
-    transition: all 0.1s;
+    transition: all var(--transition-fast);
 }
 
 .btn-primary {
-    background-color: #3B82F6; /* Blue-500 */
-    color: white;
+    background: linear-gradient(135deg, var(--accent-primary), #9b7bfc);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(124, 92, 252, 0.3);
 }
 
     .btn-primary:hover {
-        background-color: #2563EB; /* Blue-600 */
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(124, 92, 252, 0.45);
     }
 
 .btn-secondary {
-    background-color: #FFFFFF;
-    color: #374151; /* Gray-700 */
-    border-color: #D1D5DB; /* Gray-300 */
+    background-color: var(--bg-primary);
+    color: var(--text-secondary);
+    border-color: var(--border-strong);
 }
 
     .btn-secondary:hover {
-        background-color: #F9FAFB; /* Gray-50 */
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
     }
 
 .profile-link {
@@ -100,13 +105,13 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background-color: #F3F4F6; /* Placeholder color */
-    border: 1px solid #E5E7EB;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-default);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 500;
-    color: #6B7280;
+    color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {

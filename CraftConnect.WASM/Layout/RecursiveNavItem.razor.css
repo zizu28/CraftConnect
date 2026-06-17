@@ -1,22 +1,24 @@
-﻿.nav-item {
+/* RecursiveNavItem.razor.css — Design System Migration */
+
+.nav-item {
     display: block;
     padding: 6px 8px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     text-decoration: none;
     font-size: 0.875rem; /* 14px */
     font-weight: 500;
-    color: #4B5563; /* Gray-600 */
-    transition: all 0.1s ease-in-out;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
 }
 
     .nav-item:hover {
-        background-color: #F3F4F6; /* Gray-100 */
-        color: #111827;
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
     }
 
     .nav-item.active {
-        background-color: #E0E7FF; /* Indigo-100 */
-        color: #3730A3; /* Indigo-800 */
+        background-color: var(--bg-tertiary);
+        color: var(--accent-primary);
         font-weight: 600;
     }
 
@@ -33,17 +35,17 @@
     .nav-child-list .nav-item {
         font-size: 0.85rem;
         font-weight: 400;
-        color: #6B7280; /* Gray-500 */
+        color: var(--text-muted);
         padding: 4px 8px;
     }
 
         .nav-child-list .nav-item:hover {
-            background-color: #F3F4F6;
-            color: #111827;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
         }
 
         .nav-child-list .nav-item.active {
-            background-color: #E0E7FF;
-            color: #3730A3;
+            background-color: var(--bg-tertiary);
+            color: var(--accent-primary);
             font-weight: 500; /* Slightly less bold than parent */
         }

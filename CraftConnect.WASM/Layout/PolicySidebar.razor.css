@@ -1,7 +1,9 @@
-﻿.policy-sidebar {
+/* PolicySidebar.razor.css — Design System Migration */
+
+.policy-sidebar {
     width: 280px; /* Fixed width for sidebar */
     flex-shrink: 0;
-    background-color: #FFFFFF;
+    background-color: var(--bg-primary);
 }
 
 .sticky-nav {
@@ -10,7 +12,7 @@
     padding: 32px 0 32px 48px; /* Match content padding */
     height: calc(100vh - 64px); /* Full height minus nav */
     overflow-y: auto;
-    border-right: 1px solid #F3F4F6; /* Gray-100 */
+    border-right: 1px solid var(--border-default);
 }
 
     .sticky-nav ul {
@@ -27,38 +29,38 @@
     align-items: center;
     gap: 10px;
     padding: 8px 12px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     text-decoration: none;
     font-size: 0.875rem; /* 14px */
     font-weight: 500;
-    color: #4B5563; /* Gray-600 */
-    transition: all 0.1s ease-in-out;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
 }
 
 .nav-icon {
     width: 20px;
     height: 20px;
-    color: #9CA3AF; /* Gray-400 */
+    color: var(--text-muted);
     flex-shrink: 0;
 }
 
 .nav-item:hover {
-    background-color: #F9FAFB; /* Gray-50 */
-    color: #111827; /* Gray-900 */
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
 }
 
     .nav-item:hover .nav-icon {
-        color: #6B7280; /* Gray-500 */
+        color: var(--text-secondary);
     }
 
 .nav-item.active {
-    background-color: #F3F4F6; /* Gray-100 */
-    color: #111827; /* Gray-900 */
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
     font-weight: 600;
 }
 
     .nav-item.active .nav-icon {
-        color: #3B82F6; /* Blue-500 */
+        color: var(--accent-primary);
     }
 
 @media (max-width: 768px) {
@@ -72,7 +74,7 @@
         height: auto;
         padding: 0 24px 24px 24px;
         border-right: none;
-        border-bottom: 1px solid #F3F4F6;
+        border-bottom: 1px solid var(--border-default);
         overflow-y: visible;
     }
 

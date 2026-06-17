@@ -1,8 +1,10 @@
-﻿.settings-nav-header {
-    background-color: #FFFFFF;
-    border-bottom: 1px solid #E5E7EB; /* Gray-200 */
+/* NotificationSettingsTopNav.razor.css — Design System Migration */
+
+.settings-nav-header {
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-default);
     padding: 16px 24px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--font-body);
 }
 
 .nav-content {
@@ -18,13 +20,13 @@
     align-items: center;
     gap: 8px;
     text-decoration: none;
-    color: #111827; /* Gray-900 */
+    color: var(--text-primary);
 }
 
     .logo svg {
         width: 28px;
         height: 28px;
-        color: #111827; /* Gray-900 */
+        color: var(--text-primary);
     }
 
     .logo span {
@@ -41,32 +43,34 @@
 .nav-link {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #4B5563; /* Gray-600 */
+    color: var(--text-secondary);
     text-decoration: none;
     padding-bottom: 4px;
     border-bottom: 2px solid transparent;
+    transition: all var(--transition-fast);
 }
 
     .nav-link:hover {
-        color: #111827;
+        color: var(--text-primary);
     }
 
     .nav-link.active {
-        color: #111827;
+        color: var(--text-primary);
         font-weight: 600;
-        border-bottom-color: #F97316; /* Orange-500 */
+        border-bottom-color: var(--accent-primary);
     }
 
 .icon-btn {
     background: none;
     border: none;
     cursor: pointer;
-    color: #4B5563; /* Gray-600 */
+    color: var(--text-secondary);
     padding: 4px;
+    transition: color var(--transition-fast);
 }
 
     .icon-btn:hover {
-        color: #111827;
+        color: var(--text-primary);
     }
 
     .icon-btn svg {
@@ -78,8 +82,8 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background-color: #FDE68A; /* Yellow-200 */
-    border: none;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-default);
     cursor: pointer;
 }
 

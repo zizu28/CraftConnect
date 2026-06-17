@@ -1,8 +1,10 @@
-﻿.terms-footer {
+/* TermsFooter.razor.css — Design System Migration */
+
+.terms-footer {
     width: 100%;
     padding: 24px 0;
-    border-top: 1px solid #E5E7EB; /* Gray-200 */
-    background-color: #F9FAFB;
+    border-top: 1px solid var(--border-default);
+    background-color: var(--bg-secondary);
 }
 
 .footer-content {
@@ -15,7 +17,7 @@
     margin: 0 auto;
     padding: 0 48px;
     font-size: 0.875rem; /* 14px */
-    color: #6B7280; /* Gray-500 */
+    color: var(--text-muted);
 }
 
 .footer-links {
@@ -25,12 +27,13 @@
 
     .footer-links a {
         text-decoration: none;
-        color: #6B7280;
+        color: var(--text-muted);
+        transition: color var(--transition-fast);
     }
 
         .footer-links a:hover {
             text-decoration: underline;
-            color: #111827;
+            color: var(--text-primary);
         }
 
 @media (max-width: 768px) {

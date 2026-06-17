@@ -1,13 +1,15 @@
-﻿/* =========================================
+/* CraftedToNav.razor.css — Design System Migration */
+
+/* =========================================
    1. Header Layout
    ========================================= */
 .top-nav-header {
-    background-color: #FFFFFF;
-    border-bottom: 1px solid #E5E7EB;
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-default);
     position: sticky; /* Or fixed depending on layout needs */
     top: 0;
     z-index: 50;
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: var(--font-body);
 }
 
 .nav-content {
@@ -34,7 +36,7 @@
     align-items: center;
     gap: 10px;
     text-decoration: none;
-    color: #111827;
+    color: var(--text-primary);
 }
 
 .logo-img {
@@ -55,14 +57,14 @@
 
 .nav-link {
     text-decoration: none;
-    color: #4B5563; /* Gray-600 */
+    color: var(--text-secondary);
     font-weight: 500;
     font-size: 0.95rem;
-    transition: color 0.2s;
+    transition: color var(--transition-fast);
 }
 
     .nav-link:hover, .nav-link.active {
-        color: #2563EB; /* Blue-600 */
+        color: var(--accent-primary);
     }
 
 /* =========================================
@@ -78,39 +80,40 @@
     background: transparent;
     border: none;
     font-size: 1.25rem;
-    color: #6B7280;
+    color: var(--text-muted);
     cursor: pointer;
     position: relative;
     padding: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: color var(--transition-fast);
 }
 
     .icon-btn:hover {
-        color: #111827;
+        color: var(--text-primary);
     }
 
 .user-greeting {
     font-size: 0.9rem;
-    color: #555;
+    color: var(--text-secondary);
     white-space: nowrap;
 }
 
     .user-greeting strong {
-        color: #333;
+        color: var(--text-primary);
         font-weight: 600;
     }
 
 /* Logout Button */
 .btn-logout {
     background: transparent;
-    border: 1px solid #fee2e2;
-    color: #dc2626; /* Red */
-    border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    color: var(--color-danger); /* Red */
+    border-radius: var(--radius-sm);
     padding: 6px 10px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
     font-size: 1.1rem;
     display: flex;
     align-items: center;
@@ -118,8 +121,8 @@
 }
 
     .btn-logout:hover {
-        background-color: #fef2f2;
-        border-color: #fca5a5;
+        background-color: var(--bg-tertiary);
+        border-color: var(--color-danger);
     }
 
 .notification-dot {
@@ -128,9 +131,9 @@
     right: 4px;
     width: 8px;
     height: 8px;
-    background-color: #EF4444; /* Red */
+    background-color: var(--color-danger); /* Red */
     border-radius: 50%;
-    border: 1px solid #fff;
+    border: 1px solid var(--bg-primary);
 }
 
 .profile-btn {
@@ -147,14 +150,14 @@
 }
 
 .avatar-initials {
-    background-color: #DBEAFE; /* Blue-100 */
-    color: #1E40AF; /* Blue-800 */
+    background-color: var(--bg-secondary);
+    color: var(--accent-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
     font-size: 0.9rem;
-    border: 1px solid #BFDBFE;
+    border: 1px solid var(--border-default);
 }
 
 /* =========================================
@@ -165,20 +168,20 @@
 }
 
 .mobile-menu {
-    background-color: #FFFFFF;
-    border-bottom: 1px solid #E5E7EB;
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-default);
     padding: 16px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
 }
 
 .mobile-link {
     padding: 12px 16px;
     text-decoration: none;
-    color: #374151;
+    color: var(--text-secondary);
     font-weight: 500;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     margin-bottom: 4px;
     display: flex;
     align-items: center;
@@ -191,13 +194,14 @@
 }
 
     .mobile-link:hover {
-        background-color: #F3F4F6;
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
     }
 
 .logout-link {
-    color: #DC2626; /* Red */
+    color: var(--color-danger); /* Red */
     margin-top: 8px;
-    border-top: 1px solid #F3F4F6;
+    border-top: 1px solid var(--border-subtle);
     padding-top: 16px;
 }
 

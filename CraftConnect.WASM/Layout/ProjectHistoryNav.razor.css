@@ -1,7 +1,9 @@
-﻿.top-nav-header-history {
+/* ProjectHistoryNav.razor.css — Design System Migration */
+
+.top-nav-header-history {
     width: 100%;
-    background-color: #FFFFFF;
-    border-bottom: 1px solid #E5E7EB; /* Gray-200 */
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-default);
     padding: 0 24px;
     height: 72px; /* Slightly taller nav */
     display: flex;
@@ -31,13 +33,13 @@
     align-items: center;
     gap: 8px;
     text-decoration: none;
-    color: #111827; /* Gray-900 */
+    color: var(--text-primary);
 }
 
 .logo-icon-history {
     width: 28px;
     height: 28px;
-    color: #0EA5E9; /* Sky-500 from image */
+    color: var(--accent-primary);
 }
 
 .logo-text-history {
@@ -53,18 +55,18 @@
 .nav-link-history {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #374151; /* Gray-700 */
+    color: var(--text-secondary);
     text-decoration: none;
     padding: 4px 0;
-    transition: all 0.1s ease-in-out;
+    transition: all var(--transition-fast);
 }
 
     .nav-link-history:hover {
-        color: #0EA5E9; /* Sky-500 */
+        color: var(--accent-primary);
     }
 
     .nav-link-history.active {
-        color: #0EA5E9; /* Sky-500 */
+        color: var(--accent-primary);
         font-weight: 600;
     }
 
@@ -72,17 +74,18 @@
     padding: 10px 16px;
     font-size: 0.875rem;
     font-weight: 500;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     border: none;
     cursor: pointer;
-    transition: all 0.1s ease-in-out;
-    background-color: #0EA5E9; /* Sky-500 */
-    color: #FFFFFF;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all var(--transition-fast);
+    background: linear-gradient(135deg, var(--accent-primary), #9b7bfc);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(124, 92, 252, 0.3);
 }
 
     .btn-post-project:hover {
-        background-color: #0284C7; /* Sky-600 */
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(124, 92, 252, 0.45);
     }
 
 .profile-btn-history {
@@ -96,8 +99,8 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #FDBA74; /* Amber-300 */
-    color: #7C2D12; /* Amber-900 */
+    background-color: var(--bg-secondary);
+    color: var(--accent-primary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -108,9 +111,14 @@
 .icon-btn-history {
     background: transparent;
     border: none;
-    color: #6B7280;
+    color: var(--text-muted);
     cursor: pointer;
+    transition: color var(--transition-fast);
 }
+    
+    .icon-btn-history:hover {
+        color: var(--text-primary);
+    }
 
 .mobile-menu-btn-history {
     display: none;

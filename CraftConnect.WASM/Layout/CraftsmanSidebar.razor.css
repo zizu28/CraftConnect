@@ -1,10 +1,10 @@
-/* CraftsmanSidebar.razor.css */
+/* CraftsmanSidebar.razor.css — Design System Migration */
 
 .sidebar-craftsman {
     width: 260px;
     flex-shrink: 0;
-    background: var(--sidebar-bg);
-    border-right: 1px solid var(--sidebar-border);
+    background: var(--bg-primary); /* Changed to use standard token */
+    border-right: 1px solid var(--border-default); /* Changed to use standard token */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -35,7 +35,7 @@
     height: 40px;
     border-radius: var(--radius-full);
     flex-shrink: 0;
-    border: 2px solid var(--accent-primary-subtle);
+    border: 2px solid var(--accent-primary-glow);
     object-fit: cover;
     transition: border-color var(--transition-default);
 }
@@ -93,7 +93,7 @@
 }
 
 .nav-item:hover {
-    background: var(--sidebar-item-hover);
+    background: var(--bg-secondary);
     color: var(--text-primary);
 }
 
@@ -111,7 +111,7 @@
 }
 
 .nav-item.active {
-    background: var(--sidebar-item-active);
+    background: var(--bg-tertiary);
     color: var(--accent-primary);
     font-weight: 600;
 }
@@ -174,7 +174,7 @@
         align-items: center;
         padding: 0 var(--space-4);
         border-right: none;
-        border-bottom: 1px solid var(--sidebar-border);
+        border-bottom: 1px solid var(--border-default);
         position: fixed;
         top: 0;
         z-index: 50;

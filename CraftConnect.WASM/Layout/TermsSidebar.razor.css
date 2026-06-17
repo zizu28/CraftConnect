@@ -1,4 +1,6 @@
-﻿.terms-sidebar {
+/* TermsSidebar.razor.css — Design System Migration */
+
+.terms-sidebar {
     width: 280px; /* Fixed width */
     flex-shrink: 0;
     padding-left: 48px;
@@ -15,7 +17,7 @@
     .sticky-nav h5 {
         font-size: 0.75rem; /* 12px */
         font-weight: 600;
-        color: #6B7280; /* Gray-500 */
+        color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.05em;
         padding: 0 8px;
@@ -41,7 +43,7 @@
         top: 0;
         height: auto;
         overflow-y: visible;
-        border-bottom: 1px solid #E5E7EB;
+        border-bottom: 1px solid var(--border-default);
         padding-bottom: 16px;
     }
 
