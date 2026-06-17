@@ -1,17 +1,19 @@
-﻿.page-header {
+/* ContentManagement.razor.css — Design System Migration */
+
+.page-header {
     margin-bottom: 24px;
 }
 
     .page-header h1 {
         font-size: 2.25rem; /* 36px */
         font-weight: 800;
-        color: #1E293B; /* Slate-800 */
+        color: var(--text-primary);
         margin: 0 0 4px 0;
     }
 
     .page-header p {
         font-size: 1rem;
-        color: #64748B; /* Slate-500 */
+        color: var(--text-secondary);
         margin: 0;
     }
 
@@ -22,9 +24,9 @@
 }
 
 .management-card {
-    background-color: #FFFFFF;
-    border-radius: 8px;
-    border: 1px solid #E2E8F0; /* Slate-200 */
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
     padding: 24px;
 }
@@ -39,7 +41,7 @@
     .card-header h2 {
         font-size: 1.5rem; /* 24px */
         font-weight: 700;
-        color: #1E293B; /* Slate-800 */
+        color: var(--text-primary);
         margin: 0;
     }
 
@@ -48,18 +50,18 @@
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
-    background-color: #2563EB; /* Blue-600 from image */
-    color: white;
+    background-color: var(--accent-primary);
+    color: #ffffff;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-fast);
 }
 
     .btn-primary:hover {
-        background-color: #1D4ED8; /* Blue-700 */
+        background-color: var(--accent-primary-hover, #1D4ED8);
     }
 
     .btn-primary svg {
@@ -79,23 +81,24 @@
         transform: translateY(-50%);
         width: 20px;
         height: 20px;
-        color: #9CA3AF; /* Gray-400 */
+        color: var(--text-muted);
     }
 
     .card-search input {
         width: 100%;
         padding: 10px 10px 10px 40px;
-        border: 1px solid #E2E8F0; /* Slate-200 */
+        border: 1px solid var(--border-strong);
         border-radius: 6px;
         font-size: 0.9rem;
-        background-color: #F8FAFC; /* Slate-50 */
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
     }
 
         .card-search input:focus {
             outline: none;
-            background-color: #FFFFFF;
-            border-color: #2563EB; /* Blue-600 */
-            box-shadow: 0 0 0 1px #2563EB;
+            background-color: var(--bg-primary);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 1px var(--accent-primary);
         }
 
 .item-list {

@@ -1,5 +1,7 @@
-﻿.dispute-categories-container {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+/* DisputesCategoryManagement.razor.css — Design System Migration */
+
+.dispute-categories-container {
+    font-family: var(--font-body);
 }
 
 .page-header {
@@ -12,13 +14,13 @@
     .page-header h1 {
         font-size: 2.25rem; /* 36px */
         font-weight: 800;
-        color: #1E293B; /* Slate-800 */
+        color: var(--text-primary);
         margin: 0;
     }
 
 .page-description {
     font-size: 1rem; /* 16px */
-    color: #64748B; /* Slate-500 */
+    color: var(--text-secondary);
     margin: 0 0 24px 0;
 }
 
@@ -27,18 +29,18 @@
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
-    background-color: #4F46E5; /* Indigo-600 */
-    color: white;
+    background-color: var(--accent-primary);
+    color: #ffffff;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-fast);
 }
 
     .btn-primary:hover {
-        background-color: #4338CA; /* Indigo-700 */
+        background-color: var(--accent-primary-hover, #4338CA);
     }
 
     .btn-primary svg {
@@ -49,9 +51,9 @@
 /* Search Bar */
 .search-bar-container {
     padding: 16px;
-    background-color: #FFFFFF;
-    border-radius: 8px;
-    border: 1px solid #E2E8F0; /* Slate-200 */
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
     margin-bottom: 24px;
 }
 
@@ -67,28 +69,30 @@
     transform: translateY(-50%);
     width: 20px;
     height: 20px;
-    color: #9CA3AF; /* Gray-400 */
+    color: var(--text-muted);
 }
 
 .search-input {
     width: 100%;
     padding: 10px 10px 10px 40px;
-    border: 1px solid #E2E8F0; /* Slate-200 */
+    border: 1px solid var(--border-strong);
     border-radius: 6px;
     font-size: 0.9rem;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
 }
 
     .search-input:focus {
         outline: none;
-        border-color: #4F46E5; /* Indigo-600 */
-        box-shadow: 0 0 0 1px #4F46E5;
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 1px var(--accent-primary);
     }
 
 /* Table */
 .table-container {
-    background-color: #FFFFFF;
-    border-radius: 8px;
-    border: 1px solid #E2E8F0; /* Slate-200 */
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
     overflow: hidden;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
@@ -100,21 +104,21 @@
 
     .categories-table th {
         padding: 12px 24px;
-        background-color: #F8FAFC; /* Slate-50 */
+        background-color: var(--bg-secondary);
         text-align: left;
         font-size: 0.75rem; /* 12px */
         font-weight: 600;
-        color: #64748B; /* Slate-500 */
+        color: var(--text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        border-bottom: 1px solid #E2E8F0; /* Slate-200 */
+        border-bottom: 1px solid var(--border-strong);
     }
 
     .categories-table td {
         padding: 16px 24px;
-        border-bottom: 1px solid #E2E8F0; /* Slate-200 */
+        border-bottom: 1px solid var(--border-strong);
         font-size: 0.9rem;
-        color: #334155; /* Slate-700 */
+        color: var(--text-primary);
         vertical-align: middle;
     }
 
@@ -124,11 +128,11 @@
 
 .cell-name {
     font-weight: 600;
-    color: #1E293B; /* Slate-800 */
+    color: var(--text-primary);
 }
 
 .cell-description {
-    color: #475569; /* Slate-600 */
+    color: var(--text-muted);
     width: 50%; /* Give description more space */
 }
 
@@ -151,19 +155,19 @@
     }
 
 .btn-edit {
-    color: #4F46E5; /* Indigo-600 */
+    color: var(--accent-primary);
 }
 
     .btn-edit:hover {
-        color: #4338CA; /* Indigo-700 */
+        color: var(--accent-primary-hover, #4338CA);
     }
 
 .btn-delete {
-    color: #DC2626; /* Red-600 */
+    color: var(--color-danger);
 }
 
     .btn-delete:hover {
-        color: #B91C1C; /* Red-700 */
+        color: var(--color-danger-hover, #B91C1C);
     }
 
 /* Pagination Footer */

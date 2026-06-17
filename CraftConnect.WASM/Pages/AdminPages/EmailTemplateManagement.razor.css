@@ -1,5 +1,7 @@
-﻿.email-template-container {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+/* EmailTemplateManagement.razor.css — Design System Migration */
+
+.email-template-container {
+    font-family: var(--font-body);
     height: calc(100vh - 80px); /* Full height minus top bar */
     display: flex;
     flex-direction: column;
@@ -9,13 +11,13 @@
 .page-header h1 {
     font-size: 2.25rem; /* 36px */
     font-weight: 800;
-    color: #1E293B; /* Slate-800 */
+    color: var(--text-primary);
     margin: 0;
 }
 
 .page-description {
     font-size: 1rem;
-    color: #64748B; /* Slate-500 */
+    color: var(--text-secondary);
     margin: 8px 0 24px 0;
 }
 
@@ -31,9 +33,9 @@
 
 /* Column 1: Template List */
 .template-list-column {
-    background-color: #FFFFFF;
+    background-color: var(--bg-primary);
     border-radius: 12px;
-    border: 1px solid #F1F5F9; /* Slate-100 */
+    border: 1px solid var(--border-default);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     padding: 20px;
     display: flex;
@@ -47,18 +49,18 @@
     justify-content: center;
     gap: 8px;
     padding: 12px;
-    background-color: #3B82F6; /* Blue-500 */
-    color: white;
+    background-color: var(--accent-primary);
+    color: #ffffff;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-fast);
 }
 
     .btn-primary:hover {
-        background-color: #2563EB; /* Blue-600 */
+        background-color: var(--accent-primary-hover, #2563EB);
     }
 
     .btn-primary svg {
@@ -78,16 +80,17 @@
         transform: translateY(-50%);
         width: 20px;
         height: 20px;
-        color: #9CA3AF; /* Gray-400 */
+        color: var(--text-muted);
     }
 
     .search-input-wrapper input {
         width: 100%;
         padding: 12px 12px 12px 44px;
-        border: 1px solid #E2E8F0; /* Slate-200 */
-        border-radius: 8px;
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-sm);
         font-size: 0.9rem;
-        background-color: #F8FAFC; /* Slate-50 */
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
     }
 
 .template-list {
@@ -101,27 +104,28 @@
     align-items: flex-start;
     gap: 16px;
     padding: 16px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     border: 1px solid transparent;
+    transition: background-color var(--transition-fast);
 }
 
     .template-item:hover {
-        background-color: #F8FAFC; /* Slate-50 */
+        background-color: var(--bg-secondary);
     }
 
     .template-item.active {
-        background-color: #EFF6FF; /* Blue-50 */
-        border-color: #BFDBFE; /* Blue-200 */
+        background-color: var(--accent-primary-subtle);
+        border-color: var(--accent-primary-glow);
     }
 
 .template-icon {
     flex-shrink: 0;
     width: 36px;
     height: 36px;
-    border-radius: 8px;
-    background-color: #F1F5F9; /* Slate-100 */
-    color: #64748B; /* Slate-500 */
+    border-radius: var(--radius-sm);
+    background-color: var(--border-default);
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -133,8 +137,8 @@
     }
 
 .template-item.active .template-icon {
-    background-color: #DBEAFE; /* Blue-100 */
-    color: #3B82F6; /* Blue-500 */
+    background-color: var(--accent-primary-glow);
+    color: var(--accent-primary);
 }
 
 .template-details {
@@ -145,12 +149,12 @@
 .template-title {
     font-size: 0.9rem;
     font-weight: 600;
-    color: #1E293B; /* Slate-800 */
+    color: var(--text-primary);
 }
 
 .template-description {
     font-size: 0.875rem;
-    color: #64748B; /* Slate-500 */
+    color: var(--text-secondary);
 }
 
 /* Column 2: Template Editor */
@@ -161,9 +165,9 @@
 }
 
 .editor-card {
-    background-color: #FFFFFF;
+    background-color: var(--bg-primary);
     border-radius: 12px;
-    border: 1px solid #F1F5F9; /* Slate-100 */
+    border: 1px solid var(--border-default);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     flex-grow: 1;
     display: flex;
@@ -184,7 +188,7 @@
     .form-group label {
         font-size: 0.875rem; /* 14px */
         font-weight: 500;
-        color: #334155; /* Slate-700 */
+        color: var(--text-primary);
         margin-bottom: 8px;
         display: block;
     }
@@ -192,10 +196,11 @@
 .form-control {
     width: 100%;
     padding: 12px;
-    border: 1px solid #CBD5E1; /* Slate-300 */
+    border: 1px solid var(--border-subtle);
     border-radius: 6px;
     font-size: 0.9rem;
-    background-color: #FFFFFF;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
 }
 
 .wysiwyg-toolbar {
@@ -203,23 +208,24 @@
     flex-wrap: wrap;
     gap: 8px;
     padding: 12px;
-    background-color: #F8FAFC; /* Slate-50 */
-    border: 1px solid #CBD5E1; /* Slate-300 */
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
     border-bottom: none;
     border-radius: 6px 6px 0 0;
 }
 
 .toolbar-btn {
-    background: #FFFFFF;
-    border: 1px solid #CBD5E1; /* Slate-300 */
+    background: var(--bg-primary);
+    border: 1px solid var(--border-subtle);
     border-radius: 4px;
     padding: 6px;
     cursor: pointer;
-    color: #334155; /* Slate-700 */
+    color: var(--text-primary);
+    transition: background-color var(--transition-fast);
 }
 
     .toolbar-btn:hover {
-        background-color: #F1F5F9; /* Slate-100 */
+        background-color: var(--bg-secondary);
     }
 
     .toolbar-btn svg {
@@ -239,8 +245,8 @@ textarea.form-control {
 
 .editor-footer {
     padding: 20px 24px;
-    border-top: 1px solid #F1F5F9; /* Slate-100 */
-    background-color: #F8FAFC; /* Slate-50 */
+    border-top: 1px solid var(--border-default);
+    background-color: var(--bg-secondary);
     display: flex;
     justify-content: flex-end;
     gap: 12px;
@@ -249,48 +255,48 @@ textarea.form-control {
 .btn {
     padding: 10px 16px;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .btn-secondary {
-    background-color: #FFFFFF;
-    color: #334155; /* Slate-7700 */
-    border: 1px solid #CBD5E1; /* Slate-300 */
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-subtle);
 }
 
     .btn-secondary:hover {
-        background-color: #F8FAFC; /* Slate-50 */
+        background-color: var(--bg-secondary);
     }
 
 .btn-secondary-gray {
-    background-color: #E2E8F0; /* Slate-200 */
-    color: #334155; /* Slate-700 */
+    background-color: var(--border-strong);
+    color: var(--text-primary);
 }
 
     .btn-secondary-gray:hover {
-        background-color: #CBD5E1; /* Slate-300 */
+        background-color: var(--border-subtle);
     }
 
 .btn-danger {
-    background-color: #EF4444; /* Red-500 */
-    color: #FFFFFF;
+    background-color: var(--color-danger);
+    color: #ffffff;
 }
 
     .btn-danger:hover {
-        background-color: #DC2626; /* Red-600 */
+        opacity: 0.9;
     }
 
 .btn-success {
-    background-color: #16A34A; /* Green-600 */
-    color: #FFFFFF;
+    background-color: var(--color-success);
+    color: #ffffff;
 }
 
     .btn-success:hover {
-        background-color: #15803D; /* Green-700 */
+        opacity: 0.9;
     }
 
 .empty-state {
@@ -299,7 +305,7 @@ textarea.form-control {
     align-items: center;
     justify-content: center;
     height: 100%;
-    color: #94A3B8; /* Slate-400 */
+    color: var(--text-muted);
 }
 
     .empty-state svg {

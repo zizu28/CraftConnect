@@ -1,22 +1,23 @@
-﻿/* =========================================
+/* AvailableProjects.razor.css — Design System Migration */
+
+/* =========================================
    PAGE LAYOUT
    ========================================= */
 
 .main-dashboard-container {
     display: grid;
-    /* Sidebar is fixed 280px on desktop, Results take the rest */
     grid-template-columns: 280px 1fr;
     max-width: 1400px;
-    margin: 90px auto 40px; /* Accounts for fixed navbar height */
+    margin: 90px auto 40px;
     gap: 40px;
     padding: 0 40px;
-    font-family: system-ui, -apple-system, sans-serif;
-    color: #1f2937;
+    font-family: var(--font-body);
+    color: var(--text-primary);
 }
 
 .results-area {
     width: 100%;
-    min-width: 0; /* Prevents grid blowout */
+    min-width: 0;
 }
 
 /* =========================================
@@ -29,20 +30,22 @@
     align-items: flex-end;
     margin-bottom: 30px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #e5e7eb;
-    flex-wrap: wrap; /* Wraps on mobile */
+    border-bottom: 1px solid var(--border-default);
+    flex-wrap: wrap;
     gap: 16px;
 }
 
 .header-text h1 {
     font-size: 2rem;
     font-weight: 700;
+    font-family: var(--font-heading);
     margin: 0 0 8px 0;
-    color: #111827;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
 }
 
 .header-text p {
-    color: #6b7280;
+    color: var(--text-muted);
     font-size: 1rem;
     margin: 0;
 }
@@ -55,20 +58,27 @@
 
     .sort-control label {
         font-weight: 500;
-        color: #374151;
+        color: var(--text-secondary);
         font-size: 0.9rem;
     }
 
     .sort-control select {
         padding: 8px 36px 8px 12px;
-        border-radius: 8px;
-        border: 1px solid #d1d5db;
-        background-color: #fff;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-default);
+        background-color: var(--bg-primary);
         font-size: 0.9rem;
-        color: #1f2937;
+        font-family: var(--font-body);
+        color: var(--text-primary);
         cursor: pointer;
-        /* Custom arrow logic handled by browser or add svg background here */
+        transition: all var(--transition-default);
+        outline: none;
     }
+
+        .sort-control select:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-primary-glow);
+        }
 
 /* =========================================
    RESULTS GRID
@@ -76,14 +86,13 @@
 
 .projects-grid {
     display: grid;
-    /* Smart responsive grid: Cards are min 350px wide */
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 24px;
     margin-bottom: 40px;
 }
 
 /* =========================================
-   EMPTY STATE / LOADING (Unified Style)
+   EMPTY STATE / LOADING
    ========================================= */
 
 .loading-state,
@@ -94,9 +103,10 @@
     align-items: center;
     min-height: 400px;
     text-align: center;
-    background-color: #f9fafb;
-    border-radius: 12px;
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-xl);
     padding: 40px;
+    transition: background-color var(--transition-theme);
 }
 
 .empty-state-card {
@@ -107,8 +117,8 @@
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background-color: #eff6ff;
-    color: #3b82f6;
+    background: var(--accent-primary-subtle);
+    color: var(--accent-primary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -119,45 +129,46 @@
 .empty-state-card h3 {
     font-size: 1.25rem;
     font-weight: 700;
+    font-family: var(--font-heading);
     margin-bottom: 8px;
-    color: #1f2937;
+    color: var(--text-primary);
 }
 
 .empty-state-card p {
-    color: #6b7280;
+    color: var(--text-muted);
     line-height: 1.5;
     margin-bottom: 20px;
 }
 
 .btn-primary-action {
-    background-color: #2563eb;
-    color: white;
+    background: linear-gradient(135deg, var(--accent-primary), #9b7bfc);
+    color: #ffffff;
     padding: 10px 20px;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     border: none;
     font-weight: 600;
+    font-family: var(--font-body);
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all var(--transition-smooth);
+    box-shadow: 0 2px 8px rgba(124, 92, 252, 0.3);
 }
 
     .btn-primary-action:hover {
-        background-color: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(124, 92, 252, 0.45);
     }
 
 /* =========================================
    RESPONSIVE BREAKPOINTS
    ========================================= */
 
-/* Tablet & Large Mobile (Max 1024px) */
 @media (max-width: 1024px) {
     .main-dashboard-container {
-        /* Stack Sidebar on top of Results */
         grid-template-columns: 1fr;
         padding: 0 24px;
         gap: 24px;
     }
 
-    /* Adjust Header for stacking */
     .results-header {
         flex-direction: column;
         align-items: flex-start;
@@ -166,11 +177,10 @@
 
     .sort-control {
         width: 100%;
-        justify-content: space-between; /* Spread label and select */
+        justify-content: space-between;
     }
 }
 
-/* Small Mobile (Max 600px) */
 @media (max-width: 600px) {
     .main-dashboard-container {
         padding: 0 16px;
@@ -181,7 +191,6 @@
         font-size: 1.75rem;
     }
 
-    /* Allow cards to go full width */
     .projects-grid {
         grid-template-columns: 1fr;
     }
