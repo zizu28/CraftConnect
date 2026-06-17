@@ -1,19 +1,22 @@
-﻿/* =========================================
+/* SecureCheckout.razor.css — Design System Migration */
+
+/* =========================================
    1. Page Layout
    ========================================= */
 .checkout-page {
     max-width: 1200px;
     margin: 40px auto;
     padding: 0 24px;
-    font-family: system-ui, -apple-system, sans-serif;
-    color: #1e293b; /* Slate-800 */
+    font-family: var(--font-body);
+    color: var(--text-primary);
 }
 
 .page-title {
     font-size: 2rem;
     font-weight: 700;
+    font-family: var(--font-heading);
     margin-bottom: 32px;
-    color: #0f172a;
+    color: var(--text-primary);
 }
 
 .checkout-grid {
@@ -50,25 +53,26 @@
     font-size: 1.1rem;
     font-weight: 600;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    background-color: #0284c7; /* Sky-600 */
-    color: white;
+    background: linear-gradient(135deg, var(--accent-primary), #9b7bfc);
+    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    transition: background-color 0.2s, transform 0.1s;
-    box-shadow: 0 4px 6px rgba(2, 132, 199, 0.2);
+    transition: all var(--transition-smooth);
+    box-shadow: 0 4px 12px rgba(124, 92, 252, 0.3);
 }
 
     .btn-submit:hover:not(:disabled) {
-        background-color: #0369a1; /* Sky-700 */
         transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(124, 92, 252, 0.45);
     }
 
     .btn-submit:disabled {
-        background-color: #94a3b8;
+        background: var(--border-strong);
+        color: var(--text-muted);
         cursor: not-allowed;
         transform: none;
         box-shadow: none;
@@ -79,12 +83,12 @@
     align-items: center;
     gap: 8px;
     font-size: 0.9rem;
-    color: #64748b; /* Slate-500 */
+    color: var(--text-muted);
     font-weight: 500;
 }
 
     .ssl-badge i {
-        color: #10b981; /* Green for security */
+        color: var(--color-success); /* Green for security */
         font-size: 1.1rem;
     }
 

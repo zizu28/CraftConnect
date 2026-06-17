@@ -1,28 +1,32 @@
-﻿/* --- Page and Card Layout --- */
+/* EditProject.razor.css — Design System Migration */
+
+/* --- Page and Card Layout --- */
 .page-container {
     padding: 90px 20px 50px 20px;
-    background-color: #f7f9fa; /* Light background */
+    background-color: var(--bg-secondary); /* Light background */
     min-height: 100vh;
 }
 
 .project-form-card {
     max-width: 650px;
     margin: 0 auto;
-    background-color: white;
+    background-color: var(--bg-primary);
     padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-default);
 }
 
 .form-title {
     font-size: 2rem;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 5px;
     text-align: center;
+    font-family: var(--font-heading);
 }
 
 .form-subtitle {
-    color: #6c757d;
+    color: var(--text-secondary);
     margin-bottom: 30px;
     text-align: center;
 }
@@ -36,7 +40,7 @@
     display: block;
     font-weight: 600;
     margin-bottom: 5px;
-    color: #333;
+    color: var(--text-primary);
     font-size: 1.1rem;
 }
 
@@ -48,7 +52,7 @@
 }
 
 .input-hint {
-    color: #999;
+    color: var(--text-muted);
     font-size: 0.9rem;
     margin-bottom: 10px;
 }
@@ -56,9 +60,18 @@
 .form-control {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
     box-sizing: border-box;
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-primary-glow);
 }
 
 .description-box {
@@ -73,19 +86,19 @@
 }
 
 .input-prefix {
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-strong);
     border-right: none;
     padding: 12px;
-    border-radius: 4px 0 0 4px;
-    color: #666;
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    color: var(--text-muted);
     height: 100%;
     display: flex;
     align-items: center;
 }
 
 .input-group .form-control {
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
     border-left: none;
 }
 
@@ -104,18 +117,25 @@
 }
 
 .btn-submit {
-    background-color: #007bff;
-    color: white;
+    background: linear-gradient(135deg, var(--accent-primary), #9b7bfc);
+    color: #ffffff;
     border: none;
     padding: 12px 30px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 8px;
+    box-shadow: 0 2px 8px rgba(124, 92, 252, 0.3);
+    transition: all var(--transition-smooth);
 }
+
+    .btn-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(124, 92, 252, 0.45);
+    }
 
     .btn-submit i {
         font-size: 1.2rem;
@@ -165,14 +185,14 @@
 
 .date-label {
     font-size: 0.75rem;
-    color: #6c757d;
+    color: var(--text-secondary);
     margin-bottom: 4px;
     font-weight: 500;
     text-transform: uppercase;
 }
 
 .date-separator {
-    color: #6c757d;
+    color: var(--text-secondary);
     font-weight: 500;
     margin-top: 14px; /* Align visually with input box, ignoring label height */
 }

@@ -1,10 +1,12 @@
-﻿.privacy-policy-container {
-    color: #374151; /* Gray-700 */
+/* PrivacyPolicy.razor.css — Design System Migration */
+
+.privacy-policy-container {
+    color: var(--text-secondary);
     line-height: 1.6;
 }
 
 .policy-header {
-    border-bottom: 1px solid #F3F4F6; /* Gray-100 */
+    border-bottom: 1px solid var(--border-default);
     padding-bottom: 24px;
     margin-bottom: 24px;
 }
@@ -12,13 +14,14 @@
     .policy-header h1 {
         font-size: 2.25rem; /* 36px */
         font-weight: 700;
-        color: #111827; /* Gray-900 */
+        font-family: var(--font-heading);
+        color: var(--text-primary);
         margin: 0;
     }
 
     .policy-header p {
         font-size: 0.9rem;
-        color: #6B7280; /* Gray-500 */
+        color: var(--text-muted);
         margin: 4px 0 0 0;
     }
 
@@ -29,7 +32,7 @@ section {
     section h2 {
         font-size: 1.25rem; /* 20px */
         font-weight: 600;
-        color: #111827; /* Gray-900 */
+        color: var(--text-primary);
         margin-bottom: 12px;
     }
 
@@ -48,13 +51,15 @@ section {
     }
 
     section a {
-        color: #3B82F6; /* Blue-500 */
+        color: var(--accent-primary);
         text-decoration: none;
         font-weight: 500;
+        transition: color var(--transition-fast);
     }
 
         section a:hover {
             text-decoration: underline;
+            color: var(--text-link-hover);
         }
 
 /* --- Page Footer --- */
@@ -64,11 +69,11 @@ section {
     align-items: center;
     flex-wrap: wrap;
     gap: 16px;
-    border-top: 1px solid #F3F4F6; /* Gray-100 */
+    border-top: 1px solid var(--border-default);
     padding-top: 24px;
     margin-top: 48px;
     font-size: 0.875rem; /* 14px */
-    color: #6B7280; /* Gray-500 */
+    color: var(--text-muted);
 }
 
 .footer-links {
@@ -78,9 +83,11 @@ section {
 
     .footer-links a {
         text-decoration: none;
-        color: #6B7280;
+        color: var(--text-muted);
+        transition: color var(--transition-fast);
     }
 
         .footer-links a:hover {
             text-decoration: underline;
+            color: var(--text-secondary);
         }
