@@ -1,8 +1,8 @@
-﻿.history-card {
-    background-color: #FFFFFF;
-    border: 1px solid #E5E7EB;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+.history-card {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -39,23 +39,23 @@
 .name {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #374151; /* Gray-700 */
+    color: var(--text-secondary); /* Gray-700 */
 }
 
 .project-title {
     font-size: 1.125rem; /* 18px */
     font-weight: 600;
-    color: #111827; /* Gray-900 */
+    color: var(--text-primary); /* Gray-900 */
 }
 
 .completed-date {
     font-size: 0.8rem;
-    color: #6B7280; /* Gray-500 */
+    color: var(--text-muted); /* Gray-500 */
 }
 
 .description {
     font-size: 0.9rem;
-    color: #374151;
+    color: var(--text-secondary);
     line-height: 1.6;
     margin: 0;
 }
@@ -69,10 +69,10 @@
     padding: 8px 14px;
     font-size: 0.875rem;
     font-weight: 500;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     border: 1px solid transparent;
     cursor: pointer;
-    transition: all 0.1s ease-in-out;
+    transition: all var(--transition-fast);
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -84,30 +84,30 @@
     }
 
 .btn-details {
-    background-color: #EFF6FF; /* Blue-50 */
-    color: #2563EB; /* Blue-600 */
-    border-color: #DBEAFE; /* Blue-200 */
+    background-color: var(--accent-primary-subtle); /* Blue-50 */
+    color: var(--accent-primary); /* Blue-600 */
+    border-color: var(--accent-primary-hover); /* Blue-200 */
 }
 
     .btn-details:hover {
-        background-color: #DBEAFE; /* Blue-200 */
+        background-color: var(--accent-primary-hover); /* Blue-200 */
     }
 
 .btn-contact {
-    background-color: #FDF4F4; /* Rose-50 (from image) */
-    color: #E11D48; /* Rose-600 */
-    border-color: #FDE4E4; /* Rose-200 */
+    background-color: var(--color-danger-subtle); /* Rose-50 (from image) */
+    color: var(--color-danger); /* Rose-600 */
+    border-color: var(--color-danger-hover); /* Rose-200 */
 }
 
     .btn-contact:hover {
-        background-color: #FDE4E4; /* Rose-200 */
+        background-color: var(--color-danger-hover); /* Rose-200 */
     }
 
 .card-image {
     flex-shrink: 0;
     width: 240px;
     height: 160px;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     overflow: hidden;
 }
 

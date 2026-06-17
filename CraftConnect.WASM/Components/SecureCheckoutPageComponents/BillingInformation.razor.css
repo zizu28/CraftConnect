@@ -1,16 +1,16 @@
-﻿.checkout-card {
-    background-color: #FFFFFF;
-    border: 1px solid #E5E7EB;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+.checkout-card {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
 }
 
 .card-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #111827;
-    margin: 0 0 16px 0;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-4) 0;
 }
 
 .form-check {
@@ -23,19 +23,19 @@
         width: 16px;
         height: 16px;
         border-radius: 4px;
-        border: 1px solid #D1D5DB;
+        border: 1px solid var(--border-strong);
         cursor: pointer;
     }
 
         .form-check input[type="checkbox"]:checked {
-            background-color: #0295D8;
-            border-color: #0295D8;
+            background-color: var(--accent-primary);
+            border-color: var(--accent-primary);
         }
 
     .form-check label {
         font-size: 0.9rem;
         font-weight: 500;
-        color: #374151;
+        color: var(--text-secondary);
         cursor: pointer;
     }
 
@@ -45,7 +45,7 @@
     gap: 16px;
     margin-top: 16px;
     padding-top: 16px;
-    border-top: 1px solid #E5E7EB;
+    border-top: 1px solid var(--border-default);
 }
 
 .form-group {
@@ -57,24 +57,24 @@
     .form-group label {
         font-size: 0.875rem;
         font-weight: 500;
-        color: #374151;
+        color: var(--text-secondary);
     }
 
 .form-control {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #D1D5DB;
-    border-radius: 6px;
-    background-color: #FFFFFF;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-primary);
     font-size: 0.9rem;
-    color: #111827;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
 }
 
     .form-control:focus {
         outline: none;
-        border-color: #0295D8;
-        box-shadow: 0 0 0 1px #0295D8;
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 1px var(--accent-primary);
     }
 
 .form-row {
