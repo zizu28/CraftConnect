@@ -17,6 +17,7 @@
         "EnableRateLimiting": false
       }
     },
+    { "$ref": "#" },
     {
       "UpstreamPathTemplate": "/users/craftsman/{Id}",
       "UpstreamHttpMethod": [
