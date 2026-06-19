@@ -1,4 +1,6 @@
-﻿@inject NavigationManager Navigation
+@using CraftConnect.WASM.Services
+@inject NavigationManager Navigation
+@inject ThemeService ThemeService
 @implements IDisposable
 
 <nav class="projects-sidebar">
@@ -34,6 +36,12 @@
     </div>
 
     <div class="sidebar-bottom">
+        <div style="display:flex; justify-content:center; margin-bottom:1rem;">
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+                <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon-fill" : "bi-sun-fill")"></i>
+            </button>
+        </div>
         <NavLink href="/settings" class="nav-item">
             <i class="bi bi-gear-fill"></i>
             <span>Settings</span>
@@ -50,8 +58,14 @@
 
     protected override void OnInitialized()
     {
+        ThemeService.OnThemeChanged += OnThemeChangedHandler;
         currentUrl = Navigation.Uri;
         Navigation.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnThemeChangedHandler()
+    {
+        InvokeAsync(StateHasChanged);
     }
 
     private void OnLocationChanged(object sender, LocationChangedEventArgs e)
@@ -62,6 +76,7 @@
 
     public void Dispose()
     {
+        ThemeService.OnThemeChanged -= OnThemeChangedHandler;
         Navigation.LocationChanged -= OnLocationChanged;
     }
 }

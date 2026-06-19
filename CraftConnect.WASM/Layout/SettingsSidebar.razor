@@ -1,4 +1,7 @@
-﻿@inject NavigationManager NavigationManager
+@using CraftConnect.WASM.Services
+@inject NavigationManager NavigationManager
+@inject ThemeService ThemeService
+@implements IDisposable
 
 <aside class="settings-sidebar">
     <div class="sidebar-top">
@@ -27,14 +30,35 @@
     </div>
 
     <div class="sidebar-bottom">
+        <div style="display:flex; justify-content:center; margin-bottom:1rem;">
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+                <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon-fill" : "bi-sun-fill")"></i>
+            </button>
+        </div>
         <button class="logout-btn" @onclick="Logout">Logout</button>
     </div>
 </aside>
 
 @code {
+    protected override void OnInitialized()
+    {
+        ThemeService.OnThemeChanged += OnThemeChangedHandler;
+    }
+
+    private void OnThemeChangedHandler()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
     private void Logout()
     {
         // Add logout logic here
         NavigationManager.NavigateTo("/login");
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= OnThemeChangedHandler;
     }
 }

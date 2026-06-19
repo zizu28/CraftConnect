@@ -1,4 +1,7 @@
-﻿@inject NavigationManager NavigationManager
+@using CraftConnect.WASM.Services
+@inject NavigationManager NavigationManager
+@inject ThemeService ThemeService
+@implements IDisposable
 
 <header class="top-nav-header-history">
     <div class="nav-content-history">
@@ -17,6 +20,10 @@
 
         <div class="nav-right-history">
             <button class="btn-post-project" @onclick="@(() => NavigationManager.NavigateTo("/customer/post-project"))">Post a Project</button>
+            <!-- Theme Toggle -->
+            <button class="icon-btn theme-toggle" style="border:none; margin-right:8px; margin-left:16px;" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+                <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon-fill" : "bi-sun-fill")"></i>
+            </button>
             <button class="profile-btn-history">
                 <span class="avatar-history">JD</span>
             </button>
@@ -28,3 +35,20 @@
         </button>
     </div>
 </header>
+
+@code {
+    protected override void OnInitialized()
+    {
+        ThemeService.OnThemeChanged += OnThemeChangedHandler;
+    }
+
+    private void OnThemeChangedHandler()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= OnThemeChangedHandler;
+    }
+}
