@@ -1,4 +1,7 @@
-﻿@using CraftConnect.WASM.ViewModels
+@using CraftConnect.WASM.ViewModels
+@using CraftConnect.WASM.Services
+@inject ThemeService ThemeService
+@implements IDisposable
 <nav class="sidebar-craftsman">
     <div class="sidebar-top">
         <div class="user-profile-sidebar">
@@ -38,6 +41,12 @@
     </div>
 
     <div class="sidebar-bottom">
+        <div style="display:flex; justify-content:center; margin-bottom: 1rem;">
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+                <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon-fill" : "bi-sun-fill")"></i>
+            </button>
+        </div>
         <a href="/customer/" class="new-project-btn">New Project</a>
         <ul class="nav-links-bottom">
             <li>
@@ -59,4 +68,19 @@
 @code {
     [Parameter]
     public UserProfileVM User { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        ThemeService.OnThemeChanged += OnThemeChangedHandler;
+    }
+
+    private void OnThemeChangedHandler()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= OnThemeChangedHandler;
+    }
 }

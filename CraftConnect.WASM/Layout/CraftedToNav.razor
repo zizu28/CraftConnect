@@ -1,8 +1,11 @@
-﻿@using Core.SharedKernel.DTOs
+@using Core.SharedKernel.DTOs
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+@using CraftConnect.WASM.Services
 @inject NavigationManager NavigationManager
 @inject IHttpClientFactory HttpClientFactory
+@inject ThemeService ThemeService
+@implements IDisposable
 
 <header class="top-nav-header">
     <div class="nav-content">
@@ -23,6 +26,10 @@
             <span class="user-greeting">Welcome, <strong>@DisplayName</strong></span>
             <button class="btn btn-logout" @onclick="HandleLogout" title="Log out">
                 <i class="bi bi-box-arrow-right"></i>
+            </button>
+            <!-- Theme Toggle -->
+            <button class="icon-btn theme-toggle" style="border:none; margin-right:8px;" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+                <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon-fill" : "bi-sun-fill")"></i>
             </button>
             <!-- Notifications -->
             <button class="icon-btn notification-btn" title="Notifications">
@@ -76,6 +83,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        ThemeService.OnThemeChanged += OnThemeChangedHandler;
         var authState = await AuthenticationState;
         var user = authState.User;
 
@@ -121,5 +129,15 @@
         {
             NavigationManager.NavigateTo("/login");
         }
+    }
+
+    private void OnThemeChangedHandler()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= OnThemeChangedHandler;
     }
 }

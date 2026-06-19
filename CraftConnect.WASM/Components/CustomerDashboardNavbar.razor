@@ -1,4 +1,7 @@
-﻿@inject NavigationManager NavManager
+@using CraftConnect.WASM.Services
+@inject NavigationManager NavManager
+@inject ThemeService ThemeService
+@implements IDisposable
 
 <header class="navbar-container customer-dashboard-nav">
     <div class="navbar-content">
@@ -12,6 +15,11 @@
 
         @* Right Side Profile and Controls *@
         <div class="user-actions">
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" style="margin-right:8px;" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+                <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon-fill" : "bi-sun-fill")"></i>
+            </button>
+
             <a href="/notifications" class="nav-icon-link">
                 <i class="bi bi-bell"></i>
             </a>
@@ -26,3 +34,20 @@
         </div>
     </div>
 </header>
+
+@code {
+    protected override void OnInitialized()
+    {
+        ThemeService.OnThemeChanged += OnThemeChangedHandler;
+    }
+
+    private void OnThemeChangedHandler()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= OnThemeChangedHandler;
+    }
+}
