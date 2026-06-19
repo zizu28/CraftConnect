@@ -1,4 +1,7 @@
-﻿@using CraftConnect.WASM.ViewModels
+@using CraftConnect.WASM.ViewModels
+@using CraftConnect.WASM.Services
+@inject ThemeService ThemeService
+@implements IDisposable
 <aside class="terms-sidebar">
     <nav class="sticky-nav">
         <h5>Table of Contents</h5>
@@ -9,6 +12,11 @@
             }
         </ul>
     </nav>
+    <div style="display:flex; justify-content:center; margin-bottom: 1rem; margin-top: 1rem;">
+        <button class="theme-toggle" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+            <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon-fill" : "bi-sun-fill")"></i>
+        </button>
+    </div>
 </aside>
 
 @code {
@@ -19,6 +27,7 @@
 
     protected override void OnInitialized()
     {
+        ThemeService.OnThemeChanged += OnThemeChangedHandler;
         NavItems = new List<TermsNavItem>
         {
             new TermsNavItem { Title = "Introduction", Href = "#introduction", Children = new List<TermsNavItem>
@@ -35,5 +44,15 @@
             new TermsNavItem { Title = "Termination", Href = "#termination" },
             new TermsNavItem { Title = "Governing Law", Href = "#governing-law" }
         };
+    }
+
+    private void OnThemeChangedHandler()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= OnThemeChangedHandler;
     }
 }

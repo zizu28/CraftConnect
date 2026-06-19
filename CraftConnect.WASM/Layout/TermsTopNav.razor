@@ -1,4 +1,7 @@
-﻿<header class="terms-nav-header">
+@using CraftConnect.WASM.Services
+@inject ThemeService ThemeService
+@implements IDisposable
+<header class="terms-nav-header">
     <div class="terms-nav-container">
         <a href="/" class="logo">
             <i class="logo-icon bi bi-tools"></i>
@@ -10,8 +13,29 @@
         </div>
         <div class="nav-spacer"></div>
         <div class="auth-buttons">
+            <!-- Theme Toggle -->
+            <button class="icon-btn theme-toggle" style="border:none; margin-right:8px;" @onclick="ThemeService.ToggleTheme" title="Toggle Theme">
+                <i class="bi @(ThemeService.CurrentTheme == "light" ? "bi-moon-fill" : "bi-sun-fill")"></i>
+            </button>
             <a href="/signup" class="btn btn-primary">Sign Up</a>
             <a href="/login" class="btn btn-secondary">Log In</a>
         </div>
     </div>
 </header>
+
+@code {
+    protected override void OnInitialized()
+    {
+        ThemeService.OnThemeChanged += OnThemeChangedHandler;
+    }
+
+    private void OnThemeChangedHandler()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= OnThemeChangedHandler;
+    }
+}
