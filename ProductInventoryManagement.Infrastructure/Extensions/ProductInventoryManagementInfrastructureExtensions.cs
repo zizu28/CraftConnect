@@ -1,4 +1,4 @@
-﻿using Infrastructure.Persistence.Data;
+using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +21,11 @@ namespace ProductInventoryManagement.Infrastructure.Extensions
 			services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseSqlServer(
 					configuration.GetConnectionString("DefaultConnection"),
-					b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+					b => 
+					{
+						b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
+						b.EnableRetryOnFailure();
+					}));
 			services.AddScoped<IProductRepository, ProductRepository>();
 			services.AddScoped<ICategoryRepository, CategoryRepository>();
 			services.AddScoped<IUnitOfWork, UnitOfWork>();

@@ -42,6 +42,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions =>
 	{
 		sqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+		sqlOptions.EnableRetryOnFailure();
 	}));
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpContextAccessor();

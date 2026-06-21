@@ -25,7 +25,10 @@ builder.Services.AddBackgroundJobs(builder.Configuration);
 builder.Services.RegisterSerilog();
 builder.Services.AddMessageBroker(builder.Configuration);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions => 
+	{
+		sqlOptions.EnableRetryOnFailure();
+	}));
 
 // Add Application layer services (MediatR, AutoMapper, FluentValidation)
 builder.Services.AddNotificationApplicationExtensions(builder.Configuration);

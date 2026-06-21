@@ -30,7 +30,10 @@ builder.Services.AddBackgroundJobs(builder.Configuration);
 builder.Services.RegisterSerilog();
 //builder.AddSqlServerDbContext<ApplicationDbContext>("CraftConnectDB"); // For Aspire orchestration
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions => 
+	{
+		sqlOptions.EnableRetryOnFailure();
+	}));
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpClient("UserModule", client =>
 {

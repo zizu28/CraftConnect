@@ -1,4 +1,4 @@
-﻿using Infrastructure.Persistence.Data;
+using Infrastructure.Persistence.Data;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,16 +17,28 @@ namespace Core.EventServices
 					config.UseSqlServer().UseBusOutbox();
 				});
 				mt.SetKebabCaseEndpointNameFormatter();
-				mt.UsingAmazonSqs((context, config) =>
+				var rabbitMqConnection = configuration.GetConnectionString("rabbitmq");
+				if (!string.IsNullOrEmpty(rabbitMqConnection))
 				{
-					config.Host("us-east-1", h =>
+					mt.UsingRabbitMq((context, config) =>
 					{
-						h.AccessKey(configuration["AWS:AccessKey"]!);
-						h.SecretKey(configuration["AWS:SecretKey"]!);
-						h.Scope("CraftConnect", true);
+						config.Host(rabbitMqConnection);
+						config.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter("dev", false));
 					});
-					config.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter("dev", false));
-				});
+				}
+				else
+				{
+					mt.UsingAmazonSqs((context, config) =>
+					{
+						config.Host("us-east-1", h =>
+						{
+							h.AccessKey(configuration["AWS:AccessKey"]!);
+							h.SecretKey(configuration["AWS:SecretKey"]!);
+							h.Scope("CraftConnect", true);
+						});
+						config.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter("dev", false));
+					});
+				}
 			});
 
 			services.AddScoped<IMessageBroker, MassTransitMessageBroker>();

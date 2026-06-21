@@ -1,4 +1,4 @@
-﻿using Infrastructure.Persistence.Data;
+using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.UnitOfWork;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +17,11 @@ namespace PaymentManagement.Infrastructure.Extensions
 			services.AddDbContext<ApplicationDbContext>(options =>
 			{
 			options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-				b => b.MigrationsAssembly(typeof(PaymentManagementInfrastructureExtensions).Assembly.FullName));
+				b => 
+				{
+					b.MigrationsAssembly(typeof(PaymentManagementInfrastructureExtensions).Assembly.FullName);
+					b.EnableRetryOnFailure();
+				});
 			});
 			services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 			services.AddScoped<IPaymentRepository, PaymentRepository>();
